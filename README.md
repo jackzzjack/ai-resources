@@ -1,1 +1,81 @@
-# ai-resources
+# AI Resources
+
+支援 AI 工具的網站整理，包含國際英文、中國大陸、台灣、香港等來源。
+
+---
+
+## 國際英文目錄
+
+| 名稱 | 網址 | 說明 |
+|------|------|------|
+| There's An AI For That | https://theresanaiforthat.com/ | 全球最大 AI 工具目錄之一，80M+ 使用者，依任務搜尋 |
+| Futurepedia | https://www.futurepedia.io/ | 4,000+ 工具，54+ 分類，每日更新 |
+| Toolify.ai | https://www.toolify.ai/ | 大型目錄，附流量與營收數據 |
+| FutureTools.io | https://futuretools.io/ | YouTuber Matt Wolfe 整理，4,000+ 工具，29 分類 |
+| Supertools (The Rundown AI) | https://supertools.therundown.ai/ | 9,400+ 工具，233 分類，每日更新 |
+| AITopTools | https://aitoptools.com/ | 10,000+ 工具，含使用者評分 |
+| TopAI.tools | https://topai.tools/ | 120+ 分類，社群排名 |
+| TopTools.ai | https://toptools.ai/ | 分類瀏覽，介面簡潔 |
+| AI Tools Directory | https://aitoolsdirectory.com/ | 分類整理的工具目錄 |
+| Insidr.ai | https://www.insidr.ai/ai-tools/ | 500+ 工具，78+ 分類，含比較功能 |
+| Easy With AI | https://easywithai.com/ | 1,000+ 精選工具，含使用指南 |
+| EliteAI Tools | https://eliteai.tools/ | 精選高品質工具，嚴格篩選 |
+| AIxploria | https://www.aixploria.com/en/ | 號稱最大 AI 工具列表，支援多語言 |
+| PoweredbyAI | https://poweredbyai.app/ | 工具提交後 24–48 小時上架 |
+| AIVolut | https://aivolut.com/ | 依分類整理，含工具說明 |
+
+---
+
+## GitHub 精選清單（開發者向）
+
+| 名稱 | 網址 | 說明 |
+|------|------|------|
+| awesome-ai-tools (mahseema) | https://github.com/mahseema/awesome-ai-tools | 精選生成式 AI 工具與 LLM，社群維護 |
+| awesome-ai-tools (eudk) | https://github.com/eudk/awesome-ai-tools | 大型工具清單，涵蓋模型與平台，持續更新至 2026 |
+| awesome-generative-ai (steven2358) | https://github.com/steven2358/awesome-generative-ai | 生成式 AI 專案整理，涵蓋圖像、文字、音訊、影片 |
+
+---
+
+## 中國大陸（簡體中文）
+
+| 名稱 | 網址 | 說明 |
+|------|------|------|
+| AI工具集 | https://ai-bot.cn/ | 最全面的中文 AI 導航站之一，1,000+ 國內外工具，每日更新 |
+| AI导航网 | https://www.ainav.cn/ | 1,000+ 工具，入口網站形式 |
+| 优设AI工具导航 | https://hao.uisdc.com/ai/ | 設計社群 UISDC 運營，設計向，每週更新 |
+| 优设AI导航 | https://ai.uisdc.com/ | UISDC 旗下擴充版 AI 工具導航，每日更新 |
+| AI神器大全 | https://aishenqi.net/ | 15,000+ 全球工具，詳細標籤分類 |
+| AI中国工具导航 | https://tool.aiofchina.com/ | 收錄在中國可用的 AI 工具 |
+| AI工具箱导航 (AMZ123) | https://www.amz123.com/ai | 跨境電商平台旗下，商業導向 |
+
+---
+
+## 台灣（繁體中文）
+
+| 名稱 | 網址 | 說明 |
+|------|------|------|
+| 104職場力 AI工具懶人包 | https://blog.104.com.tw/ai_tools/ | 台灣最大求職平台持續更新，含免費／付費分類 |
+| 數位時代 | https://www.bnext.com.tw/article/82548/ai-tools-list | 台灣科技媒體，12+ 生產力工具整理 |
+| 天下雜誌 | https://www.cw.com.tw/article/5132642 | 職場必備 20 款 AI 工具 |
+| AHHA技術分享 | https://www.ahha.tw/blog/ai-tools-categories | 台灣網頁設計公司，分類整理，2026 更新 |
+| iBest網站設計 | https://www.ibest.com.tw/news-detail/2025-ai-tools/ | 全球前 16 款 AI 工具排名 |
+| CyberLink部落格 | https://tw.cyberlink.com/blog/photo-editing-tips/3485/ai-tools | 台灣訊連科技，依用途分類的免費 AI 工具 |
+| 就享知 | https://www.digiknow.com.tw/knowledge/bb9a43b90a2b4 | 台灣數位知識平台，AI 工具 Top 10 |
+| 犬哥網站 | https://frankknow.com/ai-tools/ | 獨立部落客，60+ 免費與付費工具分類整理 |
+| host.com.tw | https://host.com.tw/ai-tools | 台灣主機商部落格，24 款生產力 AI 工具 |
+
+---
+
+## 香港（繁體中文）
+
+| 名稱 | 網址 | 說明 |
+|------|------|------|
+| HK01 開罐 | https://www.hk01.com/開罐/60232489/ | 實測 13 款免費 AI 工具，工作與學習適用 |
+| DotAI | https://dotai.hk/blog/ai-tools-hong-kong-no-vpn | 專注香港可直接使用（無需 VPN）的工具 |
+| SHOPLINE電商教室 | https://blog.shopline.hk/ai-tools/ | 香港電商平台，7 款商業用途 AI 工具推薦 |
+
+---
+
+## 授權
+
+本資源庫採用 [CC BY 4.0](LICENSE) 授權。
