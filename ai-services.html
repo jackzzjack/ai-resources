@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 服務入口</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%);
+    }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    /* Filter bar */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 24px 24px 8px;
+    }
+    .filter-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Main grid */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    .section { margin-bottom: 56px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .section-icon { font-size: 1.4rem; }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .section-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0% 0%, rgba(124,106,255,0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(124,106,255,0.12);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .card-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .card-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .card-tag {
+      font-size: 0.72rem;
+      color: var(--accent2);
+      background: rgba(124,106,255,0.12);
+      border: 1px solid rgba(124,106,255,0.2);
+      border-radius: 999px;
+      padding: 2px 8px;
+      display: inline-block;
+      width: fit-content;
+    }
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .card-arrow {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: var(--accent2);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .card:hover .card-arrow { opacity: 1; }
+
+    /* Free badge */
+    .badge-free {
+      font-size: 0.68rem;
+      color: #4ade80;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 999px;
+      padding: 1px 7px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>AI 服務入口</h1>
+  <p>依使用情境分類，找到最適合你的 AI 工具</p>
+</header>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterAll(this)">全部</button>
+  <button class="filter-btn" onclick="filterSection('chat', this)">💬 對話與寫作</button>
+  <button class="filter-btn" onclick="filterSection('search', this)">🔍 搜尋與研究</button>
+  <button class="filter-btn" onclick="filterSection('code', this)">💻 程式碼</button>
+  <button class="filter-btn" onclick="filterSection('image', this)">🎨 圖像生成</button>
+  <button class="filter-btn" onclick="filterSection('video', this)">🎬 影片生成</button>
+  <button class="filter-btn" onclick="filterSection('audio', this)">🎵 語音與音樂</button>
+  <button class="filter-btn" onclick="filterSection('productivity', this)">📋 生產力與筆記</button>
+  <button class="filter-btn" onclick="filterSection('design', this)">✨ 設計與簡報</button>
+  <button class="filter-btn" onclick="filterSection('study', this)">📚 學習與筆記</button>
+</div>
+
+<main>
+
+  <!-- 對話與寫作 -->
+  <div class="section" data-category="chat">
+    <div class="section-header">
+      <span class="section-icon">💬</span>
+      <span class="section-title">對話與寫作</span>
+      <span class="section-count">通用型 AI 助理，可寫作、摘要、翻譯、分析</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://chatgpt.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=chatgpt.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">ChatGPT</div>
+            <span class="card-tag">OpenAI</span>
+          </div>
+        </div>
+        <div class="card-desc">最廣為人知的 AI 對話助理，支援文字、圖片、語音輸入，GPT-4o 免費可用。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://claude.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=claude.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Claude</div>
+            <span class="card-tag">Anthropic</span>
+          </div>
+        </div>
+        <div class="card-desc">擅長長文分析、程式碼與複雜推理，支援超長 context，回答細膩。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://gemini.google.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Gemini</div>
+            <span class="card-tag">Google</span>
+          </div>
+        </div>
+        <div class="card-desc">Google 推出的多模態 AI，深度整合 Google 服務（Gmail、Docs、Drive）。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://copilot.microsoft.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Microsoft Copilot</div>
+            <span class="card-tag">Microsoft</span>
+          </div>
+        </div>
+        <div class="card-desc">整合 Bing 搜尋的 AI 助理，深度嵌入 Windows 與 Microsoft 365。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.meta.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=meta.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Meta AI</div>
+            <span class="card-tag">Meta</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">由 Llama 驅動，整合於 WhatsApp、Instagram、Facebook，完全免費。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://grok.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=grok.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Grok</div>
+            <span class="card-tag">xAI</span>
+          </div>
+        </div>
+        <div class="card-desc">Elon Musk 旗下 xAI 推出，能存取即時 X (Twitter) 資料，回答風格直接。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 搜尋與研究 -->
+  <div class="section" data-category="search">
+    <div class="section-header">
+      <span class="section-icon">🔍</span>
+      <span class="section-title">搜尋與研究</span>
+      <span class="section-count">結合 AI 的搜尋引擎，適合資料蒐集、學術研究</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://www.perplexity.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=perplexity.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Perplexity AI</div>
+            <span class="card-tag">搜尋引擎</span>
+          </div>
+        </div>
+        <div class="card-desc">AI 驅動的搜尋引擎，每個答案附帶來源引用，適合快速查詢與研究。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://notebooklm.google.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=notebooklm.google.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">NotebookLM</div>
+            <span class="card-tag">Google</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">上傳 PDF、文件或網址，讓 AI 幫你摘要、問答，並生成播客式音訊摘要。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://consensus.app" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=consensus.app&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Consensus</div>
+            <span class="card-tag">學術搜尋</span>
+          </div>
+        </div>
+        <div class="card-desc">專門搜尋學術論文的 AI，直接從研究文獻中給出有引用依據的答案。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://elicit.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=elicit.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Elicit</div>
+            <span class="card-tag">學術研究</span>
+          </div>
+        </div>
+        <div class="card-desc">AI 研究助理，自動化文獻回顧、提取論文重點，適合學術寫作前期準備。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 程式碼 -->
+  <div class="section" data-category="code">
+    <div class="section-header">
+      <span class="section-icon">💻</span>
+      <span class="section-title">程式碼輔助</span>
+      <span class="section-count">寫程式、除錯、重構、解釋程式碼</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://github.com/features/copilot" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">GitHub Copilot</div>
+            <span class="card-tag">GitHub / Microsoft</span>
+          </div>
+        </div>
+        <div class="card-desc">整合於 VS Code、JetBrains 等 IDE，即時補全程式碼，業界最廣泛使用。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://cursor.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=cursor.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Cursor</div>
+            <span class="card-tag">AI IDE</span>
+          </div>
+        </div>
+        <div class="card-desc">以 VS Code 為基礎的 AI 編輯器，可對整個專案提問、自動修改多個檔案。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://codeium.com/windsurf" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=codeium.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Windsurf</div>
+            <span class="card-tag">AI IDE</span>
+          </div>
+        </div>
+        <div class="card-desc">Codeium 推出的 AI 原生 IDE，Cascade 代理可跨多個檔案規劃並執行程式變更，2026 年排名第一。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://replit.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=replit.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Replit</div>
+            <span class="card-tag">線上 IDE</span>
+          </div>
+        </div>
+        <div class="card-desc">瀏覽器內直接執行程式，AI 可自動生成並部署完整應用程式，無需本機環境。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://v0.dev" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=v0.dev&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">v0</div>
+            <span class="card-tag">Vercel</span>
+          </div>
+        </div>
+        <div class="card-desc">用自然語言生成 React / Tailwind 前端元件，可直接匯出至 Next.js 專案。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 圖像生成 -->
+  <div class="section" data-category="image">
+    <div class="section-header">
+      <span class="section-icon">🎨</span>
+      <span class="section-title">圖像生成</span>
+      <span class="section-count">文字生成圖片、修圖、風格轉換</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://www.midjourney.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=midjourney.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Midjourney</div>
+            <span class="card-tag">圖像生成</span>
+          </div>
+        </div>
+        <div class="card-desc">藝術風格最強的圖像生成 AI，輸出品質極高，廣受設計師與創作者使用。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://openai.com/index/dall-e-3/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=openai.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">DALL·E 3</div>
+            <span class="card-tag">OpenAI</span>
+          </div>
+        </div>
+        <div class="card-desc">整合於 ChatGPT，能精準理解複雜文字描述並生成圖片，支援中文提示詞。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://ideogram.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=ideogram.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Ideogram</div>
+            <span class="card-tag">圖像生成</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">特別擅長在圖片中正確呈現文字，適合製作 Logo、海報、社群圖文。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.adobe.com/products/firefly.html" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=adobe.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Adobe Firefly</div>
+            <span class="card-tag">Adobe</span>
+          </div>
+        </div>
+        <div class="card-desc">Adobe 推出的生成式 AI，整合於 Photoshop，商業授權安全，適合專業設計。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://stability.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=stability.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Stable Diffusion</div>
+            <span class="card-tag">開源</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">開源圖像生成模型，可本機運行，高度可自訂，開發者社群龐大。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 影片生成 -->
+  <div class="section" data-category="video">
+    <div class="section-header">
+      <span class="section-icon">🎬</span>
+      <span class="section-title">影片生成</span>
+      <span class="section-count">文字或圖片轉影片、AI 剪輯</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://runwayml.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=runwayml.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Runway</div>
+            <span class="card-tag">影片生成</span>
+          </div>
+        </div>
+        <div class="card-desc">專業影片生成平台，Gen-3 Alpha 支援高品質 AI 影片創作，廣受電影工作者使用。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://sora.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=sora.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Sora</div>
+            <span class="card-tag">OpenAI</span>
+          </div>
+        </div>
+        <div class="card-desc">OpenAI 推出的文字轉影片模型，可生成長達 20 秒的高畫質影片。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.heygen.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=heygen.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">HeyGen</div>
+            <span class="card-tag">AI 虛擬人</span>
+          </div>
+        </div>
+        <div class="card-desc">生成說話的 AI 虛擬人影片，支援多語言唇形同步，常用於教育與行銷內容。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.capcut.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=capcut.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">CapCut</div>
+            <span class="card-tag">AI 剪輯</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">免費影片剪輯工具，AI 自動字幕、去背、音效，適合社群短影音製作。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 語音與音樂 -->
+  <div class="section" data-category="audio">
+    <div class="section-header">
+      <span class="section-icon">🎵</span>
+      <span class="section-title">語音與音樂</span>
+      <span class="section-count">語音合成、音樂生成、語音轉文字</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://elevenlabs.io" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=elevenlabs.io&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">ElevenLabs</div>
+            <span class="card-tag">語音合成</span>
+          </div>
+        </div>
+        <div class="card-desc">最擬真的 AI 語音合成，支援聲音克隆，可用少量錄音複製任何人聲。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://suno.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=suno.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Suno</div>
+            <span class="card-tag">音樂生成</span>
+          </div>
+        </div>
+        <div class="card-desc">輸入歌詞與風格描述，幾秒內生成完整歌曲（含人聲、樂器、混音）。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.udio.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=udio.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Udio</div>
+            <span class="card-tag">音樂生成</span>
+          </div>
+        </div>
+        <div class="card-desc">高品質 AI 音樂生成，支援多種曲風，可從零生成或基於既有片段延伸創作。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://openai.com/index/whisper/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=openai.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Whisper</div>
+            <span class="card-tag">語音轉文字</span> <span class="badge-free">開源</span>
+          </div>
+        </div>
+        <div class="card-desc">OpenAI 開源的語音辨識模型，支援 99 種語言，辨識精準度業界頂尖。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 生產力與筆記 -->
+  <div class="section" data-category="productivity">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      <span class="section-title">生產力與筆記</span>
+      <span class="section-count">AI 強化的工作流、筆記、會議記錄</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://www.notion.com/product/ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=notion.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Notion AI</div>
+            <span class="card-tag">筆記 / 知識庫</span>
+          </div>
+        </div>
+        <div class="card-desc">在 Notion 筆記中直接使用 AI 寫作、摘要、翻譯，並能跨頁面搜尋與問答。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://otter.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=otter.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Otter.ai</div>
+            <span class="card-tag">會議記錄</span>
+          </div>
+        </div>
+        <div class="card-desc">即時轉錄會議內容、自動摘要重點，整合 Zoom、Google Meet、Teams。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.mem.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=mem.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Mem</div>
+            <span class="card-tag">AI 筆記</span>
+          </div>
+        </div>
+        <div class="card-desc">AI 驅動的個人知識庫，自動組織筆記，並能用自然語言查詢你記過的所有內容。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.taskade.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=taskade.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Taskade</div>
+            <span class="card-tag">任務管理</span>
+          </div>
+        </div>
+        <div class="card-desc">AI 自動生成任務清單、流程圖與工作計畫，適合團隊協作與專案管理。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 設計與簡報 -->
+  <div class="section" data-category="design">
+    <div class="section-header">
+      <span class="section-icon">✨</span>
+      <span class="section-title">設計與簡報</span>
+      <span class="section-count">AI 輔助平面設計、簡報製作、UI 生成</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://www.canva.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=canva.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Canva</div>
+            <span class="card-tag">設計平台</span>
+          </div>
+        </div>
+        <div class="card-desc">AI 自動生成簡報、社群圖、影片，Magic Studio 支援一鍵生成完整設計稿。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://gamma.app" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=gamma.app&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Gamma</div>
+            <span class="card-tag">AI 簡報</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">輸入主題，30 秒內生成精美簡報，支援匯出 PDF / PPT，適合快速提案。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.figma.com" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=figma.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Figma AI</div>
+            <span class="card-tag">UI 設計</span>
+          </div>
+        </div>
+        <div class="card-desc">Figma 內建 AI 功能，可根據描述生成 UI 元件、自動填充設計稿內容。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://www.beautiful.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=beautiful.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Beautiful.ai</div>
+            <span class="card-tag">AI 簡報</span>
+          </div>
+        </div>
+        <div class="card-desc">AI 自動排版簡報，確保每一頁視覺一致，適合商業提案與投資人簡報。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+
+  <!-- 學習與筆記 -->
+  <div class="section" data-category="study">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">學習與筆記</span>
+      <span class="section-count">課堂錄音轉筆記、學習輔助、知識整理</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://www.thetawave.ai" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=thetawave.ai&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Thetawave AI</div>
+            <span class="card-tag">課堂筆記</span>
+          </div>
+        </div>
+        <div class="card-desc">將課堂錄音、PDF、影片自動轉為整理好的筆記，並生成閃卡、測驗題與心智圖，適合學生備考。</div>
+        <span class="card-arrow">前往 →</span>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE" style="color:var(--accent2);text-decoration:none;">CC BY 4.0</a> 授權 · 持續更新中</p>
+</footer>
+
+<script>
+  function filterAll(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.section').forEach(s => s.style.display = '');
+  }
+
+  function filterSection(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.section').forEach(s => {
+      s.style.display = s.dataset.category === cat ? '' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
