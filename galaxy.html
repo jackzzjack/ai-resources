@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>銀河系互動圖</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000008; overflow: hidden; font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; }
+    canvas { display: block; }
+
+    #title {
+      position: fixed;
+      top: 20px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(180,220,255,0.85);
+      font-size: 1.05rem;
+      letter-spacing: 4px;
+      pointer-events: none;
+      text-shadow: 0 0 20px rgba(100,180,255,0.5);
+      white-space: nowrap;
+    }
+
+    #scale-info {
+      position: fixed;
+      top: 50px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(100,150,200,0.4);
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #back-btn {
+      position: fixed;
+      top: 18px; left: 20px;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid rgba(100,116,139,0.3);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.5);
+      transition: color 0.15s, border-color 0.15s;
+      z-index: 10;
+    }
+    #back-btn:hover { color: #cbd5e1; border-color: rgba(148,163,184,0.5); }
+
+    #solar-btn {
+      position: fixed;
+      top: 18px; right: 20px;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid rgba(100,116,139,0.3);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.5);
+      transition: color 0.15s, border-color 0.15s;
+      z-index: 10;
+    }
+    #solar-btn:hover { color: #cbd5e1; border-color: rgba(148,163,184,0.5); }
+
+    #tooltip {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+    #tooltip.visible { opacity: 1; }
+    .tooltip-box {
+      background: rgba(6,16,34,0.96);
+      border: 1px solid rgba(100,180,255,0.35);
+      border-radius: 12px;
+      padding: 16px 20px;
+      min-width: 220px;
+      max-width: 300px;
+      color: #e8f4ff;
+      box-shadow: 0 0 30px rgba(50,120,220,0.25);
+      backdrop-filter: blur(10px);
+    }
+    .tooltip-box h2 { font-size: 1.1rem; color: #7dd3fc; margin-bottom: 2px; }
+    .tt-en { font-size: 0.72rem; color: #475569; margin-bottom: 10px; letter-spacing: 1px; }
+    .tt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(100,180,255,0.1);
+      color: #cbd5e1;
+    }
+    .tt-row:last-of-type { border-bottom: none; }
+    .tt-row span:first-child { color: #7dd3fc; white-space: nowrap; }
+    .tt-row span:last-child { text-align: right; }
+    .tt-desc { margin-top: 10px; font-size: 0.78rem; line-height: 1.7; color: #94a3b8; }
+
+    #controls {
+      position: fixed;
+      bottom: 22px; right: 20px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      z-index: 10;
+    }
+    #controls label { display: block; margin-bottom: 6px; }
+    #speed-slider { width: 130px; cursor: pointer; accent-color: #7dd3fc; }
+
+    #legend {
+      position: fixed;
+      bottom: 22px; left: 20px;
+      color: #374151;
+      font-size: 0.72rem;
+      line-height: 2;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div id="title">銀 河 系 互 動 圖</div>
+<div id="scale-info">直徑約 10 萬光年 · 恆星數量 1,000–4,000 億顆</div>
+<a id="back-btn" href="index.html">← 返回首頁</a>
+<a id="solar-btn" href="solar_system.html">縮小至太陽系 →</a>
+<div id="tooltip"><div class="tooltip-box" id="tt-content"></div></div>
+
+<div id="controls">
+  <label>旋轉速度 <span id="speed-val">1.0×</span></label>
+  <input type="range" id="speed-slider" min="0" max="5" step="0.1" value="1" />
+</div>
+
+<div id="legend">
+  <div>懸停天體標記 → 查看詳細資訊</div>
+  <div>滑鼠滾輪 → 縮放</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+const ttContent = document.getElementById('tt-content');
+const speedSlider = document.getElementById('speed-slider');
+const speedValEl = document.getElementById('speed-val');
+
+let W, H, cx, cy, galaxyR;
+let zoomLevel = 1, targetZoom = 1;
+let speedMult = 1;
+let t = 0;
+let hoveredObj = null;
+let mouseX = 0, mouseY = 0;
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+
+const LANDMARKS = [
+  {
+    name: '銀河中心',
+    en: 'Galactic Center / Sgr A*',
+    type: 'center',
+    r_frac: 0,
+    angle: 0,
+    hitR: 0.07,
+    badge: '⚫ 超大質量黑洞',
+    stats: {
+      中央天體: '人馬座 A*（Sgr A*）',
+      黑洞質量: '約 400 萬倍太陽質量',
+      距太陽系: '約 26,000 光年',
+      核球直徑: '約 1 萬光年',
+    },
+    desc: '銀河系中心存在超大質量黑洞「人馬座 A*」，質量約太陽的 400 萬倍。2022 年事件視界望遠鏡（EHT）首次直接拍攝到其黑洞陰影。核球由密集的老年恆星組成，發出溫暖的黃橙色光。',
+  },
+  {
+    name: '太陽系位置',
+    en: 'Solar System — Orion Spur',
+    type: 'solar',
+    r_frac: 0.52,
+    angle: Math.PI * 1.15,
+    hitR: 0.045,
+    badge: '☀️ 你在這裡',
+    stats: {
+      距銀河中心: '約 26,000 光年',
+      所在旋臂: '獵戶座短臂（本地臂）',
+      銀河公轉速度: '約 220 km/s',
+      銀河年: '約 2.25 億年',
+    },
+    desc: '太陽系位於獵戶座短臂（Orion Spur）中，這是英仙臂與人馬臂之間的次要旋臂。太陽繞銀河中心公轉一圈約需 2.25 億年（1 銀河年），迄今已公轉約 20 圈。',
+  },
+];
+
+// 4 主旋臂，以對數螺旋生成
+// r = ARM_R0 * exp(ARM_B * t)，臂從中心棒端部展開
+const ARM_R0   = 0.08;
+const ARM_B    = 0.25;
+const ARM_SWEEP = 10.0;
+
+const ARMS = [
+  { startAngle: 0,              name: '盾牌-半人馬臂', en: 'Scutum-Centaurus', labelT: 5.0, warm: true  },
+  { startAngle: Math.PI / 2,    name: '英仙臂',         en: 'Perseus Arm',      labelT: 7.2, warm: false },
+  { startAngle: Math.PI,        name: '人馬臂',         en: 'Sagittarius Arm',  labelT: 5.0, warm: true  },
+  { startAngle: Math.PI * 3/2,  name: '矩尺臂',         en: 'Norma Arm',        labelT: 7.2, warm: false },
+];
+
+// ── Star generation ───────────────────────────────────────────────────────────
+
+let bgStars  = [];
+let armStars = [];
+let coreStars = [];
+
+function gaussian() {
+  let u = 0, v = 0;
+  while (!u) u = Math.random();
+  while (!v) v = Math.random();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function genBgStars(n = 550) {
+  bgStars = Array.from({ length: n }, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 0.85 + 0.2,
+    a: Math.random() * 0.45 + 0.08,
+  }));
+}
+
+function genCoreStars(n = 2200) {
+  coreStars = [];
+  for (let i = 0; i < n; i++) {
+    const r = Math.pow(Math.random(), 1.6) * 0.18;
+    const angle = Math.random() * Math.PI * 2;
+    // Bar elongation along the bar axis (angle ~0)
+    const barStretch = r < 0.10 ? 2.2 + Math.random() * 0.6 : 1.0;
+    coreStars.push({
+      r, angle, barStretch,
+      sz: Math.random() * 1.1 + 0.2,
+      a: Math.random() * 0.6 + 0.25,
+    });
+  }
+}
+
+function starColor(r_frac) {
+  if (r_frac < 0.22) return [255, 235, 170];  // warm core
+  if (r_frac < 0.55) return [245, 245, 255];  // white mid
+  return [200, 220, 255];                      // blue outer
+}
+
+function genArmStars() {
+  armStars = [];
+  const STEPS = 4200;
+
+  ARMS.forEach(arm => {
+    for (let i = 0; i < STEPS; i++) {
+      const tParam = (i / STEPS) * ARM_SWEEP;
+      const r_base = ARM_R0 * Math.exp(ARM_B * tParam);
+      if (r_base > 1.06) break;
+
+      const spread = 0.013 + r_base * 0.048;
+      const dr     = gaussian() * spread;
+      const dAngle = gaussian() * spread / Math.max(r_base, 0.06) * 0.45;
+
+      const r = Math.max(0.01, r_base + dr);
+      const angle = arm.startAngle + tParam + dAngle;
+      const [cr, cg, cb] = starColor(r_base);
+
+      armStars.push({
+        r, angle,
+        sz: Math.random() * 1.25 + 0.15,
+        a: (0.12 + Math.random() * 0.52) * (1.15 - r_base * 0.3),
+        cr, cg, cb,
+      });
+    }
+  });
+
+  // Inter-arm sparse population
+  for (let i = 0; i < 900; i++) {
+    const r = Math.sqrt(Math.random()) * 0.97;
+    armStars.push({
+      r, angle: Math.random() * Math.PI * 2,
+      sz: Math.random() * 0.75 + 0.15,
+      a: Math.random() * 0.12 + 0.04,
+      cr: 210, cg: 225, cb: 255,
+    });
+  }
+}
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W / 2;
+  cy = H / 2;
+  galaxyR = Math.min(W, H) / 2 * 0.86;
+}
+
+resize();
+genBgStars();
+genCoreStars();
+genArmStars();
+window.addEventListener('resize', resize);
+
+// ── Zoom / Speed ──────────────────────────────────────────────────────────────
+
+window.addEventListener('wheel', e => {
+  targetZoom *= e.deltaY < 0 ? 1.1 : 0.909;
+  targetZoom = Math.max(0.3, Math.min(4.0, targetZoom));
+  e.preventDefault();
+}, { passive: false });
+
+speedSlider.addEventListener('input', () => {
+  speedMult = parseFloat(speedSlider.value);
+  speedValEl.textContent = speedMult.toFixed(1) + '×';
+});
+
+// ── Draw ──────────────────────────────────────────────────────────────────────
+
+function drawBgStars() {
+  bgStars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+    ctx.fill();
+  });
+}
+
+function drawDiskHaze() {
+  const R = galaxyR * zoomLevel;
+
+  // Outer diffuse halo
+  const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.05);
+  halo.addColorStop(0,   'rgba(200,170,100,0.0)');
+  halo.addColorStop(0.3, 'rgba(180,155,90,0.05)');
+  halo.addColorStop(0.65,'rgba(100,130,200,0.03)');
+  halo.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 1.05, 0, Math.PI * 2);
+  ctx.fillStyle = halo;
+  ctx.fill();
+
+  // Mid disk glow
+  const disk = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.75);
+  disk.addColorStop(0,   'rgba(230,195,120,0.13)');
+  disk.addColorStop(0.28,'rgba(190,165,100,0.07)');
+  disk.addColorStop(0.65,'rgba(100,130,210,0.04)');
+  disk.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.75, 0, Math.PI * 2);
+  ctx.fillStyle = disk;
+  ctx.fill();
+}
+
+function drawCore() {
+  const R = galaxyR * zoomLevel;
+  const coreR = R * 0.175;
+
+  // Layered glows
+  [
+    [R * 0.52,    'rgba(255,200,90,0.035)'],
+    [coreR * 2.8, 'rgba(255,205,100,0.09)'],
+    [coreR * 1.6, 'rgba(255,215,130,0.20)'],
+    [coreR,       'rgba(255,235,170,0.55)'],
+    [coreR * 0.4, 'rgba(255,252,220,0.88)'],
+  ].forEach(([radius, color]) => {
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    g.addColorStop(0, color);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+  });
+
+  // Galactic bar — slowly counter-rotates for visual effect
+  const barAngle = t * -0.000035 * speedMult;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(barAngle);
+  const barG = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR * 2.0);
+  barG.addColorStop(0,   'rgba(255,220,130,0.32)');
+  barG.addColorStop(0.55,'rgba(255,200,90,0.10)');
+  barG.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.ellipse(0, 0, coreR * 2.0, coreR * 0.48, 0, 0, Math.PI * 2);
+  ctx.fillStyle = barG;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawCoreStars(rotOffset) {
+  const R = galaxyR * zoomLevel;
+  coreStars.forEach(s => {
+    const angle = s.angle + rotOffset * 1.4;
+    const r = s.r * R;
+    const x = cx + Math.cos(angle) * r * s.barStretch;
+    const y = cy + Math.sin(angle) * r;
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(0.2, s.sz * Math.min(zoomLevel, 1.5)), 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,230,170,${s.a})`;
+    ctx.fill();
+  });
+}
+
+function drawArmStars(rotOffset) {
+  const R = galaxyR * zoomLevel;
+  armStars.forEach(s => {
+    const angle = s.angle + rotOffset;
+    const x = cx + Math.cos(angle) * s.r * R;
+    const y = cy + Math.sin(angle) * s.r * R;
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(0.15, s.sz * Math.min(zoomLevel, 1.5)), 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${s.cr},${s.cg},${s.cb},${s.a})`;
+    ctx.fill();
+  });
+}
+
+function drawArmLabels(rotOffset) {
+  const R = galaxyR * zoomLevel;
+  const fontSize = Math.max(9, Math.round(10 * Math.min(zoomLevel, 1.6)));
+  ctx.font = `${fontSize}px 'Microsoft JhengHei', sans-serif`;
+  ctx.textAlign = 'center';
+
+  ARMS.forEach(arm => {
+    const r_label = ARM_R0 * Math.exp(ARM_B * arm.labelT);
+    if (r_label > 1.1) return;
+    const angle = arm.startAngle + arm.labelT + rotOffset;
+    const x = cx + Math.cos(angle) * r_label * R;
+    const y = cy + Math.sin(angle) * r_label * R;
+    ctx.fillStyle = 'rgba(140,195,255,0.42)';
+    ctx.fillText(arm.name, x, y);
+  });
+}
+
+function landmarkPos(lm, rotOffset) {
+  const R = galaxyR * zoomLevel;
+  if (lm.r_frac === 0) return { x: cx, y: cy };
+  const angle = lm.angle + rotOffset;
+  return {
+    x: cx + Math.cos(angle) * lm.r_frac * R,
+    y: cy + Math.sin(angle) * lm.r_frac * R,
+  };
+}
+
+function drawLandmarks(rotOffset) {
+  const R = galaxyR * zoomLevel;
+
+  LANDMARKS.forEach(lm => {
+    const { x, y } = landmarkPos(lm, rotOffset);
+
+    if (lm.type === 'solar') {
+      const pulse = 0.65 + 0.35 * Math.sin(t * 0.045);
+      const mr = Math.max(4, 7 * Math.min(zoomLevel, 1.8));
+
+      ctx.beginPath();
+      ctx.arc(x, y, mr * 2.0 * pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(110,220,255,${0.28 * pulse})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(x, y, mr * 0.55, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(140,225,255,0.92)';
+      ctx.fill();
+
+      const fSize = Math.max(9, 10 * Math.min(zoomLevel, 1.5));
+      ctx.font = `${fSize}px 'Microsoft JhengHei', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(130,220,255,0.72)';
+      ctx.fillText('☀ 你在這裡', x, y - mr * 2.4);
+    }
+    // Galactic center has no extra marker — core glow is its indicator
+  });
+}
+
+// ── Hover / Tooltip ───────────────────────────────────────────────────────────
+
+function rotOffset() {
+  return t * 0.000048 * speedMult;
+}
+
+function checkHover(mx, my) {
+  const R = galaxyR * zoomLevel;
+  const rot = rotOffset();
+  for (const lm of LANDMARKS) {
+    const { x, y } = landmarkPos(lm, rot);
+    if (Math.hypot(mx - x, my - y) < lm.hitR * R) return lm;
+  }
+  return null;
+}
+
+function buildTT(data) {
+  let rows = '';
+  for (const [k, v] of Object.entries(data.stats || {})) {
+    rows += `<div class="tt-row"><span>${k}</span><span>${v}</span></div>`;
+  }
+  return `
+    <h2>${data.name} <small style="font-size:0.68em;color:#475569">${data.badge || ''}</small></h2>
+    <div class="tt-en">${data.en}</div>
+    ${rows}
+    <div class="tt-desc">${data.desc || ''}</div>
+  `;
+}
+
+window.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  const hit = checkHover(mouseX, mouseY);
+  if (hit) {
+    if (hoveredObj !== hit) {
+      hoveredObj = hit;
+      ttContent.innerHTML = buildTT(hit);
+    }
+    const m = 16;
+    let tx = mouseX + m, ty = mouseY + m;
+    if (tx + 320 > W) tx = mouseX - 320 - m;
+    if (ty + 310 > H) ty = mouseY - 310 - m;
+    tooltip.style.transform = `translate(${tx}px,${ty}px)`;
+    tooltip.classList.add('visible');
+    canvas.style.cursor = 'pointer';
+  } else {
+    hoveredObj = null;
+    tooltip.classList.remove('visible');
+    canvas.style.cursor = 'default';
+  }
+});
+
+// ── Animation loop ────────────────────────────────────────────────────────────
+
+function animate() {
+  requestAnimationFrame(animate);
+  zoomLevel += (targetZoom - zoomLevel) * 0.1;
+
+  ctx.fillStyle = '#000008';
+  ctx.fillRect(0, 0, W, H);
+
+  const rot = rotOffset();
+
+  drawBgStars();
+  drawDiskHaze();
+  drawArmStars(rot);
+  drawCoreStars(rot);
+  drawCore();
+  drawArmLabels(rot);
+  drawLandmarks(rot);
+
+  t += speedMult;
+}
+
+animate();
+</script>
+</body>
+</html>

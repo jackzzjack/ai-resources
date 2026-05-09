@@ -9,7 +9,8 @@
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
-| `solar_system.html` | 太陽系 3D 互動視覺化 |
+| `solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
+| `galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
