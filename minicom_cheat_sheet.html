@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>minicom Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050a14;
+    --panel-bg: #0a1628;
+    --surface: #0d1b2e;
+    --border: rgba(100,180,255,0.15);
+    --border2: rgba(100,180,255,0.08);
+    --text: #c8e0ff;
+    --dim: #4a6a99;
+    --accent: #60b0ff;
+    --accent2: #c080ff;
+    --accent3: #60e0ff;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --red: #f87171;
+    --pink: #f472b6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(30,60,120,0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(80,20,120,0.3) 0%, transparent 55%);
+  }
+
+  header {
+    text-align: center;
+    padding: 48px 24px 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .back-link {
+    position: absolute;
+    top: 20px; left: 24px;
+    font-size: 0.8rem;
+    color: var(--dim);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2.4rem);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  .prefix-badge {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: var(--orange);
+    background: rgba(251,146,60,0.1);
+    border: 1px solid rgba(251,146,60,0.25);
+    border-radius: 6px;
+    padding: 4px 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .search-wrap {
+    max-width: 420px;
+    margin: 20px auto 0;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 10px 16px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--dim); }
+
+  .mode-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 24px 24px 0;
+  }
+  .mode-tab {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .mode-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .mode-tab.active { background: rgba(96,176,255,0.12); border-color: var(--accent); color: var(--accent); }
+
+  main {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .section {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .section:hover {
+    border-color: rgba(100,180,255,0.35);
+    box-shadow: 0 8px 32px rgba(30,80,180,0.15);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border2);
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .section-head .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .section-body { padding: 6px 0 10px; }
+
+  .cmd {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 5px 18px;
+    transition: background 0.1s;
+    border-radius: 4px;
+    margin: 0 4px;
+  }
+  .cmd:hover { background: rgba(100,180,255,0.06); }
+  .cmd.hidden { display: none; }
+
+  kbd {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(96,176,255,0.12);
+    border: 1px solid rgba(96,176,255,0.25);
+    border-radius: 5px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 110px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  kbd.g  { color: var(--green);  background: rgba(74,222,128,0.1);  border-color: rgba(74,222,128,0.25); }
+  kbd.y  { color: var(--yellow); background: rgba(251,191,36,0.1);  border-color: rgba(251,191,36,0.25); }
+  kbd.o  { color: var(--orange); background: rgba(251,146,60,0.1);  border-color: rgba(251,146,60,0.25); }
+  kbd.r  { color: var(--red);    background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.25); }
+  kbd.p  { color: var(--accent2);background: rgba(192,128,255,0.1); border-color: rgba(192,128,255,0.25); }
+  kbd.c  { color: var(--accent3);background: rgba(96,224,255,0.1);  border-color: rgba(96,224,255,0.25); }
+  kbd.pk { color: var(--pink);   background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.25); }
+
+  .desc {
+    font-size: 0.8rem;
+    color: #8aabcc;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .sep {
+    border: none;
+    border-top: 1px solid var(--border2);
+    margin: 6px 18px;
+  }
+
+  .section[data-cat="nav"]      .section-head .dot { background: var(--accent); }
+  .section[data-cat="serial"]   .section-head .dot { background: var(--green); }
+  .section[data-cat="transfer"] .section-head .dot { background: var(--orange); }
+  .section[data-cat="capture"]  .section-head .dot { background: var(--accent2); }
+  .section[data-cat="cli"]      .section-head .dot { background: var(--accent3); }
+  .section[data-cat="tips"]     .section-head .dot { background: var(--yellow); }
+
+  .section[data-cat="nav"]      .section-head { color: var(--accent); }
+  .section[data-cat="serial"]   .section-head { color: var(--green); }
+  .section[data-cat="transfer"] .section-head { color: var(--orange); }
+  .section[data-cat="capture"]  .section-head { color: var(--accent2); }
+  .section[data-cat="cli"]      .section-head { color: var(--accent3); }
+  .section[data-cat="tips"]     .section-head { color: var(--yellow); }
+
+  #no-results {
+    display: none;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--dim);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px 24px;
+    color: var(--dim);
+    font-size: 0.75rem;
+    border-top: 1px solid var(--border2);
+    letter-spacing: 0.05em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回入口</a>
+  <h1>MINICOM CHEAT SHEET</h1>
+  <p class="subtitle">Serial Terminal 快速參考 · 嵌入式開發 / UART 通訊</p>
+  <div class="prefix-badge">預設 Escape = Ctrl-A（按下後再按指令鍵）</div>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="搜尋指令或說明…" autocomplete="off" spellcheck="false">
+  </div>
+</header>
+
+<div class="mode-tabs">
+  <button class="mode-tab active" data-filter="all">全部</button>
+  <button class="mode-tab" data-filter="nav">導覽選單</button>
+  <button class="mode-tab" data-filter="serial">連線設定</button>
+  <button class="mode-tab" data-filter="transfer">檔案傳輸</button>
+  <button class="mode-tab" data-filter="capture">擷取記錄</button>
+  <button class="mode-tab" data-filter="cli">CLI 啟動</button>
+  <button class="mode-tab" data-filter="tips">使用技巧</button>
+</div>
+
+<main id="grid">
+
+  <!-- ── 基本導覽 ── -->
+  <div class="section" data-cat="nav">
+    <div class="section-head"><span class="dot"></span>基本導覽（Ctrl-A 前綴）</div>
+    <div class="section-body">
+      <div class="cmd"><kbd>Ctrl-A Z</kbd><span class="desc">開啟說明選單（Help menu）</span></div>
+      <div class="cmd"><kbd>Ctrl-A X</kbd><span class="desc">離開 minicom（Exit）</span></div>
+      <div class="cmd"><kbd>Ctrl-A Q</kbd><span class="desc">離開但不重設 modem（Quit）</span></div>
+      <div class="cmd"><kbd>Ctrl-A O</kbd><span class="desc">設定選單（Configuration）</span></div>
+      <div class="cmd"><kbd>Ctrl-A M</kbd><span class="desc">傳送 modem 初始化字串</span></div>
+      <div class="cmd"><kbd>Ctrl-A R</kbd><span class="desc">接收檔案（Receive）</span></div>
+      <div class="cmd"><kbd>Ctrl-A S</kbd><span class="desc">傳送檔案（Send）</span></div>
+      <div class="cmd"><kbd>Ctrl-A I</kbd><span class="desc">切換 Line Wrap 模式</span></div>
+      <div class="cmd"><kbd>Ctrl-A U</kbd><span class="desc">切換新行模式（Add LF）</span></div>
+      <div class="cmd"><kbd>Ctrl-A E</kbd><span class="desc">切換本地回顯（Local Echo）</span></div>
+      <div class="cmd"><kbd>Ctrl-A C</kbd><span class="desc">清除螢幕</span></div>
+      <div class="cmd"><kbd>Ctrl-A B</kbd><span class="desc">傳送 BREAK 訊號</span></div>
+      <div class="cmd"><kbd>Ctrl-A F</kbd><span class="desc">傳送換頁字元（FF）</span></div>
+      <div class="cmd"><kbd>Ctrl-A G</kbd><span class="desc">執行 script 檔案</span></div>
+      <div class="cmd"><kbd>Ctrl-A K</kbd><span class="desc">執行 Kermit 協定</span></div>
+      <div class="cmd"><kbd>Ctrl-A H</kbd><span class="desc">手動撥號（Hang up）</span></div>
+      <div class="cmd"><kbd>Ctrl-A D</kbd><span class="desc">撥號目錄（Dial directory）</span></div>
+      <div class="cmd"><kbd>Ctrl-A A</kbd><span class="desc">傳送 Ctrl-A 字元本身</span></div>
+    </div>
+  </div>
+
+  <!-- ── 捲動 / 緩衝 ── -->
+  <div class="section" data-cat="nav">
+    <div class="section-head"><span class="dot"></span>捲動 / 緩衝區</div>
+    <div class="section-body">
+      <div class="cmd"><kbd>Ctrl-A J</kbd><span class="desc">進入捲動緩衝模式（Scroll Back）</span></div>
+      <div class="cmd"><kbd>↑ / ↓</kbd><span class="desc">（捲動模式）上 / 下一行</span></div>
+      <div class="cmd"><kbd>PgUp / PgDn</kbd><span class="desc">（捲動模式）上 / 下一頁</span></div>
+      <div class="cmd"><kbd>/ {pattern}</kbd><span class="desc">（捲動模式）搜尋字串</span></div>
+      <div class="cmd"><kbd>n</kbd><span class="desc">（捲動模式）下一個搜尋結果</span></div>
+      <div class="cmd"><kbd>q / Esc</kbd><span class="desc">離開捲動模式</span></div>
+    </div>
+  </div>
+
+  <!-- ── 連線設定 ── -->
+  <div class="section" data-cat="serial">
+    <div class="section-head"><span class="dot"></span>Serial 連線設定</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="g">Ctrl-A O</kbd><span class="desc">進入設定選單</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="g">Serial port setup</kbd><span class="desc">設定序列埠（A 改裝置路徑）</span></div>
+      <div class="cmd"><kbd class="g">A</kbd><span class="desc">設定裝置路徑（如 /dev/ttyUSB0）</span></div>
+      <div class="cmd"><kbd class="g">B</kbd><span class="desc">設定 Baud Rate（如 115200）</span></div>
+      <div class="cmd"><kbd class="g">C</kbd><span class="desc">設定資料位元（Data bits，常用 8）</span></div>
+      <div class="cmd"><kbd class="g">D</kbd><span class="desc">設定停止位元（Stop bits，常用 1）</span></div>
+      <div class="cmd"><kbd class="g">E</kbd><span class="desc">設定同位元（Parity，常用 None）</span></div>
+      <div class="cmd"><kbd class="g">F</kbd><span class="desc">設定硬體流控（Hardware FC）</span></div>
+      <div class="cmd"><kbd class="g">G</kbd><span class="desc">設定軟體流控（Software FC，XON/XOFF）</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="g">Save setup as dfl</kbd><span class="desc">儲存為預設設定</span></div>
+      <div class="cmd"><kbd class="g">Save setup as...</kbd><span class="desc">儲存為指定名稱設定檔</span></div>
+      <div class="cmd"><kbd class="g">Exit</kbd><span class="desc">離開設定並套用</span></div>
+    </div>
+  </div>
+
+  <!-- ── 常用 Baud Rate ── -->
+  <div class="section" data-cat="serial">
+    <div class="section-head"><span class="dot"></span>常用 Baud Rate / 設定組合</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="g">9600</kbd><span class="desc">常用於舊設備、BIOS console</span></div>
+      <div class="cmd"><kbd class="g">38400</kbd><span class="desc">部分嵌入式裝置</span></div>
+      <div class="cmd"><kbd class="g">57600</kbd><span class="desc">Arduino 部分設定</span></div>
+      <div class="cmd"><kbd class="g">115200</kbd><span class="desc">最常見預設（Linux kernel、Arduino）</span></div>
+      <div class="cmd"><kbd class="g">230400</kbd><span class="desc">高速嵌入式應用</span></div>
+      <div class="cmd"><kbd class="g">1000000+</kbd><span class="desc">高速 UART（視硬體支援而定）</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="g">8N1</kbd><span class="desc">8 data bits, No parity, 1 stop bit（最常用）</span></div>
+      <div class="cmd"><kbd class="g">8E1</kbd><span class="desc">8 data bits, Even parity, 1 stop bit</span></div>
+      <div class="cmd"><kbd class="g">7N1</kbd><span class="desc">7 data bits, No parity, 1 stop bit</span></div>
+    </div>
+  </div>
+
+  <!-- ── 檔案傳輸 ── -->
+  <div class="section" data-cat="transfer">
+    <div class="section-head"><span class="dot"></span>檔案傳輸協定</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="o">Ctrl-A S</kbd><span class="desc">傳送檔案（選擇協定）</span></div>
+      <div class="cmd"><kbd class="o">Ctrl-A R</kbd><span class="desc">接收檔案（選擇協定）</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="o">Xmodem</kbd><span class="desc">簡單傳輸，128 Byte 區塊，相容性高</span></div>
+      <div class="cmd"><kbd class="o">Ymodem</kbd><span class="desc">支援批次傳輸與 1K 區塊</span></div>
+      <div class="cmd"><kbd class="o">Zmodem</kbd><span class="desc">最常用，支援斷點續傳、較快速</span></div>
+      <div class="cmd"><kbd class="o">Kermit</kbd><span class="desc">跨平台傳輸協定，適用特殊環境</span></div>
+      <div class="cmd"><kbd class="o">ASCII</kbd><span class="desc">純文字傳輸（無錯誤校正）</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="o">sz {file}</kbd><span class="desc">遠端：以 Zmodem 傳送檔案至本機</span></div>
+      <div class="cmd"><kbd class="o">rz</kbd><span class="desc">遠端：以 Zmodem 接收本機上傳的檔案</span></div>
+    </div>
+  </div>
+
+  <!-- ── 擷取 ── -->
+  <div class="section" data-cat="capture">
+    <div class="section-head"><span class="dot"></span>擷取 / 記錄</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="p">Ctrl-A L</kbd><span class="desc">開啟 / 關閉 Log 擷取至檔案</span></div>
+      <div class="cmd"><kbd class="p">Ctrl-A P</kbd><span class="desc">傳送目前緩衝區至印表機 / 檔案</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="p">Capture on</kbd><span class="desc">開始記錄所有收到的資料</span></div>
+      <div class="cmd"><kbd class="p">Capture off</kbd><span class="desc">停止記錄</span></div>
+      <div class="cmd"><kbd class="p">Capture pause</kbd><span class="desc">暫停記錄</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="p">-C {file}</kbd><span class="desc">啟動時直接開始擷取至指定檔案</span></div>
+    </div>
+  </div>
+
+  <!-- ── CLI 啟動 ── -->
+  <div class="section" data-cat="cli">
+    <div class="section-head"><span class="dot"></span>CLI 啟動參數</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="c">minicom</kbd><span class="desc">以預設設定啟動</span></div>
+      <div class="cmd"><kbd class="c">minicom -s</kbd><span class="desc">啟動並直接進入設定選單</span></div>
+      <div class="cmd"><kbd class="c">minicom -D /dev/ttyUSB0</kbd><span class="desc">指定裝置路徑</span></div>
+      <div class="cmd"><kbd class="c">minicom -b 115200</kbd><span class="desc">指定 Baud Rate</span></div>
+      <div class="cmd"><kbd class="c">minicom -8</kbd><span class="desc">使用 8 位元字元（UTF-8 支援）</span></div>
+      <div class="cmd"><kbd class="c">minicom -o</kbd><span class="desc">不初始化 modem（直接連線）</span></div>
+      <div class="cmd"><kbd class="c">minicom -c on</kbd><span class="desc">啟用彩色顯示</span></div>
+      <div class="cmd"><kbd class="c">minicom -C {file}</kbd><span class="desc">啟動並擷取至指定 log 檔</span></div>
+      <div class="cmd"><kbd class="c">minicom -r</kbd><span class="desc">倒轉（翻轉）BS 與 DEL 鍵行為</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="c">minicom {config}</kbd><span class="desc">載入指定名稱的設定（~/.minirc.{config}）</span></div>
+      <div class="cmd"><kbd class="c">minicom -S {script}</kbd><span class="desc">啟動並執行指定 script</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="c">ls /dev/ttyUSB*</kbd><span class="desc">列出 USB-Serial 裝置</span></div>
+      <div class="cmd"><kbd class="c">ls /dev/ttyACM*</kbd><span class="desc">列出 ACM 裝置（Arduino 等）</span></div>
+      <div class="cmd"><kbd class="c">ls /dev/ttyS*</kbd><span class="desc">列出實體 COM Port</span></div>
+      <div class="cmd"><kbd class="c">dmesg | grep tty</kbd><span class="desc">從 dmesg 確認裝置名稱</span></div>
+    </div>
+  </div>
+
+  <!-- ── 權限設定 ── -->
+  <div class="section" data-cat="cli">
+    <div class="section-head"><span class="dot"></span>裝置權限設定</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="c">ls -l /dev/ttyUSB0</kbd><span class="desc">查看裝置所屬群組（通常為 dialout）</span></div>
+      <div class="cmd"><kbd class="c">sudo usermod -aG dialout $USER</kbd><span class="desc">將使用者加入 dialout 群組</span></div>
+      <div class="cmd"><kbd class="c">sudo usermod -aG uucp $USER</kbd><span class="desc">Arch Linux 系列使用 uucp 群組</span></div>
+      <div class="cmd"><kbd class="c">sudo chmod 666 /dev/ttyUSB0</kbd><span class="desc">臨時開放裝置讀寫（不建議長期）</span></div>
+      <div class="cmd"><kbd class="c">groups</kbd><span class="desc">確認當前使用者所屬群組（需重新登入後生效）</span></div>
+    </div>
+  </div>
+
+  <!-- ── 使用技巧 ── -->
+  <div class="section" data-cat="tips">
+    <div class="section-head"><span class="dot"></span>使用技巧 / 常見問題</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="y">Hardware FC 關閉</kbd><span class="desc">大多數 USB-Serial 不需硬體流控，出現亂碼時先關閉</span></div>
+      <div class="cmd"><kbd class="y">Local Echo 開啟</kbd><span class="desc">輸入看不到字元時，以 Ctrl-A E 開啟回顯</span></div>
+      <div class="cmd"><kbd class="y">Add LF 開啟</kbd><span class="desc">換行只顯示一行時，以 Ctrl-A U 加入 LF</span></div>
+      <div class="cmd"><kbd class="y">Line Wrap 開啟</kbd><span class="desc">長行被截斷時，以 Ctrl-A I 切換換行</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="y">minirc 設定位置</kbd><span class="desc">預設設定存於 ~/.minirc.dfl</span></div>
+      <div class="cmd"><kbd class="y">/etc/minicom/</kbd><span class="desc">系統全域設定目錄</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="y">Ctrl-A A</kbd><span class="desc">若需傳送真正的 Ctrl-A，使用此組合</span></div>
+      <div class="cmd"><kbd class="y">Ctrl-]</kbd><span class="desc">部分設定中用於替代前綴鍵</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="y">picocom 替代方案</kbd><span class="desc">picocom -b 115200 /dev/ttyUSB0（更輕量）</span></div>
+      <div class="cmd"><kbd class="y">screen 替代方案</kbd><span class="desc">screen /dev/ttyUSB0 115200</span></div>
+      <div class="cmd"><kbd class="y">cu 替代方案</kbd><span class="desc">cu -l /dev/ttyUSB0 -s 115200</span></div>
+    </div>
+  </div>
+
+  <div id="no-results">沒有符合的指令</div>
+</main>
+
+<footer>
+  <a href="index.html">← 返回入口</a> &nbsp;·&nbsp;
+  minicom Cheat Sheet &nbsp;·&nbsp; 本頁採 <a href="LICENSE">CC BY 4.0</a> 授權
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const noRes  = document.getElementById('no-results');
+  const tabs   = document.querySelectorAll('.mode-tab');
+  const sections = document.querySelectorAll('.section');
+
+  let activeFilter = 'all';
+
+  function applyFilter(query) {
+    const q = query.trim().toLowerCase();
+    let anyVisible = false;
+
+    sections.forEach(sec => {
+      const cat = sec.dataset.cat;
+      const matchCat = activeFilter === 'all' || cat === activeFilter;
+
+      if (!matchCat) { sec.style.display = 'none'; return; }
+
+      if (!q) {
+        sec.style.display = '';
+        sec.querySelectorAll('.cmd').forEach(c => c.classList.remove('hidden'));
+        anyVisible = true;
+        return;
+      }
+
+      const cmds = sec.querySelectorAll('.cmd');
+      let secVisible = false;
+      cmds.forEach(cmd => {
+        const text = cmd.textContent.toLowerCase();
+        if (text.includes(q)) { cmd.classList.remove('hidden'); secVisible = true; }
+        else cmd.classList.add('hidden');
+      });
+
+      sec.style.display = secVisible ? '' : 'none';
+      if (secVisible) anyVisible = true;
+    });
+
+    noRes.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  search.addEventListener('input', () => applyFilter(search.value));
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeFilter = tab.dataset.filter;
+      applyFilter(search.value);
+    });
+  });
+</script>
+
+</body>
+</html>
