@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>太陽系 3D 互動圖</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; }
+    canvas { display: block; }
+
+    #tooltip {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #tooltip.visible { opacity: 1; }
+    .tooltip-box {
+      background: rgba(8, 20, 40, 0.92);
+      border: 1px solid rgba(100, 180, 255, 0.4);
+      border-radius: 12px;
+      padding: 16px 20px;
+      max-width: 300px;
+      color: #e8f4ff;
+      box-shadow: 0 0 20px rgba(50, 120, 220, 0.3);
+      backdrop-filter: blur(8px);
+    }
+    .tooltip-box h2 {
+      font-size: 1.2rem;
+      color: #7dd3fc;
+      margin-bottom: 2px;
+    }
+    .tooltip-box .en-name {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .tooltip-box .info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(100,180,255,0.1);
+      color: #cbd5e1;
+    }
+    .tooltip-box .info-row:last-of-type { border-bottom: none; }
+    .tooltip-box .info-row span:first-child { color: #7dd3fc; min-width: 70px; }
+    .tooltip-box .description {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #94a3b8;
+    }
+
+    #legend {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: #64748b;
+      font-size: 0.75rem;
+      line-height: 1.8;
+      pointer-events: none;
+    }
+    #legend span { color: #94a3b8; }
+
+    #title {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(180, 220, 255, 0.8);
+      font-size: 1.1rem;
+      letter-spacing: 4px;
+      pointer-events: none;
+      text-shadow: 0 0 20px rgba(100, 180, 255, 0.5);
+    }
+
+    #speed-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+    #speed-control label { display: block; margin-bottom: 6px; }
+    #speed-slider {
+      width: 130px;
+      cursor: pointer;
+      accent-color: #7dd3fc;
+    }
+  </style>
+</head>
+<body>
+<div id="title">太 陽 系 3D 互 動 圖</div>
+<div id="tooltip"><div class="tooltip-box" id="tooltip-content"></div></div>
+<div id="legend">
+  <div>滑鼠左鍵拖曳：旋轉視角</div>
+  <div>滑鼠滾輪：縮放</div>
+  <div>右鍵拖曳：平移</div>
+  <div>懸停星體：查看介紹</div>
+</div>
+<div id="speed-control">
+  <label>公轉速度 <span id="speed-val">1×</span></label>
+  <input type="range" id="speed-slider" min="0" max="5" step="0.1" value="1" />
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ── Planet / object data ────────────────────────────────────────────────────
+const OBJECTS = [
+  {
+    id: 'sun', name: '太陽', en: 'Sun',
+    radius: 6, distance: 0, color: 0xFDB813, emissive: 0xFF8C00,
+    orbitSpeed: 0, rotSpeed: 0.001, tilt: 7.25,
+    type: 'star',
+    stats: { 直徑: '139.2 萬 km', 質量: '1.989×10³⁰ kg', 表面溫度: '5,778 K', 類型: '黃矮星' },
+    desc: '太陽是太陽系唯一的恆星，佔太陽系總質量的 99.86%。其核心溫度高達 1,500 萬°C，靠核融合反應持續發光發熱。',
+  },
+  {
+    id: 'mercury', name: '水星', en: 'Mercury',
+    radius: 0.55, distance: 14, color: 0xB5B5B5, emissive: 0x222222,
+    orbitSpeed: 0.0047, rotSpeed: 0.003, tilt: 0.03,
+    type: 'planet',
+    stats: { 直徑: '4,879 km', 距日距離: '0.39 AU', 公轉週期: '87.97 天', 衛星數: '0' },
+    desc: '太陽系最小、最靠近太陽的行星。幾乎沒有大氣層，晝夜溫差極大（+430°C 至 −180°C）。表面佈滿隕石坑，外觀類似月球。',
+  },
+  {
+    id: 'venus', name: '金星', en: 'Venus',
+    radius: 0.95, distance: 20, color: 0xE8C97A, emissive: 0x332200,
+    orbitSpeed: 0.0035, rotSpeed: -0.0007, tilt: 177.4,
+    type: 'planet',
+    stats: { 直徑: '12,104 km', 距日距離: '0.72 AU', 公轉週期: '224.7 天', 衛星數: '0' },
+    desc: '太陽系中最熱的行星，表面均溫 465°C。濃厚的二氧化碳大氣造成強烈溫室效應。自轉方向與多數行星相反（逆行自轉）。',
+  },
+  {
+    id: 'earth', name: '地球', en: 'Earth',
+    radius: 1.0, distance: 27, color: 0x2E86AB, emissive: 0x001122,
+    orbitSpeed: 0.003, rotSpeed: 0.01, tilt: 23.44,
+    type: 'planet',
+    stats: { 直徑: '12,742 km', 距日距離: '1.00 AU', 公轉週期: '365.25 天', 衛星數: '1（月球）' },
+    desc: '目前已知唯一孕育生命的行星。擁有液態水海洋、適宜的大氣層與磁場保護。生物多樣性極為豐富。',
+    moons: [{ name: '月球', r: 0.27, dist: 2.5, speed: 0.04, color: 0xAAAAAA }],
+  },
+  {
+    id: 'mars', name: '火星', en: 'Mars',
+    radius: 0.53, distance: 35, color: 0xCD4A2C, emissive: 0x220800,
+    orbitSpeed: 0.0024, rotSpeed: 0.0097, tilt: 25.19,
+    type: 'planet',
+    stats: { 直徑: '6,779 km', 距日距離: '1.52 AU', 公轉週期: '686.97 天', 衛星數: '2（火衛一、二）' },
+    desc: '被稱為「紅色星球」，富含氧化鐵使表面呈紅色。擁有太陽系最高的火山（奧林帕斯山，高 21.9 km）及最深的峽谷。',
+  },
+  {
+    id: 'jupiter', name: '木星', en: 'Jupiter',
+    radius: 3.5, distance: 58, color: 0xC88B3A, emissive: 0x221100,
+    orbitSpeed: 0.0013, rotSpeed: 0.024, tilt: 3.13,
+    type: 'planet',
+    stats: { 直徑: '139,820 km', 距日距離: '5.20 AU', 公轉週期: '11.86 年', 衛星數: '95+' },
+    desc: '太陽系最大行星，質量為其他行星總和的 2.5 倍。著名的「大紅斑」是持續超過 350 年的超大型颶風。擁有至少 95 顆衛星。',
+    rings: { inner: 4.0, outer: 4.5, opacity: 0.15 },
+  },
+  {
+    id: 'saturn', name: '土星', en: 'Saturn',
+    radius: 3.0, distance: 82, color: 0xEDD28C, emissive: 0x221800,
+    orbitSpeed: 0.00096, rotSpeed: 0.022, tilt: 26.73,
+    type: 'planet',
+    stats: { 直徑: '116,460 km', 距日距離: '9.58 AU', 公轉週期: '29.46 年', 衛星數: '146+' },
+    desc: '以壯觀的行星環聞名，環由冰塊與岩石碎片組成，寬度達 27 萬 km 但厚度僅約 10 m。密度極低，若有足夠大的水池，土星能浮在水上。',
+    rings: { inner: 3.8, outer: 6.5, opacity: 0.7, color: 0xD4B483 },
+  },
+  {
+    id: 'uranus', name: '天王星', en: 'Uranus',
+    radius: 1.8, distance: 107, color: 0x7DE8E8, emissive: 0x002222,
+    orbitSpeed: 0.00068, rotSpeed: -0.014, tilt: 97.77,
+    type: 'planet',
+    stats: { 直徑: '50,724 km', 距日距離: '19.2 AU', 公轉週期: '84.02 年', 衛星數: '28' },
+    desc: '自轉軸傾斜高達 97.77°，幾乎是「躺著」繞日公轉。大氣中的甲烷使其呈藍綠色。擁有 13 條細窄的行星環與 28 顆已知衛星。',
+    rings: { inner: 2.2, outer: 2.8, opacity: 0.3, tiltExtra: 90 },
+  },
+  {
+    id: 'neptune', name: '海王星', en: 'Neptune',
+    radius: 1.75, distance: 130, color: 0x3F54BA, emissive: 0x000833,
+    orbitSpeed: 0.00054, rotSpeed: 0.015, tilt: 28.32,
+    type: 'planet',
+    stats: { 直徑: '49,244 km', 距日距離: '30.1 AU', 公轉週期: '164.8 年', 衛星數: '16' },
+    desc: '太陽系最遠的行星，擁有太陽系最強的風（最高達 2,100 km/h）。衛星海衛一（Triton）是太陽系中少數逆行公轉的大衛星。',
+  },
+  {
+    id: 'pluto', name: '冥王星', en: 'Pluto',
+    radius: 0.35, distance: 155, color: 0xB8A9A0, emissive: 0x111111,
+    orbitSpeed: 0.00046, rotSpeed: -0.006, tilt: 122.53,
+    type: 'dwarf',
+    stats: { 直徑: '2,376 km', 距日距離: '39.5 AU', 公轉週期: '247.9 年', 分類: '矮行星（2006 年重分類）' },
+    desc: '曾被列為第九大行星，2006 年由國際天文聯合會重新分類為「矮行星」。擁有心形地形「湯博區」，由氮冰與一氧化碳冰組成。',
+  },
+];
+
+const SPECIAL = {
+  asteroidBelt: {
+    name: '小行星帶', en: 'Asteroid Belt',
+    innerR: 43, outerR: 52, count: 2000, ySpread: 2,
+    color: 0x888877,
+    stats: { 位置: '火星與木星之間（2.2–3.2 AU）', 主要成分: '岩石、金屬、碳化物', 最大天體: '穀神星（Ceres）', 總質量: '約月球質量的 4%' },
+    desc: '位於火星和木星軌道之間的環形區域，包含數百萬顆小行星。最大的天體是穀神星（矮行星），直徑約 940 km。木星的重力阻止了這些物質聚集成行星。',
+  },
+  kuiperBelt: {
+    name: '古柏帶', en: 'Kuiper Belt',
+    innerR: 148, outerR: 175, count: 3000, ySpread: 6,
+    color: 0x667799,
+    stats: { 位置: '海王星軌道外（30–50 AU）', 主要成分: '冰、岩石', 已知天體: '2,000+', 代表天體: '冥王星、鬩神星、鳥神星' },
+    desc: '位於海王星軌道之外的環形區域，包含大量冰質天體，是短週期彗星的來源。冥王星是其中最著名的成員。比小行星帶大 20 倍、質量大 20–200 倍。',
+  },
+};
+
+// ── Scene setup ─────────────────────────────────────────────────────────────
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.8;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 5000);
+camera.position.set(0, 80, 180);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 10;
+controls.maxDistance = 800;
+
+// Stars
+const starGeo = new THREE.BufferGeometry();
+const starCount = 8000;
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount * 3; i++) {
+  starPos[i] = (Math.random() - 0.5) * 2000;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.4, sizeAttenuation: true })));
+
+// Ambient + sun light
+scene.add(new THREE.AmbientLight(0x111122, 0.5));
+const sunLight = new THREE.PointLight(0xfff8e0, 2.5, 600);
+scene.add(sunLight);
+
+// ── Build objects ────────────────────────────────────────────────────────────
+const pivots = [];        // { pivot, planet, data, moons:[] }
+const hitTargets = [];    // { mesh, data }
+
+function makeOrbitLine(radius) {
+  const pts = [];
+  for (let i = 0; i <= 128; i++) {
+    const a = (i / 128) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+  }
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color: 0x334455, transparent: true, opacity: 0.35 });
+  return new THREE.Line(geo, mat);
+}
+
+function makeRing(inner, outer, color = 0xD4B483, opacity = 0.7) {
+  const geo = new THREE.RingGeometry(inner, outer, 128);
+  const mat = new THREE.MeshBasicMaterial({
+    color, side: THREE.DoubleSide, transparent: true, opacity,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.rotation.x = Math.PI / 2;
+  return mesh;
+}
+
+function makeParticleBelt({ innerR, outerR, count, ySpread, color }) {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const r = innerR + Math.random() * (outerR - innerR);
+    positions[i * 3]     = Math.cos(angle) * r;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * ySpread;
+    positions[i * 3 + 2] = Math.sin(angle) * r;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const mat = new THREE.PointsMaterial({ color, size: 0.45, sizeAttenuation: true, transparent: true, opacity: 0.7 });
+  return new THREE.Points(geo, mat);
+}
+
+// Build planets
+OBJECTS.forEach(data => {
+  const geo = new THREE.SphereGeometry(data.radius, 48, 32);
+  const mat = new THREE.MeshStandardMaterial({
+    color: data.color,
+    emissive: data.emissive,
+    emissiveIntensity: data.id === 'sun' ? 1 : 0.15,
+    roughness: data.id === 'sun' ? 1 : 0.75,
+    metalness: 0.1,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.castShadow = data.id !== 'sun';
+
+  // Special: sun glow
+  if (data.id === 'sun') {
+    const glowGeo = new THREE.SphereGeometry(data.radius * 1.18, 32, 32);
+    const glowMat = new THREE.MeshBasicMaterial({ color: 0xFF9900, transparent: true, opacity: 0.12, side: THREE.BackSide });
+    scene.add(Object.assign(new THREE.Mesh(glowGeo, glowMat), { position: new THREE.Vector3(0, 0, 0) }));
+    scene.add(mesh);
+    hitTargets.push({ mesh, data });
+    pivots.push({ pivot: null, planet: mesh, data, moons: [] });
+    return;
+  }
+
+  // Orbit line
+  scene.add(makeOrbitLine(data.distance));
+
+  // Pivot for orbit
+  const pivot = new THREE.Object3D();
+  pivot.rotation.y = Math.random() * Math.PI * 2;
+  scene.add(pivot);
+
+  mesh.position.x = data.distance;
+  mesh.rotation.z = THREE.MathUtils.degToRad(data.tilt || 0);
+  pivot.add(mesh);
+
+  // Rings
+  if (data.rings) {
+    const ring = makeRing(
+      data.radius * data.rings.inner,
+      data.radius * data.rings.outer,
+      data.rings.color || 0xC2A44A,
+      data.rings.opacity ?? 0.6,
+    );
+    if (data.rings.tiltExtra) ring.rotation.x += THREE.MathUtils.degToRad(data.rings.tiltExtra);
+    mesh.add(ring);
+  }
+
+  // Moons
+  const moonObjs = [];
+  (data.moons || []).forEach(m => {
+    const mGeo = new THREE.SphereGeometry(m.r, 24, 16);
+    const mMat = new THREE.MeshStandardMaterial({ color: m.color, roughness: 0.9 });
+    const mMesh = new THREE.Mesh(mGeo, mMat);
+    const mPivot = new THREE.Object3D();
+    mMesh.position.x = m.dist;
+    mPivot.add(mMesh);
+    mesh.add(mPivot);
+    moonObjs.push({ pivot: mPivot, speed: m.speed });
+  });
+
+  hitTargets.push({ mesh, data });
+  pivots.push({ pivot, planet: mesh, data, moons: moonObjs });
+});
+
+// Belt hit targets (invisible sphere for hover)
+function addBeltHover(beltData, avgR) {
+  const geo = new THREE.SphereGeometry(avgR, 32, 32);
+  const mat = new THREE.MeshBasicMaterial({ visible: false });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  hitTargets.push({ mesh, data: beltData });
+}
+
+// Particle belts
+const asteroidBeltPoints = makeParticleBelt(SPECIAL.asteroidBelt);
+scene.add(asteroidBeltPoints);
+addBeltHover(SPECIAL.asteroidBelt, (SPECIAL.asteroidBelt.innerR + SPECIAL.asteroidBelt.outerR) / 2);
+
+const kuiperBeltPoints = makeParticleBelt(SPECIAL.kuiperBelt);
+scene.add(kuiperBeltPoints);
+addBeltHover(SPECIAL.kuiperBelt, (SPECIAL.kuiperBelt.innerR + SPECIAL.kuiperBelt.outerR) / 2);
+
+// ── Tooltip logic ─────────────────────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+const tooltipContent = document.getElementById('tooltip-content');
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredData = null;
+
+function buildTooltipHTML(data) {
+  let rows = '';
+  if (data.stats) {
+    for (const [k, v] of Object.entries(data.stats)) {
+      rows += `<div class="info-row"><span>${k}</span><span>${v}</span></div>`;
+    }
+  }
+  const typeBadge = data.type === 'star' ? '⭐ 恆星' : data.type === 'dwarf' ? '🔵 矮行星' : data.type === 'planet' ? '🪐 行星' : '☄️ 星帶';
+  return `
+    <h2>${data.name} <small style="font-size:0.7em;color:#64748b">${typeBadge || ''}</small></h2>
+    <div class="en-name">${data.en || ''}</div>
+    ${rows}
+    <div class="description">${data.desc || ''}</div>
+  `;
+}
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const meshes = hitTargets.map(h => h.mesh);
+  const hits = raycaster.intersectObjects(meshes, false);
+
+  if (hits.length > 0) {
+    const hit = hitTargets.find(h => h.mesh === hits[0].object);
+    if (hit) {
+      if (hoveredData !== hit.data) {
+        hoveredData = hit.data;
+        tooltipContent.innerHTML = buildTooltipHTML(hit.data);
+      }
+      const margin = 16;
+      let tx = e.clientX + margin;
+      let ty = e.clientY + margin;
+      if (tx + 320 > window.innerWidth) tx = e.clientX - 320 - margin;
+      if (ty + 260 > window.innerHeight) ty = e.clientY - 260 - margin;
+      tooltip.style.transform = `translate(${tx}px, ${ty}px)`;
+      tooltip.classList.add('visible');
+      renderer.domElement.style.cursor = 'pointer';
+    }
+  } else {
+    hoveredData = null;
+    tooltip.classList.remove('visible');
+    renderer.domElement.style.cursor = 'default';
+  }
+});
+
+// ── Speed control ─────────────────────────────────────────────────────────────
+const speedSlider = document.getElementById('speed-slider');
+const speedVal = document.getElementById('speed-val');
+let speedMult = 1;
+speedSlider.addEventListener('input', () => {
+  speedMult = parseFloat(speedSlider.value);
+  speedVal.textContent = speedMult.toFixed(1) + '×';
+});
+
+// ── Animation ─────────────────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+
+  pivots.forEach(({ pivot, planet, data, moons }) => {
+    if (pivot) pivot.rotation.y += data.orbitSpeed * speedMult;
+    planet.rotation.y += data.rotSpeed * speedMult;
+    moons.forEach(m => { m.pivot.rotation.y += m.speed * speedMult; });
+  });
+
+  // Slowly rotate belt particles
+  asteroidBeltPoints.rotation.y += 0.00015 * speedMult;
+  kuiperBeltPoints.rotation.y += 0.00008 * speedMult;
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
