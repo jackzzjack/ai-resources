@@ -1,0 +1,55 @@
+# CLAUDE.md
+
+本文件提供 Claude Code（及其他 AI coding agent）在此專案中工作所需的背景資訊。
+
+## 專案概覽
+
+**ai-resources** 是一個純靜態網站資源庫，無需建置工具或套件管理器。所有頁面皆為獨立的 HTML 檔案，可直接在瀏覽器中開啟，亦可透過任何靜態檔案伺服器提供服務。
+
+## 技術棧
+
+- 純 HTML5 + CSS3 + 原生 JavaScript（無框架、無相依套件）
+- 所有樣式採用 CSS Custom Properties（CSS 變數），色彩主題集中於 `:root` 區塊
+- 互動功能（搜尋、3D 動畫等）均以原生 JS 實作
+
+## 檔案說明
+
+| 檔案 | 功能 |
+|------|------|
+| `index.html` | 主入口頁，導覽至所有子頁面 |
+| `ai-services.html` | AI 服務快速連結頁 |
+| `periodic_table.html` | 互動式元素週期表（含詳細元素資料） |
+| `solar_system.html` | 太陽系 3D 互動視覺化（Canvas / CSS 3D） |
+| `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
+| `tmux_cheat_sheet.html` | tmux 指令速查表 |
+| `minicom_cheat_sheet.html` | minicom 指令速查表 |
+| `README.md` | 專案說明與 AI 工具目錄清單 |
+
+## 開發慣例
+
+### 風格一致性
+- 所有 HTML 頁面共用相同的深色主題設計語言（背景 `#0a0a0f`，強調色 `#7c6aff`）
+- 新增頁面時，應沿用現有的 CSS 變數命名（`--bg`、`--surface`、`--accent` 等）
+- 頁面語言屬性：繁體中文頁面使用 `lang="zh-Hant"`
+
+### 無建置流程
+- 不引入 npm、bundler 或任何外部建置工具
+- 外部資源（字型、圖示）若需引入，優先使用 CDN，並考量離線可用性
+
+### README 維護
+- 新增 HTML 頁面時，同步更新 `README.md` 的「專案結構」表格
+- AI 工具目錄的連結應定期驗證是否仍然有效
+
+## 測試方式
+
+直接在瀏覽器開啟 HTML 檔案即可測試；或使用簡易本地伺服器：
+
+```bash
+python3 -m http.server 8000
+```
+
+然後造訪 `http://localhost:8000` 驗證功能。
+
+## 授權
+
+本專案採用 [CC BY 4.0](LICENSE) 授權。
