@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tmux Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050a14;
+    --panel-bg: #0a1628;
+    --surface: #0d1b2e;
+    --border: rgba(100,180,255,0.15);
+    --border2: rgba(100,180,255,0.08);
+    --text: #c8e0ff;
+    --dim: #4a6a99;
+    --accent: #60b0ff;
+    --accent2: #c080ff;
+    --accent3: #60e0ff;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --red: #f87171;
+    --pink: #f472b6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(30,60,120,0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(80,20,120,0.3) 0%, transparent 55%);
+  }
+
+  header {
+    text-align: center;
+    padding: 48px 24px 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .back-link {
+    position: absolute;
+    top: 20px; left: 24px;
+    font-size: 0.8rem;
+    color: var(--dim);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2.4rem);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  .prefix-badge {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: var(--yellow);
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 6px;
+    padding: 4px 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .search-wrap {
+    max-width: 420px;
+    margin: 20px auto 0;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 10px 16px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--dim); }
+
+  .mode-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 24px 24px 0;
+  }
+  .mode-tab {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .mode-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .mode-tab.active { background: rgba(96,176,255,0.12); border-color: var(--accent); color: var(--accent); }
+
+  main {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .section {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .section:hover {
+    border-color: rgba(100,180,255,0.35);
+    box-shadow: 0 8px 32px rgba(30,80,180,0.15);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border2);
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .section-head .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .section-body { padding: 6px 0 10px; }
+
+  .cmd {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 5px 18px;
+    transition: background 0.1s;
+    border-radius: 4px;
+    margin: 0 4px;
+  }
+  .cmd:hover { background: rgba(100,180,255,0.06); }
+  .cmd.hidden { display: none; }
+
+  kbd {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(96,176,255,0.12);
+    border: 1px solid rgba(96,176,255,0.25);
+    border-radius: 5px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 110px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  kbd.g  { color: var(--green);  background: rgba(74,222,128,0.1);  border-color: rgba(74,222,128,0.25); }
+  kbd.y  { color: var(--yellow); background: rgba(251,191,36,0.1);  border-color: rgba(251,191,36,0.25); }
+  kbd.o  { color: var(--orange); background: rgba(251,146,60,0.1);  border-color: rgba(251,146,60,0.25); }
+  kbd.r  { color: var(--red);    background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.25); }
+  kbd.p  { color: var(--accent2);background: rgba(192,128,255,0.1); border-color: rgba(192,128,255,0.25); }
+  kbd.c  { color: var(--accent3);background: rgba(96,224,255,0.1);  border-color: rgba(96,224,255,0.25); }
+  kbd.pk { color: var(--pink);   background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.25); }
+
+  .desc {
+    font-size: 0.8rem;
+    color: #8aabcc;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .sep {
+    border: none;
+    border-top: 1px solid var(--border2);
+    margin: 6px 18px;
+  }
+
+  .section[data-cat="session"]  .section-head .dot { background: var(--accent); }
+  .section[data-cat="window"]   .section-head .dot { background: var(--green); }
+  .section[data-cat="pane"]     .section-head .dot { background: var(--orange); }
+  .section[data-cat="copy"]     .section-head .dot { background: var(--accent2); }
+  .section[data-cat="misc"]     .section-head .dot { background: var(--yellow); }
+  .section[data-cat="cli"]      .section-head .dot { background: var(--accent3); }
+
+  .section[data-cat="session"]  .section-head { color: var(--accent); }
+  .section[data-cat="window"]   .section-head { color: var(--green); }
+  .section[data-cat="pane"]     .section-head { color: var(--orange); }
+  .section[data-cat="copy"]     .section-head { color: var(--accent2); }
+  .section[data-cat="misc"]     .section-head { color: var(--yellow); }
+  .section[data-cat="cli"]      .section-head { color: var(--accent3); }
+
+  #no-results {
+    display: none;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--dim);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px 24px;
+    color: var(--dim);
+    font-size: 0.75rem;
+    border-top: 1px solid var(--border2);
+    letter-spacing: 0.05em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回入口</a>
+  <h1>TMUX CHEAT SHEET</h1>
+  <p class="subtitle">Session · Window · Pane · Copy Mode 快速參考</p>
+  <div class="prefix-badge">預設前綴鍵 Prefix = Ctrl-b</div>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="搜尋指令或說明…" autocomplete="off" spellcheck="false">
+  </div>
+</header>
+
+<div class="mode-tabs">
+  <button class="mode-tab active" data-filter="all">全部</button>
+  <button class="mode-tab" data-filter="session">Session</button>
+  <button class="mode-tab" data-filter="window">Window</button>
+  <button class="mode-tab" data-filter="pane">Pane</button>
+  <button class="mode-tab" data-filter="copy">Copy Mode</button>
+  <button class="mode-tab" data-filter="cli">CLI 指令</button>
+  <button class="mode-tab" data-filter="misc">其他</button>
+</div>
+
+<main id="grid">
+
+  <!-- ── Session ── -->
+  <div class="section" data-cat="session">
+    <div class="section-head"><span class="dot"></span>Session 管理</div>
+    <div class="section-body">
+      <div class="cmd"><kbd>Prefix $</kbd><span class="desc">重新命名當前 session</span></div>
+      <div class="cmd"><kbd>Prefix d</kbd><span class="desc">Detach（背景執行，離開不中斷）</span></div>
+      <div class="cmd"><kbd>Prefix s</kbd><span class="desc">列出並切換 session（互動選單）</span></div>
+      <div class="cmd"><kbd>Prefix (</kbd><span class="desc">切換至上一個 session</span></div>
+      <div class="cmd"><kbd>Prefix )</kbd><span class="desc">切換至下一個 session</span></div>
+      <div class="cmd"><kbd>Prefix L</kbd><span class="desc">切換至上一個使用的 session</span></div>
+      <div class="cmd"><kbd>Prefix $</kbd><span class="desc">重新命名 session</span></div>
+    </div>
+  </div>
+
+  <!-- ── Window ── -->
+  <div class="section" data-cat="window">
+    <div class="section-head"><span class="dot"></span>Window（標籤）管理</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="g">Prefix c</kbd><span class="desc">建立新視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix ,</kbd><span class="desc">重新命名當前視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix &amp;</kbd><span class="desc">關閉當前視窗（需確認）</span></div>
+      <div class="cmd"><kbd class="g">Prefix n</kbd><span class="desc">切換至下一個視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix p</kbd><span class="desc">切換至上一個視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix l</kbd><span class="desc">切換至上一個使用的視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix 0-9</kbd><span class="desc">切換至指定編號視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix w</kbd><span class="desc">列出所有視窗（互動選單）</span></div>
+      <div class="cmd"><kbd class="g">Prefix f</kbd><span class="desc">依名稱搜尋視窗</span></div>
+      <div class="cmd"><kbd class="g">Prefix .</kbd><span class="desc">移動視窗至指定編號</span></div>
+    </div>
+  </div>
+
+  <!-- ── Pane 分割 ── -->
+  <div class="section" data-cat="pane">
+    <div class="section-head"><span class="dot"></span>Pane 分割與切換</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="o">Prefix %</kbd><span class="desc">垂直分割（左右）</span></div>
+      <div class="cmd"><kbd class="o">Prefix "</kbd><span class="desc">水平分割（上下）</span></div>
+      <div class="cmd"><kbd class="o">Prefix x</kbd><span class="desc">關閉當前 pane（需確認）</span></div>
+      <div class="cmd"><kbd class="o">Prefix !</kbd><span class="desc">將當前 pane 移為獨立視窗</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="o">Prefix ↑↓←→</kbd><span class="desc">切換至相鄰 pane</span></div>
+      <div class="cmd"><kbd class="o">Prefix o</kbd><span class="desc">循環切換 pane</span></div>
+      <div class="cmd"><kbd class="o">Prefix ;</kbd><span class="desc">切換至上一個使用的 pane</span></div>
+      <div class="cmd"><kbd class="o">Prefix q</kbd><span class="desc">顯示 pane 編號（按編號跳躍）</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="o">Prefix z</kbd><span class="desc">最大化 / 還原當前 pane（zoom）</span></div>
+      <div class="cmd"><kbd class="o">Prefix {</kbd><span class="desc">將當前 pane 向前移動</span></div>
+      <div class="cmd"><kbd class="o">Prefix }</kbd><span class="desc">將當前 pane 向後移動</span></div>
+      <div class="cmd"><kbd class="o">Prefix Space</kbd><span class="desc">循環切換 pane 排列方式</span></div>
+      <div class="cmd"><kbd class="o">Prefix Alt-↑↓←→</kbd><span class="desc">調整 pane 大小（5 格）</span></div>
+      <div class="cmd"><kbd class="o">Prefix Ctrl-↑↓←→</kbd><span class="desc">調整 pane 大小（1 格）</span></div>
+    </div>
+  </div>
+
+  <!-- ── Pane 同步 / 佈局 ── -->
+  <div class="section" data-cat="pane">
+    <div class="section-head"><span class="dot"></span>Pane 同步 / 佈局</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="o">Prefix Alt-1</kbd><span class="desc">佈局：even-horizontal（水平均分）</span></div>
+      <div class="cmd"><kbd class="o">Prefix Alt-2</kbd><span class="desc">佈局：even-vertical（垂直均分）</span></div>
+      <div class="cmd"><kbd class="o">Prefix Alt-3</kbd><span class="desc">佈局：main-horizontal</span></div>
+      <div class="cmd"><kbd class="o">Prefix Alt-4</kbd><span class="desc">佈局：main-vertical</span></div>
+      <div class="cmd"><kbd class="o">Prefix Alt-5</kbd><span class="desc">佈局：tiled（平鋪）</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="c">:setw synchronize-panes on</kbd><span class="desc">同步所有 pane 輸入</span></div>
+      <div class="cmd"><kbd class="c">:setw synchronize-panes off</kbd><span class="desc">關閉同步輸入</span></div>
+    </div>
+  </div>
+
+  <!-- ── Copy Mode ── -->
+  <div class="section" data-cat="copy">
+    <div class="section-head"><span class="dot"></span>Copy Mode（vi 模式）</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="p">Prefix [</kbd><span class="desc">進入 Copy Mode</span></div>
+      <div class="cmd"><kbd class="p">Prefix ]</kbd><span class="desc">貼上剪貼簿內容</span></div>
+      <div class="cmd"><kbd class="p">Prefix PgUp</kbd><span class="desc">進入 Copy Mode 並向上捲動</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="p">h j k l</kbd><span class="desc">移動游標</span></div>
+      <div class="cmd"><kbd class="p">w / b</kbd><span class="desc">跳至下 / 上一個單字</span></div>
+      <div class="cmd"><kbd class="p">/{pattern}</kbd><span class="desc">向下搜尋</span></div>
+      <div class="cmd"><kbd class="p">?{pattern}</kbd><span class="desc">向上搜尋</span></div>
+      <div class="cmd"><kbd class="p">n / N</kbd><span class="desc">下 / 上一個搜尋結果</span></div>
+      <div class="cmd"><kbd class="p">g / G</kbd><span class="desc">跳至頂端 / 底端</span></div>
+      <div class="cmd"><kbd class="p">Ctrl-u / d</kbd><span class="desc">向上 / 下捲動半頁</span></div>
+      <div class="cmd"><kbd class="p">Ctrl-b / f</kbd><span class="desc">向上 / 下捲動一頁</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="p">Space</kbd><span class="desc">開始選取</span></div>
+      <div class="cmd"><kbd class="p">Enter</kbd><span class="desc">複製選取並離開 Copy Mode</span></div>
+      <div class="cmd"><kbd class="p">v</kbd><span class="desc">開始字元選取（需設定 vi 模式）</span></div>
+      <div class="cmd"><kbd class="p">V</kbd><span class="desc">開始行選取</span></div>
+      <div class="cmd"><kbd class="p">Ctrl-v</kbd><span class="desc">開始區塊選取</span></div>
+      <div class="cmd"><kbd class="p">y</kbd><span class="desc">複製選取（yank）</span></div>
+      <div class="cmd"><kbd class="p">q / Esc</kbd><span class="desc">離開 Copy Mode</span></div>
+    </div>
+  </div>
+
+  <!-- ── 其他快捷鍵 ── -->
+  <div class="section" data-cat="misc">
+    <div class="section-head"><span class="dot"></span>其他快捷鍵</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="y">Prefix ?</kbd><span class="desc">列出所有快捷鍵</span></div>
+      <div class="cmd"><kbd class="y">Prefix :</kbd><span class="desc">進入 tmux command prompt</span></div>
+      <div class="cmd"><kbd class="y">Prefix t</kbd><span class="desc">在當前 pane 顯示時鐘</span></div>
+      <div class="cmd"><kbd class="y">Prefix i</kbd><span class="desc">顯示當前視窗資訊</span></div>
+      <div class="cmd"><kbd class="y">Prefix ~</kbd><span class="desc">顯示 tmux 訊息記錄</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="y">Prefix r</kbd><span class="desc">重新載入設定（需設定於 .tmux.conf）</span></div>
+      <div class="cmd"><kbd class="y">Prefix D</kbd><span class="desc">選擇要 detach 的 client</span></div>
+      <div class="cmd"><kbd class="y">Prefix Ctrl-z</kbd><span class="desc">暫停 tmux client</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="y">:source ~/.tmux.conf</kbd><span class="desc">重新載入設定檔</span></div>
+      <div class="cmd"><kbd class="y">:show-options -g</kbd><span class="desc">顯示全域設定</span></div>
+      <div class="cmd"><kbd class="y">:set -g mouse on</kbd><span class="desc">啟用滑鼠支援</span></div>
+    </div>
+  </div>
+
+  <!-- ── CLI 指令 ── -->
+  <div class="section" data-cat="cli">
+    <div class="section-head"><span class="dot"></span>Shell CLI 指令</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="c">tmux</kbd><span class="desc">啟動新 session</span></div>
+      <div class="cmd"><kbd class="c">tmux new -s {name}</kbd><span class="desc">建立並命名新 session</span></div>
+      <div class="cmd"><kbd class="c">tmux attach</kbd><span class="desc">重新連接最近的 session</span></div>
+      <div class="cmd"><kbd class="c">tmux attach -t {name}</kbd><span class="desc">連接指定 session</span></div>
+      <div class="cmd"><kbd class="c">tmux ls</kbd><span class="desc">列出所有 session</span></div>
+      <div class="cmd"><kbd class="c">tmux kill-session -t {name}</kbd><span class="desc">刪除指定 session</span></div>
+      <div class="cmd"><kbd class="c">tmux kill-server</kbd><span class="desc">終止 tmux server 及所有 session</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="c">tmux new-window</kbd><span class="desc">建立新視窗（CLI）</span></div>
+      <div class="cmd"><kbd class="c">tmux split-window -h</kbd><span class="desc">垂直分割 pane</span></div>
+      <div class="cmd"><kbd class="c">tmux split-window -v</kbd><span class="desc">水平分割 pane</span></div>
+      <div class="cmd"><kbd class="c">tmux send-keys -t {target} "{cmd}" Enter</kbd><span class="desc">向指定 pane 發送指令</span></div>
+      <div class="cmd"><kbd class="c">tmux rename-session -t {old} {new}</kbd><span class="desc">重新命名 session</span></div>
+      <div class="cmd"><kbd class="c">tmux swap-pane -s {src} -t {dst}</kbd><span class="desc">交換兩個 pane</span></div>
+      <div class="cmd"><kbd class="c">tmux move-window -t {session}</kbd><span class="desc">移動視窗至另一個 session</span></div>
+      <hr class="sep">
+      <div class="cmd"><kbd class="c">tmux show-keys</kbd><span class="desc">顯示所有快捷鍵綁定</span></div>
+      <div class="cmd"><kbd class="c">tmux info</kbd><span class="desc">顯示所有 session / client 資訊</span></div>
+    </div>
+  </div>
+
+  <!-- ── .tmux.conf 常用設定 ── -->
+  <div class="section" data-cat="misc">
+    <div class="section-head"><span class="dot"></span>~/.tmux.conf 常用設定</div>
+    <div class="section-body">
+      <div class="cmd"><kbd class="y">set -g prefix C-a</kbd><span class="desc">將前綴鍵改為 Ctrl-a</span></div>
+      <div class="cmd"><kbd class="y">set -g mouse on</kbd><span class="desc">啟用滑鼠（點擊切換 pane / 捲動）</span></div>
+      <div class="cmd"><kbd class="y">set -g history-limit 50000</kbd><span class="desc">增加捲動歷史行數</span></div>
+      <div class="cmd"><kbd class="y">set -g base-index 1</kbd><span class="desc">視窗從 1 開始編號</span></div>
+      <div class="cmd"><kbd class="y">setw -g pane-base-index 1</kbd><span class="desc">Pane 從 1 開始編號</span></div>
+      <div class="cmd"><kbd class="y">setw -g mode-keys vi</kbd><span class="desc">Copy Mode 使用 vi 按鍵</span></div>
+      <div class="cmd"><kbd class="y">set -g default-terminal "tmux-256color"</kbd><span class="desc">啟用 256 色支援</span></div>
+      <div class="cmd"><kbd class="y">set -g renumber-windows on</kbd><span class="desc">關閉視窗後自動重新編號</span></div>
+      <div class="cmd"><kbd class="y">set -g status-position top</kbd><span class="desc">將狀態列移至頂端</span></div>
+      <div class="cmd"><kbd class="y">set -sg escape-time 0</kbd><span class="desc">消除 Esc 延遲（Neovim 適用）</span></div>
+    </div>
+  </div>
+
+  <div id="no-results">沒有符合的指令</div>
+</main>
+
+<footer>
+  <a href="index.html">← 返回入口</a> &nbsp;·&nbsp;
+  tmux Cheat Sheet &nbsp;·&nbsp; 本頁採 <a href="LICENSE">CC BY 4.0</a> 授權
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const noRes  = document.getElementById('no-results');
+  const tabs   = document.querySelectorAll('.mode-tab');
+  const sections = document.querySelectorAll('.section');
+
+  let activeFilter = 'all';
+
+  function applyFilter(query) {
+    const q = query.trim().toLowerCase();
+    let anyVisible = false;
+
+    sections.forEach(sec => {
+      const cat = sec.dataset.cat;
+      const matchCat = activeFilter === 'all' || cat === activeFilter;
+
+      if (!matchCat) { sec.style.display = 'none'; return; }
+
+      if (!q) {
+        sec.style.display = '';
+        sec.querySelectorAll('.cmd').forEach(c => c.classList.remove('hidden'));
+        anyVisible = true;
+        return;
+      }
+
+      const cmds = sec.querySelectorAll('.cmd');
+      let secVisible = false;
+      cmds.forEach(cmd => {
+        const text = cmd.textContent.toLowerCase();
+        if (text.includes(q)) { cmd.classList.remove('hidden'); secVisible = true; }
+        else cmd.classList.add('hidden');
+      });
+
+      sec.style.display = secVisible ? '' : 'none';
+      if (secVisible) anyVisible = true;
+    });
+
+    noRes.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  search.addEventListener('input', () => applyFilter(search.value));
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeFilter = tab.dataset.filter;
+      applyFilter(search.value);
+    });
+  });
+</script>
+
+</body>
+</html>
