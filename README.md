@@ -1,10 +1,24 @@
 # AI Resources
 
-支援 AI 工具的網站整理，包含國際英文、中國大陸、台灣、香港等來源。
+一個收集 AI 工具目錄、互動式學習工具與實用速查表的靜態網站資源庫。
+
+## 專案結構
+
+| 檔案 | 說明 |
+|------|------|
+| `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
+| `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
+| `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
+| `solar_system.html` | 太陽系 3D 互動視覺化 |
+| `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
+| `tmux_cheat_sheet.html` | tmux 快速參考 |
+| `minicom_cheat_sheet.html` | minicom 快速參考 |
 
 ---
 
-## 國際英文目錄
+## AI 工具目錄
+
+### 國際英文
 
 | 名稱 | 網址 | 說明 |
 |------|------|------|
@@ -24,9 +38,7 @@
 | PoweredbyAI | https://poweredbyai.app/ | 工具提交後 24–48 小時上架 |
 | AIVolut | https://aivolut.com/ | 依分類整理，含工具說明 |
 
----
-
-## GitHub 精選清單（開發者向）
+### GitHub 精選清單（開發者向）
 
 | 名稱 | 網址 | 說明 |
 |------|------|------|
@@ -34,9 +46,7 @@
 | awesome-ai-tools (eudk) | https://github.com/eudk/awesome-ai-tools | 大型工具清單，涵蓋模型與平台，持續更新至 2026 |
 | awesome-generative-ai (steven2358) | https://github.com/steven2358/awesome-generative-ai | 生成式 AI 專案整理，涵蓋圖像、文字、音訊、影片 |
 
----
-
-## 中國大陸（簡體中文）
+### 中國大陸（簡體中文）
 
 | 名稱 | 網址 | 說明 |
 |------|------|------|
@@ -48,9 +58,7 @@
 | AI中国工具导航 | https://tool.aiofchina.com/ | 收錄在中國可用的 AI 工具 |
 | AI工具箱导航 (AMZ123) | https://www.amz123.com/ai | 跨境電商平台旗下，商業導向 |
 
----
-
-## 台灣（繁體中文）
+### 台灣（繁體中文）
 
 | 名稱 | 網址 | 說明 |
 |------|------|------|
@@ -64,9 +72,7 @@
 | 犬哥網站 | https://frankknow.com/ai-tools/ | 獨立部落客，60+ 免費與付費工具分類整理 |
 | host.com.tw | https://host.com.tw/ai-tools | 台灣主機商部落格，24 款生產力 AI 工具 |
 
----
-
-## 香港（繁體中文）
+### 香港（繁體中文）
 
 | 名稱 | 網址 | 說明 |
 |------|------|------|

@@ -139,6 +139,7 @@ let hoveredObj = null;
 let mouseX = 0, mouseY = 0;
 let stars = [];
 let asteroids = [];
+let kuiperAsteroids = [];
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -222,6 +223,13 @@ const BELT = {
   desc: '位於火星和木星軌道之間的環形區域，包含數百萬顆小行星。木星的重力阻止了這些物質聚集成行星。',
 };
 
+const KUIPER_BELT = {
+  name: '古柏帶', en: 'Kuiper Belt', type: 'belt',
+  innerF: 0.820, outerF: 0.960,
+  stats: { 位置: '海王星軌道外（30–50 AU）', 主要成分: '冰、岩石', 已知天體: '2,000+', 代表天體: '冥王星、鬩神星、鳥神星' },
+  desc: '位於海王星軌道之外的環形區域，包含大量冰質天體，是短週期彗星的來源。冥王星是其中最著名的成員。比小行星帶大 20 倍、質量大 20–200 倍。',
+};
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 function resize() {
@@ -248,9 +256,18 @@ function genAsteroids(n = 600) {
   }));
 }
 
+function genKuiperBelt(n = 1200) {
+  kuiperAsteroids = Array.from({ length: n }, () => ({
+    angle: Math.random() * Math.PI * 2,
+    frac: KUIPER_BELT.innerF + Math.random() * (KUIPER_BELT.outerF - KUIPER_BELT.innerF),
+    sz: Math.random() * 0.9 + 0.2,
+  }));
+}
+
 resize();
 genStars();
 genAsteroids();
+genKuiperBelt();
 window.addEventListener('resize', resize);
 
 // ── Zoom ──────────────────────────────────────────────────────────────────────
@@ -393,6 +410,21 @@ function drawAsteroidBelt() {
   });
 }
 
+function drawKuiperBelt() {
+  const beltRot = t * 0.00005;
+  kuiperAsteroids.forEach(a => {
+    const angle = a.angle + beltRot;
+    const r = sc(a.frac);
+    const ax = cx + Math.cos(angle) * r;
+    const ay = cy + Math.sin(angle) * r;
+    const sz = Math.max(0.2, a.sz * Math.min(zoomLevel, 1.2));
+    ctx.beginPath();
+    ctx.arc(ax, ay, sz, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(119,153,187,0.5)';
+    ctx.fill();
+  });
+}
+
 // ── Hover detection ───────────────────────────────────────────────────────────
 
 function checkHover(mx, my) {
@@ -408,6 +440,8 @@ function checkHover(mx, my) {
   // Asteroid belt ring
   const d = Math.hypot(dx, dy);
   if (d >= sc(BELT.innerF) && d <= sc(BELT.outerF)) return BELT;
+  // Kuiper belt ring
+  if (d >= sc(KUIPER_BELT.innerF) && d <= sc(KUIPER_BELT.outerF)) return KUIPER_BELT;
   return null;
 }
 
@@ -465,6 +499,7 @@ function animate() {
   drawOrbit((BELT.innerF + BELT.outerF) / 2, true);
 
   drawAsteroidBelt();
+  drawKuiperBelt();
   drawSun();
   PLANETS.forEach(drawPlanet);
 
