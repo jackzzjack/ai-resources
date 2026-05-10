@@ -201,7 +201,7 @@
 
     /* Info table */
     .info-section {
-      margin-top: 24px;
+      margin-top: 48px;
     }
 
     .info-section h2 {
@@ -214,16 +214,17 @@
 
     .info-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
     }
 
     .info-card {
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px 16px;
-      transition: border-color 0.2s;
+      padding: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
 
     .info-card:hover { border-color: var(--accent); }
@@ -326,6 +327,7 @@
     <button class="tab-btn" onclick="switchTab('sba')">服務化架構 SBA</button>
     <button class="tab-btn" onclick="switchTab('interfaces')">介面說明</button>
     <button class="tab-btn" onclick="switchTab('slicing')">網路切片</button>
+    <button class="tab-btn" onclick="switchTab('roadmap')">學習路徑</button>
   </div>
 
   <!-- Tab: 整體架構 -->
@@ -520,24 +522,24 @@
 
         <!-- ===== INTERFACES / CONNECTIONS ===== -->
         <!-- N1: UE - AMF (control) -->
-        <line x1="125" y1="693" x2="98" y2="241" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
-        <text x="60" y="480" fill="#a78bfa" font-size="10" font-family="sans-serif" transform="rotate(-75,60,480)">N1</text>
+        <path d="M125,693 L125,660 L60,660 L60,260 L98,260 L98,241" fill="none" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
+        <text x="65" y="480" fill="#a78bfa" font-size="10" font-family="sans-serif" transform="rotate(-90,65,480)">N1</text>
 
         <!-- N2: gNB - AMF (control) -->
-        <line x1="185" y1="573" x2="98" y2="241" stroke="#7c6aff" stroke-width="2" stroke-dasharray="6,3"/>
-        <text x="128" y="415" fill="#a78bfa" font-size="11" font-family="sans-serif" font-weight="600">N2</text>
+        <path d="M185,573 L185,370 L98,370 L98,241" fill="none" stroke="#7c6aff" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="120" y="365" fill="#a78bfa" font-size="11" font-family="sans-serif" font-weight="600">N2</text>
 
         <!-- N3: gNB - UPF (user) -->
-        <line x1="185" y1="573" x2="150" y2="495" stroke="#f59e0b" stroke-width="2.5"/>
-        <text x="158" y="540" fill="#fbbf24" font-size="11" font-family="sans-serif" font-weight="600">N3</text>
+        <path d="M185,573 L185,535 L150,535 L150,495" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="165" y="530" fill="#fbbf24" font-size="11" font-family="sans-serif" font-weight="600">N3</text>
 
         <!-- N4: SMF - UPF (control) -->
-        <line x1="220" y1="241" x2="150" y2="415" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="5,3"/>
-        <text x="172" y="335" fill="#a78bfa" font-size="11" font-family="sans-serif" font-weight="600">N4</text>
+        <path d="M220,241 L220,380 L150,380 L150,415" fill="none" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="225" y="335" fill="#a78bfa" font-size="11" font-family="sans-serif" font-weight="600">N4</text>
 
         <!-- N6: UPF - Internet -->
-        <line x1="150" y1="415" x2="525" y2="84" stroke="#f59e0b" stroke-width="2.5"/>
-        <text x="300" y="230" fill="#fbbf24" font-size="11" font-family="sans-serif" font-weight="600">N6</text>
+        <path d="M150,415 L150,110 L525,110 L525,84" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="300" y="105" fill="#fbbf24" font-size="11" font-family="sans-serif" font-weight="600">N6</text>
 
         <!-- N9: UPF - UPF (for multiple UPF) shown as self-annotation -->
 
@@ -570,8 +572,8 @@
         <text x="480" y="200" fill="#a78bfa" font-size="9" font-family="sans-serif">N22</text>
 
         <!-- N33: NEF - AF -->
-        <line x1="148" y1="306" x2="940" y2="213" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
-        <text x="550" y="285" fill="#22d3ee" font-size="9" font-family="sans-serif">N33/Nnef</text>
+        <path d="M148,306 L148,340 L940,340 L940,213" fill="none" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <text x="550" y="335" fill="#22d3ee" font-size="9" font-family="sans-serif">N33/Nnef</text>
 
         <!-- Xn: gNB - gNB -->
         <line x1="250" y1="603" x2="290" y2="603" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3,2"/>
@@ -893,6 +895,51 @@
           <text x="500" y="511" fill="#8888aa">CU-DU 分離架構：集中單元與分散單元間的介面</text>
         </g>
       </svg>
+    </div>
+  </div>
+
+  <!-- Tab: 學習路徑 -->
+  <div id="tab-roadmap" class="tab-panel">
+    <div class="info-section">
+      <h2>5G 技術學習路徑</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="abbr">第一階段：基礎概念與背景</div>
+          <div class="full">掌握 5G 的核心願景與基本術語</div>
+          <div class="desc">
+            • <b>三大特性：</b>深入理解 eMBB (大頻寬)、URLLC (低延遲)、mMTC (海量連接) 的應用場景。<br>
+            • <b>頻譜範圍：</b>認識 FR1 (Sub-6GHz) 與 FR2 (mmWave) 的物理特性差異。<br>
+            • <b>組網模式：</b>釐清 SA (獨立組網) 與 NSA (非獨立組網，如 Option 3x) 的架構演進。
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="abbr">第二階段：核心架構與元件</div>
+          <div class="full">理解服務化架構 (SBA) 的運作機制</div>
+          <div class="desc">
+            • <b>控制平面 (CP)：</b>學習 AMF、SMF、PCF、UDM 等 NF 的職責。<br>
+            • <b>用戶平面 (UP)：</b>理解 UPF 如何處理封包路由與轉發。<br>
+            • <b>介面與參考點：</b>熟悉 N1、N2、N3、N4、N6 等關鍵連線及其攜帶的通訊協議 (如 GTP-U, NG-AP)。
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="abbr">第三階段：關鍵流程與信令</div>
+          <div class="full">追蹤 UE 在網路中的動態行為</div>
+          <div class="desc">
+            • <b>註冊程序 (Registration)：</b>從初始接入、身份驗證、鑑權到位置更新的完整流程。<br>
+            • <b>會話建立 (PDU Session)：</b>理解 UE 如何獲得 IP 位址並建立資料傳輸隧道。<br>
+            • <b>QoS 框架：</b>認識 5QI (5G QoS Identifier) 與 Flow-based QoS 控制機制。
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="abbr">第四階段：進階技術與應用</div>
+          <div class="full">探索 5G 帶來的垂直產業變革</div>
+          <div class="desc">
+            • <b>網路切片 (Slicing)：</b>如何在一套物理設備上切割出多個邏輯隔離的專屬網路。<br>
+            • <b>邊緣運算 (MEC)：</b>將運算能力下沉至靠近用戶端，降低端到端延遲。<br>
+            • <b>Massive MIMO：</b>認識大規模天線陣列與波束成型 (Beamforming) 如何提升容量。
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
