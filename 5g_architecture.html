@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5G 網路架構圖</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-ue: #3b82f6;
+      --color-ran: #10b981;
+      --color-up: #f59e0b;
+      --color-cp: #7c6aff;
+      --color-data: #ef4444;
+      --color-mgmt: #8b5cf6;
+      --color-ext: #06b6d4;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(96,200,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 2px solid;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text);
+      border-color: var(--accent2);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* SVG container */
+    .diagram-wrap {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    svg {
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      background: #1c1c2e;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 12px 16px;
+      max-width: 300px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .tooltip.show { opacity: 1; }
+
+    .tooltip h3 {
+      color: var(--accent2);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .tooltip .full-name {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .tooltip p { color: var(--text); }
+
+    /* Info table */
+    .info-section {
+      margin-top: 24px;
+    }
+
+    .info-section h2 {
+      font-size: 1.1rem;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .info-card:hover { border-color: var(--accent); }
+
+    .info-card .abbr {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .info-card .full {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .info-card .desc {
+      font-size: 0.83rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* SVG styles embedded */
+    .nf-box {
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+
+    .nf-box:hover {
+      filter: brightness(1.3);
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 1.4rem; }
+      .legend { gap: 12px; }
+      main { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>5G 網路架構圖</h1>
+  <p>3GPP Release 15/16/17 — 服務化架構（Service-Based Architecture, SBA）</p>
+</header>
+
+<nav-bar>
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+</nav-bar>
+
+<main>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:#3b82f6;background:rgba(59,130,246,0.2)"></div>
+      <span>終端設備 UE</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:#10b981;background:rgba(16,185,129,0.2)"></div>
+      <span>無線接入網 RAN</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:#f59e0b;background:rgba(245,158,11,0.2)"></div>
+      <span>用戶平面 User Plane</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:#7c6aff;background:rgba(124,106,255,0.2)"></div>
+      <span>控制平面 Control Plane</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:#ef4444;background:rgba(239,68,68,0.2)"></div>
+      <span>資料網路 Data Network</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:#06b6d4;background:rgba(6,182,212,0.2)"></div>
+      <span>外部 / 應用</span>
+    </div>
+    <div class="legend-item">
+      <span style="color:#fff;font-weight:700">──</span>
+      <span>用戶平面介面</span>
+    </div>
+    <div class="legend-item">
+      <span style="color:var(--accent2);font-weight:700">- -</span>
+      <span>控制平面介面</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">整體架構</button>
+    <button class="tab-btn" onclick="switchTab('sba')">服務化架構 SBA</button>
+    <button class="tab-btn" onclick="switchTab('interfaces')">介面說明</button>
+    <button class="tab-btn" onclick="switchTab('slicing')">網路切片</button>
+  </div>
+
+  <!-- Tab: 整體架構 -->
+  <div id="tab-overview" class="tab-panel active">
+    <div class="diagram-wrap">
+      <svg id="svg-overview" width="1200" height="760" viewBox="0 0 1200 760" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow-up" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#f59e0b"/>
+          </marker>
+          <marker id="arrow-cp" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#7c6aff"/>
+          </marker>
+          <marker id="arrow-both-up" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#f59e0b"/>
+          </marker>
+          <marker id="arrow-both-up2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#f59e0b"/>
+          </marker>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Background layers -->
+        <!-- Data Network layer -->
+        <rect x="20" y="20" width="1160" height="80" rx="12" fill="rgba(239,68,68,0.06)" stroke="#ef4444" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="36" y="42" fill="#ef4444" font-size="12" font-weight="600" font-family="sans-serif">Data Network (DN) / Internet</text>
+
+        <!-- 5GC layer -->
+        <rect x="20" y="130" width="1160" height="400" rx="12" fill="rgba(124,106,255,0.04)" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <text x="36" y="152" fill="#7c6aff" font-size="13" font-weight="700" font-family="sans-serif">5G Core Network (5GC)</text>
+
+        <!-- Control Plane zone -->
+        <rect x="36" y="160" width="900" height="200" rx="8" fill="rgba(124,106,255,0.06)" stroke="#7c6aff" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="52" y="178" fill="#a78bfa" font-size="11" font-family="sans-serif">Control Plane NFs</text>
+
+        <!-- User Plane zone -->
+        <rect x="36" y="385" width="350" height="130" rx="8" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="52" y="404" fill="#f59e0b" font-size="11" font-family="sans-serif">User Plane</text>
+
+        <!-- RAN layer -->
+        <rect x="20" y="560" width="1160" height="90" rx="12" fill="rgba(16,185,129,0.05)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <text x="36" y="582" fill="#10b981" font-size="13" font-weight="700" font-family="sans-serif">Radio Access Network (NG-RAN)</text>
+
+        <!-- UE layer -->
+        <rect x="20" y="680" width="1160" height="70" rx="12" fill="rgba(59,130,246,0.05)" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <text x="36" y="702" fill="#3b82f6" font-size="13" font-weight="700" font-family="sans-serif">User Equipment (UE)</text>
+
+        <!-- ===== DATA NETWORK ===== -->
+        <!-- Internet -->
+        <g class="nf-box" data-id="internet" onclick="showTooltip(event,'internet')">
+          <rect x="460" y="28" width="130" height="56" rx="8" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="525" y="52" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="700" font-family="sans-serif">Internet</text>
+          <text x="525" y="68" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="sans-serif">Public DN</text>
+        </g>
+        <!-- IMS -->
+        <g class="nf-box" data-id="ims" onclick="showTooltip(event,'ims')">
+          <rect x="620" y="28" width="130" height="56" rx="8" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="685" y="52" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="700" font-family="sans-serif">IMS</text>
+          <text x="685" y="68" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="sans-serif">IP Multimedia Subsystem</text>
+        </g>
+
+        <!-- ===== CONTROL PLANE NFs ===== -->
+        <!-- AMF -->
+        <g class="nf-box" data-id="amf" onclick="showTooltip(event,'amf')">
+          <rect x="48" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="98" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">AMF</text>
+          <text x="98" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Access &amp; Mobility</text>
+        </g>
+        <!-- SMF -->
+        <g class="nf-box" data-id="smf" onclick="showTooltip(event,'smf')">
+          <rect x="170" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="220" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">SMF</text>
+          <text x="220" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Session Mgmt</text>
+        </g>
+        <!-- PCF -->
+        <g class="nf-box" data-id="pcf" onclick="showTooltip(event,'pcf')">
+          <rect x="292" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="342" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">PCF</text>
+          <text x="342" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Policy Control</text>
+        </g>
+        <!-- UDM -->
+        <g class="nf-box" data-id="udm" onclick="showTooltip(event,'udm')">
+          <rect x="414" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="464" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">UDM</text>
+          <text x="464" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">User Data Mgmt</text>
+        </g>
+        <!-- AUSF -->
+        <g class="nf-box" data-id="ausf" onclick="showTooltip(event,'ausf')">
+          <rect x="536" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="586" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">AUSF</text>
+          <text x="586" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Authentication</text>
+        </g>
+        <!-- NRF -->
+        <g class="nf-box" data-id="nrf" onclick="showTooltip(event,'nrf')">
+          <rect x="658" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="708" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">NRF</text>
+          <text x="708" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">NF Repository</text>
+        </g>
+        <!-- NSSF -->
+        <g class="nf-box" data-id="nssf" onclick="showTooltip(event,'nssf')">
+          <rect x="780" y="185" width="100" height="56" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="830" y="210" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">NSSF</text>
+          <text x="830" y="228" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Network Slice Sel.</text>
+        </g>
+
+        <!-- Second row CP -->
+        <!-- NEF -->
+        <g class="nf-box" data-id="nef" onclick="showTooltip(event,'nef')">
+          <rect x="48" y="278" width="100" height="56" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="98" y="302" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">NEF</text>
+          <text x="98" y="320" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Network Exposure</text>
+        </g>
+        <!-- UDR -->
+        <g class="nf-box" data-id="udr" onclick="showTooltip(event,'udr')">
+          <rect x="170" y="278" width="100" height="56" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="220" y="302" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">UDR</text>
+          <text x="220" y="320" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">User Data Repository</text>
+        </g>
+        <!-- CHF -->
+        <g class="nf-box" data-id="chf" onclick="showTooltip(event,'chf')">
+          <rect x="292" y="278" width="100" height="56" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="342" y="302" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">CHF</text>
+          <text x="342" y="320" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Charging</text>
+        </g>
+        <!-- LMF -->
+        <g class="nf-box" data-id="lmf" onclick="showTooltip(event,'lmf')">
+          <rect x="414" y="278" width="100" height="56" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="464" y="302" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">LMF</text>
+          <text x="464" y="320" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Location Mgmt</text>
+        </g>
+
+        <!-- ===== USER PLANE ===== -->
+        <!-- UPF -->
+        <g class="nf-box" data-id="upf" onclick="showTooltip(event,'upf')">
+          <rect x="90" y="415" width="120" height="80" rx="10" fill="rgba(245,158,11,0.25)" stroke="#f59e0b" stroke-width="2.5"/>
+          <text x="150" y="447" text-anchor="middle" fill="#fbbf24" font-size="16" font-weight="800" font-family="sans-serif">UPF</text>
+          <text x="150" y="463" text-anchor="middle" fill="#fde68a" font-size="9" font-family="sans-serif">User Plane</text>
+          <text x="150" y="476" text-anchor="middle" fill="#fde68a" font-size="9" font-family="sans-serif">Function</text>
+        </g>
+
+        <!-- AF (external) -->
+        <g class="nf-box" data-id="af" onclick="showTooltip(event,'af')">
+          <rect x="940" y="185" width="120" height="56" rx="8" fill="rgba(6,182,212,0.2)" stroke="#06b6d4" stroke-width="2"/>
+          <text x="1000" y="210" text-anchor="middle" fill="#22d3ee" font-size="14" font-weight="700" font-family="sans-serif">AF</text>
+          <text x="1000" y="228" text-anchor="middle" fill="#a5f3fc" font-size="9" font-family="sans-serif">Application Function</text>
+        </g>
+
+        <!-- ===== RAN ===== -->
+        <!-- gNB 1 -->
+        <g class="nf-box" data-id="gnb" onclick="showTooltip(event,'gnb')">
+          <rect x="120" y="573" width="130" height="60" rx="8" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2"/>
+          <text x="185" y="598" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700" font-family="sans-serif">gNB</text>
+          <text x="185" y="614" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="sans-serif">NR gNodeB (5G)</text>
+        </g>
+        <!-- ng-eNB -->
+        <g class="nf-box" data-id="ngenb" onclick="showTooltip(event,'ngenb')">
+          <rect x="290" y="573" width="130" height="60" rx="8" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="355" y="598" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700" font-family="sans-serif">ng-eNB</text>
+          <text x="355" y="614" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="sans-serif">4G eNB (NSA)</text>
+        </g>
+        <!-- gNB-CU / DU split -->
+        <g class="nf-box" data-id="cu-du" onclick="showTooltip(event,'cu-du')">
+          <rect x="500" y="568" width="200" height="70" rx="8" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="600" y="588" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="sans-serif">gNB-CU / gNB-DU Split</text>
+          <rect x="512" y="596" width="82" height="32" rx="5" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+          <text x="553" y="616" text-anchor="middle" fill="#6ee7b7" font-size="10" font-family="sans-serif">gNB-CU</text>
+          <rect x="604" y="596" width="82" height="32" rx="5" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+          <text x="645" y="616" text-anchor="middle" fill="#6ee7b7" font-size="10" font-family="sans-serif">gNB-DU</text>
+          <line x1="594" y1="612" x2="604" y2="612" stroke="#10b981" stroke-width="1.5"/>
+          <text x="599" y="610" text-anchor="middle" fill="#10b981" font-size="9" font-family="sans-serif">F1</text>
+        </g>
+
+        <!-- ===== UE ===== -->
+        <g class="nf-box" data-id="ue" onclick="showTooltip(event,'ue')">
+          <rect x="80" y="693" width="90" height="48" rx="8" fill="rgba(59,130,246,0.25)" stroke="#3b82f6" stroke-width="2"/>
+          <text x="125" y="715" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="700" font-family="sans-serif">UE</text>
+          <text x="125" y="730" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="sans-serif">5G Device</text>
+        </g>
+        <g class="nf-box" data-id="ue">
+          <rect x="200" y="693" width="90" height="48" rx="8" fill="rgba(59,130,246,0.25)" stroke="#3b82f6" stroke-width="2"/>
+          <text x="245" y="715" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="700" font-family="sans-serif">UE</text>
+          <text x="245" y="730" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="sans-serif">IoT Device</text>
+        </g>
+        <g class="nf-box" data-id="ue">
+          <rect x="490" y="693" width="90" height="48" rx="8" fill="rgba(59,130,246,0.25)" stroke="#3b82f6" stroke-width="2"/>
+          <text x="535" y="715" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="700" font-family="sans-serif">UE</text>
+          <text x="535" y="730" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="sans-serif">Vehicle/V2X</text>
+        </g>
+
+        <!-- ===== INTERFACES / CONNECTIONS ===== -->
+        <!-- N1: UE - AMF (control) -->
+        <line x1="125" y1="693" x2="98" y2="241" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.7"/>
+        <text x="60" y="480" fill="#a78bfa" font-size="10" font-family="sans-serif" transform="rotate(-75,60,480)">N1</text>
+
+        <!-- N2: gNB - AMF (control) -->
+        <line x1="185" y1="573" x2="98" y2="241" stroke="#7c6aff" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="128" y="415" fill="#a78bfa" font-size="11" font-family="sans-serif" font-weight="600">N2</text>
+
+        <!-- N3: gNB - UPF (user) -->
+        <line x1="185" y1="573" x2="150" y2="495" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="158" y="540" fill="#fbbf24" font-size="11" font-family="sans-serif" font-weight="600">N3</text>
+
+        <!-- N4: SMF - UPF (control) -->
+        <line x1="220" y1="241" x2="150" y2="415" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="172" y="335" fill="#a78bfa" font-size="11" font-family="sans-serif" font-weight="600">N4</text>
+
+        <!-- N6: UPF - Internet -->
+        <line x1="150" y1="415" x2="525" y2="84" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="300" y="230" fill="#fbbf24" font-size="11" font-family="sans-serif" font-weight="600">N6</text>
+
+        <!-- N9: UPF - UPF (for multiple UPF) shown as self-annotation -->
+
+        <!-- N11: AMF - SMF -->
+        <line x1="148" y1="213" x2="170" y2="213" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="152" y="208" fill="#a78bfa" font-size="9" font-family="sans-serif">N11</text>
+
+        <!-- N8: AMF - UDM -->
+        <line x1="148" y1="213" x2="414" y2="213" stroke="#7c6aff" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+        <text x="270" y="208" fill="#a78bfa" font-size="9" font-family="sans-serif">N8</text>
+
+        <!-- N12: AMF - AUSF -->
+        <line x1="148" y1="220" x2="536" y2="220" stroke="#7c6aff" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+        <text x="350" y="232" fill="#a78bfa" font-size="9" font-family="sans-serif">N12</text>
+
+        <!-- N7: SMF - PCF -->
+        <line x1="270" y1="213" x2="292" y2="213" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="275" y="208" fill="#a78bfa" font-size="9" font-family="sans-serif">N7</text>
+
+        <!-- N10: SMF - UDM -->
+        <line x1="270" y1="220" x2="414" y2="220" stroke="#7c6aff" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>
+        <text x="340" y="215" fill="#a78bfa" font-size="9" font-family="sans-serif">N10</text>
+
+        <!-- N13: AUSF - UDM -->
+        <line x1="536" y1="213" x2="514" y2="213" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="520" y="208" fill="#a78bfa" font-size="9" font-family="sans-serif">N13</text>
+
+        <!-- N22: AMF - NSSF -->
+        <line x1="148" y1="205" x2="780" y2="205" stroke="#7c6aff" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>
+        <text x="480" y="200" fill="#a78bfa" font-size="9" font-family="sans-serif">N22</text>
+
+        <!-- N33: NEF - AF -->
+        <line x1="148" y1="306" x2="940" y2="213" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <text x="550" y="285" fill="#22d3ee" font-size="9" font-family="sans-serif">N33/Nnef</text>
+
+        <!-- Xn: gNB - gNB -->
+        <line x1="250" y1="603" x2="290" y2="603" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="262" y="597" fill="#34d399" font-size="9" font-family="sans-serif">Xn</text>
+
+        <!-- UE - gNB (air) -->
+        <line x1="125" y1="693" x2="185" y2="633" stroke="#3b82f6" stroke-width="2"/>
+        <line x1="245" y1="693" x2="215" y2="633" stroke="#3b82f6" stroke-width="2"/>
+        <text x="148" y="665" fill="#60a5fa" font-size="10" font-family="sans-serif">NR Uu</text>
+        <!-- UE2 - ng-eNB -->
+        <line x1="535" y1="693" x2="600" y2="638" stroke="#3b82f6" stroke-width="2"/>
+        <text x="545" y="668" fill="#60a5fa" font-size="10" font-family="sans-serif">Uu</text>
+
+        <!-- Service Bus line (SBA) -->
+        <line x1="36" y1="172" x2="936" y2="172" stroke="#7c6aff" stroke-width="3" opacity="0.4"/>
+        <text x="860" y="168" fill="#a78bfa" font-size="10" font-family="sans-serif">Service Bus (SBI)</text>
+
+        <!-- Connect each CP NF to bus -->
+        <line x1="98" y1="185" x2="98" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="220" y1="185" x2="220" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="342" y1="185" x2="342" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="464" y1="185" x2="464" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="586" y1="185" x2="586" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="708" y1="185" x2="708" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="830" y1="185" x2="830" y2="172" stroke="#7c6aff" stroke-width="1.5" opacity="0.6"/>
+        <line x1="1000" y1="213" x2="1000" y2="172" stroke="#06b6d4" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- Interface labels on sides -->
+        <!-- N15: AMF-PCF -->
+        <text x="250" y="148" fill="#a78bfa" font-size="9" font-family="sans-serif">N15(AMF-PCF)</text>
+        <!-- N36: PCF-UDR -->
+        <text x="160" y="340" fill="#a78bfa" font-size="9" font-family="sans-serif" transform="rotate(-90,160,340)">N36(PCF-UDR)</text>
+
+        <!-- Title box -->
+        <rect x="960" y="400" width="215" height="140" rx="10" fill="rgba(13,13,25,0.9)" stroke="#2a2a3d" stroke-width="1"/>
+        <text x="1067" y="422" text-anchor="middle" fill="#7c6aff" font-size="12" font-weight="700" font-family="sans-serif">3GPP 5G System</text>
+        <text x="975" y="442" fill="#8888aa" font-size="10" font-family="sans-serif">• SA (Standalone)</text>
+        <text x="975" y="458" fill="#8888aa" font-size="10" font-family="sans-serif">• NSA (Non-Standalone)</text>
+        <text x="975" y="474" fill="#8888aa" font-size="10" font-family="sans-serif">• Release 15/16/17</text>
+        <text x="975" y="490" fill="#8888aa" font-size="10" font-family="sans-serif">• SBA Architecture</text>
+        <text x="975" y="506" fill="#8888aa" font-size="10" font-family="sans-serif">• Network Slicing (NSSAI)</text>
+        <text x="975" y="522" fill="#8888aa" font-size="10" font-family="sans-serif">• Edge Computing (MEC)</text>
+
+        <!-- Click hint -->
+        <text x="600" y="750" text-anchor="middle" fill="#555577" font-size="11" font-family="sans-serif">點擊各元件查看說明</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Tab: SBA -->
+  <div id="tab-sba" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="1100" height="620" viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg">
+        <!-- SBA Service Bus -->
+        <rect x="30" y="70" width="1040" height="50" rx="8" fill="rgba(124,106,255,0.12)" stroke="#7c6aff" stroke-width="2"/>
+        <text x="550" y="90" text-anchor="middle" fill="#7c6aff" font-size="13" font-weight="700" font-family="sans-serif">HTTP/2 Service Based Interface (SBI) — RESTful API</text>
+        <text x="550" y="108" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="sans-serif">Namf | Nsmf | Nupf | Npcf | Nudm | Nausf | Nnrf | Nnssf | Nnef | Nudr | Nchf | Nlmf | Naf</text>
+
+        <!-- NFs connected to bus -->
+        <!-- Row 1 -->
+        <g class="nf-box" data-id="amf" onclick="showTooltip(event,'amf')">
+          <rect x="50" y="150" width="110" height="70" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="105" y="178" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">AMF</text>
+          <text x="105" y="195" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Namf</text>
+          <text x="105" y="209" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">N1, N2 Termination</text>
+        </g>
+        <line x1="105" y1="150" x2="105" y2="120" stroke="#7c6aff" stroke-width="2"/>
+
+        <g class="nf-box" data-id="smf" onclick="showTooltip(event,'smf')">
+          <rect x="180" y="150" width="110" height="70" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="235" y="178" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">SMF</text>
+          <text x="235" y="195" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nsmf</text>
+          <text x="235" y="209" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">PDU Session Ctrl</text>
+        </g>
+        <line x1="235" y1="150" x2="235" y2="120" stroke="#7c6aff" stroke-width="2"/>
+
+        <g class="nf-box" data-id="pcf" onclick="showTooltip(event,'pcf')">
+          <rect x="310" y="150" width="110" height="70" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="365" y="178" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">PCF</text>
+          <text x="365" y="195" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Npcf</text>
+          <text x="365" y="209" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Policy Rules</text>
+        </g>
+        <line x1="365" y1="150" x2="365" y2="120" stroke="#7c6aff" stroke-width="2"/>
+
+        <g class="nf-box" data-id="udm" onclick="showTooltip(event,'udm')">
+          <rect x="440" y="150" width="110" height="70" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="495" y="178" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">UDM</text>
+          <text x="495" y="195" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nudm</text>
+          <text x="495" y="209" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Subscriber Data</text>
+        </g>
+        <line x1="495" y1="150" x2="495" y2="120" stroke="#7c6aff" stroke-width="2"/>
+
+        <g class="nf-box" data-id="ausf" onclick="showTooltip(event,'ausf')">
+          <rect x="570" y="150" width="110" height="70" rx="8" fill="rgba(124,106,255,0.25)" stroke="#7c6aff" stroke-width="2"/>
+          <text x="625" y="178" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">AUSF</text>
+          <text x="625" y="195" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nausf</text>
+          <text x="625" y="209" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Auth Service</text>
+        </g>
+        <line x1="625" y1="150" x2="625" y2="120" stroke="#7c6aff" stroke-width="2"/>
+
+        <g class="nf-box" data-id="nrf" onclick="showTooltip(event,'nrf')">
+          <rect x="700" y="150" width="110" height="70" rx="8" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="2"/>
+          <text x="755" y="178" text-anchor="middle" fill="#fbbf24" font-size="15" font-weight="800" font-family="sans-serif">NRF</text>
+          <text x="755" y="195" text-anchor="middle" fill="#fde68a" font-size="9" font-family="sans-serif">Nnrf</text>
+          <text x="755" y="209" text-anchor="middle" fill="#fde68a" font-size="8" font-family="sans-serif">NF Discovery/Register</text>
+        </g>
+        <line x1="755" y1="150" x2="755" y2="120" stroke="#f59e0b" stroke-width="2"/>
+
+        <g class="nf-box" data-id="nssf" onclick="showTooltip(event,'nssf')">
+          <rect x="830" y="150" width="110" height="70" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="885" y="178" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">NSSF</text>
+          <text x="885" y="195" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nnssf</text>
+          <text x="885" y="209" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Slice Selection</text>
+        </g>
+        <line x1="885" y1="150" x2="885" y2="120" stroke="#7c6aff" stroke-width="2"/>
+
+        <g class="nf-box" data-id="nef" onclick="showTooltip(event,'nef')">
+          <rect x="960" y="150" width="110" height="70" rx="8" fill="rgba(6,182,212,0.2)" stroke="#06b6d4" stroke-width="1.5"/>
+          <text x="1015" y="178" text-anchor="middle" fill="#22d3ee" font-size="15" font-weight="800" font-family="sans-serif">NEF</text>
+          <text x="1015" y="195" text-anchor="middle" fill="#a5f3fc" font-size="9" font-family="sans-serif">Nnef</text>
+          <text x="1015" y="209" text-anchor="middle" fill="#a5f3fc" font-size="8" font-family="sans-serif">API Exposure</text>
+        </g>
+        <line x1="1015" y1="150" x2="1015" y2="120" stroke="#06b6d4" stroke-width="2"/>
+
+        <!-- Row 2 NFs below bus -->
+        <g class="nf-box" data-id="udr" onclick="showTooltip(event,'udr')">
+          <rect x="50" y="380" width="110" height="70" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="105" y="408" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">UDR</text>
+          <text x="105" y="425" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nudr</text>
+          <text x="105" y="439" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Data Storage</text>
+        </g>
+        <line x1="105" y1="380" x2="105" y2="260" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <g class="nf-box" data-id="chf" onclick="showTooltip(event,'chf')">
+          <rect x="180" y="380" width="110" height="70" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="235" y="408" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">CHF</text>
+          <text x="235" y="425" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nchf</text>
+          <text x="235" y="439" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Charging</text>
+        </g>
+        <line x1="235" y1="380" x2="235" y2="260" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <g class="nf-box" data-id="lmf" onclick="showTooltip(event,'lmf')">
+          <rect x="310" y="380" width="110" height="70" rx="8" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="365" y="408" text-anchor="middle" fill="#a78bfa" font-size="15" font-weight="800" font-family="sans-serif">LMF</text>
+          <text x="365" y="425" text-anchor="middle" fill="#c4b5fd" font-size="9" font-family="sans-serif">Nlmf</text>
+          <text x="365" y="439" text-anchor="middle" fill="#c4b5fd" font-size="8" font-family="sans-serif">Location</text>
+        </g>
+        <line x1="365" y1="380" x2="365" y2="260" stroke="#7c6aff" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- UPF (User Plane - separate) -->
+        <g class="nf-box" data-id="upf" onclick="showTooltip(event,'upf')">
+          <rect x="440" y="380" width="160" height="70" rx="8" fill="rgba(245,158,11,0.25)" stroke="#f59e0b" stroke-width="2.5"/>
+          <text x="520" y="408" text-anchor="middle" fill="#fbbf24" font-size="15" font-weight="800" font-family="sans-serif">UPF</text>
+          <text x="520" y="425" text-anchor="middle" fill="#fde68a" font-size="9" font-family="sans-serif">N3/N4/N6/N9</text>
+          <text x="520" y="439" text-anchor="middle" fill="#fde68a" font-size="8" font-family="sans-serif">User Plane Forwarding</text>
+        </g>
+        <line x1="520" y1="380" x2="520" y2="260" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="525" y="330" fill="#fbbf24" font-size="9" font-family="sans-serif">N4</text>
+
+        <!-- AF -->
+        <g class="nf-box" data-id="af" onclick="showTooltip(event,'af')">
+          <rect x="700" y="380" width="160" height="70" rx="8" fill="rgba(6,182,212,0.2)" stroke="#06b6d4" stroke-width="2"/>
+          <text x="780" y="408" text-anchor="middle" fill="#22d3ee" font-size="15" font-weight="800" font-family="sans-serif">AF</text>
+          <text x="780" y="425" text-anchor="middle" fill="#a5f3fc" font-size="9" font-family="sans-serif">Naf / N33</text>
+          <text x="780" y="439" text-anchor="middle" fill="#a5f3fc" font-size="8" font-family="sans-serif">3rd Party Application</text>
+        </g>
+        <line x1="780" y1="380" x2="780" y2="260" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+        <!-- Service Registration label -->
+        <rect x="700" y="28" width="210" height="36" rx="6" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1"/>
+        <text x="805" y="44" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="sans-serif" font-weight="700">NF Registration &amp; Discovery</text>
+        <text x="805" y="58" text-anchor="middle" fill="#fde68a" font-size="9" font-family="sans-serif">via NRF (Nnrf interface)</text>
+
+        <!-- SBA note -->
+        <rect x="30" y="490" width="1040" height="110" rx="10" fill="rgba(20,20,35,0.8)" stroke="#2a2a3d" stroke-width="1"/>
+        <text x="550" y="512" text-anchor="middle" fill="#7c6aff" font-size="12" font-weight="700" font-family="sans-serif">服務化架構（SBA）核心概念</text>
+        <text x="50" y="532" fill="#8888aa" font-size="10" font-family="sans-serif">• 每個 NF 透過 RESTful API（HTTP/2）對外暴露服務，取代傳統點對點介面</text>
+        <text x="50" y="550" fill="#8888aa" font-size="10" font-family="sans-serif">• NF 啟動後向 NRF 註冊，其他 NF 透過 NRF 探索並訂閱所需服務</text>
+        <text x="50" y="568" fill="#8888aa" font-size="10" font-family="sans-serif">• OAuth 2.0 Token 授權機制保護 NF 服務呼叫</text>
+        <text x="50" y="586" fill="#8888aa" font-size="10" font-family="sans-serif">• 支援微服務化部署（Microservices）、雲原生（Cloud-Native）與容器化（Kubernetes）</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Tab: 介面說明 -->
+  <div id="tab-interfaces" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="1100" height="520" viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg">
+        <!-- Title -->
+        <text x="550" y="30" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">3GPP 5G 參考點介面（Reference Points）</text>
+
+        <!-- Interface table -->
+        <!-- Headers -->
+        <rect x="30" y="45" width="1040" height="32" rx="4" fill="rgba(124,106,255,0.2)"/>
+        <text x="80" y="66" fill="#a78bfa" font-size="11" font-weight="700" font-family="sans-serif">介面</text>
+        <text x="180" y="66" fill="#a78bfa" font-size="11" font-weight="700" font-family="sans-serif">連接節點</text>
+        <text x="400" y="66" fill="#a78bfa" font-size="11" font-weight="700" font-family="sans-serif">平面</text>
+        <text x="500" y="66" fill="#a78bfa" font-size="11" font-weight="700" font-family="sans-serif">功能說明</text>
+
+        <!-- Data rows -->
+        <g font-size="10" font-family="sans-serif">
+          <!-- N1 -->
+          <rect x="30" y="77" width="1040" height="26" rx="2" fill="rgba(59,130,246,0.06)"/>
+          <text x="80" y="95" fill="#60a5fa" font-weight="700">N1</text>
+          <text x="180" y="95" fill="#e8e8f0">UE ↔ AMF</text>
+          <text x="400" y="95" fill="#a78bfa">Control</text>
+          <text x="500" y="95" fill="#8888aa">NAS (Non-Access Stratum) 訊令：註冊、認證、PDU 建立等</text>
+
+          <!-- N2 -->
+          <rect x="30" y="103" width="1040" height="26" rx="2" fill="rgba(255,255,255,0.02)"/>
+          <text x="80" y="121" fill="#60a5fa" font-weight="700">N2</text>
+          <text x="180" y="121" fill="#e8e8f0">gNB ↔ AMF</text>
+          <text x="400" y="121" fill="#a78bfa">Control</text>
+          <text x="500" y="121" fill="#8888aa">NG-AP (NG Application Protocol)：基地台控制平面訊令</text>
+
+          <!-- N3 -->
+          <rect x="30" y="129" width="1040" height="26" rx="2" fill="rgba(245,158,11,0.06)"/>
+          <text x="80" y="147" fill="#fbbf24" font-weight="700">N3</text>
+          <text x="180" y="147" fill="#e8e8f0">gNB ↔ UPF</text>
+          <text x="400" y="147" fill="#f59e0b">User Plane</text>
+          <text x="500" y="147" fill="#8888aa">GTP-U 隧道：用戶資料封包傳輸（RAN to Core）</text>
+
+          <!-- N4 -->
+          <rect x="30" y="155" width="1040" height="26" rx="2" fill="rgba(255,255,255,0.02)"/>
+          <text x="80" y="173" fill="#60a5fa" font-weight="700">N4</text>
+          <text x="180" y="173" fill="#e8e8f0">SMF ↔ UPF</text>
+          <text x="400" y="173" fill="#a78bfa">Control</text>
+          <text x="500" y="173" fill="#8888aa">PFCP：SMF 對 UPF 進行轉發規則設定、QoS 控制</text>
+
+          <!-- N6 -->
+          <rect x="30" y="181" width="1040" height="26" rx="2" fill="rgba(245,158,11,0.06)"/>
+          <text x="80" y="199" fill="#fbbf24" font-weight="700">N6</text>
+          <text x="180" y="199" fill="#e8e8f0">UPF ↔ DN</text>
+          <text x="400" y="199" fill="#f59e0b">User Plane</text>
+          <text x="500" y="199" fill="#8888aa">用戶平面與資料網路（Internet/IMS）的連接介面</text>
+
+          <!-- N7 -->
+          <rect x="30" y="207" width="1040" height="26" rx="2" fill="rgba(255,255,255,0.02)"/>
+          <text x="80" y="225" fill="#60a5fa" font-weight="700">N7</text>
+          <text x="180" y="225" fill="#e8e8f0">SMF ↔ PCF</text>
+          <text x="400" y="225" fill="#a78bfa">Control</text>
+          <text x="500" y="225" fill="#8888aa">SMF 向 PCF 取得 PDU Session 相關策略（PCC rules）</text>
+
+          <!-- N8 -->
+          <rect x="30" y="233" width="1040" height="26" rx="2" fill="rgba(124,106,255,0.04)"/>
+          <text x="80" y="251" fill="#60a5fa" font-weight="700">N8</text>
+          <text x="180" y="251" fill="#e8e8f0">AMF ↔ UDM</text>
+          <text x="400" y="251" fill="#a78bfa">Control</text>
+          <text x="500" y="251" fill="#8888aa">AMF 向 UDM 取得用戶存取與移動管理訂閱資料</text>
+
+          <!-- N9 -->
+          <rect x="30" y="259" width="1040" height="26" rx="2" fill="rgba(245,158,11,0.06)"/>
+          <text x="80" y="277" fill="#fbbf24" font-weight="700">N9</text>
+          <text x="180" y="277" fill="#e8e8f0">UPF ↔ UPF</text>
+          <text x="400" y="277" fill="#f59e0b">User Plane</text>
+          <text x="500" y="277" fill="#8888aa">UPF 間隧道（多 UPF 拓撲，I-UPF / PSA-UPF）</text>
+
+          <!-- N10 -->
+          <rect x="30" y="285" width="1040" height="26" rx="2" fill="rgba(255,255,255,0.02)"/>
+          <text x="80" y="303" fill="#60a5fa" font-weight="700">N10</text>
+          <text x="180" y="303" fill="#e8e8f0">SMF ↔ UDM</text>
+          <text x="400" y="303" fill="#a78bfa">Control</text>
+          <text x="500" y="303" fill="#8888aa">SMF 向 UDM 取得 Session Management 訂閱資料</text>
+
+          <!-- N11 -->
+          <rect x="30" y="311" width="1040" height="26" rx="2" fill="rgba(124,106,255,0.04)"/>
+          <text x="80" y="329" fill="#60a5fa" font-weight="700">N11</text>
+          <text x="180" y="329" fill="#e8e8f0">AMF ↔ SMF</text>
+          <text x="400" y="329" fill="#a78bfa">Control</text>
+          <text x="500" y="329" fill="#8888aa">AMF 與 SMF 間 PDU Session 建立、修改、釋放協調</text>
+
+          <!-- N12 -->
+          <rect x="30" y="337" width="1040" height="26" rx="2" fill="rgba(255,255,255,0.02)"/>
+          <text x="80" y="355" fill="#60a5fa" font-weight="700">N12</text>
+          <text x="180" y="355" fill="#e8e8f0">AMF ↔ AUSF</text>
+          <text x="400" y="355" fill="#a78bfa">Control</text>
+          <text x="500" y="355" fill="#8888aa">AMF 發起認證請求，AUSF 執行 5G-AKA / EAP-AKA'</text>
+
+          <!-- N13 -->
+          <rect x="30" y="363" width="1040" height="26" rx="2" fill="rgba(124,106,255,0.04)"/>
+          <text x="80" y="381" fill="#60a5fa" font-weight="700">N13</text>
+          <text x="180" y="381" fill="#e8e8f0">AUSF ↔ UDM</text>
+          <text x="400" y="381" fill="#a78bfa">Control</text>
+          <text x="500" y="381" fill="#8888aa">AUSF 向 UDM 取得認證向量（Authentication Vectors）</text>
+
+          <!-- N15 -->
+          <rect x="30" y="389" width="1040" height="26" rx="2" fill="rgba(255,255,255,0.02)"/>
+          <text x="80" y="407" fill="#60a5fa" font-weight="700">N15</text>
+          <text x="180" y="407" fill="#e8e8f0">AMF ↔ PCF</text>
+          <text x="400" y="407" fill="#a78bfa">Control</text>
+          <text x="500" y="407" fill="#8888aa">AMF 向 PCF 取得 UE 存取與移動管理策略</text>
+
+          <!-- N22 -->
+          <rect x="30" y="415" width="1040" height="26" rx="2" fill="rgba(124,106,255,0.04)"/>
+          <text x="80" y="433" fill="#60a5fa" font-weight="700">N22</text>
+          <text x="180" y="433" fill="#e8e8f0">AMF ↔ NSSF</text>
+          <text x="400" y="433" fill="#a78bfa">Control</text>
+          <text x="500" y="433" fill="#8888aa">網路切片選擇：AMF 向 NSSF 查詢適合的 Network Slice</text>
+
+          <!-- N33 -->
+          <rect x="30" y="441" width="1040" height="26" rx="2" fill="rgba(6,182,212,0.04)"/>
+          <text x="80" y="459" fill="#22d3ee" font-weight="700">N33</text>
+          <text x="180" y="459" fill="#e8e8f0">NEF ↔ AF</text>
+          <text x="400" y="459" fill="#06b6d4">External</text>
+          <text x="500" y="459" fill="#8888aa">第三方應用透過 NEF 安全存取 5G Core 服務</text>
+
+          <!-- Xn -->
+          <rect x="30" y="467" width="1040" height="26" rx="2" fill="rgba(16,185,129,0.04)"/>
+          <text x="80" y="485" fill="#34d399" font-weight="700">Xn</text>
+          <text x="180" y="485" fill="#e8e8f0">gNB ↔ gNB</text>
+          <text x="400" y="485" fill="#10b981">RAN</text>
+          <text x="500" y="485" fill="#8888aa">基地台間介面：Handover、Dual Connectivity (DC)</text>
+
+          <!-- F1 -->
+          <rect x="30" y="493" width="1040" height="26" rx="2" fill="rgba(16,185,129,0.04)"/>
+          <text x="80" y="511" fill="#34d399" font-weight="700">F1</text>
+          <text x="180" y="511" fill="#e8e8f0">gNB-CU ↔ gNB-DU</text>
+          <text x="400" y="511" fill="#10b981">RAN (internal)</text>
+          <text x="500" y="511" fill="#8888aa">CU-DU 分離架構：集中單元與分散單元間的介面</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Tab: 網路切片 -->
+  <div id="tab-slicing" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="1100" height="580" viewBox="0 0 1100 580" xmlns="http://www.w3.org/2000/svg">
+        <text x="550" y="30" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="700" font-family="sans-serif">5G 網路切片（Network Slicing）架構</text>
+        <text x="550" y="50" text-anchor="middle" fill="#8888aa" font-size="10" font-family="sans-serif">一套物理基礎設施，透過 NSSAI 切割出多個邏輯獨立的端到端網路</text>
+
+        <!-- Physical Infrastructure -->
+        <rect x="30" y="65" width="1040" height="430" rx="12" fill="rgba(30,30,50,0.8)" stroke="#2a2a3d" stroke-width="2"/>
+        <text x="550" y="88" text-anchor="middle" fill="#555577" font-size="11" font-family="sans-serif">Physical Infrastructure (Shared Hardware / Transport)</text>
+
+        <!-- Slice 1: eMBB -->
+        <rect x="60" y="100" width="300" height="360" rx="10" fill="rgba(124,106,255,0.12)" stroke="#7c6aff" stroke-width="2"/>
+        <text x="210" y="124" text-anchor="middle" fill="#7c6aff" font-size="13" font-weight="700" font-family="sans-serif">eMBB Slice</text>
+        <text x="210" y="140" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="sans-serif">Enhanced Mobile Broadband</text>
+        <text x="210" y="155" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">SST=1 | 高頻寬、高速率</text>
+
+        <!-- eMBB components -->
+        <rect x="85" y="168" width="250" height="35" rx="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+        <text x="210" y="190" text-anchor="middle" fill="#34d399" font-size="11" font-family="sans-serif">gNB (NR, Massive MIMO)</text>
+
+        <rect x="85" y="215" width="110" height="35" rx="6" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1"/>
+        <text x="140" y="237" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="sans-serif">AMF (slice)</text>
+
+        <rect x="205" y="215" width="130" height="35" rx="6" fill="rgba(124,106,255,0.2)" stroke="#7c6aff" stroke-width="1"/>
+        <text x="270" y="237" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="sans-serif">SMF (slice)</text>
+
+        <rect x="130" y="265" width="160" height="35" rx="6" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="210" y="287" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="sans-serif">UPF (eMBB)</text>
+
+        <rect x="85" y="315" width="250" height="35" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1"/>
+        <text x="210" y="337" text-anchor="middle" fill="#f87171" font-size="11" font-family="sans-serif">Internet (DN)</text>
+
+        <text x="210" y="378" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">用途：4K/8K 串流、AR/VR</text>
+        <text x="210" y="393" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">頻寬：&gt;1 Gbps</text>
+        <text x="210" y="408" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">延遲：&lt;10ms</text>
+
+        <!-- Slice 2: URLLC -->
+        <rect x="390" y="100" width="300" height="360" rx="10" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="2"/>
+        <text x="540" y="124" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="700" font-family="sans-serif">URLLC Slice</text>
+        <text x="540" y="140" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="sans-serif">Ultra-Reliable Low Latency Comm.</text>
+        <text x="540" y="155" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">SST=2 | 超低延遲、高可靠</text>
+
+        <rect x="415" y="168" width="250" height="35" rx="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+        <text x="540" y="190" text-anchor="middle" fill="#34d399" font-size="11" font-family="sans-serif">gNB (MEC 支援)</text>
+
+        <rect x="415" y="215" width="110" height="35" rx="6" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1"/>
+        <text x="470" y="237" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="sans-serif">AMF (slice)</text>
+
+        <rect x="535" y="215" width="130" height="35" rx="6" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1"/>
+        <text x="600" y="237" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="sans-serif">SMF (slice)</text>
+
+        <rect x="455" y="265" width="170" height="35" rx="6" fill="rgba(245,158,11,0.25)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="540" y="287" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="sans-serif">UPF (Edge / MEC)</text>
+
+        <rect x="415" y="315" width="250" height="35" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1"/>
+        <text x="540" y="337" text-anchor="middle" fill="#f87171" font-size="11" font-family="sans-serif">Industrial / V2X DN</text>
+
+        <text x="540" y="378" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">用途：工業自動化、自駕車</text>
+        <text x="540" y="393" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">延遲：&lt;1ms</text>
+        <text x="540" y="408" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">可靠度：99.9999%</text>
+
+        <!-- Slice 3: mMTC -->
+        <rect x="720" y="100" width="320" height="360" rx="10" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="2"/>
+        <text x="880" y="124" text-anchor="middle" fill="#10b981" font-size="13" font-weight="700" font-family="sans-serif">mMTC Slice</text>
+        <text x="880" y="140" text-anchor="middle" fill="#34d399" font-size="10" font-family="sans-serif">Massive Machine Type Comm.</text>
+        <text x="880" y="155" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">SST=3 | 海量連接、低功耗</text>
+
+        <rect x="745" y="168" width="270" height="35" rx="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+        <text x="880" y="190" text-anchor="middle" fill="#34d399" font-size="11" font-family="sans-serif">gNB (NB-IoT / eMTC)</text>
+
+        <rect x="745" y="215" width="120" height="35" rx="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+        <text x="805" y="237" text-anchor="middle" fill="#34d399" font-size="11" font-family="sans-serif">AMF (slice)</text>
+
+        <rect x="875" y="215" width="140" height="35" rx="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+        <text x="945" y="237" text-anchor="middle" fill="#34d399" font-size="11" font-family="sans-serif">SMF (slice)</text>
+
+        <rect x="785" y="265" width="190" height="35" rx="6" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="880" y="287" text-anchor="middle" fill="#34d399" font-size="11" font-family="sans-serif">UPF (mMTC)</text>
+
+        <rect x="745" y="315" width="270" height="35" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1"/>
+        <text x="880" y="337" text-anchor="middle" fill="#f87171" font-size="11" font-family="sans-serif">IoT Platform DN</text>
+
+        <text x="880" y="378" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">用途：智慧城市、感測器</text>
+        <text x="880" y="393" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">密度：100萬設備/km²</text>
+        <text x="880" y="408" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">電池壽命：10年以上</text>
+
+        <!-- Shared NFs -->
+        <rect x="60" y="460" width="450" height="28" rx="6" fill="rgba(124,106,255,0.1)" stroke="#7c6aff" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="285" y="478" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="sans-serif">共用 NF：NRF | NSSF | UDM | AUSF | NEF | PCF | UDR | CHF</text>
+
+        <!-- NSSAI -->
+        <rect x="560" y="455" width="510" height="38" rx="6" fill="rgba(6,182,212,0.1)" stroke="#06b6d4" stroke-width="1"/>
+        <text x="815" y="470" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="700" font-family="sans-serif">NSSAI（Network Slice Selection Assistance Info）</text>
+        <text x="815" y="485" text-anchor="middle" fill="#a5f3fc" font-size="9" font-family="sans-serif">S-NSSAI = SST（1byte）+ SD（3bytes）, 最多 8 個 Slice/UE</text>
+
+        <!-- UE at bottom -->
+        <rect x="200" y="510" width="700" height="55" rx="10" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="550" y="535" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="700" font-family="sans-serif">UE（同時可連接多個 Slice）</text>
+        <text x="550" y="553" text-anchor="middle" fill="#8888aa" font-size="9" font-family="sans-serif">在 Registration Request 中帶入 Requested NSSAI → NSSF 選擇 → 回傳 Allowed NSSAI</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Component Reference -->
+  <div class="info-section">
+    <h2>5G 核心網路元件說明</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="abbr">AMF</div>
+        <div class="full">Access and Mobility Management Function</div>
+        <div class="desc">負責 UE 的接入管理與移動性管理，終結 NAS 訊令（N1），並協調基地台（N2）。處理 UE 的註冊、認證流程發起、位置更新、尋呼。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">SMF</div>
+        <div class="full">Session Management Function</div>
+        <div class="desc">管理 PDU Session 的建立、修改與釋放。分配 IP 位址、設定 QoS、透過 N4 控制 UPF 的封包轉發規則（PFCP），並向 PCF 取得策略。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">UPF</div>
+        <div class="full">User Plane Function</div>
+        <div class="desc">用戶平面核心元件，負責封包路由與轉發（GTP-U）、QoS 執行、流量偵測（Traffic Detection）。連接 RAN（N3）、其他 UPF（N9）與資料網路（N6）。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">PCF</div>
+        <div class="full">Policy Control Function</div>
+        <div class="desc">統一策略框架，提供 AM Policy（存取移動策略）與 SM Policy（Session 策略、PCC rules）。整合 UDR 中的訂閱策略資料。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">UDM</div>
+        <div class="full">Unified Data Management</div>
+        <div class="desc">管理用戶訂閱資料的統一前端，包含用戶識別碼轉換（SUPI/SUCI）、訂閱資料存取、認證憑據管理，底層資料儲存於 UDR。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">AUSF</div>
+        <div class="full">Authentication Server Function</div>
+        <div class="desc">執行 5G 認證流程（5G-AKA / EAP-AKA'）。向 UDM 取得認證向量，協助 AMF 完成 UE 身份驗證與安全密鑰的產生。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">NRF</div>
+        <div class="full">Network Repository Function</div>
+        <div class="desc">5G 的「服務目錄」。所有 NF 啟動後向 NRF 註冊自身 Profile（能力、位址等），其他 NF 透過 NRF 探索（Discovery）並訂閱服務。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">NSSF</div>
+        <div class="full">Network Slice Selection Function</div>
+        <div class="desc">根據 UE 請求的 NSSAI 及運營商策略，選擇合適的 Network Slice。返回 Allowed NSSAI 與對應服務該 Slice 的 AMF 集合。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">NEF</div>
+        <div class="full">Network Exposure Function</div>
+        <div class="desc">5G 對外的 API 閘道器。安全地將 5G Core 能力（QoS 控制、UE 位置、網路狀態）暴露給第三方 AF，並保護核心網路安全。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">UDR</div>
+        <div class="full">Unified Data Repository</div>
+        <div class="desc">統一資料儲存庫，儲存訂閱資料、策略資料、應用資料。為 UDM、PCF、NEF 提供資料存取服務（Nudr 介面）。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">CHF</div>
+        <div class="full">Charging Function</div>
+        <div class="desc">5G 統一計費功能，支援線上計費（OCS）與離線計費（OFCS）。SMF 透過 N40 介面回報用量，CHF 進行扣費或記錄。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">LMF</div>
+        <div class="full">Location Management Function</div>
+        <div class="desc">5G 定位功能，透過 NR Positioning（NR-OTDOA、UL-TDOA、E-CID 等）提供高精度定位服務，支援緊急呼叫位置回報。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">gNB</div>
+        <div class="full">Next Generation NodeB（5G基地台）</div>
+        <div class="desc">5G NR 基地台，支援 Sub-6GHz 與 mmWave。內部可拆分為 gNB-CU（集中單元）與 gNB-DU（分散單元），透過 F1 介面連接。支援 Massive MIMO、Beamforming。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">AF</div>
+        <div class="full">Application Function</div>
+        <div class="desc">第三方應用服務，可透過 NEF（非信任）或直接透過 SBI（受信任 AF）與 5GC 互動，申請 QoS 保障、獲取網路資訊、訂閱網路事件。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">ng-eNB</div>
+        <div class="full">Next-Generation eNodeB（4G 升級版）</div>
+        <div class="desc">在 NSA（非獨立組網）模式下，4G eNB 透過升級連接至 5G Core，與 gNB 形成 Dual Connectivity（DC），加速 5G 初期部署。</div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">UE</div>
+        <div class="full">User Equipment（用戶設備）</div>
+        <div class="desc">5G 終端設備，包含智慧手機、IoT 感測器、工業設備、車載 V2X 模組等。內含 USIM 存放 SUPI（IMSI），支援 5G-AKA 認證。</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>基於 3GPP TS 23.501 / TS 23.502 | Release 15 / 16 / 17 &nbsp;|&nbsp; <a href="index.html" style="color:var(--accent2);text-decoration:none;">返回首頁</a></p>
+</footer>
+
+<!-- Tooltip element -->
+<div class="tooltip" id="tooltip">
+  <h3 id="tt-title"></h3>
+  <div class="full-name" id="tt-full"></div>
+  <p id="tt-desc"></p>
+</div>
+
+<script>
+  const nfData = {
+    amf: {
+      title: 'AMF',
+      full: 'Access and Mobility Management Function',
+      desc: '終結 NAS 訊令（N1/N2）。負責 UE 註冊、認證流程發起、移動性管理（切換協調）、位置更新、尋呼、合法監聽。連接 SMF（N11）、UDM（N8）、AUSF（N12）、PCF（N15）、NSSF（N22）。'
+    },
+    smf: {
+      title: 'SMF',
+      full: 'Session Management Function',
+      desc: 'PDU Session 生命週期管理：建立、修改、釋放。IP 位址分配（DHCP/IPAM）、透過 PFCP（N4）控制 UPF 轉發規則、QoS 設定、向 PCF（N7）、UDM（N10）取得策略與訂閱資料。'
+    },
+    upf: {
+      title: 'UPF',
+      full: 'User Plane Function',
+      desc: '用戶平面資料轉發核心。GTP-U 封包路由（N3/N9/N6）、QoS 標記執行（DSCP）、上行分類（Uplink Classifier）、流量偵測（TDF）、本地分流（ULCL/Branching Point for MEC）。'
+    },
+    pcf: {
+      title: 'PCF',
+      full: 'Policy Control Function',
+      desc: '統一策略控制。提供 AM Policy（給 AMF）與 SM Policy（給 SMF，含 PCC rules）。依據 SLA、訂閱等級、網路負載動態調整 QoS。從 UDR（N36）讀取策略資料。'
+    },
+    udm: {
+      title: 'UDM',
+      full: 'Unified Data Management',
+      desc: '用戶資料管理前端：SUPI/SUCI 解碼轉換、訂閱資料管理、認證資料處理（向 AUSF 提供）、服務網路授權、UE 位置登記管理。資料儲存於 UDR。'
+    },
+    ausf: {
+      title: 'AUSF',
+      full: 'Authentication Server Function',
+      desc: '5G 認證伺服器。執行 5G-AKA（基於 USIM/SIM 的對稱金鑰認證）或 EAP-AKA\'（EAP 框架）。向 UDM（N13）取得認證向量，協助 AMF（N12）完成 UE 認證，產生安全密鑰。'
+    },
+    nrf: {
+      title: 'NRF',
+      full: 'Network Repository Function',
+      desc: '5G 服務目錄。NF 啟動時向 NRF 登錄自身（NFType、能力、IP 位址、負載）。其他 NF 透過 Nnrf_NFDiscovery 查詢所需 NF，並可訂閱（Subscribe）NF 狀態通知。'
+    },
+    nssf: {
+      title: 'NSSF',
+      full: 'Network Slice Selection Function',
+      desc: '根據 UE 的 Requested NSSAI、本地政策及 HPLMN 資訊，選擇合適的 Network Slice（Allowed NSSAI）及對應的 AMF Set，支援多 PLMN 漫遊場景的切片選擇。'
+    },
+    nef: {
+      title: 'NEF',
+      full: 'Network Exposure Function',
+      desc: '5G 網路能力開放平台。將 5GC 內部事件（UE 位置、QoS 保障、流量引導）安全暴露給第三方 AF（N33）。作為 AF 與核心網的中介，防止直接存取內部 NF。'
+    },
+    udr: {
+      title: 'UDR',
+      full: 'Unified Data Repository',
+      desc: '統一資料儲存，為 UDM、PCF、NEF 提供結構化儲存。儲存項目：訂閱資料（Subscription Data）、策略資料（Policy Data）、應用資料（Application Data）。'
+    },
+    chf: {
+      title: 'CHF',
+      full: 'Charging Function',
+      desc: '統一計費功能。支援線上計費（Online：即時扣費，需授信額度 OCS）與離線計費（Offline：事後記錄 OFCS）。SMF 透過 N40（Nchf）上報用量，支援流量/時間/事件計費。'
+    },
+    lmf: {
+      title: 'LMF',
+      full: 'Location Management Function',
+      desc: '5G 定位管理。支援多種定位技術：NR-OTDOA（下行到達時間差）、UL-TDOA（上行）、E-CID（增強型小區識別）。精度可達公尺級，適用緊急定位、商業位置服務（LCS）。'
+    },
+    gnb: {
+      title: 'gNB（5G基地台）',
+      full: 'Next Generation NodeB',
+      desc: '5G NR 基地台。內部可拆分 CU（集中單元）和 DU（分散單元）。CU 負責 RRC、PDCP；DU 負責 MAC、PHY。支援 FR1（Sub-6GHz）和 FR2（mmWave）。N2（AMF）、N3（UPF）介面對接核心網。'
+    },
+    ngenb: {
+      title: 'ng-eNB（升級版4G基地台）',
+      full: 'Next-Generation eNodeB',
+      desc: 'NSA（非獨立組網）模式下，4G LTE 基地台升級版，直接連接 5G Core（N2/N3 介面）。與 gNB 組成 Dual Connectivity，UE 同時使用 4G（錨點）和 5G（資料）頻段。'
+    },
+    'cu-du': {
+      title: 'gNB-CU / gNB-DU 切割架構',
+      full: 'Centralized Unit / Distributed Unit Split',
+      desc: 'gNB-CU 集中部署（可雲端化）：處理 RRC、SDAP、PDCP。gNB-DU 分散靠近天線：處理 RLC、MAC、PHY。透過 F1 介面（F1-C 控制 / F1-U 用戶）連接，實現 5G 基地台的靈活部署。'
+    },
+    ue: {
+      title: 'UE（用戶設備）',
+      full: 'User Equipment',
+      desc: '5G 終端設備。內含 USIM（儲存 SUPI/IMSI、認證金鑰 K）。透過 NR Uu 空中介面連接 gNB，最高速率可達 20Gbps（理論值）。支援 SA 或 NSA 組網模式。'
+    },
+    internet: {
+      title: 'Internet（公眾網際網路）',
+      full: 'Public Data Network',
+      desc: 'UPF 透過 N6 介面連接公眾網際網路。SMF 為每個 PDU Session 分配 IP，UPF 進行 NAT/路由轉發至 Internet。支援 IPv4、IPv6 及 IPv4v6 雙棧。'
+    },
+    ims: {
+      title: 'IMS',
+      full: 'IP Multimedia Subsystem',
+      desc: '負責 VoNR（5G 語音通話）的核心。5G 通話透過 IMS 的 P-CSCF、S-CSCF、I-CSCF 處理 SIP 訊令，UPF 提供媒體封包路由。取代傳統電路交換語音。'
+    },
+    af: {
+      title: 'AF（應用功能）',
+      full: 'Application Function',
+      desc: '可來自運營商或第三方的應用服務。透過 NEF（N33）安全存取 5GC，或以受信任 AF 直接呼叫 SBI。常見用途：申請 QoS 保障（如遊戲/視訊）、訂閱 UE 位置通知、影響流量引導。'
+    }
+  };
+
+  const tooltip = document.getElementById('tooltip');
+
+  function showTooltip(event, id) {
+    const data = nfData[id];
+    if (!data) return;
+    document.getElementById('tt-title').textContent = data.title;
+    document.getElementById('tt-full').textContent = data.full;
+    document.getElementById('tt-desc').textContent = data.desc;
+
+    const x = event.clientX + 16;
+    const y = event.clientY + 16;
+    const tw = 300;
+    const th = 150;
+    tooltip.style.left = (x + tw > window.innerWidth ? x - tw - 32 : x) + 'px';
+    tooltip.style.top = (y + th > window.innerHeight ? y - th : y) + 'px';
+    tooltip.classList.add('show');
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (tooltip.classList.contains('show')) {
+      const x = e.clientX + 16;
+      const y = e.clientY + 16;
+      const tw = 300;
+      const th = 150;
+      tooltip.style.left = (x + tw > window.innerWidth ? x - tw - 32 : x) + 'px';
+      tooltip.style.top = (y + th > window.innerHeight ? y - th : y) + 'px';
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nf-box')) {
+      tooltip.classList.remove('show');
+    }
+  });
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
