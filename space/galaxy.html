@@ -189,6 +189,149 @@ const LANDMARKS = [
   },
 ];
 
+// ── Points of Interest ────────────────────────────────────────────────────────
+
+const POIS = [
+  // 星雲
+  {
+    name: '獵戶座星雲',
+    en: 'Orion Nebula (M42)',
+    type: 'nebula',
+    r_frac: 0.525, angle: Math.PI * 1.06,
+    hitR: 0.038, badge: '🌸 恆星形成區',
+    glow: [255, 120, 160],
+    stats: {
+      距太陽系: '約 1,350 光年',
+      距銀河中心: '約 26,000 光年',
+      直徑: '約 24 光年',
+      年輕恆星數: '約 700 顆',
+    },
+    desc: '距太陽系最近的大型恆星形成區之一，肉眼可見於獵戶座劍柄。中心有四顆熾熱年輕恆星「獵戶四邊形」，是哈伯太空望遠鏡最著名的拍攝對象之一。',
+  },
+  {
+    name: '鷹星雲・創生之柱',
+    en: 'Eagle Nebula / Pillars of Creation (M16)',
+    type: 'nebula',
+    r_frac: 0.40, angle: Math.PI * 0.78,
+    hitR: 0.036, badge: '🌿 恆星形成區',
+    glow: [100, 210, 140],
+    stats: {
+      距太陽系: '約 7,000 光年',
+      距銀河中心: '約 20,000 光年',
+      所在旋臂: '人馬臂',
+      直徑: '約 70 × 55 光年',
+    },
+    desc: '「創生之柱」是三根高聳的星際氣體與塵埃柱，哈伯太空望遠鏡於 1995 年拍攝的影像成為史上最具代表性的天文照片之一。正在孕育新生恆星。',
+  },
+  {
+    name: '船底座星雲',
+    en: 'Carina Nebula (NGC 3372)',
+    type: 'nebula',
+    r_frac: 0.47, angle: Math.PI * 1.50,
+    hitR: 0.038, badge: '💙 巨型星雲',
+    glow: [80, 170, 255],
+    stats: {
+      距太陽系: '約 8,500 光年',
+      距銀河中心: '約 24,000 光年',
+      所在旋臂: '人馬-船底臂',
+      直徑: '約 300 光年',
+    },
+    desc: '銀河系中最大、最亮的星雲之一，包含著名的海山二（η Carinae），是目前已知質量最大的恆星之一，距爆發為超新星僅一步之遙。',
+  },
+  {
+    name: '蟹狀星雲',
+    en: 'Crab Nebula (M1)',
+    type: 'nebula',
+    r_frac: 0.60, angle: Math.PI * 0.88,
+    hitR: 0.034, badge: '💥 超新星遺跡',
+    glow: [200, 140, 255],
+    stats: {
+      距太陽系: '約 6,500 光年',
+      距銀河中心: '約 32,000 光年',
+      所在旋臂: '英仙臂',
+      爆發年份: '西元 1054 年（宋朝記錄）',
+    },
+    desc: '西元 1054 年超新星爆炸的殘骸，宋朝天文學家記錄此「客星」白天可見長達 23 天。中心為一顆脈衝星，每秒自轉約 30 次。',
+  },
+  {
+    name: '礁湖星雲',
+    en: 'Lagoon Nebula (M8)',
+    type: 'nebula',
+    r_frac: 0.34, angle: Math.PI * 0.95,
+    hitR: 0.034, badge: '🌊 發射星雲',
+    glow: [255, 180, 90],
+    stats: {
+      距太陽系: '約 4,100 光年',
+      距銀河中心: '約 27,000 光年',
+      所在旋臂: '人馬臂',
+      直徑: '約 110 × 50 光年',
+    },
+    desc: '位於人馬臂中的大型發射星雲，晴朗夜晚肉眼可見。內含活躍恆星形成區「沙漏星雲」，中央有年輕疏散星團 NGC 6530。',
+  },
+  // 球狀星團
+  {
+    name: '半人馬座 ω',
+    en: 'Omega Centauri (NGC 5139)',
+    type: 'cluster',
+    r_frac: 0.33, angle: Math.PI * 1.42,
+    hitR: 0.034, badge: '✨ 球狀星團',
+    glow: [255, 225, 130],
+    stats: {
+      距太陽系: '約 17,000 光年',
+      距銀河中心: '約 17,000 光年',
+      恆星數量: '約 1,000 萬顆',
+      直徑: '約 150 光年',
+    },
+    desc: '銀河系最大、最重的球狀星團，被認為可能是被銀河系吞併的矮星系核心殘骸，含有多個年代的恆星族群。南半球肉眼可見。',
+  },
+  {
+    name: '武仙座球狀星團',
+    en: 'Hercules Cluster (M13)',
+    type: 'cluster',
+    r_frac: 0.63, angle: Math.PI * 0.52,
+    hitR: 0.032, badge: '✨ 球狀星團',
+    glow: [255, 225, 130],
+    stats: {
+      距太陽系: '約 25,000 光年',
+      距銀河中心: '約 25,000 光年',
+      恆星數量: '約 30 萬顆',
+      直徑: '約 145 光年',
+    },
+    desc: '北半球最著名的球狀星團。1974 年阿雷西博無線電望遠鏡曾向此方向發送「阿雷西博訊息」，期望被可能存在的外星文明接收。',
+  },
+  // 衛星星系（縮小視圖才可見）
+  {
+    name: '大麥哲倫雲',
+    en: 'Large Magellanic Cloud (LMC)',
+    type: 'satellite',
+    r_frac: 3.26, angle: Math.PI * 1.68,
+    hitR: 0.20, badge: '🌌 衛星星系',
+    glow: [220, 200, 255],
+    stats: {
+      距銀河中心: '約 163,000 光年',
+      直徑: '約 14,000 光年',
+      恆星數量: '約 300 億顆',
+      類型: '不規則矮星系',
+    },
+    desc: '銀河系最大的衛星星系，南半球肉眼清晰可見。1987 年於此觀測到「超新星 1987A」，是近 400 年來最近的肉眼可見超新星。',
+  },
+  {
+    name: '小麥哲倫雲',
+    en: 'Small Magellanic Cloud (SMC)',
+    type: 'satellite',
+    r_frac: 4.00, angle: Math.PI * 1.80,
+    hitR: 0.15, badge: '🌌 衛星星系',
+    glow: [200, 215, 255],
+    stats: {
+      距銀河中心: '約 200,000 光年',
+      直徑: '約 7,000 光年',
+      恆星數量: '約 30 億顆',
+      類型: '不規則矮星系',
+    },
+    desc: '銀河系第二大衛星星系，與大麥哲倫雲相伴，南半球肉眼可見。兩者均由麥哲倫環航時的歐洲人記錄而命名。',
+  },
+];
+
 // 4 主旋臂，以對數螺旋生成
 // r = ARM_R0 * exp(ARM_B * t)，臂從中心棒端部展開
 const ARM_R0   = 0.08;
@@ -471,6 +614,82 @@ function drawLandmarks(rotOffset) {
   });
 }
 
+function drawPOIs(rotOffset) {
+  const R = galaxyR * zoomLevel;
+  const fSize = Math.max(8, 9 * Math.min(zoomLevel, 1.8));
+
+  POIS.forEach(p => {
+    const angle = p.angle + rotOffset;
+    const x = cx + Math.cos(angle) * p.r_frac * R;
+    const y = cy + Math.sin(angle) * p.r_frac * R;
+    const [gr, gg, gb] = p.glow;
+
+    // Skip satellite galaxies when they'd be off-screen
+    if (p.type === 'satellite') {
+      const dist = Math.hypot(x - cx, y - cy);
+      if (dist > Math.max(W, H) * 0.85) return;
+    }
+
+    if (p.type === 'nebula') {
+      const br = Math.max(4, 10 * Math.min(zoomLevel, 2));
+      const g = ctx.createRadialGradient(x, y, 0, x, y, br * 2.2);
+      g.addColorStop(0,   `rgba(${gr},${gg},${gb},0.68)`);
+      g.addColorStop(0.45,`rgba(${gr},${gg},${gb},0.22)`);
+      g.addColorStop(1,   `rgba(${gr},${gg},${gb},0)`);
+      ctx.beginPath();
+      ctx.arc(x, y, br * 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y, Math.max(1.5, br * 0.42), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${gr},${gg},${gb},0.92)`;
+      ctx.fill();
+
+    } else if (p.type === 'cluster') {
+      const br = Math.max(3, 8 * Math.min(zoomLevel, 2));
+      const g = ctx.createRadialGradient(x, y, 0, x, y, br * 1.8);
+      g.addColorStop(0,   `rgba(${gr},${gg},${gb},0.78)`);
+      g.addColorStop(0.5, `rgba(${gr},${gg},${gb},0.28)`);
+      g.addColorStop(1,   `rgba(${gr},${gg},${gb},0)`);
+      ctx.beginPath();
+      ctx.arc(x, y, br * 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      const cr = Math.max(2, br * 0.72);
+      ctx.strokeStyle = `rgba(${gr},${gg},${gb},0.62)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - cr, y); ctx.lineTo(x + cr, y);
+      ctx.moveTo(x, y - cr); ctx.lineTo(x, y + cr);
+      ctx.stroke();
+
+    } else if (p.type === 'satellite') {
+      const br = Math.max(6, 18 * Math.min(zoomLevel, 2));
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(0.4);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, br);
+      g.addColorStop(0,   `rgba(${gr},${gg},${gb},0.52)`);
+      g.addColorStop(0.5, `rgba(${gr},${gg},${gb},0.18)`);
+      g.addColorStop(1,   `rgba(${gr},${gg},${gb},0)`);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, br, br * 0.62, 0, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Label
+    ctx.font = `${fSize}px 'Microsoft JhengHei', sans-serif`;
+    ctx.textAlign = 'center';
+    const br = p.type === 'satellite' ? Math.max(6, 18 * Math.min(zoomLevel, 2))
+             : p.type === 'cluster'   ? Math.max(3, 8  * Math.min(zoomLevel, 2))
+             :                          Math.max(4, 10 * Math.min(zoomLevel, 2));
+    ctx.fillStyle = `rgba(${gr},${gg},${gb},0.50)`;
+    ctx.fillText(p.name, x, y + br * (p.type === 'satellite' ? 1.2 : 2.5) + fSize * 0.4);
+  });
+}
+
 // ── Hover / Tooltip ───────────────────────────────────────────────────────────
 
 function rotOffset() {
@@ -483,6 +702,12 @@ function checkHover(mx, my) {
   for (const lm of LANDMARKS) {
     const { x, y } = landmarkPos(lm, rot);
     if (Math.hypot(mx - x, my - y) < lm.hitR * R) return lm;
+  }
+  for (const p of POIS) {
+    const angle = p.angle + rot;
+    const x = cx + Math.cos(angle) * p.r_frac * R;
+    const y = cy + Math.sin(angle) * p.r_frac * R;
+    if (Math.hypot(mx - x, my - y) < p.hitR * R) return p;
   }
   return null;
 }
@@ -540,6 +765,7 @@ function animate() {
   drawCoreStars(rot);
   drawCore();
   drawArmLabels(rot);
+  drawPOIs(rot);
   drawLandmarks(rot);
 
   t += speedMult;
