@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>太空梭構造導覽：人類最複雜的飛行器</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-orbiter: #ffffff;
+      --color-et: #b45309;
+      --color-srb: #d1d5db;
+      --color-tiles: #374151;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(150,100,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-wrap {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      color: var(--accent2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .highlight-box {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .tabs { flex-wrap: wrap; }
+      .tab-btn { flex: 1 1 40%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>太空梭構造導覽</h1>
+  <p>探索這項結合火箭、航天器與飛機特性的工程傑作</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="../index.html">← 返回首頁</a>
+  <a class="nav-link" href="modern_rockets.html">現代火箭構造</a>
+  <a class="nav-link" href="rocket_physics.html">火箭與軌道物理</a>
+  <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
+  <a class="nav-link" href="black_hole.html">黑洞互動導覽</a>
+</nav>
+
+<main>
+  <!-- Global SVG Definitions -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#888" />
+      </marker>
+    </defs>
+  </svg>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'config')">1. 整體配置</button>
+    <button class="tab-btn" onclick="switchTab(this, 'orbiter')">2. 軌道器構造</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tps')">3. 隔熱系統</button>
+    <button class="tab-btn" onclick="switchTab(this, 'mission')">4. 飛行任務</button>
+  </div>
+
+  <!-- Tab: Configuration -->
+  <div id="tab-config" class="tab-panel active">
+    <div class="diagram-wrap">
+      <svg width="600" height="450" viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+        <!-- External Tank (ET) -->
+        <rect x="260" y="50" width="80" height="320" rx="40" fill="#b45309" stroke="#8c4006" stroke-width="2" />
+        <path d="M 260 90 L 340 90 M 260 330 L 340 330" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+
+        <!-- Solid Rocket Boosters (SRB) -->
+        <rect x="210" y="120" width="35" height="260" rx="17.5" fill="#d1d5db" stroke="#9ca3af" stroke-width="2" />
+        <rect x="355" y="120" width="35" height="260" rx="17.5" fill="#d1d5db" stroke="#9ca3af" stroke-width="2" />
+
+        <!-- Orbiter (Side view / Simplified) -->
+        <path d="M 340 180 L 460 300 L 460 360 L 340 360 Z" fill="#fff" stroke="#ccc" stroke-width="2" />
+        <path d="M 460 300 Q 480 330 460 360" fill="none" stroke="#ccc" stroke-width="2" /> <!-- Vertical Stabilizer -->
+
+        <!-- Annotations -->
+        <!-- External Tank label -->
+        <path d="M 340 100 L 400 100" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="405" y="105" fill="#fb923c" font-size="14" font-weight="600">外部燃料箱 (ET)</text>
+
+        <!-- SRB label -->
+        <path d="M 210 200 L 150 200" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="145" y="205" fill="#94a3b8" font-size="14" font-weight="600" text-anchor="end">固體火箭推進器 (SRB)</text>
+
+        <!-- Orbiter label -->
+        <path d="M 460 330 L 520 330" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="525" y="335" fill="#fff" font-size="14" font-weight="600">軌道器 (Orbiter)</text>
+
+        <!-- Main Engines -->
+        <rect x="330" y="360" width="10" height="15" fill="#374151" />
+        <rect x="315" y="360" width="10" height="15" fill="#374151" />
+        <rect x="300" y="360" width="10" height="15" fill="#374151" />
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">太空梭發射配置：軌道器、外部燃料箱與固體推進器</p>
+    </div>
+
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🚀 軌道器 (Orbiter)</h3>
+        <p>太空梭的核心，既是航天器也是滑翔機。它攜帶機組人員和有效載荷，是系統中唯一進入軌道並返回地球的部分。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔥 外部燃料箱 (External Tank)</h3>
+        <p>為軌道器的主發動機提供液氫燃料和液氧氧化劑。它是唯一不可重複使用的部件，在進入軌道前分離並在大氣層中燒毀。</p>
+      </div>
+      <div class="info-card">
+        <h3>⚡ 固體推進器 (SRB)</h3>
+        <p>提供起飛最初兩分鐘內 71% 的推力。燃料耗盡後會掉落至海面，回收並翻新後可再次使用。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Orbiter -->
+  <div id="tab-orbiter" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Orbiter Top View -->
+        <path d="M 300 50 L 380 200 L 380 250 L 220 250 L 220 200 Z" fill="#fff" stroke="#ccc" stroke-width="2" />
+        <rect x="250" y="110" width="100" height="120" fill="none" stroke="#ddd" stroke-dasharray="4,2" />
+
+        <!-- Annotations -->
+        <!-- Cockpit -->
+        <path d="M 300 70 L 420 70" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="425" y="75" fill="#a78bfa" font-size="13" font-weight="600">駕駛艙 (Flight Deck)</text>
+
+        <!-- Payload Bay -->
+        <path d="M 350 150 L 450 150" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="455" y="155" fill="#a78bfa" font-size="13" font-weight="600">有效載荷艙 (Payload Bay)</text>
+
+        <!-- SSME -->
+        <path d="M 300 250 L 300 280 L 330 280" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="335" y="285" fill="#a78bfa" font-size="13" font-weight="600">主發動機 (SSME)</text>
+
+        <!-- RCS -->
+        <path d="M 230 75 L 180 75" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="175" y="80" fill="#a78bfa" font-size="13" font-weight="600" text-anchor="end">姿態控制系統 (RCS)</text>
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🏢 駕駛艙與生活區</h3>
+        <p>上層為飛行甲板，設有駕駛座和操作儀表；下層為中層甲板，提供機組人員休息、用餐及實驗空間。</p>
+      </div>
+      <div class="info-card">
+        <h3>📦 有效載荷艙 (Payload Bay)</h3>
+        <p>長 18.3 公尺，寬 4.6 公尺。用於運載衛星、太空實驗室元件，或進行哈伯望遠鏡的維修任務。</p>
+      </div>
+      <div class="info-card">
+        <h3>⚙️ 反推力系統 (RCS)</h3>
+        <p>分布在機頭和機尾的小型推進器，用於在軌道上精確調整太空梭的姿態與方向。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: TPS -->
+  <div id="tab-tps" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tiles grid concept -->
+        <g transform="translate(100, 50)">
+          <rect x="0" y="0" width="40" height="40" fill="#222" stroke="#444" />
+          <rect x="42" y="0" width="40" height="40" fill="#222" stroke="#444" />
+          <rect x="0" y="42" width="40" height="40" fill="#222" stroke="#444" />
+          <rect x="42" y="42" width="40" height="40" fill="#222" stroke="#444" />
+          <text x="20" y="100" fill="#cbd5e1" font-size="12" text-anchor="middle">HRSI 黑型高溫隔熱瓦</text>
+        </g>
+
+        <!-- Nose cone / Wing lead edge -->
+        <path d="M 400 50 Q 450 50 450 100 L 450 200 Q 450 250 400 250" fill="#555" />
+        <text x="460" y="150" fill="#cbd5e1" font-size="12">強化碳-碳材料 (RCC)</text>
+        <path d="M 450 150 L 500 150" stroke="#fff" stroke-width="1.5" fill="none" />
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🛡️ 隔熱瓦 (Tiles)</h3>
+        <p>太空梭表面覆蓋超過 24,000 塊隔熱瓦。主要由高純度矽纖維組成，能阻絕重返大氣層時產生的 1,600°C 高溫，且散熱極快。</p>
+      </div>
+      <div class="info-card">
+        <h3>💎 強化碳-碳 (RCC)</h3>
+        <p>用於機頭和機翼前緣等熱負荷最高的部位。這種材料在極高溫下仍能保持強度和形狀。</p>
+      </div>
+      <div class="info-card">
+        <h3>🌡️ 熱防護層級</h3>
+        <p>太空梭的不同部位根據預期熱度使用不同材料：黑瓦用於腹部，白瓦用於側面，柔性隔熱毯用於溫度較低的背部。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Mission -->
+  <div id="tab-mission" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Trajectory curve -->
+        <path d="M 50 250 L 100 250 Q 150 50 300 50 T 550 250" fill="none" stroke="#7c6aff" stroke-width="2" stroke-dasharray="8,4" />
+
+        <!-- Phases -->
+        <circle cx="100" cy="250" r="5" fill="#fb923c" />
+        <text x="80" y="275" fill="#fb923c" font-size="11">1. 發射</text>
+
+        <circle cx="300" cy="50" r="5" fill="#3b82f6" />
+        <text x="280" y="35" fill="#3b82f6" font-size="11">2. 軌道運行</text>
+
+        <circle cx="450" cy="110" r="5" fill="#ef4444" />
+        <text x="460" y="115" fill="#ef4444" font-size="11">3. 重返大氣層</text>
+
+        <circle cx="550" cy="250" r="5" fill="#10b981" />
+        <text x="530" y="275" fill="#10b981" font-size="11">4. 降落</text>
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🚀 發射與上升</h3>
+        <p>SSME 和 SRB 同時點火提供巨大的推力。起飛兩分鐘後 SRB 分離，八分鐘後主發動機關機並拋棄外部燃料箱。</p>
+      </div>
+      <div class="info-card">
+        <h3>☄️ 重返 (Re-entry)</h3>
+        <p>太空梭以約 40 度的攻角進入大氣層，利用機腹緩衝衝擊波並產生熱量。透過一系列「S」形轉向來消耗能量並減速。</p>
+      </div>
+      <div class="info-card">
+        <h3>🛬 降落</h3>
+        <p>太空梭此時已成為一架沉重的「無動力滑翔機」。它只有一次降落機會，必須精確對準跑道並以 346 km/h 的高速著陸。</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2024 太空梭構造科普網頁 · 採用 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  function switchTab(btn, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

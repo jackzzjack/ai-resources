@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>現代火箭構造與回收技術</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-fuel: #3b82f6;
+      --color-oxidizer: #ef4444;
+      --color-structure: #94a3b8;
+      --color-engine: #fb923c;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(96,200,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-wrap {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      color: var(--accent2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .highlight-box {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .tabs { flex-wrap: wrap; }
+      .tab-btn { flex: 1 1 40%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>現代火箭構造與回收技術</h1>
+  <p>從傳統的多級消耗到可重複使用的垂直起降革命</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="../index.html">← 返回首頁</a>
+  <a class="nav-link" href="rocket_physics.html">火箭與軌道物理</a>
+  <a class="nav-link" href="space_shuttle.html">太空梭構造</a>
+  <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
+</nav>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'structure')">1. 現代火箭構造</button>
+    <button class="tab-btn" onclick="switchTab(this, 'reuse')">2. 回收原理</button>
+    <button class="tab-btn" onclick="switchTab(this, 'sequence')">3. 飛行程序</button>
+    <button class="tab-btn" onclick="switchTab(this, 'propellant')">4. 燃料與噴嘴</button>
+  </div>
+
+  <!-- Tab: Structure -->
+  <div id="tab-structure" class="tab-panel active">
+    <div class="diagram-wrap">
+      <svg width="400" height="500" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+        <!-- Payload Fairing -->
+        <path d="M 180 20 Q 200 0 220 20 L 225 80 L 175 80 Z" fill="#eee" stroke="#ccc" />
+        <text x="240" y="50" fill="#eee" font-size="12">整流罩 (Fairing) / 酬載</text>
+
+        <!-- Second Stage -->
+        <rect x="175" y="80" width="50" height="80" fill="#ddd" stroke="#bbb" />
+        <path d="M 185 160 L 180 175 L 220 175 L 215 160 Z" fill="#fb923c" />
+        <text x="240" y="125" fill="#ddd" font-size="12">第二節 (Second Stage)</text>
+
+        <!-- Interstage -->
+        <rect x="175" y="175" width="50" height="30" fill="#333" />
+        <text x="240" y="195" fill="#888" font-size="12">級間段 (Interstage)</text>
+
+        <!-- First Stage -->
+        <rect x="175" y="205" width="50" height="200" fill="#eee" stroke="#ccc" />
+        <!-- Fuel Tanks -->
+        <rect x="180" y="215" width="40" height="80" rx="5" fill="rgba(59, 130, 246, 0.3)" stroke="#3b82f6" />
+        <text x="110" y="260" fill="#3b82f6" font-size="11" text-anchor="end">液氧 (LOX)</text>
+        <rect x="180" y="305" width="40" height="80" rx="5" fill="rgba(167, 139, 250, 0.3)" stroke="#a78bfa" />
+        <text x="110" y="350" fill="#a78bfa" font-size="11" text-anchor="end">燃料 (RP-1/CH4)</text>
+
+        <!-- Grid Fins -->
+        <rect x="170" y="210" width="10" height="15" fill="#555" />
+        <rect x="220" y="210" width="10" height="15" fill="#555" />
+        <text x="240" y="222" fill="#888" font-size="11">柵格舵 (Grid Fins)</text>
+
+        <!-- First Stage Engines -->
+        <path d="M 180 405 L 175 425 L 225 425 L 220 405 Z" fill="#fb923c" />
+        <text x="240" y="420" fill="#fb923c" font-size="12">主發動機群 (Engines)</text>
+
+        <!-- Landing Legs (stowed) -->
+        <line x1="175" y1="360" x2="170" y2="400" stroke="#333" stroke-width="3" />
+        <line x1="225" y1="360" x2="230" y2="400" stroke="#333" stroke-width="3" />
+        <text x="240" y="380" fill="#888" font-size="11">著陸支架 (Landing Legs)</text>
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">現代兩級火箭構造示意圖 (以 Falcon 9 為例)</p>
+    </div>
+
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🏗️ 模組化設計</h3>
+        <p>現代火箭通常由多節（Stage）組成。第一節提供起飛推力，第二節負責將酬載精確送入軌道。級間段則包含分離機構與二節引擎。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔋 推進劑儲箱</h3>
+        <p>佔據火箭體積的 90% 以上。包含燃料（Fuel）與氧化劑（Oxidizer）。為了節省重量，儲箱壁極薄，完全依靠內部壓力支撐結構。</p>
+      </div>
+      <div class="info-card">
+        <h3>🖥️ 航電與控制</h3>
+        <p>包含慣性導航系統、GPS 以及控制柵格舵與引擎向量的電腦，確保火箭能精確飛行並在回收時精準降落。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Reuse -->
+  <div id="tab-reuse" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="350" viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+        <!-- Re-entry plasma effect -->
+        <path d="M 280 150 Q 300 200 320 150" fill="none" stroke="#ef4444" stroke-width="4" opacity="0.6">
+          <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1s" repeatCount="indefinite" />
+        </path>
+
+        <!-- Falling Rocket Stage -->
+        <g transform="translate(300, 100) rotate(180)">
+           <rect x="-15" y="-60" width="30" height="120" fill="#eee" />
+           <!-- Grid fins deployed -->
+           <rect x="-25" y="-55" width="10" height="5" fill="#333" />
+           <rect x="15" y="-55" width="10" height="5" fill="#333" />
+           <!-- Engine at bottom (now top due to rotation) -->
+           <path d="M -12 60 L -15 75 L 15 75 L 12 60 Z" fill="#fb923c" />
+        </g>
+
+        <!-- Labels -->
+        <text x="340" y="50" fill="#a78bfa" font-size="14" font-weight="600">1. 姿態調整 (Cold Gas Thrusters)</text>
+        <text x="340" y="100" fill="#888" font-size="12">利用冷氣噴嘴在真空環境轉向</text>
+
+        <text x="340" y="160" fill="#fb923c" font-size="14" font-weight="600">2. 柵格舵 (Grid Fins)</text>
+        <text x="340" y="180" fill="#888" font-size="12">在大氣層中像帆船一樣控制方向</text>
+
+        <text x="340" y="240" fill="#ef4444" font-size="14" font-weight="600">3. 動力減速 (Entry/Landing Burn)</text>
+        <text x="340" y="260" fill="#888" font-size="12">引擎反向點火，抵銷超音速動能</text>
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>♻️ 為什麼可以回收？</h3>
+        <p>過去火箭是「拋棄式」的，因為精確控制重返非常困難。現代回收的核心在於「剩餘燃料」與「精確導航」。</p>
+      </div>
+      <div class="info-card">
+        <h3>🧭 導航關鍵：柵格舵</h3>
+        <p>在超音速下，傳統機翼會燒毀或失效。柵格舵體積小、結構強，能提供極大的控制力矩，將火箭導向降落點。</p>
+      </div>
+      <div class="info-card">
+        <h3>⚓ 著陸支架</h3>
+        <p>由碳纖維和鋁蜂窩組成的輕量化支架，在著陸前幾秒展開，吸收殘餘的衝擊力。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Sequence -->
+  <div id="tab-sequence" class="tab-panel">
+    <div class="info-card" style="width: 100%; margin-bottom: 24px;">
+      <h3 style="justify-content: center;">Falcon 9 標準發射與回收時序 (典型 LEO 任務)</h3>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border); color: var(--accent2);">
+              <th style="padding: 10px; text-align: left;">時間 (T+)</th>
+              <th style="padding: 10px; text-align: left;">事件</th>
+              <th style="padding: 10px; text-align: left;">說明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding: 10px;">00:00:00</td><td style="padding: 10px;">Liftoff</td><td style="padding: 10px;">起飛，9 具引擎全速運作</td></tr>
+            <tr><td style="padding: 10px;">00:01:12</td><td style="padding: 10px;">Max Q</td><td style="padding: 10px;">最大動壓點，火箭承受結構壓力最大時刻</td></tr>
+            <tr><td style="padding: 10px;">00:02:30</td><td style="padding: 10px;">MECO</td><td style="padding: 10px;">主引擎關機 (Main Engine Cut-off)</td></tr>
+            <tr><td style="padding: 10px;">00:02:35</td><td style="padding: 10px;">Separation</td><td style="padding: 10px;">一二節分離</td></tr>
+            <tr><td style="padding: 10px;">00:02:40</td><td style="padding: 10px;">SES-1</td><td style="padding: 10px;">二節引擎啟動 (Second Stage Start)</td></tr>
+            <tr><td style="padding: 10px;">00:06:30</td><td style="padding: 10px;">Entry Burn</td><td style="padding: 10px;">一節進入點火，保護引擎免於大氣加熱</td></tr>
+            <tr><td style="padding: 10px;">00:08:20</td><td style="padding: 10px;">Landing Burn</td><td style="padding: 10px;">一節著陸點火，最終減速</td></tr>
+            <tr><td style="padding: 10px;">00:08:40</td><td style="padding: 10px;">Landing</td><td style="padding: 10px;">一節成功降落於無人船或陸地</td></tr>
+            <tr><td style="padding: 10px;">00:09:00</td><td style="padding: 10px;">SECO</td><td style="padding: 10px;">二節關機，到達初始軌道</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🌬️ 脫離大氣層</h3>
+        <p>在大約 T+2 分鐘時，火箭已穿過大氣層最濃厚部分，此時空氣稀薄，整流罩會拋棄以減少重量。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔄 拋物線回收</h3>
+        <p>一節分離後，會利用冷氣噴嘴進行 180 度翻轉，並視情況進行「返場點火 (Boostback Burn)」以飛回發射場附近。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Propellant & Nozzle -->
+  <div id="tab-propellant" class="tab-panel">
+    <div class="diagram-wrap">
+      <div style="display: flex; gap: 40px; align-items: flex-end; flex-wrap: wrap; justify-content: center;">
+        <!-- Bell Nozzle -->
+        <div style="text-align: center;">
+          <svg width="150" height="200" viewBox="0 0 150 200">
+            <path d="M 60 20 L 90 20 L 120 180 L 30 180 Z" fill="none" stroke="#fb923c" stroke-width="2" />
+            <path d="M 75 20 Q 75 100 130 180 M 75 20 Q 75 100 20 180" fill="none" stroke="#fb923c" stroke-dasharray="4,2" />
+            <text x="75" y="195" fill="#fb923c" font-size="12" text-anchor="middle">鈴形噴嘴 (Bell)</text>
+          </svg>
+          <p style="font-size: 0.8rem; color: var(--muted); margin-top: 10px;">傳統設計，在大氣中效率受限</p>
+        </div>
+        <!-- Aerospike -->
+        <div style="text-align: center;">
+          <svg width="150" height="200" viewBox="0 0 150 200">
+            <path d="M 30 20 L 120 20 L 75 150 Z" fill="#333" stroke="#888" />
+            <path d="M 35 20 L 20 100 Q 40 180 75 180 Q 110 180 130 100 L 115 20" fill="none" stroke="#a78bfa" stroke-width="2" />
+            <text x="75" y="195" fill="#a78bfa" font-size="12" text-anchor="middle">氣尖噴嘴 (Aerospike)</text>
+          </svg>
+          <p style="font-size: 0.8rem; color: var(--muted); margin-top: 10px;">高度補償，各高度效率均衡</p>
+        </div>
+      </div>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🧪 主要燃料組合</h3>
+        <p><b>Kerolox (RP-1/LOX):</b> 能量密度高，技術成熟 (Falcon 9)。</p>
+        <p><b>Hydrolox (LH2/LOX):</b> 比沖最高，但體積巨大且極冷 (SLS, 太空梭)。</p>
+        <p><b>Methalox (CH4/LOX):</b> 燃燒乾淨，有利於回收與火星製取 (Starship)。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔔 噴嘴構造與特色</h3>
+        <p>噴嘴的作用是將燃燒室的高壓轉化為高速動能。<b>鈴形噴嘴</b>最常見，但在低海拔會受到大氣壓壓迫，導致效率下降。</p>
+      </div>
+      <div class="info-card">
+        <h3>🚀 氣尖噴嘴 (Aerospike)</h3>
+        <p>利用大氣壓力作為噴嘴的「隱形邊界」，能自動適應不同海拔。雖然理論效率極高，但冷卻與結構重量仍是工程挑戰。</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2024 現代火箭技術導覽 · 採用 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  function switchTab(btn, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
