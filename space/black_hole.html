@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>黑洞的結構與特色：宇宙中最極端的天體</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-horizon: #ef4444;
+      --color-disk: #fbbf24;
+      --color-jet: #60a5fa;
+      --color-photon: #f472b6;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(150,100,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-wrap {
+      background: #000;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      color: var(--accent2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .highlight-box {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .formula {
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      background: #000;
+      padding: 8px;
+      border-radius: 4px;
+      text-align: center;
+      margin: 8px 0;
+      color: #7dd3fc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .tabs { flex-wrap: wrap; }
+      .tab-btn { flex: 1 1 40%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>黑洞的結構與特色</h1>
+  <p>揭開時空盡頭的神秘面紗，探索宇宙中最極端的天體物理</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="../index.html">← 返回首頁</a>
+  <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
+  <a class="nav-link" href="galaxy.html">銀河系互動圖</a>
+  <a class="nav-link" href="rocket_physics.html">火箭與軌道物理</a>
+</nav>
+
+<main>
+  <!-- Global SVG Definitions -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#888" />
+      </marker>
+    </defs>
+  </svg>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'structure')">1. 空間結構</button>
+    <button class="tab-btn" onclick="switchTab(this, 'features')">2. 物理特色</button>
+    <button class="tab-btn" onclick="switchTab(this, 'dilation')">3. 時間與重力</button>
+    <button class="tab-btn" onclick="switchTab(this, 'hawking')">4. 霍金輻射</button>
+  </div>
+
+  <!-- Tab: Structure -->
+  <div id="tab-structure" class="tab-panel active">
+    <div class="diagram-wrap">
+      <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="holeGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="90%" stop-color="#000" />
+            <stop offset="100%" stop-color="#222" />
+          </radialGradient>
+          <radialGradient id="diskGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="20%" stop-color="#fff" stop-opacity="0.9" />
+            <stop offset="40%" stop-color="#fbbf24" stop-opacity="0.7" />
+            <stop offset="70%" stop-color="#f97316" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="#000" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- Relativistic Jet -->
+        <path d="M 300 200 L 300 50" stroke="url(#jetGrad)" stroke-width="20" stroke-opacity="0.4" />
+        <path d="M 300 200 L 300 350" stroke="url(#jetGrad)" stroke-width="20" stroke-opacity="0.4" />
+        <linearGradient id="jetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#60a5fa" stop-opacity="0" />
+          <stop offset="50%" stop-color="#60a5fa" stop-opacity="1" />
+          <stop offset="100%" stop-color="#60a5fa" stop-opacity="0" />
+        </linearGradient>
+
+        <!-- Accretion Disk (perspective ellipse) -->
+        <ellipse cx="300" cy="200" rx="200" ry="40" fill="url(#diskGrad)" />
+
+        <!-- Black Hole (Event Horizon) -->
+        <circle cx="300" cy="200" r="40" fill="url(#holeGrad)" />
+
+        <!-- Photon Sphere -->
+        <circle cx="300" cy="200" r="60" fill="none" stroke="#f472b6" stroke-width="1" stroke-dasharray="4,4" />
+
+        <!-- Annotations (Orthogonal paths) -->
+        <!-- Relativistic Jet label -->
+        <path d="M 300 80 L 360 80" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="365" y="85" fill="#60a5fa" font-size="13" font-weight="600">相對論性噴流 (Relativistic Jet)</text>
+
+        <!-- Accretion Disk label -->
+        <path d="M 450 200 L 450 150 L 410 150" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="405" y="155" fill="#fbbf24" font-size="13" font-weight="600" text-anchor="end">吸積盤 (Accretion Disk)</text>
+
+        <!-- Event Horizon label -->
+        <path d="M 320 220 L 320 280 L 350 280" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="355" y="285" fill="#ef4444" font-size="13" font-weight="600">事件視界 (Event Horizon)</text>
+
+        <!-- Singularity label -->
+        <path d="M 300 200 L 220 200" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="215" y="205" fill="#fff" font-size="13" font-weight="600" text-anchor="end">奇點 (Singularity)</text>
+
+        <!-- Photon Sphere label -->
+        <path d="M 245 180 L 245 120 L 260 120" stroke="#fff" stroke-width="1.5" fill="none" />
+        <text x="265" y="125" fill="#f472b6" font-size="13" font-weight="600">光子球 (Photon Sphere)</text>
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">黑洞的基本構造示意圖：吸積盤、事件視界與噴流</p>
+    </div>
+
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>⚫ 奇點 (Singularity)</h3>
+        <p>黑洞中心的一個點，體積趨近於零，密度與引力無限大。在這裡，目前已知的物理定律（廣義相對論）將失效。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔴 事件視界 (Event Horizon)</h3>
+        <p>黑洞的邊界。一旦跨越這個界限，即使是宇宙中速度最快的光也無法逃脫。這也是「黑洞」之名的由來。</p>
+        <div class="formula">Rs = 2GM / c²</div>
+      </div>
+      <div class="info-card">
+        <h3>🟠 吸積盤 (Accretion Disk)</h3>
+        <p>由氣體、塵埃和星際物質組成的旋轉盤面。物質在掉入黑洞前因劇烈摩擦產生高溫，發出強烈的 X 射線和可見光。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Features -->
+  <div id="tab-features" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Spaghettification concept -->
+        <rect x="50" y="200" width="20" height="60" fill="#fff" rx="4" />
+        <path d="M 70 230 L 150 230" stroke="#888" stroke-dasharray="4,2" marker-end="url(#arrow)" />
+        <path d="M 200 210 Q 200 230 200 280" stroke="#fff" stroke-width="4" fill="none" />
+        <circle cx="200" cy="285" r="3" fill="#fff" />
+        <text x="50" y="180" fill="#cbd5e1" font-size="14">潮汐力 (Tidal Forces)</text>
+        <text x="220" y="240" fill="#a78bfa" font-size="14">麵條化 (Spaghettification)</text>
+
+        <!-- Gravitational Lensing concept -->
+        <circle cx="450" cy="150" r="30" fill="#000" stroke="#333" />
+        <path d="M 350 150 Q 450 100 550 150" stroke="#7dd3fc" stroke-width="2" fill="none" />
+        <path d="M 350 150 Q 450 200 550 150" stroke="#7dd3fc" stroke-width="2" fill="none" />
+        <text x="400" y="80" fill="#7dd3fc" font-size="14">重力透鏡效應</text>
+
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🍝 麵條化 (Spaghettification)</h3>
+        <p>當物體靠近黑洞時，腳部受到的引力遠大於頭部。這種極端的潮汐力會將物體像麵條一樣垂直拉長、水平擠壓。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔍 重力透鏡 (Gravitational Lensing)</h3>
+        <p>黑洞巨大的質量會扭曲周圍的時空，導致光線路徑彎曲。這使得黑洞後方的星系影像看起來會變形、放大或出現多個重影。</p>
+      </div>
+      <div class="info-card">
+        <h3>💫 磁場與噴流</h3>
+        <p>旋轉的黑洞與吸積盤會產生強大的磁場，將部分物質以接近光速的速度從兩極噴射出去，形成橫跨數千光年的噴流。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Dilation -->
+  <div id="tab-dilation" class="tab-panel">
+    <div class="diagram-wrap">
+      <div class="highlight-box">
+        <p>根據廣義相對論，引力越強的地方，時間流逝越慢。</p>
+      </div>
+      <svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Earth observer -->
+        <circle cx="100" cy="100" r="20" fill="#3b82f6" />
+        <text x="80" y="140" fill="#3b82f6" font-size="12">地球觀察者</text>
+        <text x="85" y="105" fill="#fff" font-size="10">1.0s</text>
+
+        <!-- Near Black Hole -->
+        <circle cx="500" cy="100" r="20" fill="#000" stroke="#ef4444" />
+        <text x="470" y="140" fill="#ef4444" font-size="12">黑洞邊緣</text>
+        <text x="485" y="105" fill="#fff" font-size="10">0.1s</text>
+
+        <path d="M 130 100 L 460 100" stroke="#888" stroke-dasharray="8,4" marker-end="url(#arrow)" />
+        <text x="250" y="90" fill="#muted" font-size="11">引力時間膨脹 (Gravitational Time Dilation)</text>
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>⏳ 時間膨脹</h3>
+        <p>對於遠處的觀察者來說，靠近黑洞的物體似乎動作越來越慢，且永遠無法真正跨越事件視界，而是停留在邊界並逐漸變紅消失（重力紅移）。</p>
+      </div>
+      <div class="info-card">
+        <h3>🌌 時空拖曳 (Frame Dragging)</h3>
+        <p>旋轉的黑洞（克爾黑洞）會像攪拌糖漿一樣，拖著周圍的時空一起旋轉。這個區域被稱為「動圈」(Ergosphere)。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Hawking -->
+  <div id="tab-hawking" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Event Horizon -->
+        <path d="M 300 0 L 300 300" stroke="#ef4444" stroke-width="4" stroke-dasharray="10,5" />
+        <text x="310" y="20" fill="#ef4444" font-size="12">事件視界邊界</text>
+
+        <!-- Virtual particle pair -->
+        <g transform="translate(300, 150)">
+          <circle cx="-30" cy="-10" r="6" fill="#60a5fa" />
+          <text x="-40" y="-20" fill="#60a5fa" font-size="10">負能量粒子</text>
+          <path d="M -20 -10 L -5 -5" stroke="#fff" marker-end="url(#arrow)" />
+
+          <circle cx="30" cy="10" r="6" fill="#fb923c" />
+          <text x="20" y="30" fill="#fb923c" font-size="10">正能量粒子</text>
+          <path d="M 20 10 L 50 20" stroke="#fff" marker-end="url(#arrow)" />
+        </g>
+
+        <text x="50" y="150" fill="#cbd5e1" font-size="14">掉入黑洞</text>
+        <text x="450" y="150" fill="#cbd5e1" font-size="14">逃逸輻射</text>
+      </svg>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>✨ 什麼是霍金輻射？</h3>
+        <p>由史蒂芬·霍金提出。在事件視界附近的量子漲落會產生虛粒子對。當其中一個掉入黑洞，另一個逃逸時，黑洞看起來就像在發光。</p>
+      </div>
+      <div class="info-card">
+        <h3>📉 黑洞蒸發</h3>
+        <p>逃逸的粒子帶走了黑洞的質量。如果沒有新的物質補充，黑洞最終會因為霍金輻射而完全蒸發消失。</p>
+      </div>
+      <div class="info-card">
+        <h3>🧩 資訊悖論</h3>
+        <p>如果黑洞蒸發了，當初掉進去的資訊去哪了？這是目前現代物理學中最重大的爭議之一。</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2024 黑洞物理科普網頁 · 採用 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  function switchTab(btn, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
