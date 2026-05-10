@@ -19,7 +19,8 @@
 | `index.html` | 主入口頁，導覽至所有子頁面 |
 | `ai-services.html` | AI 服務快速連結頁 |
 | `periodic_table.html` | 互動式元素週期表（含詳細元素資料） |
-| `solar_system.html` | 太陽系 3D 互動視覺化（Canvas / CSS 3D） |
+| `space/solar_system.html` | 太陽系互動視覺化（Canvas 2D，行星軌道 / 縮放 / 速度調整） |
+| `space/galaxy.html` | 銀河系互動視覺化（程序生成旋臂、核球、太陽系定位標記） |
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
