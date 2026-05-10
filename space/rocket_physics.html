@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>火箭與軌道物理：從發射到星際航行</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-launch: #fb923c;
+      --color-orbit: #3b82f6;
+      --color-escape: #10b981;
+      --color-solar: #ef4444;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(96,200,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-wrap {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      color: var(--accent2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .highlight-box {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .formula {
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      background: #000;
+      padding: 8px;
+      border-radius: 4px;
+      text-align: center;
+      margin: 8px 0;
+      color: #7dd3fc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .tabs { flex-wrap: wrap; }
+      .tab-btn { flex: 1 1 40%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>火箭與軌道物理</h1>
+  <p>探索人類如何脫離地球，航向星辰大海的科學奧秘</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="../index.html">← 返回首頁</a>
+  <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
+  <a class="nav-link" href="galaxy.html">銀河系互動圖</a>
+</nav>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'launch')">1. 發射流程</button>
+    <button class="tab-btn" onclick="switchTab(this, 'orbit')">2. 進入軌道</button>
+    <button class="tab-btn" onclick="switchTab(this, 'planetary')">3. 脫離星球</button>
+    <button class="tab-btn" onclick="switchTab(this, 'solar')">4. 脫離太陽系</button>
+  </div>
+
+  <!-- Tab: Launch -->
+  <div id="tab-launch" class="tab-panel active">
+    <div class="diagram-wrap">
+      <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skyGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+          </linearGradient>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8" />
+          </marker>
+        </defs>
+        <!-- Ground -->
+        <rect x="0" y="380" width="600" height="20" fill="#1e293b" />
+        <!-- Atmosphere -->
+        <rect x="0" y="0" width="600" height="380" fill="url(#skyGrad)" />
+
+        <!-- Gravity Turn Trajectory -->
+        <path d="M 100 380 L 100 300 Q 100 150 500 100" fill="none" stroke="#fb923c" stroke-width="3" stroke-dasharray="8,4" />
+
+        <!-- Labels -->
+        <text x="110" y="360" fill="#cbd5e1" font-size="12">1. 垂直起飛</text>
+        <text x="140" y="220" fill="#cbd5e1" font-size="12">2. 重力轉向開始</text>
+        <text x="450" y="80" fill="#cbd5e1" font-size="12">3. 水平加速進入軌道</text>
+
+        <!-- Rocket (simplified) -->
+        <g transform="translate(500, 100) rotate(-75)">
+          <path d="M 0 -15 L 5 0 L -5 0 Z" fill="#fff" />
+          <rect x="-3" y="0" width="6" height="15" fill="#fff" />
+          <path d="M -3 15 L 3 15 L 5 20 L -5 20 Z" fill="#fb923c" />
+        </g>
+
+        <!-- Gravity indicator -->
+        <line x1="300" y1="200" x2="300" y2="250" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+        <text x="310" y="240" fill="#94a3b8" font-size="11">重力 (g)</text>
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">火箭發射與重力轉向（Gravity Turn）示意圖</p>
+    </div>
+
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🚀 垂直起飛與動力加速</h3>
+        <p>火箭最初垂直起飛以最快速度穿過大氣層最濃厚的部分，減少空氣阻力造成的損失。</p>
+        <div class="highlight-box">
+          <b>推重比 (TWR):</b> 必須大於 1 才能離開地面。
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>📐 重力轉向 (Gravity Turn)</h3>
+        <p>起飛不久後，火箭會微微傾斜。重力會自然地使飛行路徑彎曲，將垂直速度轉換為水平速度。</p>
+        <p>這能最大化燃料效率，並減少結構壓力。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔥 階段分離 (Staging)</h3>
+        <p>為了減輕重量，火箭會拋棄已耗盡燃料的推進器（Stage）。這是齊奧爾科夫斯基火箭方程的實踐。</p>
+        <div class="formula">Δv = ve * ln(m0 / mf)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Orbit -->
+  <div id="tab-orbit" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Earth -->
+        <circle cx="300" cy="200" r="80" fill="#1e40af" stroke="#3b82f6" stroke-width="2" />
+        <text x="300" y="205" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">地球</text>
+
+        <!-- Orbits -->
+        <!-- Suborbital -->
+        <path d="M 300 100 Q 450 100 450 200" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4" />
+        <text x="460" y="180" fill="#94a3b8" font-size="10">亞軌道 (速度不足)</text>
+
+        <!-- Circular Orbit -->
+        <circle cx="300" cy="200" r="140" fill="none" stroke="#3b82f6" stroke-width="2" />
+
+        <!-- Rocket in orbit -->
+        <g transform="translate(300, 60)">
+          <circle r="4" fill="#fff" />
+          <line x1="0" y1="0" x2="40" y2="0" stroke="#fb923c" stroke-width="2" marker-end="url(#arrow)" />
+          <text x="10" y="-10" fill="#fb923c" font-size="11">切線速度 v1</text>
+        </g>
+
+        <!-- Gravity -->
+        <line x1="300" y1="60" x2="300" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+        <text x="310" y="90" fill="#94a3b8" font-size="11">重力拉力</text>
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">牛頓的炮彈試驗：當速度足夠快時，掉落的曲線與地球弧度平行</p>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🌍 什麼是軌道？</h3>
+        <p>進入軌道並非僅僅是「飛得夠高」，更關鍵的是「飛得夠快」。在軌道上，火箭實際上是在「繞著星球掉落」。</p>
+      </div>
+      <div class="info-card">
+        <h3>速度是關鍵 (v1)</h3>
+        <p>第一宇宙速度：物體近地環繞星球作圓周運動所需的最小速度。</p>
+        <div class="formula">v1 = √(GM / r)</div>
+        <p>地球的 v1 約為 7.9 km/s。</p>
+      </div>
+      <div class="info-card">
+        <h3>軌道圓化 (Circularization)</h3>
+        <p>到達預定高度（遠地點）後，火箭再次點火增加水平速度，將橢圓軌道修整為圓形軌道。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Planetary Escape -->
+  <div id="tab-planetary" class="tab-panel">
+    <div class="diagram-wrap">
+      <div style="margin-bottom: 20px; text-align: center; background: var(--surface2); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+        <h4 style="margin-bottom: 10px; color: var(--accent2);">逃逸速度計算器</h4>
+        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <label>選擇星球:</label>
+          <select id="planet-select" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 4px; border-radius: 4px;">
+            <option value="11.186">地球</option>
+            <option value="2.38">月球</option>
+            <option value="5.03">火星</option>
+            <option value="59.5">木星</option>
+            <option value="617.5">太陽</option>
+          </select>
+          <span>逃逸速度 v2: <strong id="v2-result" style="color: var(--color-escape);">11.19</strong> km/s</span>
+        </div>
+      </div>
+      <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Planet -->
+        <circle cx="150" cy="200" r="50" fill="#065f46" stroke="#10b981" stroke-width="2" />
+
+        <!-- Closed Orbit -->
+        <ellipse cx="150" cy="200" rx="100" ry="80" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,2" />
+        <text x="180" y="110" fill="#94a3b8" font-size="10">封閉軌道 (v < v2)</text>
+
+        <!-- Escape Trajectory (Hyperbola-ish) -->
+        <path d="M 150 120 Q 350 120 550 50" fill="none" stroke="#10b981" stroke-width="3" />
+
+        <!-- Burn point -->
+        <circle cx="150" cy="120" r="5" fill="#ef4444" />
+        <text x="160" y="140" fill="#ef4444" font-size="12" font-weight="700">加速點 (Burn)</text>
+
+        <text x="450" y="100" fill="#10b981" font-size="12">逃逸軌道 (Hyperbolic)</text>
+        <text x="450" y="120" fill="#10b981" font-size="12">速度 ≥ v2</text>
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">雙曲線逃逸軌道示意圖</p>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🌌 脫離引力束縛</h3>
+        <p>當動能足以抵消引力位能時，物體就能脫離星球的引力束縛，不再返回。</p>
+      </div>
+      <div class="info-card">
+        <h3>第二宇宙速度 (v2)</h3>
+        <p>又稱逃逸速度。在星球表面將物體彈射出去，使其永遠脫離該星球引力所需的最小初速度。</p>
+        <div class="formula">v2 = √(2GM / r) = √2 * v1</div>
+        <p>地球的 v2 約為 11.2 km/s。</p>
+      </div>
+      <div class="info-card">
+        <h3>霍曼轉移軌道</h3>
+        <p>用於在兩個不同半徑的圓形軌道間轉移，是能量效率最高的方法之一。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Solar Escape -->
+  <div id="tab-solar" class="tab-panel">
+    <div class="diagram-wrap">
+      <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sun -->
+        <circle cx="50" cy="200" r="30" fill="#facc15" />
+        <text x="50" y="205" text-anchor="middle" fill="#000" font-size="10">太陽</text>
+
+        <!-- Jupiter -->
+        <circle cx="350" cy="200" r="40" fill="#92400e" stroke="#b45309" stroke-width="2" />
+        <text x="350" y="205" text-anchor="middle" fill="#fff" font-size="12">木星</text>
+
+        <!-- Jupiter's Motion -->
+        <line x1="350" y1="200" x2="350" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+        <text x="360" y="130" fill="#94a3b8" font-size="11">木星公轉速度</text>
+
+        <!-- Voyager Trajectory -->
+        <path d="M 100 250 Q 300 250 350 240 T 550 150" fill="none" stroke="#ef4444" stroke-width="2" />
+        <text x="200" y="270" fill="#ef4444" font-size="11">航海家號路徑</text>
+        <text x="450" y="210" fill="#ef4444" font-size="11">獲得動量增加</text>
+
+        <!-- Orbit of Earth (part) -->
+        <path d="M 100 100 A 200 200 0 0 1 100 300" fill="none" stroke="#1e3a8a" stroke-width="1" />
+      </svg>
+      <p style="margin-top: 16px; color: var(--muted); font-size: 0.85rem;">航海家號利用木星引力彈弓加速示意圖</p>
+    </div>
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>☀️ 離開太陽系</h3>
+        <p>要離開太陽系，物體必須克服太陽的強大引力。這需要極高的速度，遠超目前化學火箭的能力。</p>
+      </div>
+      <div class="info-card">
+        <h3>第三宇宙速度 (v3)</h3>
+        <p>在地球表面發射物體，使其脫離太陽系引力所需的最小初速度。</p>
+        <div class="highlight-box">
+          地球表面的 v3 約為 16.7 km/s (已利用地球公轉速度)。
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>引力助推 (Gravity Assist)</h3>
+        <p>利用行星的動量來加速或減速航天器。這被稱為「引力彈弓」，是深空探測任務（如航海家號）的必備技術。</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2024 火箭物理知識網頁 · 採用 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  function switchTab(btn, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Escape velocity calculator logic
+  const planetSelect = document.getElementById('planet-select');
+  const v2Result = document.getElementById('v2-result');
+
+  planetSelect.addEventListener('change', () => {
+    v2Result.textContent = parseFloat(planetSelect.value).toFixed(2);
+  });
+</script>
+
+</body>
+</html>
