@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 2026 動力單元架構</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #ff3e3e;
+      --accent2: #ff8080;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-ice: #ef4444;
+      --color-electrical: #7c6aff;
+      --color-energy: #f59e0b;
+      --color-turbo: #06b6d4;
+      --color-fuel: #10b981;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,62,62,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 30%, rgba(124,106,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 2px solid;
+    }
+
+    /* SVG container */
+    .diagram-wrap {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 32px;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    svg {
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      background: #1c1c2e;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 12px 16px;
+      max-width: 300px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .tooltip.show { opacity: 1; }
+
+    .tooltip h3 {
+      color: var(--accent2);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .tooltip .full-name {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .tooltip p { color: var(--text); }
+
+    /* Info sections */
+    .info-section {
+      margin-top: 48px;
+    }
+
+    .info-section h2 {
+      font-size: 1.2rem;
+      color: var(--accent2);
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface2);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table th {
+      background: rgba(255,255,255,0.05);
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    .comparison-table tr:last-child td { border-bottom: none; }
+
+    .highlight-diff {
+      color: var(--color-fuel);
+      font-weight: 600;
+    }
+
+    .highlight-removed {
+      color: var(--color-ice);
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover { border-color: var(--accent); }
+
+    .info-card .abbr {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 4px;
+    }
+
+    .info-card .desc {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* SVG elements */
+    .comp-box {
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+    .comp-box:hover {
+      filter: brightness(1.2) saturate(1.2);
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 1.5rem; }
+      .legend { gap: 12px; }
+      main { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>F1 2026 動力單元架構</h1>
+  <p>FIA 2026 技術規則 — 邁向 100% 永續燃料與高度電氣化</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+</nav>
+
+<main>
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:var(--color-ice);background:rgba(239,68,68,0.2)"></div>
+      <span>內燃機系統 (ICE)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:var(--color-turbo);background:rgba(6,182,212,0.2)"></div>
+      <span>渦輪增壓 (TC)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:var(--color-electrical);background:rgba(124,106,255,0.2)"></div>
+      <span>電力回收/驅動 (MGU-K/CE)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="border-color:var(--color-energy);background:rgba(245,158,11,0.2)"></div>
+      <span>能量儲存 (ES)</span>
+    </div>
+    <div class="legend-item">
+      <span style="color:#fff;font-weight:700">━━</span>
+      <span>機械連結</span>
+    </div>
+    <div class="legend-item">
+      <span style="color:var(--color-electrical);font-weight:700">━━</span>
+      <span>電力傳輸</span>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="1000" height="600" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background / Labels -->
+      <text x="500" y="580" text-anchor="middle" fill="#555577" font-size="12">點擊各元件查看詳細規格說明</text>
+
+      <!-- Energy Store (ES) / Battery -->
+      <g class="comp-box" onclick="showTooltip(event, 'es')">
+        <rect x="50" y="380" width="180" height="100" rx="10" fill="rgba(245,158,11,0.15)" stroke="var(--color-energy)" stroke-width="2.5" />
+        <text x="140" y="425" text-anchor="middle" fill="var(--color-energy)" font-size="18" font-weight="700">ES</text>
+        <text x="140" y="445" text-anchor="middle" fill="var(--color-energy)" font-size="11">Energy Store</text>
+        <text x="140" y="460" text-anchor="middle" fill="var(--color-energy)" font-size="9">能量儲存 (電池組)</text>
+      </g>
+
+      <!-- Control Electronics (CE) -->
+      <g class="comp-box" onclick="showTooltip(event, 'ce')">
+        <rect x="50" y="180" width="180" height="80" rx="10" fill="rgba(124,106,255,0.15)" stroke="var(--color-electrical)" stroke-width="2" />
+        <text x="140" y="215" text-anchor="middle" fill="var(--color-electrical)" font-size="18" font-weight="700">CE</text>
+        <text x="140" y="235" text-anchor="middle" fill="var(--color-electrical)" font-size="11">Control Electronics</text>
+        <text x="140" y="250" text-anchor="middle" fill="var(--color-electrical)" font-size="9">控制電子單元</text>
+      </g>
+
+      <!-- MGU-K -->
+      <g class="comp-box" onclick="showTooltip(event, 'mguk')">
+        <rect x="350" y="380" width="160" height="100" rx="10" fill="rgba(124,106,255,0.2)" stroke="var(--color-electrical)" stroke-width="2.5" />
+        <text x="430" y="425" text-anchor="middle" fill="var(--color-electrical)" font-size="20" font-weight="800">MGU-K</text>
+        <text x="430" y="445" text-anchor="middle" fill="var(--color-electrical)" font-size="11">Motor Generator Unit - Kinetic</text>
+        <text x="430" y="460" text-anchor="middle" fill="var(--color-electrical)" font-size="10" font-weight="700">350 kW (476 hp)</text>
+      </g>
+
+      <!-- Internal Combustion Engine (ICE) -->
+      <g class="comp-box" onclick="showTooltip(event, 'ice')">
+        <rect x="350" y="150" width="300" height="180" rx="12" fill="rgba(239,68,68,0.15)" stroke="var(--color-ice)" stroke-width="3" />
+        <text x="500" y="230" text-anchor="middle" fill="var(--color-ice)" font-size="24" font-weight="800">ICE</text>
+        <text x="500" y="255" text-anchor="middle" fill="var(--color-ice)" font-size="12">1.6L V6 Turbocharged Engine</text>
+        <text x="500" y="275" text-anchor="middle" fill="var(--color-ice)" font-size="11">使用 100% 永續燃料</text>
+        <text x="500" y="295" text-anchor="middle" fill="var(--color-ice)" font-size="12" font-weight="700">~400 kW (544 hp)</text>
+      </g>
+
+      <!-- Turbocharger (TC) -->
+      <g class="comp-box" onclick="showTooltip(event, 'tc')">
+        <circle cx="800" cy="240" r="60" fill="rgba(6,182,212,0.15)" stroke="var(--color-turbo)" stroke-width="2.5" />
+        <text x="800" y="240" text-anchor="middle" fill="var(--color-turbo)" font-size="20" font-weight="800">TC</text>
+        <text x="800" y="260" text-anchor="middle" fill="var(--color-turbo)" font-size="10">Turbocharger</text>
+        <text x="800" y="320" text-anchor="middle" fill="var(--color-turbo)" font-size="11">渦輪增壓器 (單級)</text>
+      </g>
+
+      <!-- Connections (Orthogonal Paths) -->
+      <!-- Mechanical: ICE to MGU-K -->
+      <path d="M430,330 V380" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="8,4" />
+      <text x="440" y="360" fill="#fff" font-size="10">曲軸連結</text>
+
+      <!-- Mechanical: Exhaust to TC -->
+      <path d="M650,220 H740" fill="none" stroke="var(--color-ice)" stroke-width="6" marker-end="url(#arrow-ice)" />
+      <text x="695" y="210" text-anchor="middle" fill="var(--color-ice)" font-size="10">廢氣</text>
+
+      <!-- Mechanical: TC to Intake -->
+      <path d="M740,260 H650" fill="none" stroke="var(--color-turbo)" stroke-width="6" marker-end="url(#arrow-turbo)" />
+      <text x="695" y="285" text-anchor="middle" fill="var(--color-turbo)" font-size="10">增壓進氣</text>
+
+      <!-- Electrical: ES to CE -->
+      <path d="M140,380 V260" fill="none" stroke="var(--color-electrical)" stroke-width="4" />
+
+      <!-- Electrical: CE to MGU-K -->
+      <path d="M230,220 H300 V430 H350" fill="none" stroke="var(--color-electrical)" stroke-width="4" />
+      <text x="270" y="330" text-anchor="middle" fill="var(--color-electrical)" font-size="11" transform="rotate(-90, 270, 330)">AC/DC 轉換</text>
+
+      <!-- Removed Component Note: MGU-H -->
+      <g opacity="0.3">
+        <rect x="730" y="100" width="140" height="60" rx="8" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="4,4" />
+        <text x="800" y="130" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">MGU-H</text>
+        <line x1="740" y1="110" x2="860" y2="150" stroke="var(--color-ice)" stroke-width="3" />
+        <line x1="860" y1="110" x2="740" y2="150" stroke="var(--color-ice)" stroke-width="3" />
+        <text x="800" y="175" text-anchor="middle" fill="#fff" font-size="10">已從 2026 規則移除</text>
+      </g>
+
+      <!-- Arrows Definitions -->
+      <defs>
+        <marker id="arrow-ice" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 Z" fill="var(--color-ice)" />
+        </marker>
+        <marker id="arrow-turbo" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 Z" fill="var(--color-turbo)" />
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <section class="info-section">
+    <h2>規則對比：2022-2025 vs. 2026</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>特性</th>
+          <th>2022 - 2025 (現行)</th>
+          <th>2026 (新制)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>內燃機 (ICE) 功率</td>
+          <td>約 550 - 600 kW (可達 800 hp)</td>
+          <td>約 400 kW (約 544 hp) <span class="highlight-diff">(-30%)</span></td>
+        </tr>
+        <tr>
+          <td>MGU-K 功率 (電力)</td>
+          <td>120 kW (163 hp)</td>
+          <td>350 kW (476 hp) <span class="highlight-diff">(+190%)</span></td>
+        </tr>
+        <tr>
+          <td>熱能回收 (MGU-H)</td>
+          <td>有 (與渦輪連結)</td>
+          <td><span class="highlight-removed">無 (完全移除)</span></td>
+        </tr>
+        <tr>
+          <td>燃料類型</td>
+          <td>E10 (10% 乙醇)</td>
+          <td>100% 永續、碳中和燃料</td>
+        </tr>
+        <tr>
+          <td>燃料流量限制</td>
+          <td>100 kg/hr (固定限制)</td>
+          <td>能量限制 (受控於能源管理)</td>
+        </tr>
+        <tr>
+          <td>總輸出功率</td>
+          <td>約 1000 hp</td>
+          <td>約 1000 hp (電力佔比顯著提升)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="info-section">
+    <h2>核心元件詳解</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="abbr">ICE (Internal Combustion Engine)</div>
+        <div class="desc">
+          1.6 升 V6 渦輪增壓引擎。2026 年後將功率下調至約 400kW (544hp)，並強制使用 100% 永續燃料。燃料流量限制將由原本的質量限制轉為能量限制，以鼓勵提升熱效率。
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">MGU-K (Kinetic)</div>
+        <div class="desc">
+          動能電機單元。連結於引擎曲軸，在煞車時作為發電機回收動能，在加速時作為馬達提供額外驅動力。2026 年功率從 120kW 大幅提升至 350kW，成為動力輸出的一半。
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">ES (Energy Store)</div>
+        <div class="desc">
+          能量儲存單元 (電池組)。2026 年規則強化了安全性要求，並增加了回收能量的限制。單圈可回收能量從 2MJ 提升至更高水平，以對應更強大的 MGU-K。
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">TC (Turbocharger)</div>
+        <div class="desc">
+          單級渦輪增壓器。廢氣驅動渦輪，進而壓縮進氣。由於 MGU-H 移除，2026 年的渦輪將不再與馬達連結，這可能導致更明顯的渦輪遲滯，車隊需透過 MGU-K 介入來補償。
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">CE (Control Electronics)</div>
+        <div class="desc">
+          控制電子單元。負責直流電與交流電間的轉換，並管理 ES、MGU-K 之間的能量流向。它是混合動力系統的「大腦」，決定了何時部署動力與回收能量。
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="abbr">MGU-H (Removed)</div>
+        <div class="desc">
+          熱能電機單元。曾用於回收渦輪熱能並消除延遲。2026 年為了降低開發難度、成本，並吸引如 Audi 等新廠商加入，正式取消此元件。
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>資料參考：FIA Technical Regulations 2026 | F1.com | <a href="index.html" style="color:var(--accent2); text-decoration:none;">返回首頁</a></p>
+</footer>
+
+<div class="tooltip" id="tooltip">
+  <h3 id="tt-title"></h3>
+  <div class="full-name" id="tt-full"></div>
+  <p id="tt-desc"></p>
+</div>
+
+<script>
+  const compData = {
+    ice: {
+      title: 'ICE (內燃機)',
+      full: 'Internal Combustion Engine',
+      desc: '1.6L V6 渦輪增壓引擎。2026 規則下功率調降至 400kW。使用 100% 永續燃料，實現碳中和目標。它是動力單元的核心機械來源。'
+    },
+    mguk: {
+      title: 'MGU-K (動能回收馬達)',
+      full: 'Motor Generator Unit - Kinetic',
+      desc: '功率從 120kW 翻倍至 350kW。煞車時回收動能為電池充電，加速時提供約 476hp 的電能動力。2026 賽車將更加依賴電能輸出。'
+    },
+    tc: {
+      title: 'TC (渦輪增壓器)',
+      full: 'Turbocharger',
+      desc: '利用廢氣能量壓縮空氣進入汽缸。2026 年起不再連結 MGU-H，這增加了系統簡潔性，但也對能源管理提出更高挑戰，以消除可能的渦輪遲滯。'
+    },
+    es: {
+      title: 'ES (電池組)',
+      full: 'Energy Store',
+      desc: '儲存混合動力系統所需的電能。2026 年電池技術將更注重安全性與輕量化，並配合 MGU-K 功率的提升而進行優化。'
+    },
+    ce: {
+      title: 'CE (控制電子)',
+      full: 'Control Electronics',
+      desc: '負責將電池的直流電轉換為馬達的交流電。2026 年規則嚴格限制了每個賽季可使用的單元數量，強調耐用性與能源效率。'
+    }
+  };
+
+  const tooltip = document.getElementById('tooltip');
+
+  function showTooltip(event, id) {
+    const data = compData[id];
+    if (!data) return;
+    document.getElementById('tt-title').textContent = data.title;
+    document.getElementById('tt-full').textContent = data.full;
+    document.getElementById('tt-desc').textContent = data.desc;
+
+    const x = event.clientX + 16;
+    const y = event.clientY + 16;
+    const tw = 300;
+    const th = 150;
+    tooltip.style.left = (x + tw > window.innerWidth ? x - tw - 32 : x) + 'px';
+    tooltip.style.top = (y + th > window.innerHeight ? y - th : y) + 'px';
+    tooltip.classList.add('show');
+    event.stopPropagation();
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (tooltip.classList.contains('show')) {
+      const x = e.clientX + 16;
+      const y = e.clientY + 16;
+      const tw = 300;
+      tooltip.style.left = (x + tw > window.innerWidth ? x - tw - 32 : x) + 'px';
+      tooltip.style.top = (y + 150 > window.innerHeight ? y - 150 : y) + 'px';
+    }
+  });
+
+  document.addEventListener('click', () => {
+    tooltip.classList.remove('show');
+  });
+</script>
+</body>
+</html>
