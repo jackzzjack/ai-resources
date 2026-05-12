@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台北捷運路網互動圖</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --mrt-br: #c48c31;
+      --mrt-r: #e3002c;
+      --mrt-g: #008659;
+      --mrt-o: #f8b61c;
+      --mrt-bl: #0070bd;
+      --mrt-y: #ffdb00;
+      --mrt-lg: #99cc00;
+      --mrt-sb: #0099cc;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(96,200,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      justify-content: center;
+    }
+
+    .legend-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .legend-title {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .legend-items {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .line-sample {
+      width: 32px;
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    .diagram-container {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 40px;
+      overflow: auto;
+      position: relative;
+      min-height: 800px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    svg {
+      flex-shrink: 0;
+      user-select: none;
+      background: #0d0d14;
+      border-radius: 8px;
+    }
+
+    .mrt-line {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 0.3s;
+    }
+
+    .mrt-line.construction {
+      stroke-dasharray: 10, 8;
+    }
+
+    .mrt-line.planned {
+      stroke-dasharray: 2, 8;
+      opacity: 0.6;
+    }
+
+    .station-node {
+      fill: var(--bg);
+      stroke: #fff;
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: transform 0.2s, stroke-width 0.2s, fill 0.2s;
+    }
+
+    .station-node:hover {
+      transform: scale(1.3);
+      stroke-width: 2.5;
+      stroke: var(--accent2);
+      fill: var(--surface2);
+    }
+
+    .station-label {
+      font-size: 11px;
+      fill: var(--text);
+      pointer-events: none;
+      font-weight: 500;
+      text-shadow: 0 0 4px #000;
+      opacity: 0.8;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      background: #1c1c28;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 12px 16px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .tooltip.show { opacity: 1; }
+    .tooltip h3 { font-size: 1rem; color: var(--text); margin-bottom: 4px; }
+    .tooltip .status { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; font-weight: 600; }
+    .tooltip .status.op { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .tooltip .status.const { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    .tooltip .status.plan { background: rgba(124, 106, 255, 0.2); color: #a78bfa; }
+    .tooltip p { font-size: 0.85rem; color: var(--muted); }
+
+    .info-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .info-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: var(--accent2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .line-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .line-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .line-badge {
+      width: 40px;
+      height: 20px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .diagram-container { padding: 10px; }
+      header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>台北捷運路網互動圖</h1>
+  <p>整合營運中、興建中及規劃中路線之全景導覽</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+</nav>
+
+<main>
+  <div class="control-panel">
+    <div class="legend-group">
+      <div class="legend-title">路線狀態</div>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="line-sample" style="background: var(--accent2);"></div>
+          <span>營運中</span>
+        </div>
+        <div class="legend-item">
+          <div class="line-sample" style="border: 1px dashed var(--accent2); background: none; height: 0;"></div>
+          <span>興建中</span>
+        </div>
+        <div class="legend-item">
+          <div class="line-sample" style="border: 1px dotted var(--muted); background: none; height: 0;"></div>
+          <span>規劃中</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg width="1000" height="900" viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg">
+      <!-- MRT Lines (Paths) -->
+      <g id="mrt-lines-layer">
+        <!-- BL Bannan Line -->
+        <path class="mrt-line" d="M100,500 L900,500" stroke="var(--mrt-bl)" />
+
+        <!-- R Tamsui-Xinyi Line -->
+        <path class="mrt-line" d="M500,50 L500,650" stroke="var(--mrt-r)" />
+        <path class="mrt-line construction" d="M500,650 L500,750" stroke="var(--mrt-r)" />
+
+        <!-- G Songshan-Xindian Line -->
+        <path class="mrt-line" d="M800,350 L750,350 L650,350 L500,350 L350,500 L350,600 L500,700 L600,800" stroke="var(--mrt-g)" />
+
+        <!-- O Zhonghe-Xinlu Line -->
+        <path class="mrt-line" d="M150,150 L350,350 L500,350 L500,500 L650,650 L650,800" stroke="var(--mrt-o)" />
+        <path class="mrt-line" d="M150,250 L350,350" stroke="var(--mrt-o)" />
+
+        <!-- BR Wenhu Line -->
+        <path class="mrt-line" d="M900,300 L900,500 L850,650 L700,850" stroke="var(--mrt-br)" />
+        <path class="mrt-line" d="M900,300 L800,200 L650,200 L650,500" stroke="var(--mrt-br)" />
+
+        <!-- Y Circular Line -->
+        <!-- West (Op) -->
+        <path class="mrt-line" d="M600,800 L350,800 L200,650 L200,350" stroke="var(--mrt-y)" />
+        <!-- North (Const) -->
+        <path class="mrt-line construction" d="M200,350 L350,200 L500,50 L800,200" stroke="var(--mrt-y)" />
+        <!-- South (Const) -->
+        <path class="mrt-line construction" d="M600,800 L700,850" stroke="var(--mrt-y)" />
+        <!-- East (Plan) -->
+        <path class="mrt-line planned" d="M800,200 L950,400 L900,500 L800,700 L700,850" stroke="var(--mrt-y)" />
+
+        <!-- LG Wanda Line -->
+        <path class="mrt-line construction" d="M500,700 L350,700 L200,700" stroke="var(--mrt-lg)" />
+        <path class="mrt-line planned" d="M200,700 L50,700 L50,500" stroke="var(--mrt-lg)" />
+
+        <!-- SB Minsheng-Xizhi Line -->
+        <path class="mrt-line planned" d="M350,350 L350,150 L600,150 L950,150" stroke="var(--mrt-sb)" />
+      </g>
+
+      <!-- Station Nodes -->
+      <g id="stations-layer">
+        <!-- Transfer Nodes (Large) -->
+        <circle class="station-node" cx="500" cy="500" r="8" data-name="台北車站" data-status="op" />
+        <circle class="station-node" cx="350" cy="500" r="7" data-name="西門" data-status="op" />
+        <circle class="station-node" cx="500" cy="350" r="7" data-name="中山" data-status="op" />
+        <circle class="station-node" cx="650" cy="500" r="7" data-name="忠孝復興" data-status="op" />
+        <circle class="station-node" cx="650" cy="350" r="7" data-name="忠孝新生" data-status="op" />
+        <circle class="station-node" cx="650" cy="200" r="7" data-name="南京復興" data-status="op" />
+        <circle class="station-node" cx="500" cy="200" r="7" data-name="民權西路" data-status="op" />
+        <circle class="station-node" cx="350" cy="350" r="7" data-name="大橋頭" data-status="op" />
+        <circle class="station-node" cx="800" cy="200" r="7" data-name="劍南路" data-status="op" />
+        <circle class="station-node" cx="900" cy="500" r="7" data-name="南港展覽館" data-status="op" />
+        <circle class="station-node" cx="200" cy="350" r="7" data-name="新北產業園區" data-status="op" />
+        <circle class="station-node" cx="650" cy="650" r="7" data-name="古亭" data-status="op" />
+        <circle class="station-node" cx="700" cy="850" r="7" data-name="動物園" data-status="op" />
+
+        <!-- Terminals & Others -->
+        <circle class="station-node" cx="500" cy="50" r="5" data-name="淡水" data-status="op" />
+        <circle class="station-node" cx="500" cy="650" r="5" data-name="象山" data-status="op" />
+        <circle class="station-node" cx="500" cy="750" r="5" data-name="廣慈/奉天宮" data-status="const" />
+        <circle class="station-node" cx="100" cy="500" r="5" data-name="頂埔" data-status="op" />
+        <circle class="station-node" cx="800" cy="350" r="5" data-name="松山" data-status="op" />
+        <circle class="station-node" cx="600" cy="800" r="5" data-name="大坪林" data-status="op" />
+        <circle class="station-node" cx="150" cy="150" r="5" data-name="迴龍" data-status="op" />
+        <circle class="station-node" cx="150" cy="250" r="5" data-name="蘆洲" data-status="op" />
+        <circle class="station-node" cx="350" cy="700" r="5" data-name="中和" data-status="const" />
+        <circle class="station-node" cx="200" cy="700" r="5" data-name="莒光" data-status="const" />
+        <circle class="station-node" cx="950" cy="150" r="5" data-name="汐止" data-status="plan" />
+
+        <!-- Labels -->
+        <g class="station-labels">
+          <text class="station-label" x="512" y="504">台北車站</text>
+          <text class="station-label" x="362" y="504">西門</text>
+          <text class="station-label" x="512" y="354">中山</text>
+          <text class="station-label" x="662" y="504">忠孝復興</text>
+          <text class="station-label" x="662" y="354">忠孝新生</text>
+          <text class="station-label" x="662" y="204">南京復興</text>
+          <text class="station-label" x="812" y="204">劍南路</text>
+          <text class="station-label" x="712" y="854">動物園</text>
+          <text class="station-label" x="512" y="754">廣慈(建)</text>
+          <text class="station-label" x="912" y="504">南港展覽館</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="info-section">
+    <div class="info-card">
+      <h2><span style="color:var(--mrt-bl)">■</span> 核心縱橫線</h2>
+      <ul class="line-list">
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-bl)">BL</div>
+          <span>板南線：東西向主要幹線，連結板橋、台北車站及南港。</span>
+        </li>
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-r)">R</div>
+          <span>淡水信義線：南北向主要幹線。信義線東延段興建中。</span>
+        </li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h2><span style="color:var(--mrt-y)">■</span> 三環六線 (環狀線)</h2>
+      <ul class="line-list">
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-y)">Y</div>
+          <span>西環段營運中。北環、南環段興建中。</span>
+        </li>
+        <li class="line-item">
+          <div class="line-badge" style="border: 1px dotted var(--mrt-y); color: var(--mrt-y)">Y</div>
+          <span>東環段規劃中，未來將串聯信義區與內湖科學園區。</span>
+        </li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h2><span style="color:var(--mrt-lg)">■</span> 新興發展路網</h2>
+      <ul class="line-list">
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-lg)">LG</div>
+          <span>萬大線：連結中正區、萬華、中和、土城及樹林。</span>
+        </li>
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-sb)">SB</div>
+          <span>民生汐止線：紓解內湖及汐止交通壓力之重要規劃。</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>資料參考：台北市政府捷運工程局 &nbsp;|&nbsp; 繪製於 2025年</p>
+</footer>
+
+<div class="tooltip" id="tooltip">
+  <h3 id="tt-name">車站名稱</h3>
+  <div id="tt-status" class="status">狀態</div>
+  <p id="tt-desc">點擊查看更多資訊</p>
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  const ttName = document.getElementById('tt-name');
+  const ttStatus = document.getElementById('tt-status');
+
+  const statusMap = {
+    'op': { text: '營運中', class: 'op' },
+    'const': { text: '興建中', class: 'const' },
+    'plan': { text: '規劃中', class: 'plan' }
+  };
+
+  document.querySelectorAll('.station-node').forEach(node => {
+    node.addEventListener('mouseenter', (e) => {
+      const name = node.getAttribute('data-name');
+      const statusKey = node.getAttribute('data-status');
+      const status = statusMap[statusKey];
+
+      ttName.textContent = name;
+      ttStatus.textContent = status.text;
+      ttStatus.className = 'status ' + status.class;
+
+      tooltip.classList.add('show');
+    });
+
+    node.addEventListener('mousemove', (e) => {
+      const x = e.clientX + 15;
+      const y = e.clientY + 15;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    });
+
+    node.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>
