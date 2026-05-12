@@ -325,83 +325,90 @@
       <!-- MRT Lines (Paths) -->
       <g id="mrt-lines-layer">
         <!-- BL Bannan Line -->
-        <path class="mrt-line" d="M100,500 L900,500" stroke="var(--mrt-bl)" />
+        <path class="mrt-line" d="M50,400 L950,400" stroke="var(--mrt-bl)" />
 
         <!-- R Tamsui-Xinyi Line -->
-        <path class="mrt-line" d="M500,50 L500,650" stroke="var(--mrt-r)" />
-        <path class="mrt-line construction" d="M500,650 L500,750" stroke="var(--mrt-r)" />
+        <path class="mrt-line" d="M500,50 L500,500 L600,500 L950,500" stroke="var(--mrt-r)" />
+        <path class="mrt-line construction" d="M950,500 L1000,500" stroke="var(--mrt-r)" />
 
         <!-- G Songshan-Xindian Line -->
-        <path class="mrt-line" d="M800,350 L750,350 L650,350 L500,350 L350,500 L350,600 L500,700 L600,800" stroke="var(--mrt-g)" />
+        <path class="mrt-line" d="M950,200 L500,200 L400,200 L400,400 L400,500 L500,500 L500,850" stroke="var(--mrt-g)" />
 
         <!-- O Zhonghe-Xinlu Line -->
-        <path class="mrt-line" d="M150,150 L350,350 L500,350 L500,500 L650,650 L650,800" stroke="var(--mrt-o)" />
-        <path class="mrt-line" d="M150,250 L350,350" stroke="var(--mrt-o)" />
+        <path class="mrt-line" d="M100,50 L300,100" stroke="var(--mrt-o)" />
+        <path class="mrt-line" d="M100,150 L300,100 L500,100 L600,100 L600,500 L500,600 L400,700 L400,850" stroke="var(--mrt-o)" />
 
         <!-- BR Wenhu Line -->
-        <path class="mrt-line" d="M900,300 L900,500 L850,650 L700,850" stroke="var(--mrt-br)" />
-        <path class="mrt-line" d="M900,300 L800,200 L650,200 L650,500" stroke="var(--mrt-br)" />
+        <path class="mrt-line" d="M950,400 L950,50 L800,50 L800,650 L800,850" stroke="var(--mrt-br)" />
 
         <!-- Y Circular Line -->
-        <!-- West (Op) -->
-        <path class="mrt-line" d="M600,800 L350,800 L200,650 L200,350" stroke="var(--mrt-y)" />
-        <!-- North (Const) -->
-        <path class="mrt-line construction" d="M200,350 L350,200 L500,50 L800,200" stroke="var(--mrt-y)" />
-        <!-- South (Const) -->
-        <path class="mrt-line construction" d="M600,800 L700,850" stroke="var(--mrt-y)" />
-        <!-- East (Plan) -->
-        <path class="mrt-line planned" d="M800,200 L950,400 L900,500 L800,700 L700,850" stroke="var(--mrt-y)" />
+        <path class="mrt-line" d="M500,800 L200,800 L200,100 L500,100" stroke="var(--mrt-y)" />
+        <path class="mrt-line construction" d="M500,100 L800,100 L800,200" stroke="var(--mrt-y)" />
 
         <!-- LG Wanda Line -->
-        <path class="mrt-line construction" d="M500,700 L350,700 L200,700" stroke="var(--mrt-lg)" />
-        <path class="mrt-line planned" d="M200,700 L50,700 L50,500" stroke="var(--mrt-lg)" />
-
-        <!-- SB Minsheng-Xizhi Line -->
-        <path class="mrt-line planned" d="M350,350 L350,150 L600,150 L950,150" stroke="var(--mrt-sb)" />
+        <path class="mrt-line construction" d="M500,500 L300,500 L200,600 L100,600" stroke="var(--mrt-lg)" />
       </g>
 
       <!-- Station Nodes -->
       <g id="stations-layer">
         <!-- Transfer Nodes (Large) -->
-        <circle class="station-node" cx="500" cy="500" r="8" data-name="台北車站" data-status="op" />
-        <circle class="station-node" cx="350" cy="500" r="7" data-name="西門" data-status="op" />
-        <circle class="station-node" cx="500" cy="350" r="7" data-name="中山" data-status="op" />
-        <circle class="station-node" cx="650" cy="500" r="7" data-name="忠孝復興" data-status="op" />
-        <circle class="station-node" cx="650" cy="350" r="7" data-name="忠孝新生" data-status="op" />
-        <circle class="station-node" cx="650" cy="200" r="7" data-name="南京復興" data-status="op" />
-        <circle class="station-node" cx="500" cy="200" r="7" data-name="民權西路" data-status="op" />
-        <circle class="station-node" cx="350" cy="350" r="7" data-name="大橋頭" data-status="op" />
-        <circle class="station-node" cx="800" cy="200" r="7" data-name="劍南路" data-status="op" />
-        <circle class="station-node" cx="900" cy="500" r="7" data-name="南港展覽館" data-status="op" />
-        <circle class="station-node" cx="200" cy="350" r="7" data-name="新北產業園區" data-status="op" />
-        <circle class="station-node" cx="650" cy="650" r="7" data-name="古亭" data-status="op" />
-        <circle class="station-node" cx="700" cy="850" r="7" data-name="動物園" data-status="op" />
+        <circle class="station-node" cx="500" cy="400" r="8" data-name="台北車站" data-status="op" />
+        <circle class="station-node" cx="400" cy="400" r="7" data-name="西門" data-status="op" />
+        <circle class="station-node" cx="500" cy="200" r="7" data-name="中山" data-status="op" />
+        <circle class="station-node" cx="600" cy="400" r="7" data-name="忠孝新生" data-status="op" />
+        <circle class="station-node" cx="800" cy="400" r="7" data-name="忠孝復興" data-status="op" />
+        <circle class="station-node" cx="800" cy="200" r="7" data-name="南京復興" data-status="op" />
+        <circle class="station-node" cx="600" cy="200" r="7" data-name="松江南京" data-status="op" />
+        <circle class="station-node" cx="500" cy="100" r="7" data-name="民權西路" data-status="op" />
+        <circle class="station-node" cx="300" cy="100" r="7" data-name="大橋頭" data-status="op" />
+        <circle class="station-node" cx="500" cy="500" r="7" data-name="中正紀念堂" data-status="op" />
+        <circle class="station-node" cx="600" cy="500" r="7" data-name="東門" data-status="op" />
+        <circle class="station-node" cx="800" cy="500" r="7" data-name="大安" data-status="op" />
+        <circle class="station-node" cx="500" cy="600" r="7" data-name="古亭" data-status="op" />
+        <circle class="station-node" cx="800" cy="850" r="7" data-name="動物園" data-status="op" />
+        <circle class="station-node" cx="950" cy="400" r="7" data-name="南港展覽館" data-status="op" />
+        <circle class="station-node" cx="800" cy="100" r="7" data-name="中山國中" data-status="op" />
+        <circle class="station-node" cx="700" cy="500" r="7" data-name="大安森林公園" data-status="op" />
 
         <!-- Terminals & Others -->
         <circle class="station-node" cx="500" cy="50" r="5" data-name="淡水" data-status="op" />
-        <circle class="station-node" cx="500" cy="650" r="5" data-name="象山" data-status="op" />
-        <circle class="station-node" cx="500" cy="750" r="5" data-name="廣慈/奉天宮" data-status="const" />
-        <circle class="station-node" cx="100" cy="500" r="5" data-name="頂埔" data-status="op" />
-        <circle class="station-node" cx="800" cy="350" r="5" data-name="松山" data-status="op" />
-        <circle class="station-node" cx="600" cy="800" r="5" data-name="大坪林" data-status="op" />
-        <circle class="station-node" cx="150" cy="150" r="5" data-name="迴龍" data-status="op" />
-        <circle class="station-node" cx="150" cy="250" r="5" data-name="蘆洲" data-status="op" />
-        <circle class="station-node" cx="350" cy="700" r="5" data-name="中和" data-status="const" />
-        <circle class="station-node" cx="200" cy="700" r="5" data-name="莒光" data-status="const" />
-        <circle class="station-node" cx="950" cy="150" r="5" data-name="汐止" data-status="plan" />
+        <circle class="station-node" cx="500" cy="75" r="5" data-name="北投" data-status="op" />
+        <circle class="station-node" cx="950" cy="500" r="5" data-name="象山" data-status="op" />
+        <circle class="station-node" cx="50" cy="400" r="5" data-name="頂埔" data-status="op" />
+        <circle class="station-node" cx="950" cy="200" r="5" data-name="松山" data-status="op" />
+        <circle class="station-node" cx="500" cy="850" r="5" data-name="新店" data-status="op" />
+        <circle class="station-node" cx="100" cy="50" r="5" data-name="迴龍" data-status="op" />
+        <circle class="station-node" cx="100" cy="150" r="5" data-name="蘆洲" data-status="op" />
+        <circle class="station-node" cx="400" cy="700" r="5" data-name="中和" data-status="op" />
+        <circle class="station-node" cx="200" cy="100" r="5" data-name="新北產業園區" data-status="op" />
 
         <!-- Labels -->
         <g class="station-labels">
-          <text class="station-label" x="512" y="504">台北車站</text>
-          <text class="station-label" x="362" y="504">西門</text>
-          <text class="station-label" x="512" y="354">中山</text>
-          <text class="station-label" x="662" y="504">忠孝復興</text>
-          <text class="station-label" x="662" y="354">忠孝新生</text>
-          <text class="station-label" x="662" y="204">南京復興</text>
-          <text class="station-label" x="812" y="204">劍南路</text>
-          <text class="station-label" x="712" y="854">動物園</text>
-          <text class="station-label" x="512" y="754">廣慈(建)</text>
-          <text class="station-label" x="912" y="504">南港展覽館</text>
+          <text class="station-label" x="510" y="415">台北車站</text>
+          <text class="station-label" x="410" y="415">西門</text>
+          <text class="station-label" x="510" y="215">中山</text>
+          <text class="station-label" x="610" y="415">忠孝新生</text>
+          <text class="station-label" x="810" y="415">忠孝復興</text>
+          <text class="station-label" x="810" y="215">南京復興</text>
+          <text class="station-label" x="610" y="215">松江南京</text>
+          <text class="station-label" x="510" y="515">中正紀念堂</text>
+          <text class="station-label" x="610" y="515">東門</text>
+          <text class="station-label" x="810" y="515">大安</text>
+          <text class="station-label" x="510" y="615">古亭</text>
+          <text class="station-label" x="810" y="865">動物園</text>
+          <text class="station-label" x="510" y="65">淡水</text>
+          <text class="station-label" x="910" y="515">象山</text>
+          <text class="station-label" x="910" y="415">南港展覽館</text>
+          <text class="station-label" x="910" y="215">松山</text>
+          <text class="station-label" x="510" y="115">民權西路</text>
+          <text class="station-label" x="310" y="115">大橋頭</text>
+          <text class="station-label" x="510" y="865">新店</text>
+          <text class="station-label" x="110" y="65">迴龍</text>
+          <text class="station-label" x="110" y="165">蘆洲</text>
+          <text class="station-label" x="410" y="715">中和</text>
+          <text class="station-label" x="210" y="115">新北產業園區</text>
+          <text class="station-label" x="60" y="415">頂埔</text>
+          <text class="station-label" x="710" y="515">大安森林公園</text>
         </g>
       </g>
     </svg>
@@ -409,41 +416,41 @@
 
   <div class="info-section">
     <div class="info-card">
-      <h2><span style="color:var(--mrt-bl)">■</span> 核心縱橫線</h2>
+      <h2><span style="color:var(--mrt-bl)">■</span> 核心路網</h2>
       <ul class="line-list">
         <li class="line-item">
           <div class="line-badge" style="background:var(--mrt-bl)">BL</div>
-          <span>板南線：東西向主要幹線，連結板橋、台北車站及南港。</span>
+          <span>板南線：貫穿台北東西核心，連結板橋、北車、東區及南港展覽館。</span>
         </li>
         <li class="line-item">
           <div class="line-badge" style="background:var(--mrt-r)">R</div>
-          <span>淡水信義線：南北向主要幹線。信義線東延段興建中。</span>
+          <span>淡水信義線：台北南北大動脈，串聯淡水、北投、台北101與信義區。</span>
         </li>
       </ul>
     </div>
     <div class="info-card">
-      <h2><span style="color:var(--mrt-y)">■</span> 三環六線 (環狀線)</h2>
+      <h2><span style="color:var(--mrt-g)">■</span> 市中心環路</h2>
       <ul class="line-list">
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-g)">G</div>
+          <span>松山新店線：連結松山、南京商圈、公館及新店。</span>
+        </li>
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-o)">O</div>
+          <span>中和新蘆線：輻射式路網，服務三重、蘆洲、新莊及中永和。</span>
+        </li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h2><span style="color:var(--mrt-br)">■</span> 內湖與外環規劃</h2>
+      <ul class="line-list">
+        <li class="line-item">
+          <div class="line-badge" style="background:var(--mrt-br)">BR</div>
+          <span>文湖線：服務內湖科學園區及木柵地區，為台北首條捷運。</span>
+        </li>
         <li class="line-item">
           <div class="line-badge" style="background:var(--mrt-y)">Y</div>
-          <span>西環段營運中。北環、南環段興建中。</span>
-        </li>
-        <li class="line-item">
-          <div class="line-badge" style="border: 1px dotted var(--mrt-y); color: var(--mrt-y)">Y</div>
-          <span>東環段規劃中，未來將串聯信義區與內湖科學園區。</span>
-        </li>
-      </ul>
-    </div>
-    <div class="info-card">
-      <h2><span style="color:var(--mrt-lg)">■</span> 新興發展路網</h2>
-      <ul class="line-list">
-        <li class="line-item">
-          <div class="line-badge" style="background:var(--mrt-lg)">LG</div>
-          <span>萬大線：連結中正區、萬華、中和、土城及樹林。</span>
-        </li>
-        <li class="line-item">
-          <div class="line-badge" style="background:var(--mrt-sb)">SB</div>
-          <span>民生汐止線：紓解內湖及汐止交通壓力之重要規劃。</span>
+          <span>環狀線：串聯新北各大核心，北環及南環段目前興建中。</span>
         </li>
       </ul>
     </div>
