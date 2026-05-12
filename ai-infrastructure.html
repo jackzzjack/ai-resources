@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 基礎設施生態系 — Server · Switch · CPO</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(124,106,255,0.2) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 700px;
+    }
+
+    /* ── Category label ── */
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card-grid.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(124,106,255,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .icard-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+    }
+    .spec-chip.hi {
+      color: var(--accent2);
+      background: rgba(124,106,255,0.1);
+      border-color: rgba(124,106,255,0.25);
+    }
+    .spec-chip.green {
+      color: var(--accent-green);
+      background: rgba(74,222,128,0.08);
+      border-color: rgba(74,222,128,0.2);
+    }
+    .spec-chip.blue {
+      color: var(--accent-blue);
+      background: rgba(96,200,255,0.08);
+      border-color: rgba(96,200,255,0.2);
+    }
+    .spec-chip.orange {
+      color: var(--accent-orange);
+      background: rgba(251,146,60,0.08);
+      border-color: rgba(251,146,60,0.2);
+    }
+    .spec-chip.teal {
+      color: var(--accent-teal);
+      background: rgba(45,212,191,0.08);
+      border-color: rgba(45,212,191,0.2);
+    }
+    .spec-chip.red {
+      color: var(--accent-red);
+      background: rgba(248,113,113,0.08);
+      border-color: rgba(248,113,113,0.2);
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(124,106,255,0.04); }
+    .comp-table td.muted { color: var(--muted); }
+    .comp-table td.hi { color: var(--accent2); font-weight: 500; }
+    .comp-table td.green { color: var(--accent-green); }
+    .comp-table td.blue { color: var(--accent-blue); }
+    .comp-table td.orange { color: var(--accent-orange); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout.green { border-left-color: var(--accent-green); }
+    .callout.blue { border-left-color: var(--accent-blue); }
+    .callout.orange { border-left-color: var(--accent-orange); }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout.green h3 { color: var(--accent-green); }
+    .callout.blue h3 { color: var(--accent-blue); }
+    .callout.orange h3 { color: var(--accent-orange); }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin-top: 8px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: var(--border);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+    .tl-item.green::before { background: var(--accent-green); }
+    .tl-item.blue::before { background: var(--accent-blue); }
+    .tl-item.orange::before { background: var(--accent-orange); }
+    .tl-date {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Flow diagram ── */
+    .flow-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .flow-box .flow-title { font-weight: 600; color: var(--text); }
+    .flow-box .flow-sub { color: var(--muted); font-size: 0.78rem; margin-top: 4px; }
+    .flow-arrow { font-size: 1.2rem; color: var(--muted); text-align: center; margin: 6px 0; }
+
+    /* ── Arch diagram (CPO) ── */
+    .arch-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 8px;
+    }
+    .arch-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .arch-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+    .arch-box .ab-title { font-weight: 600; color: var(--text); }
+    .arch-box .ab-sub { color: var(--muted); font-size: 0.73rem; margin-top: 2px; }
+    .arch-connector {
+      color: var(--muted);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .arch-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>AI 基礎設施生態系</h1>
+  <p>AI 伺服器、高速交換器、CPO 共封裝光學與互連技術的全景概覽</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="server">🖥️ AI 伺服器</div>
+    <div class="tab" data-tab="switch">🔀 AI 交換器</div>
+    <div class="tab" data-tab="cpo">💡 CPO 光學封裝</div>
+    <div class="tab" data-tab="interconnect">🔗 互連技術</div>
+    <div class="tab" data-tab="market">📊 市場概觀</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : AI 伺服器
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-server">
+
+    <div class="section-heading">
+      <h2>AI 伺服器生態系</h2>
+      <p>以 GPU / Accelerator 為核心的高密度運算伺服器，是訓練大型語言模型（LLM）與推理部署的基礎硬體平台。</p>
+    </div>
+
+    <div class="callout">
+      <h3>核心架構</h3>
+      <p>現代 AI 伺服器通常採用 <strong>HGX / OAM 模組</strong> 搭配高頻寬記憶體（HBM），透過 NVLink / PCIe 組成 GPU 叢集，並以 InfiniBand 或 800G Ethernet 與其他節點互連。單機最高可達 8 張 GPU 卡，多機叢集（Scale-out）則透過交換架構連結數千張 GPU。</p>
+    </div>
+
+    <p class="cat-label">NVIDIA DGX / HGX 旗艦系列</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🟢</div>
+          <div>
+            <div class="icard-title">DGX H100</div>
+            <div class="icard-vendor">NVIDIA · 2023 Q1</div>
+          </div>
+        </div>
+        <div class="icard-desc">搭載 8 張 H100 SXM5 80GB，NVLink 4.0 全互連，總頻寬 3.2 TB/s，適合大規模 LLM 預訓練。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">8× H100 SXM5 80GB</span>
+          <span class="spec-chip">NVLink 4.0</span>
+          <span class="spec-chip green">3.2 TB/s 頻寬</span>
+          <span class="spec-chip">2× NDR InfiniBand</span>
+          <span class="spec-chip">10.2 PFLOPS FP8</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🟢</div>
+          <div>
+            <div class="icard-title">DGX H200</div>
+            <div class="icard-vendor">NVIDIA · 2024 Q2</div>
+          </div>
+        </div>
+        <div class="icard-desc">H100 升級版，採用 HBM3e 記憶體，每張 GPU 達 141 GB，記憶體頻寬提升至 4.8 TB/s per GPU，適合超大模型推理。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">8× H200 SXM5 141GB</span>
+          <span class="spec-chip">HBM3e</span>
+          <span class="spec-chip green">141 GB / GPU</span>
+          <span class="spec-chip">NVLink 4.0</span>
+          <span class="spec-chip">4.8 TB/s 記憶體頻寬</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🟢</div>
+          <div>
+            <div class="icard-title">DGX B200</div>
+            <div class="icard-vendor">NVIDIA · 2024 Q3</div>
+          </div>
+        </div>
+        <div class="icard-desc">Blackwell 架構旗艦，8 張 B200 GPU，採用 NVLink 5.0，FP8 效能達 40 PFLOPS，雙 GPU 可組成 NVL2。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">8× B200 SXM6</span>
+          <span class="spec-chip">192 GB HBM3e / GPU</span>
+          <span class="spec-chip green">NVLink 5.0</span>
+          <span class="spec-chip orange">40 PFLOPS FP8</span>
+          <span class="spec-chip">8 TB/s NVLink 頻寬</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🟢</div>
+          <div>
+            <div class="icard-title">GB200 NVL72</div>
+            <div class="icard-vendor">NVIDIA · 2025 H1（Rack-scale）</div>
+          </div>
+        </div>
+        <div class="icard-desc">機架級超算節點，36 顆 Grace CPU + 72 顆 B200 GPU 以 NVLink 5.0 全互連，等效單一巨型 GPU，是 LLM 訓練的里程碑產品。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">72× B200 GPU</span>
+          <span class="spec-chip">36× Grace CPU</span>
+          <span class="spec-chip green">NVLink 5.0 全互連</span>
+          <span class="spec-chip orange">13.8 TB/s 機架頻寬</span>
+          <span class="spec-chip">~120 kW TDP</span>
+          <span class="spec-chip red">液冷必要</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">NVIDIA H100 / B200 — ODM / OEM 合作伺服器</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #e04e2b;">
+        <div class="icard-head">
+          <div class="icard-icon">🖥️</div>
+          <div>
+            <div class="icard-title">Supermicro SYS-821GE-TNHR</div>
+            <div class="icard-vendor">Supermicro · HGX H100 / H200</div>
+          </div>
+        </div>
+        <div class="icard-desc">8U 形式因素，8 張 HGX H100/H200，支援直接液冷（DLC），廣泛部署於雲端 CSP 及企業私有雲。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">8U 8× GPU</span>
+          <span class="spec-chip blue">直接液冷 DLC</span>
+          <span class="spec-chip">雙 Xeon Sapphire Rapids</span>
+          <span class="spec-chip">8× NDR InfiniBand</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #0076ce;">
+        <div class="icard-head">
+          <div class="icard-icon">🖥️</div>
+          <div>
+            <div class="icard-title">Dell PowerEdge XE9680</div>
+            <div class="icard-vendor">Dell Technologies · H100 / H200</div>
+          </div>
+        </div>
+        <div class="icard-desc">Dell 旗艦 AI 伺服器，8 張 GPU，支援 OCP 標準 NIC，液冷選項，整合 Dell OpenManage 管理框架。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">8× H100/H200 SXM</span>
+          <span class="spec-chip blue">OCP 3.0 NIC</span>
+          <span class="spec-chip">Dell EMC PowerEdge</span>
+          <span class="spec-chip">GPU 直接通訊 GPUDirect</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #00b388;">
+        <div class="icard-head">
+          <div class="icard-icon">🖥️</div>
+          <div>
+            <div class="icard-title">HPE Cray EX2500</div>
+            <div class="icard-vendor">HPE · H100 / AMD MI300A</div>
+          </div>
+        </div>
+        <div class="icard-desc">HPC 級超算平台，採用 HPE Slingshot 互連（200G），支援 NVIDIA / AMD 混合加速，被多所國家實驗室採用。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">HPE Slingshot 200G</span>
+          <span class="spec-chip green">NVIDIA + AMD 混合</span>
+          <span class="spec-chip">液冷 HPC 設計</span>
+          <span class="spec-chip">HPC 超算平台</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #e2231a;">
+        <div class="icard-head">
+          <div class="icard-icon">🖥️</div>
+          <div>
+            <div class="icard-title">Lenovo ThinkSystem SR680a V3</div>
+            <div class="icard-vendor">Lenovo · H100</div>
+          </div>
+        </div>
+        <div class="icard-desc">8 張 HGX H100，支援 Lenovo Neptune 水冷技術（業界首創），PUE 可降至 1.1 以下，適合高密度資料中心。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">8× HGX H100</span>
+          <span class="spec-chip blue">Neptune 直接水冷</span>
+          <span class="spec-chip green">PUE ≤ 1.1</span>
+          <span class="spec-chip">雙 Sapphire Rapids</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #ff6600;">
+        <div class="icard-head">
+          <div class="icard-icon">🖥️</div>
+          <div>
+            <div class="icard-title">Inspur NF5488M7</div>
+            <div class="icard-vendor">Inspur / 浪潮 · H800 / A800</div>
+          </div>
+        </div>
+        <div class="icard-desc">中國最大 AI 伺服器廠商，供應百度、阿里、騰訊等超大規模雲，搭載 A800（H100 出口管制替代版）。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">8× A800 / H800</span>
+          <span class="spec-chip orange">中國市場主力</span>
+          <span class="spec-chip">PCIe 5.0 + NVLink</span>
+          <span class="spec-chip">液冷 / 風冷雙選</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #ff0000;">
+        <div class="icard-head">
+          <div class="icard-icon">🔴</div>
+          <div>
+            <div class="icard-title">AMD MI300X 伺服器</div>
+            <div class="icard-vendor">AMD · 多 ODM 合作（2024）</div>
+          </div>
+        </div>
+        <div class="icard-desc">AMD 最強 AI 加速器，單卡 192 GB HBM3 統一記憶體（APU 架構），超大模型推理的強力競爭者，已部署於 Microsoft Azure / Meta。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">192 GB HBM3 / GPU</span>
+          <span class="spec-chip red">5.3 TFLOPS FP8</span>
+          <span class="spec-chip">Infinity Fabric</span>
+          <span class="spec-chip">CDNA 3 架構</span>
+          <span class="spec-chip green">ROCm 開放軟體棧</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">GPU 規格比較表</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>GPU</th>
+            <th>架構</th>
+            <th>記憶體</th>
+            <th>記憶體頻寬</th>
+            <th>FP8 FLOPS</th>
+            <th>TDP</th>
+            <th>互連</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">H100 SXM5</td>
+            <td>Hopper</td>
+            <td>80 GB HBM3</td>
+            <td>3.35 TB/s</td>
+            <td>3.96 PFLOPS</td>
+            <td>700 W</td>
+            <td class="blue">NVLink 4.0</td>
+          </tr>
+          <tr>
+            <td class="hi">H200 SXM5</td>
+            <td>Hopper</td>
+            <td>141 GB HBM3e</td>
+            <td>4.8 TB/s</td>
+            <td>3.96 PFLOPS</td>
+            <td>700 W</td>
+            <td class="blue">NVLink 4.0</td>
+          </tr>
+          <tr>
+            <td class="hi">B200 SXM6</td>
+            <td>Blackwell</td>
+            <td>192 GB HBM3e</td>
+            <td>8.0 TB/s</td>
+            <td class="green">20 PFLOPS</td>
+            <td>1000 W</td>
+            <td class="blue">NVLink 5.0</td>
+          </tr>
+          <tr>
+            <td class="hi">GB200 Grace-Blackwell</td>
+            <td>Blackwell</td>
+            <td>192 GB HBM3e</td>
+            <td>8.0 TB/s</td>
+            <td class="green">20 PFLOPS</td>
+            <td>1200 W</td>
+            <td class="blue">NVLink 5.0 (C2G)</td>
+          </tr>
+          <tr>
+            <td class="hi">AMD MI300X</td>
+            <td>CDNA 3</td>
+            <td>192 GB HBM3</td>
+            <td>5.3 TB/s</td>
+            <td class="orange">5.3 PFLOPS</td>
+            <td>750 W</td>
+            <td>Infinity Fabric</td>
+          </tr>
+          <tr>
+            <td class="hi">AMD MI325X</td>
+            <td>CDNA 3+</td>
+            <td>288 GB HBM3e</td>
+            <td>6.0 TB/s</td>
+            <td class="orange">6.5 PFLOPS</td>
+            <td>1000 W</td>
+            <td>Infinity Fabric</td>
+          </tr>
+          <tr>
+            <td class="hi">Intel Gaudi 3</td>
+            <td>Gaudi 3</td>
+            <td>128 GB HBM2e</td>
+            <td>3.7 TB/s</td>
+            <td class="muted">1.84 PFLOPS BF16</td>
+            <td>900 W</td>
+            <td>24× 200GbE RoCE</td>
+          </tr>
+          <tr>
+            <td class="hi">Google TPU v5p</td>
+            <td>TPU v5p</td>
+            <td>95 GB HBM2e</td>
+            <td>2.76 TB/s</td>
+            <td class="muted">459 TFLOPS BF16</td>
+            <td>~450 W</td>
+            <td>ICI 互連 4096 TPU</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /panel-server -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : AI 交換器
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-switch">
+
+    <div class="section-heading">
+      <h2>AI 交換器生態系</h2>
+      <p>AI 叢集對網路的要求極高：低延遲（&lt; 1 µs）、高頻寬（400G–800G per port）、零封包遺失的 RDMA 流量，催生了專用 AI 交換架構。</p>
+    </div>
+
+    <div class="callout blue">
+      <h3>AI 網路 vs 傳統資料中心網路</h3>
+      <ul>
+        <li>GPU 需要「All-to-All」通訊模式（訓練梯度同步），對 <strong>東西向頻寬</strong> 要求遠超傳統應用。</li>
+        <li>RDMA（RoCEv2 / InfiniBand）要求 <strong>零封包遺失（Lossless）</strong> 網路，需要 PFC / ECN 精細管控。</li>
+        <li>800G 以上的連接埠密度使傳統 QSFP-DD 光纖模組的 <strong>功耗成為瓶頸</strong>，催生 CPO 技術。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">NVIDIA — InfiniBand 交換器</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">QM9700 — NDR 400G InfiniBand</div>
+            <div class="icard-vendor">NVIDIA Quantum-2</div>
+          </div>
+        </div>
+        <div class="icard-desc">64 埠 NDR 400G InfiniBand 交換器，總頻寬 51.2 Tb/s，支援 AI Fabric 自適應路由，為 DGX SuperPOD 標準配置。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">64× 400G NDR</span>
+          <span class="spec-chip green">51.2 Tb/s</span>
+          <span class="spec-chip">自適應路由 AR</span>
+          <span class="spec-chip">SHARP v3 集體運算</span>
+          <span class="spec-chip blue">< 100 ns 延遲</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">QM9790 — NDR 400G（Spine）</div>
+            <div class="icard-vendor">NVIDIA Quantum-2</div>
+          </div>
+        </div>
+        <div class="icard-desc">機架級 Spine 交換器，支援 400G NDR 全速互連，搭配 NVIDIA SHARP 在交換器內直接執行 AllReduce 集體通訊，大幅降低 CPU/GPU 負擔。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">400G NDR Spine</span>
+          <span class="spec-chip green">In-network Computing</span>
+          <span class="spec-chip">SHARP AllReduce</span>
+          <span class="spec-chip">Fat-tree / Rail-only Fabric</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">NVIDIA — Spectrum-X（Ethernet for AI）</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">SN5600 Spectrum-4</div>
+            <div class="icard-vendor">NVIDIA Spectrum-X · 2023</div>
+          </div>
+        </div>
+        <div class="icard-desc">首款專為 AI 設計的 800G Ethernet 交換器，搭配 BlueField-3 DPU 使用，Spectrum-X 網路架構可在 Ethernet 上達到近似 InfiniBand 的 AI 訓練效能。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">64× 800G</span>
+          <span class="spec-chip green">102.4 Tb/s</span>
+          <span class="spec-chip blue">RoCEv2 Lossless</span>
+          <span class="spec-chip">搭配 BlueField-3 DPU</span>
+          <span class="spec-chip orange">AI Traffic Prioritization</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">SN5000 Spectrum-4（ToR）</div>
+            <div class="icard-vendor">NVIDIA Spectrum-X ToR</div>
+          </div>
+        </div>
+        <div class="icard-desc">Top-of-Rack 版本，連接 GPU 伺服器至 Spine，支援 ECMP + PFC 精準流量控制，適用於大規模 GPU 叢集的 Leaf 層。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">ToR / Leaf 層</span>
+          <span class="spec-chip hi">400G / 800G 彈性</span>
+          <span class="spec-chip blue">PFC + ECN</span>
+          <span class="spec-chip">EVPN / VXLAN</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">Arista Networks — AI 網路</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #00a8e0;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">Arista 7800R3 / 7060X6</div>
+            <div class="icard-vendor">Arista Networks</div>
+          </div>
+        </div>
+        <div class="icard-desc">面向 AI 超大規模部署的模組化 Spine 交換器，支援 400G/800G，整合 AI 流量最佳化（RDMA、RoCEv2），已大規模部署於 Meta AI 訓練叢集。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">400G / 800G</span>
+          <span class="spec-chip">模組化 Spine</span>
+          <span class="spec-chip blue">RoCEv2 最佳化</span>
+          <span class="spec-chip">EOS 軟體定義</span>
+          <span class="spec-chip green">Meta / Microsoft 部署</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #00a8e0;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">Arista 7050X4 / 7060X5</div>
+            <div class="icard-vendor">Arista · ToR / Leaf</div>
+          </div>
+        </div>
+        <div class="icard-desc">固定形式 ToR 交換器，採用 Broadcom Tomahawk 4 / 5 晶片，支援 128× 100G 或 64× 400G，廣泛用於 GPU 節點直連層。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">64× 400G ToR</span>
+          <span class="spec-chip blue">Broadcom Tomahawk 5</span>
+          <span class="spec-chip">51.2 Tb/s</span>
+          <span class="spec-chip">VXLAN / EVPN</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">Broadcom — Switch ASIC 晶片</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Tomahawk 5（BCM56990）</div>
+            <div class="icard-vendor">Broadcom · 2022 / 51.2 Tb/s</div>
+          </div>
+        </div>
+        <div class="icard-desc">業界最廣泛部署的 400G AI 交換晶片，51.2 Tb/s 容量，支援 256× 200G 或 64× 800G，採用 7nm 製程，是 Arista、Cisco、Juniper 等廠商的主流選擇。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">51.2 Tb/s</span>
+          <span class="spec-chip">256× 200G / 64× 400G</span>
+          <span class="spec-chip orange">7nm TSMC</span>
+          <span class="spec-chip">業界最廣泛部署</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Tomahawk 6（BCM78900）</div>
+            <div class="icard-vendor">Broadcom · 2025 / 102.4 Tb/s</div>
+          </div>
+        </div>
+        <div class="icard-desc">Tomahawk 5 倍頻升級版，102.4 Tb/s 總容量，支援 64× 800G 或 128× 400G，為下一代 AI Scale-out Fabric 奠基。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">102.4 Tb/s</span>
+          <span class="spec-chip">64× 800G</span>
+          <span class="spec-chip green">800G / 1.6T 支援</span>
+          <span class="spec-chip orange">5nm TSMC</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Jericho 3-AI</div>
+            <div class="icard-vendor">Broadcom · Edge / WAN AI</div>
+          </div>
+        </div>
+        <div class="icard-desc">針對 AI 流量最佳化的 WAN / DCI 路由晶片，支援深度封包緩衝（Deep Buffer），適合跨資料中心 AI 訓練的廣域互連。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">WAN / DCI 路由</span>
+          <span class="spec-chip blue">Deep Buffer</span>
+          <span class="spec-chip">跨 DC AI 互連</span>
+          <span class="spec-chip hi">Segment Routing</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">Cisco、Juniper 及其他</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #1ba0d7;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">Cisco Nexus 9000 AI</div>
+            <div class="icard-vendor">Cisco · NX-OS / ACI</div>
+          </div>
+        </div>
+        <div class="icard-desc">企業級 AI 交換系列，支援 400G/800G，整合 Cisco ACI 自動化架構，提供精細 QoS 流量管理，適合企業私有 AI 叢集。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">400G / 800G</span>
+          <span class="spec-chip blue">Cisco ACI</span>
+          <span class="spec-chip">RDMA RoCEv2</span>
+          <span class="spec-chip">企業級支援</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #84b43e;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">Juniper QFX5230 / PTX10003</div>
+            <div class="icard-vendor">Juniper Networks · Junos AI</div>
+          </div>
+        </div>
+        <div class="icard-desc">Juniper 旗下 AI 網路解決方案，搭配 Mist AI 雲端智慧管理，PTX 系列支援大容量 Spine 路由，適合混合雲 AI 架構。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">400G / 800G</span>
+          <span class="spec-chip green">Mist AI 管理</span>
+          <span class="spec-chip">400G QSFP-DD</span>
+          <span class="spec-chip">Apstra IBN</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #f58220;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">Celestica / Edgecore / Wistron（白牌）</div>
+            <div class="icard-vendor">ODM 白牌 · SONiC</div>
+          </div>
+        </div>
+        <div class="icard-desc">大型 CSP（Meta、Google、Microsoft）廣泛採用白牌 ODM 交換器搭配開源 SONiC NOS，以降低成本並客製化 AI 流量最佳化邏輯。</div>
+        <div class="icard-specs">
+          <span class="spec-chip green">SONiC 開源 NOS</span>
+          <span class="spec-chip">ODM 白牌</span>
+          <span class="spec-chip orange">CSP 大規模採用</span>
+          <span class="spec-chip">低成本高彈性</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">AI 交換器速度世代比較</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>世代</th>
+            <th>連接埠速度</th>
+            <th>總容量</th>
+            <th>主要晶片</th>
+            <th>代表產品</th>
+            <th>上市年份</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="muted">100G Ethernet</td>
+            <td>100G</td>
+            <td>12.8 Tb/s</td>
+            <td class="muted">Tomahawk 1</td>
+            <td class="muted">Arista 7060CX</td>
+            <td class="muted">2016</td>
+          </tr>
+          <tr>
+            <td class="muted">400G Ethernet（第一代）</td>
+            <td>400G</td>
+            <td>25.6 Tb/s</td>
+            <td class="muted">Tomahawk 3</td>
+            <td class="muted">Arista 7060X3</td>
+            <td class="muted">2019</td>
+          </tr>
+          <tr>
+            <td class="hi">400G Ethernet（現主流）</td>
+            <td>400G</td>
+            <td>51.2 Tb/s</td>
+            <td class="blue">Tomahawk 5</td>
+            <td>Arista 7060X5</td>
+            <td>2022–2024</td>
+          </tr>
+          <tr>
+            <td class="hi">200G NDR InfiniBand</td>
+            <td>NDR 200G per lane</td>
+            <td>51.2 Tb/s</td>
+            <td class="blue">Quantum-2</td>
+            <td>QM9700</td>
+            <td>2022–2024</td>
+          </tr>
+          <tr>
+            <td class="green">800G Ethernet（現趨勢）</td>
+            <td>800G</td>
+            <td>102.4 Tb/s</td>
+            <td class="blue">Tomahawk 6</td>
+            <td>NVIDIA SN5600</td>
+            <td>2024–2025</td>
+          </tr>
+          <tr>
+            <td class="orange">1.6T Ethernet（下一世代）</td>
+            <td>1.6T</td>
+            <td>204.8 Tb/s</td>
+            <td class="orange">預計 Tomahawk 7+</td>
+            <td class="orange">規劃中</td>
+            <td class="orange">2026–2027</td>
+          </tr>
+          <tr>
+            <td class="orange">XDR InfiniBand</td>
+            <td>XDR 800G</td>
+            <td>102.4 Tb/s+</td>
+            <td class="orange">Quantum-3</td>
+            <td class="orange">規劃中</td>
+            <td class="orange">2025–2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /panel-switch -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : CPO
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-cpo">
+
+    <div class="section-heading">
+      <h2>CPO — Co-Packaged Optics（共封裝光學）</h2>
+      <p>將光學收發器（Optical Transceiver）直接整合至交換晶片（Switch ASIC）封裝中，消除傳統可插拔光模組的電氣訊號傳輸損耗，是下一代 AI 網路的關鍵技術。</p>
+    </div>
+
+    <div class="callout orange">
+      <h3>為什麼 AI 需要 CPO？</h3>
+      <ul>
+        <li><strong>功耗危機：</strong> 800G / 1.6T 速率下，傳統 QSFP-DD 可插拔光模組功耗佔整體交換器的 <strong>30–50%</strong>，已接近散熱極限。</li>
+        <li><strong>訊號完整性：</strong> 高速電氣訊號（SerDes）在 PCB 走線上的衰減嚴重，CPO 將光電轉換移至晶片封裝旁邊，SerDes 走線縮短至毫米級。</li>
+        <li><strong>密度需求：</strong> AI 叢集對「每瓦頻寬」與「每 mm² 頻寬」的要求持續攀升，CPO 可提供傳統可插拔模組 <strong>2–4 倍</strong> 的能效優勢。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">傳統可插拔 vs CPO 架構對比</p>
+    <div class="arch-diagram">
+      <div class="arch-label">傳統可插拔光模組架構（Pluggable Optics）</div>
+      <div class="arch-row">
+        <div class="arch-box">
+          <div class="ab-title">Switch ASIC</div>
+          <div class="ab-sub">電氣訊號輸出</div>
+        </div>
+        <div class="arch-connector">──⚡──</div>
+        <div class="arch-box" style="border-color: var(--accent-orange);">
+          <div class="ab-title" style="color:var(--accent-orange);">PCB 走線</div>
+          <div class="ab-sub">SerDes ~15 cm</div>
+        </div>
+        <div class="arch-connector">──⚡──</div>
+        <div class="arch-box" style="border-color: var(--accent-orange);">
+          <div class="ab-title" style="color:var(--accent-orange);">QSFP-DD / OSFP</div>
+          <div class="ab-sub">可插拔光模組（~5–15W）</div>
+        </div>
+        <div class="arch-connector">──🔆──</div>
+        <div class="arch-box">
+          <div class="ab-title">光纖</div>
+          <div class="ab-sub">至對端節點</div>
+        </div>
+      </div>
+      <div style="margin: 20px 0 10px; height: 1px; background: var(--border);"></div>
+      <div class="arch-label">CPO 架構（Co-Packaged Optics）</div>
+      <div class="arch-row">
+        <div class="arch-box" style="border-color: var(--accent-green);">
+          <div class="ab-title" style="color:var(--accent-green);">Switch ASIC + 光引擎</div>
+          <div class="ab-sub">同一封裝，走線 &lt; 5 mm</div>
+        </div>
+        <div class="arch-connector">──🔆──</div>
+        <div class="arch-box" style="border-color: var(--accent-green);">
+          <div class="ab-title" style="color:var(--accent-green);">光纖連接器（MPO）</div>
+          <div class="ab-sub">直接光輸出，無外部光模組</div>
+        </div>
+        <div class="arch-connector">──🔆──</div>
+        <div class="arch-box">
+          <div class="ab-title">光纖</div>
+          <div class="ab-sub">至對端節點</div>
+        </div>
+      </div>
+      <div style="margin-top: 16px; font-size: 0.8rem; color: var(--accent-green);">
+        ✓ SerDes 走線縮短 95% &nbsp;·&nbsp; ✓ 光模組功耗降低 30–50% &nbsp;·&nbsp; ✓ 可支援更高端口密度
+      </div>
+    </div>
+
+    <p class="cat-label">CPO 主要廠商</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #0071c5;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">Intel Integrated Photonics</div>
+            <div class="icard-vendor">Intel · Silicon Photonics</div>
+          </div>
+        </div>
+        <div class="icard-desc">業界最早投入 CPO 的廠商，基於矽光子（Silicon Photonics）平台，採用標準 CMOS 製程整合光電轉換，2024 年推出與 Broadcom ASIC 共封裝的 CPO 解決方案。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">矽光子 Silicon Photonics</span>
+          <span class="spec-chip">CMOS 製程相容</span>
+          <span class="spec-chip blue">與 Broadcom 合作</span>
+          <span class="spec-chip green">1.6T 支援計畫</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">Broadcom CPO（BCM78901）</div>
+            <div class="icard-vendor">Broadcom · 2024 Tomahawk 5 CPO</div>
+          </div>
+        </div>
+        <div class="icard-desc">Broadcom 與 Intel 光子部門合作推出 Tomahawk 5 CPO 版本，將 51.2 Tb/s 交換晶片與矽光子引擎共封裝，是業界首款量產 CPO 交換器 ASIC。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">51.2 Tb/s CPO</span>
+          <span class="spec-chip">Tomahawk 5 共封裝</span>
+          <span class="spec-chip orange">業界首款量產</span>
+          <span class="spec-chip blue">與 Intel Photonics 合作</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #666699;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">Marvell — Orion CPO</div>
+            <div class="icard-vendor">Marvell Technology</div>
+          </div>
+        </div>
+        <div class="icard-desc">Marvell 推出 Orion CPO 平台，整合其 Teralynx 交換晶片與光學引擎，支援 400G–800G，目標 CSP 超大規模 AI 部署，2025 年開始量產交付。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Teralynx 交換 ASIC</span>
+          <span class="spec-chip">400G / 800G CPO</span>
+          <span class="spec-chip green">2025 量產</span>
+          <span class="spec-chip">CSP 定向</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #ff6633;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">Ranovus</div>
+            <div class="icard-vendor">Ranovus · GaN 量子點雷射</div>
+          </div>
+        </div>
+        <div class="icard-desc">加拿大新創，採用獨特的 GaN 量子點（Quantum Dot）雷射技術，實現更低功耗、更高溫度容忍度的 CPO 光引擎，已與多家 Tier-1 ODM 合作。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">量子點雷射</span>
+          <span class="spec-chip green">極低功耗</span>
+          <span class="spec-chip">高溫穩定性</span>
+          <span class="spec-chip blue">ODM 合作中</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #336699;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">Ayar Labs</div>
+            <div class="icard-vendor">Ayar Labs · 晶片內光互連</div>
+          </div>
+        </div>
+        <div class="icard-desc">更激進的方案：將光學 I/O 直接整合進 CPU / GPU 晶片封裝（Optical I/O Chiplet），已與 DARPA 及多家 AI 晶片廠商合作，代表著 CPO 下一個技術世代。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Optical I/O Chiplet</span>
+          <span class="spec-chip orange">CPU/GPU 內整合</span>
+          <span class="spec-chip green">超低延遲</span>
+          <span class="spec-chip">DARPA 計畫合作</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #009900;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">II-VI / Coherent</div>
+            <div class="icard-vendor">Coherent Corp（前 II-VI）</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球最大光元件廠商之一，提供 CPO 所需的光源（雷射晶片）、光放大器（SOA）及光子積體電路（PIC），是多家 CPO 廠商的關鍵供應商。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">雷射晶片供應商</span>
+          <span class="spec-chip green">PIC 製造</span>
+          <span class="spec-chip hi">全球市佔第一</span>
+          <span class="spec-chip blue">SOA 光放大器</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">CPO 技術發展路徑</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2020–2022</div>
+        <div class="tl-title">技術驗證期</div>
+        <div class="tl-desc">Intel、Broadcom、Marvell 相繼發布 CPO 原型。OIF（Optical Internetworking Forum）建立 CPO 標準工作組。業界在電氣 / 光學介面標準上達成初步共識。</div>
+      </div>
+      <div class="tl-item blue">
+        <div class="tl-date">2023–2024</div>
+        <div class="tl-title">早期量產導入</div>
+        <div class="tl-desc">Broadcom Tomahawk 5 CPO 版本流片成功並開始小批量供應。部分超大規模 CSP 開始在特定 AI 訓練機房部署 CPO 交換器進行驗證。NVIDIA 宣布 Spectrum-X 後續版本將引入 CPO。</div>
+      </div>
+      <div class="tl-item green">
+        <div class="tl-date">2025–2026</div>
+        <div class="tl-title">大規模商用化（進行中）</div>
+        <div class="tl-desc">800G CPO 交換器開始進入 CSP 批量採購。Tomahawk 6（102.4 Tb/s）CPO 版本預計同步推出。Ultra Ethernet Consortium（UEC）將 CPO 納入標準規範討論。</div>
+      </div>
+      <div class="tl-item orange">
+        <div class="tl-date">2027+</div>
+        <div class="tl-title">1.6T 世代 / Optical Chiplet</div>
+        <div class="tl-desc">1.6T per port 將使可插拔光模組幾乎不可行，CPO 成為唯一選項。更長遠的方向是 Ayar Labs 等公司推動的 Optical I/O Chiplet，將光通道直接整合進 GPU / CPU 晶片封裝。</div>
+      </div>
+    </div>
+
+  </div><!-- /panel-cpo -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 互連技術
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-interconnect">
+
+    <div class="section-heading">
+      <h2>AI 互連技術生態系</h2>
+      <p>GPU 叢集的效能不只取決於 GPU 算力，更取決於 GPU 之間的互連頻寬與延遲。Scale-up（機內）與 Scale-out（機間）是兩條平行演進的技術路線。</p>
+    </div>
+
+    <div class="callout">
+      <h3>Scale-up vs Scale-out</h3>
+      <ul>
+        <li><strong>Scale-up（機內互連）：</strong> 同一伺服器或機架內 GPU 間的超高速連接，代表技術為 NVLink / NVSwitch，頻寬可達 TB/s 量級，延遲僅數 µs。</li>
+        <li><strong>Scale-out（機間互連）：</strong> 多台伺服器 / 機架間的高速網路，代表技術為 InfiniBand NDR 與 RoCE（Ethernet），頻寬 GB/s 量級，延遲 1–10 µs。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">NVIDIA NVLink / NVSwitch — Scale-up 互連</p>
+    <div class="card-grid wide">
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🔗</div>
+          <div>
+            <div class="icard-title">NVLink 4.0（Hopper）</div>
+            <div class="icard-vendor">NVIDIA · H100 / H200</div>
+          </div>
+        </div>
+        <div class="icard-desc">H100 使用的第四代 NVLink，每個 GPU 有 18 條 NVLink，雙向頻寬 900 GB/s。8 張 GPU 透過 NVSwitch 3.0 組成 DGX H100，任意兩張 GPU 間均可全速通訊。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">900 GB/s 雙向 / GPU</span>
+          <span class="spec-chip">18 條 NVLink per GPU</span>
+          <span class="spec-chip green">搭配 NVSwitch 3.0</span>
+          <span class="spec-chip">56.8 GB/s per link</span>
+          <span class="spec-chip blue">DGX H100 標配</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🔗</div>
+          <div>
+            <div class="icard-title">NVLink 5.0（Blackwell）</div>
+            <div class="icard-vendor">NVIDIA · B200 / GB200</div>
+          </div>
+        </div>
+        <div class="icard-desc">Blackwell 架構升級版，頻寬倍增至 1.8 TB/s per GPU。GB200 NVL72 以 NVLink 5.0 將 72 張 GPU 組成等效「單一超大 GPU」，是目前最強的 Scale-up 互連方案。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">1.8 TB/s 雙向 / GPU</span>
+          <span class="spec-chip orange">頻寬 2× NVLink 4.0</span>
+          <span class="spec-chip green">NVSwitch 4.0 搭配</span>
+          <span class="spec-chip">72 GPU 全互連（NVL72）</span>
+          <span class="spec-chip blue">C2C（Chip-to-Chip）支援</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">InfiniBand — Scale-out 標準</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">HDR InfiniBand（200G）</div>
+            <div class="icard-vendor">NVIDIA Mellanox · 2019</div>
+          </div>
+        </div>
+        <div class="icard-desc">200 Gb/s per port，為 HPC 與 AI 叢集的過渡標準，目前仍大量運行於現有 H100 部署中。ConnectX-6 HCA 廣泛部署。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">200 Gb/s per port</span>
+          <span class="spec-chip blue">ConnectX-6 HCA</span>
+          <span class="spec-chip">2 µs MPI 延遲</span>
+          <span class="spec-chip muted">逐步被 NDR 取代</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">NDR InfiniBand（400G）</div>
+            <div class="icard-vendor">NVIDIA · 2022–現在</div>
+          </div>
+        </div>
+        <div class="icard-desc">目前 AI 叢集的主流 Scale-out 選擇，400 Gb/s per port（或 2× 200G），ConnectX-7 HCA，搭配 QM9700 交換器，是 DGX H100 SuperPOD 的標準配置。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">400 Gb/s per port</span>
+          <span class="spec-chip green">ConnectX-7 HCA</span>
+          <span class="spec-chip blue">QM9700 交換器</span>
+          <span class="spec-chip">SHARP v3 AllReduce</span>
+          <span class="spec-chip">&lt; 600 ns 延遲</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">XDR InfiniBand（800G）</div>
+            <div class="icard-vendor">NVIDIA Quantum-3 · 2025+</div>
+          </div>
+        </div>
+        <div class="icard-desc">下一代 InfiniBand 標準，800 Gb/s per port，搭配 ConnectX-8 / CX-9 HCA，Quantum-3 交換晶片已進入設計驗證階段，為 GB200 NVL72 機架的 Scale-out 設計。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">800 Gb/s per port</span>
+          <span class="spec-chip orange">Quantum-3 ASIC</span>
+          <span class="spec-chip">ConnectX-8 計畫</span>
+          <span class="spec-chip green">2025–2026 量產</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">RoCE / Ultra Ethernet — 以太網路陣營</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #60c8ff;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">RoCEv2（RDMA over Converged Ethernet）</div>
+            <div class="icard-vendor">業界開放標準</div>
+          </div>
+        </div>
+        <div class="icard-desc">在標準 IP/UDP Ethernet 上實現 RDMA，延遲約 2–5 µs，需要 PFC（Priority Flow Control）+ ECN 配合實現 Lossless。廣泛用於企業 AI 叢集與非 NVIDIA 生態。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">業界開放標準</span>
+          <span class="spec-chip blue">UDP/IP 封裝</span>
+          <span class="spec-chip">PFC + ECN 必要</span>
+          <span class="spec-chip green">400G / 800G Ethernet</span>
+          <span class="spec-chip">AWS / Azure 大量部署</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #60c8ff;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">Ultra Ethernet Consortium（UEC）</div>
+            <div class="icard-vendor">AMD、Intel、Meta、Microsoft、Broadcom 等</div>
+          </div>
+        </div>
+        <div class="icard-desc">2023 年成立的業界聯盟，目標是制定專為 AI / HPC 優化的 Ethernet 協定（UET），在 RoCEv2 基礎上改進擁塞控制、有序遞送與集體通訊，正面挑戰 InfiniBand 的 AI 網路地位。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">2023 年成立</span>
+          <span class="spec-chip orange">AMD、Intel 主導</span>
+          <span class="spec-chip blue">UET 規範制定中</span>
+          <span class="spec-chip green">對抗 InfiniBand</span>
+          <span class="spec-chip">Meta、Cisco 支持</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #60c8ff;">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">NVIDIA Spectrum-X（Ethernet for AI）</div>
+            <div class="icard-vendor">NVIDIA · 2023</div>
+          </div>
+        </div>
+        <div class="icard-desc">NVIDIA 的「Ethernet 版 InfiniBand」，在標準 Ethernet 上透過 NVIDIA 專用協定棧（NCCL + BlueField-3 DPU）實現接近 InfiniBand 的 AI 訓練效能，讓選擇 Ethernet 的客戶也能發揮最大算力。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Ethernet 架構</span>
+          <span class="spec-chip green">接近 IB 效能</span>
+          <span class="spec-chip blue">BlueField-3 DPU</span>
+          <span class="spec-chip">NCCL 優化</span>
+          <span class="spec-chip">800G SN5600 交換器</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="cat-label">其他廠商互連</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #009900;">
+        <div class="icard-head">
+          <div class="icard-icon">🔗</div>
+          <div>
+            <div class="icard-title">AMD Infinity Fabric / xGMI</div>
+            <div class="icard-vendor">AMD · MI300X / MI300A</div>
+          </div>
+        </div>
+        <div class="icard-desc">AMD GPU 的機內互連，Infinity Fabric 提供 CPU–GPU 統一記憶體存取（MI300A APU），xGMI 用於多 GPU 間的高速通訊，支援 MI300X 4 卡叢集互連。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Infinity Fabric</span>
+          <span class="spec-chip">統一記憶體架構</span>
+          <span class="spec-chip blue">xGMI GPU 互連</span>
+          <span class="spec-chip green">ROCm 軟體棧</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #0071c5;">
+        <div class="icard-head">
+          <div class="icard-icon">🔗</div>
+          <div>
+            <div class="icard-title">Intel Gaudi 3 HCCL / 內建 RoCE</div>
+            <div class="icard-vendor">Intel Gaudi 3 · 24× 200GbE</div>
+          </div>
+        </div>
+        <div class="icard-desc">Intel Gaudi 3 直接內建 24 個 200GbE RoCE 網路埠，不需外加 HCA 即可形成 AI 叢集，大幅降低建置成本，是 Intel 避開 NVIDIA 生態系的差異化策略。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">24× 200GbE 內建</span>
+          <span class="spec-chip green">無需額外 HCA</span>
+          <span class="spec-chip blue">RoCE 原生支援</span>
+          <span class="spec-chip orange">低建置成本</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #4285f4;">
+        <div class="icard-head">
+          <div class="icard-icon">🔗</div>
+          <div>
+            <div class="icard-title">Google ICI（Inter-Chip Interconnect）</div>
+            <div class="icard-vendor">Google TPU · 自研互連</div>
+          </div>
+        </div>
+        <div class="icard-desc">Google TPU Pod 的自研光纖互連，TPU v5p 可將 4096 顆 TPU 以 Torus 3D 拓撲相連，頻寬極高但僅用於 Google 自有 Cloud TPU 服務，不對外銷售硬體。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">4096 TPU 全互連</span>
+          <span class="spec-chip blue">3D Torus 拓撲</span>
+          <span class="spec-chip orange">Google 自研，不對外</span>
+          <span class="spec-chip">光纖 ICI</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #f59e0b;">
+        <div class="icard-head">
+          <div class="icard-icon">🔗</div>
+          <div>
+            <div class="icard-title">UALink 1.0（Ultra Accelerator Link）</div>
+            <div class="icard-vendor">AMD、Intel、Broadcom、Cisco、Google、Meta、Microsoft、Dell 等</div>
+          </div>
+        </div>
+        <div class="icard-desc">2024 年 5 月成立的開放標準聯盟（不含 NVIDIA），2025 年 4 月發布 Spec 1.0，目標是建立可替代 NVLink/NVSwitch 的開放 Scale-up GPU 互連標準，支援最多 1,024 顆加速器同域互連。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">200 GT/s per lane</span>
+          <span class="spec-chip">x4 = 800 Gbps per link</span>
+          <span class="spec-chip green">最多 1,024 GPU 同域</span>
+          <span class="spec-chip orange">Spec 1.0 發布 2025/4</span>
+          <span class="spec-chip blue">對抗 NVLink 的開放標準</span>
+          <span class="spec-chip red">硬體量產尚需 1–2 年</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">互連技術比較</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>技術</th>
+            <th>類型</th>
+            <th>頻寬（2024）</th>
+            <th>延遲</th>
+            <th>適用場景</th>
+            <th>主要支持廠商</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">NVLink 5.0</td>
+            <td>Scale-up 機內</td>
+            <td class="green">1.8 TB/s / GPU</td>
+            <td class="green">~1 µs</td>
+            <td>DGX / NVL72 機架內</td>
+            <td>NVIDIA</td>
+          </tr>
+          <tr>
+            <td class="hi">NVLink 4.0</td>
+            <td>Scale-up 機內</td>
+            <td class="blue">900 GB/s / GPU</td>
+            <td class="green">~1 µs</td>
+            <td>DGX H100/H200</td>
+            <td>NVIDIA</td>
+          </tr>
+          <tr>
+            <td class="hi">NDR InfiniBand</td>
+            <td>Scale-out 機間</td>
+            <td class="blue">400 Gb/s / port</td>
+            <td class="green">&lt; 600 ns</td>
+            <td>AI 訓練叢集（現主流）</td>
+            <td>NVIDIA</td>
+          </tr>
+          <tr>
+            <td class="hi">XDR InfiniBand</td>
+            <td>Scale-out 機間</td>
+            <td class="green">800 Gb/s / port</td>
+            <td class="green">&lt; 600 ns</td>
+            <td>下一代 AI 叢集（2025+）</td>
+            <td>NVIDIA</td>
+          </tr>
+          <tr>
+            <td class="hi">RoCEv2 400G</td>
+            <td>Scale-out 機間</td>
+            <td>400 Gb/s / port</td>
+            <td class="blue">2–5 µs</td>
+            <td>企業 AI / 雲端 CSP</td>
+            <td>Broadcom、Arista、Cisco</td>
+          </tr>
+          <tr>
+            <td class="hi">Spectrum-X 800G</td>
+            <td>Scale-out 機間</td>
+            <td class="blue">800 Gb/s / port</td>
+            <td class="blue">~1 µs</td>
+            <td>NVIDIA Ethernet AI 叢集</td>
+            <td>NVIDIA</td>
+          </tr>
+          <tr>
+            <td>AMD Infinity Fabric</td>
+            <td>Scale-up 機內</td>
+            <td>~900 GB/s</td>
+            <td class="green">&lt; 1 µs</td>
+            <td>MI300A APU 內部</td>
+            <td>AMD</td>
+          </tr>
+          <tr>
+            <td>Ultra Ethernet (UEC)</td>
+            <td>Scale-out 規範</td>
+            <td class="orange">規範制定中</td>
+            <td class="orange">目標 &lt; 1 µs</td>
+            <td>未來 AI 開放互連</td>
+            <td>AMD、Intel、Meta</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /panel-interconnect -->
+
+
+  <!-- ════════════════════════════════════════
+       TAB 5 : 市場概觀
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-market">
+
+    <div class="section-heading">
+      <h2>AI 基礎設施市場概觀</h2>
+      <p>AI 資料中心建設投資在 2023–2026 年進入爆發期，帶動 AI 伺服器、高速交換器、電力與冷卻設備等整個供應鏈的快速成長。</p>
+    </div>
+
+    <div class="callout green">
+      <h3>市場規模概覽（2024–2025）</h3>
+      <ul>
+        <li><strong>AI 伺服器：</strong> 2024 年全球 AI 伺服器市場約 700–900 億美元，預估 2025 年突破 1,500 億美元，NVIDIA 市佔率超過 80%。</li>
+        <li><strong>AI 網路設備：</strong> 2024 年 AI 驅動的網路設備（交換器、HCA、光纜）市場約 150–200 億美元，年增率超 50%。</li>
+        <li><strong>CPO 市場：</strong> 2024 年仍以早期量產為主，預估 2027 年市場達 30–50 億美元，2030 年可能成為高速連接埠的主流形式。</li>
+        <li><strong>資料中心電力需求：</strong> 全球 AI 資料中心電力需求 2024 年約 50 GW，預估 2030 年達 200+ GW。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">主要玩家定位</p>
+    <div class="card-grid">
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🏆</div>
+          <div>
+            <div class="icard-title">NVIDIA</div>
+            <div class="icard-vendor">GPU + 交換器 + 互連 + 軟體 全棧</div>
+          </div>
+        </div>
+        <div class="icard-desc">市值最高的 AI 基礎設施公司。主導 GPU（H100/B200）、InfiniBand（NDR/XDR）、Ethernet（Spectrum-X）、Scale-up（NVLink）、軟體（CUDA / NCCL）整個 AI 計算棧，形成強大的生態系護城河。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">GPU 市佔 80%+</span>
+          <span class="spec-chip green">全棧解決方案</span>
+          <span class="spec-chip">CUDA 生態鎖定</span>
+          <span class="spec-chip orange">2024 市值突破 3.5 兆美元</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #ff0000;">
+        <div class="icard-head">
+          <div class="icard-icon">🔴</div>
+          <div>
+            <div class="icard-title">AMD</div>
+            <div class="icard-vendor">MI300X / MI300A — NVIDIA 主要競爭者</div>
+          </div>
+        </div>
+        <div class="icard-desc">MI300X 以 192 GB HBM3 統一記憶體在推理場景挑戰 NVIDIA，已獲 Microsoft Azure、Meta、Oracle 採用。ROCm 開源軟體棧持續改善，生態系逐漸成熟。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">MI300X 192 GB HBM3</span>
+          <span class="spec-chip green">推理性價比高</span>
+          <span class="spec-chip blue">ROCm 開源</span>
+          <span class="spec-chip">Azure / Meta 部署</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #0071c5;">
+        <div class="icard-head">
+          <div class="icard-icon">🔵</div>
+          <div>
+            <div class="icard-title">Intel</div>
+            <div class="icard-vendor">Gaudi 3 + 矽光子 CPO</div>
+          </div>
+        </div>
+        <div class="icard-desc">Gaudi 3 以內建 24× 200GbE 的差異化設計切入 AI 訓練市場，同時透過矽光子業務（CPO）佈局 AI 網路光連接，是 CPO 技術的重要推動者。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Gaudi 3 AI 加速器</span>
+          <span class="spec-chip blue">矽光子 CPO</span>
+          <span class="spec-chip orange">內建 RoCE 網路</span>
+          <span class="spec-chip green">OAM 標準開放</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Broadcom</div>
+            <div class="icard-vendor">交換晶片 + CPO + 客製 AI 晶片</div>
+          </div>
+        </div>
+        <div class="icard-desc">Tomahawk 系列交換晶片主導 AI Ethernet 市場，同時為 Google TPU / Meta MTIA 等超大規模 CSP 設計客製化 AI 加速晶片（ASIC），是 AI 基礎設施的隱形冠軍。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">交換晶片市佔 50%+</span>
+          <span class="spec-chip blue">CPO Tomahawk 5</span>
+          <span class="spec-chip green">客製 ASIC（Google TPU）</span>
+          <span class="spec-chip orange">2024 AI 晶片收入爆發</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #00a8e0;">
+        <div class="icard-head">
+          <div class="icard-icon">🔀</div>
+          <div>
+            <div class="icard-title">Arista Networks</div>
+            <div class="icard-vendor">AI 網路交換器首選</div>
+          </div>
+        </div>
+        <div class="icard-desc">以高可靠性 EOS 軟體與 AI-specific 流量最佳化，成為 Meta、Microsoft 等超大規模 CSP 的 AI 交換器首選，2024 年 AI 相關收入快速成長。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">CSP AI 網路首選</span>
+          <span class="spec-chip blue">EOS 軟體差異化</span>
+          <span class="spec-chip">Meta / Microsoft 部署</span>
+          <span class="spec-chip green">400G / 800G 完整產品線</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #666699;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Marvell</div>
+            <div class="icard-vendor">客製 ASIC + CPO + 光電元件</div>
+          </div>
+        </div>
+        <div class="icard-desc">主要業務包括：為 AWS（Trainium / Inferentia）等 CSP 設計 AI 推論 ASIC、Teralynx 交換晶片、Orion CPO 平台及 PAM4 DSP 光模組晶片，是 AI 基礎設施供應鏈的多面手。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">AWS ASIC 設計夥伴</span>
+          <span class="spec-chip blue">Teralynx 交換晶片</span>
+          <span class="spec-chip">Orion CPO 平台</span>
+          <span class="spec-chip green">PAM4 DSP 市佔高</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">AI 基礎設施技術演進時間軸</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2022</div>
+        <div class="tl-title">A100 → H100 世代交替；NDR InfiniBand 導入</div>
+        <div class="tl-desc">ChatGPT 引爆 AI 需求。NVIDIA H100（Hopper）開始出貨，NDR 400G InfiniBand 成為標配。Broadcom Tomahawk 5 推出，奠定 400G AI Ethernet 基礎。</div>
+      </div>
+      <div class="tl-item blue">
+        <div class="tl-date">2023</div>
+        <div class="tl-title">DGX H100 大規模部署；Spectrum-X 發布</div>
+        <div class="tl-desc">H100 伺服器全球嚴重缺貨，等待期長達 9–12 個月。NVIDIA 推出 Spectrum-X（AI Ethernet），AMD MI300X 發布。超大規模 CSP 開始投入數百億美元建設 AI 資料中心。</div>
+      </div>
+      <div class="tl-item green">
+        <div class="tl-date">2024</div>
+        <div class="tl-title">Blackwell（B200）發布；GB200 NVL72 機架量產</div>
+        <div class="tl-desc">NVIDIA 推出 Blackwell 架構（B200 / GB200），NVLink 5.0 實現 1.8 TB/s。GB200 NVL72 液冷機架成為 AI 訓練標誌性產品。CPO 開始量產導入。800G Ethernet 進入 AI 叢集。</div>
+      </div>
+      <div class="tl-item orange">
+        <div class="tl-date">2025–2026</div>
+        <div class="tl-title">800G / XDR 普及；CPO 大規模商用化</div>
+        <div class="tl-desc">NVIDIA Rubin（R100）架構規劃中，XDR InfiniBand（800G）量產，Broadcom Tomahawk 6（102.4 Tb/s）導入，CPO 800G 交換器進入 CSP 批量採購。Ultra Ethernet Consortium 完成第一版 UET 規範。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">AI 資料中心電力與冷卻趨勢</p>
+    <div class="callout orange">
+      <h3>液冷成為 AI 伺服器必要選項</h3>
+      <ul>
+        <li>GB200 NVL72 機架整機 TDP 超過 <strong>120 kW</strong>（傳統機架僅 10–20 kW），風冷架構已無法應對。</li>
+        <li>主流方案包括：<strong>直接液冷（DLC）</strong>、<strong>浸沒式冷卻（Immersion Cooling）</strong>、<strong>背板液冷（Rear-Door HX）</strong>。</li>
+        <li>Supermicro、Lenovo、Vertiv、Schneider Electric 均已推出針對 AI 伺服器的液冷基礎設施解決方案。</li>
+        <li>電力基礎設施同步升級：AI 資料中心每 MW 建設成本已達 10–20 億美元，核電、天然氣發電成為新的 AI 資料中心電力來源。</li>
+      </ul>
+    </div>
+
+  </div><!-- /panel-market -->
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="../LICENSE">CC BY 4.0</a> 授權 · 資料截至 2025 年 · 持續更新中</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

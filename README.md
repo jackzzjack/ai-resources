@@ -18,6 +18,7 @@
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
+| `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
 
 ---
 
