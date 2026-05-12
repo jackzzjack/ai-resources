@@ -20,6 +20,7 @@
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
 | `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
+| `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 
 ---
 

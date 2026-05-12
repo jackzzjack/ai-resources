@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>半導體產業生態系與製造流程 — Ecosystem · Foundry · Process</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #fbbf24;
+      --accent2: #fcd34d;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(251,191,36,0.12) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Category label ── */
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card-grid.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(251,191,36,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(251,191,36,0.04); }
+    .comp-table td.muted { color: var(--muted); }
+    .comp-table td.hi { color: var(--accent2); font-weight: 500; }
+    .comp-table td.green { color: var(--accent-green); }
+    .comp-table td.blue { color: var(--accent-blue); }
+    .comp-table td.orange { color: var(--accent-orange); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── Ecosystem SVG ── */
+    .eco-map {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .eco-node {
+      fill: var(--surface2);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .eco-node.highlight {
+      stroke: var(--accent);
+    }
+    .eco-text {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-subtext {
+      fill: var(--muted);
+      font-size: 11px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-link {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>半導體產業生態系與製造流程</h1>
+  <p>從 IC 設計、晶圓代工到封裝測試，詳解半導體供應鏈架構與製造技術核心</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="ecosystem">🌐 產業生態系</div>
+    <div class="tab" data-tab="manufacturing">🏭 晶圓製造</div>
+    <div class="tab" data-tab="backend">📦 封裝測試</div>
+    <div class="tab" data-tab="supplychain">🛠️ 設備與材料</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 產業生態系
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-ecosystem">
+    <div class="section-heading">
+      <h2>半導體垂直分工體系</h2>
+      <p>半導體產業採高度專業分工模式，主要分為上游設計、中游製造與下游封測。</p>
+    </div>
+
+    <div class="eco-map">
+      <svg width="900" height="560" viewBox="0 0 900 560">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--border)" />
+          </marker>
+        </defs>
+
+        <!-- Links -->
+        <!-- Design to Foundry -->
+        <path d="M 230 180 L 230 330 L 350 330" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Foundry to OSAT -->
+        <path d="M 550 330 L 670 330" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Equipment to Foundry -->
+        <path d="M 450 180 L 450 300" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Materials to Foundry -->
+        <path d="M 450 480 L 450 360" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- IP/EDA to Design -->
+        <path d="M 230 80 L 230 120" class="eco-link" marker-end="url(#arrowhead)" />
+
+        <!-- Nodes -->
+        <!-- IP & EDA -->
+        <rect x="130" y="20" width="200" height="60" rx="8" class="eco-node" />
+        <text x="230" y="45" class="eco-text">IP 與 EDA 工具</text>
+        <text x="230" y="65" class="eco-subtext">Arm, Synopsys, Cadence</text>
+
+        <!-- IC Design (Fabless) -->
+        <rect x="130" y="120" width="200" height="60" rx="8" class="eco-node highlight" />
+        <text x="230" y="145" class="eco-text">IC 設計 (Fabless)</text>
+        <text x="230" y="165" class="eco-subtext">聯發科, NVIDIA, 高通</text>
+
+        <!-- Foundry -->
+        <rect x="350" y="300" width="200" height="60" rx="8" class="eco-node highlight" />
+        <text x="450" y="325" class="eco-text">晶圓代工 (Foundry)</text>
+        <text x="450" y="345" class="eco-subtext">台積電, 聯電, 三星</text>
+
+        <!-- OSAT -->
+        <rect x="670" y="300" width="200" height="60" rx="8" class="eco-node highlight" />
+        <text x="770" y="325" class="eco-text">封裝測試 (OSAT)</text>
+        <text x="770" y="345" class="eco-subtext">日月光, Amkor, 力成</text>
+
+        <!-- Equipment -->
+        <rect x="350" y="120" width="200" height="60" rx="8" class="eco-node" />
+        <text x="450" y="145" class="eco-text">半導體設備</text>
+        <text x="450" y="165" class="eco-subtext">ASML, 應用材料, TEL</text>
+
+        <!-- Materials -->
+        <rect x="350" y="480" width="200" height="60" rx="8" class="eco-node" />
+        <text x="450" y="505" class="eco-text">半導體材料</text>
+        <text x="450" y="525" class="eco-subtext">信越化學, 環球晶, 德商默克</text>
+
+        <!-- IDM Callout (Optional visual) -->
+        <rect x="670" y="120" width="200" height="60" rx="8" class="eco-node" style="stroke-dasharray: 4 4;" />
+        <text x="770" y="145" class="eco-text">IDM (垂直整合)</text>
+        <text x="770" y="165" class="eco-subtext">Intel, 三星, 德州儀器</text>
+      </svg>
+    </div>
+
+    <p class="cat-label">核心角色說明</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">✏️</div>
+          <div>
+            <div class="icard-title">IC 設計 (Fabless)</div>
+            <div class="icard-vendor">上游 - 無晶圓廠設計公司</div>
+          </div>
+        </div>
+        <div class="icard-desc">專注於晶片電路設計與銷售，將製造、封裝、測試委外。台系代表：聯發科、聯詠、瑞昱。美系代表：NVIDIA、AMD、高通。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent);">
+        <div class="icard-head">
+          <div class="icard-icon">🏗️</div>
+          <div>
+            <div class="icard-title">晶圓代工 (Foundry)</div>
+            <div class="icard-vendor">中游 - 製造核心</div>
+          </div>
+        </div>
+        <div class="icard-desc">接受設計公司委託進行晶圓製造。台灣擁有全球最高市佔率與最先進製程（2nm/3nm）。代表：台積電、聯電、世界先進、力積電。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">📦</div>
+          <div>
+            <div class="icard-title">封裝測試 (OSAT)</div>
+            <div class="icard-vendor">下游 - 後段工序</div>
+          </div>
+        </div>
+        <div class="icard-desc">將製造好的晶圓切割並封裝成成品，並進行最後測試。日月光投控（ASE）為全球龍頭。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">🏭</div>
+          <div>
+            <div class="icard-title">垂直整合製造 (IDM)</div>
+            <div class="icard-vendor">一條龍模式</div>
+          </div>
+        </div>
+        <div class="icard-desc">從設計、製造到封測皆自主完成。典型代表如 Intel、三星、德州儀器（TI）。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 晶圓製造
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-manufacturing">
+    <div class="section-heading">
+      <h2>晶圓代工與製造流程</h2>
+      <p>將電路圖轉移至矽晶圓上的精密物理化學過程，包含數百道工序。</p>
+    </div>
+
+    <div class="callout">
+      <h3>前段製程 (Front-End of Line, FEOL)</h3>
+      <p>主要是在矽晶圓上形成電晶體（Transistor）等主動元件的過程。現代先進製程已演進至 <strong>FinFET</strong> 與 <strong>GAA (Gate-All-Around)</strong> 架構。</p>
+    </div>
+
+    <p class="cat-label">核心製造步驟</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">☀️</div>
+          <div>
+            <div class="icard-title">黃光微影 (Photolithography)</div>
+            <div class="icard-vendor">最關鍵工序</div>
+          </div>
+        </div>
+        <div class="icard-desc">利用光線將電路圖案轉移到塗有光阻的晶圓上。先進製程需使用 <strong>EUV (極紫外光)</strong> 技術。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">✂️</div>
+          <div>
+            <div class="icard-title">蝕刻 (Etching)</div>
+            <div class="icard-vendor">乾式 / 濕式蝕刻</div>
+          </div>
+        </div>
+        <div class="icard-desc">移除未受光阻保護的材料，在晶圓上刻畫出精細的溝槽與線路。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">🌫️</div>
+          <div>
+            <div class="icard-title">薄膜沈積 (Deposition)</div>
+            <div class="icard-vendor">CVD / PVD / ALD</div>
+          </div>
+        </div>
+        <div class="icard-desc">在晶圓表面生長或沈積一層極薄的絕緣體、半導體或金屬層。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-red);">
+        <div class="icard-head">
+          <div class="icard-icon">⚛️</div>
+          <div>
+            <div class="icard-title">離子佈植 (Ion Implantation)</div>
+            <div class="icard-vendor">摻雜工序</div>
+          </div>
+        </div>
+        <div class="icard-desc">將特定雜質離子射入矽晶圓中，以改變半導體特徵，形成 N 型或 P 型區域。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">先進製程世代比較</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>節點 (Node)</th>
+            <th>架構 (Architecture)</th>
+            <th>關鍵技術</th>
+            <th>主要應用</th>
+            <th>領先廠商</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">成熟製程 (28nm+)</td>
+            <td>Planar FET</td>
+            <td>DUV 微影</td>
+            <td>車用、電源管理、IoT</td>
+            <td>聯電, 中芯, 力積電</td>
+          </tr>
+          <tr>
+            <td class="hi">7nm / 5nm</td>
+            <td>FinFET</td>
+            <td>EUV 微影導入</td>
+            <td>智慧型手機, PC, 資料中心</td>
+            <td class="green">台積電, 三星</td>
+          </tr>
+          <tr>
+            <td class="hi">3nm</td>
+            <td>FinFET / GAA</td>
+            <td>高數值孔徑 EUV</td>
+            <td>AI 晶片, 旗艦手機 SoC</td>
+            <td class="green">台積電, 三星</td>
+          </tr>
+          <tr>
+            <td class="hi">2nm (規劃中)</td>
+            <td>GAA (NanoSheet)</td>
+            <td>背面供電 (BSPDN)</td>
+            <td>下一代高效能運算 (HPC)</td>
+            <td class="orange">台積電, Intel, Samsung</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 封裝測試
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-backend">
+    <div class="section-heading">
+      <h2>後段工序：封裝與測試 (Assembly & Test)</h2>
+      <p>保護晶粒、實現訊號引出，並確保最終產品功能與可靠性。</p>
+    </div>
+
+    <div class="callout green">
+      <h3>先進封裝：延續摩爾定律的新關鍵</h3>
+      <p>隨著製程微縮難度增加，<strong>先進封裝 (Advanced Packaging)</strong> 成為提升晶片效能的主戰場，如台積電的 <strong>CoWoS</strong> 技術對於 AI 晶片 (H100/B200) 至關重要。</p>
+    </div>
+
+    <p class="cat-label">主要封裝技術</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">🧊</div>
+          <div>
+            <div class="icard-title">CoWoS (台積電)</div>
+            <div class="icard-vendor">晶圓級系統封裝</div>
+          </div>
+        </div>
+        <div class="icard-desc">將 GPU 與 HBM (高頻寬記憶體) 封裝在同一個矽基板上。AI 伺服器晶片的標配。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">🪜</div>
+          <div>
+            <div class="icard-title">InFO (台積電)</div>
+            <div class="icard-vendor">扇出型封裝</div>
+          </div>
+        </div>
+        <div class="icard-desc">無需載板，能縮減晶片厚度，常用於 iPhone A 系列處理器。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">🔋</div>
+          <div>
+            <div class="icard-title">3D IC / Chiplet</div>
+            <div class="icard-vendor">異質整合</div>
+          </div>
+        </div>
+        <div class="icard-desc">將不同功能的晶片（小晶片）垂直堆疊或水平互連，打破單一晶粒面積限制。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--muted);">
+        <div class="icard-head">
+          <div class="icard-icon">🔬</div>
+          <div>
+            <div class="icard-title">CP / FT 測試</div>
+            <div class="icard-vendor">晶圓測試 / 終測</div>
+          </div>
+        </div>
+        <div class="icard-desc">CP (Chip Probe) 在晶圓階段測試；FT (Final Test) 封裝完後進行完整電性能測試。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 設備與材料
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-supplychain">
+    <div class="section-heading">
+      <h2>上游供應鏈：設備與材料</h2>
+      <p>半導體製造是極其複雜的「軍備競賽」，上游設備與材料的壟斷性極強。</p>
+    </div>
+
+    <p class="cat-label">全球五大設備商 (Big 5)</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #0088cc;">
+        <div class="icard-head">
+          <div class="icard-icon">🇳🇱</div>
+          <div>
+            <div class="icard-title">ASML (艾司摩爾)</div>
+            <div class="icard-vendor">光刻機霸主</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球唯一供應 EUV (極紫外光) 光刻機的公司，掌握先進製程的咽喉。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #e21e26;">
+        <div class="icard-head">
+          <div class="icard-icon">🇺🇸</div>
+          <div>
+            <div class="icard-title">Applied Materials (應材)</div>
+            <div class="icard-vendor">沈積與蝕刻設備</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球市佔最高，涵蓋薄膜沈積、離子佈植、CMP 等多領域設備。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #000;">
+        <div class="icard-head">
+          <div class="icard-icon">🇺🇸</div>
+          <div>
+            <div class="icard-title">Lam Research (科林研發)</div>
+            <div class="icard-vendor">蝕刻技術專家</div>
+          </div>
+        </div>
+        <div class="icard-desc">在高難度的電漿蝕刻與清潔領域擁有領先地位。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #005bb7;">
+        <div class="icard-head">
+          <div class="icard-icon">🇯🇵</div>
+          <div>
+            <div class="icard-title">Tokyo Electron (TEL)</div>
+            <div class="icard-vendor">塗膠顯影設備</div>
+          </div>
+        </div>
+        <div class="icard-desc">日本半導體設備龍頭，在塗膠顯影機 (Coater/Developer) 市佔極高。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #004d95;">
+        <div class="icard-head">
+          <div class="icard-icon">🇺🇸</div>
+          <div>
+            <div class="icard-title">KLA (科磊)</div>
+            <div class="icard-vendor">檢測與量測設備</div>
+          </div>
+        </div>
+        <div class="icard-desc">專精於製程缺陷檢測，確保晶圓生產的良率與品質。</div>
+      </div>
+    </div>
+
+    <p class="cat-label">關鍵材料供應</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>類別</th>
+            <th>關鍵材料</th>
+            <th>主要廠商</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">矽晶圓 (Wafer)</td>
+            <td>12 吋 / 8 吋 矽晶棒切割</td>
+            <td>信越化學 (日), 勝高 (日), 環球晶 (台)</td>
+          </tr>
+          <tr>
+            <td class="hi">光阻劑 (Photoresist)</td>
+            <td>感光化學藥劑</td>
+            <td>JSR (日), 東京應化 (日), 信越 (日)</td>
+          </tr>
+          <tr>
+            <td class="hi">電子特氣</td>
+            <td>蝕刻與沈積用特殊氣體</td>
+            <td>德商默克, 法商液空, Air Products</td>
+          </tr>
+          <tr>
+            <td class="hi">掩膜版 (Reticle)</td>
+            <td>電路光罩</td>
+            <td>大日本印刷 (DNP), 凸版印刷 (Toppan)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容僅供教育與參考使用</p>
+</footer>
+
+<script>
+  function switchTab(tabElement, targetId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tabElement.classList.add('active');
+    document.getElementById('panel-' + targetId).classList.add('active');
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      switchTab(tab, tab.dataset.tab);
+    });
+  });
+</script>
+
+</body>
+</html>
