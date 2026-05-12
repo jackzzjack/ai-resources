@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>航運產業生態系與商業模式 — Ecosystem · Profit · Business Model</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(59,130,246,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Category label ── */
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card-grid.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(59,130,246,0.04); }
+    .comp-table td.muted { color: var(--muted); }
+    .comp-table td.hi { color: var(--accent2); font-weight: 500; }
+    .comp-table td.green { color: var(--accent-green); }
+    .comp-table td.blue { color: var(--accent-blue); }
+    .comp-table td.orange { color: var(--accent-orange); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── Ecosystem SVG ── */
+    .eco-map {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .eco-node {
+      fill: var(--surface2);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .eco-node.highlight {
+      stroke: var(--accent);
+    }
+    .eco-text {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-subtext {
+      fill: var(--muted);
+      font-size: 11px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-link {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .eco-arrow {
+      fill: var(--border);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>航運產業生態系與商業模式</h1>
+  <p>從貨主、船東到碼頭營運商，探索全球貿易血脈的獲利邏輯與運作架構</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="ecosystem">🌐 產業生態系</div>
+    <div class="tab" data-tab="profit">💰 獲利模式</div>
+    <div class="tab" data-tab="business">🚢 商業模式</div>
+    <div class="tab" data-tab="vessels">📐 船型概覽</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 產業生態系
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-ecosystem">
+    <div class="section-heading">
+      <h2>航運產業鏈全景</h2>
+      <p>航運是一個資本密集且高度國際化的產業，涉及眾多專業機構相互協作。其核心是將貨物從生產地運往消費地。</p>
+    </div>
+
+    <div class="eco-map">
+      <svg width="800" height="460" viewBox="0 0 800 460">
+        <!-- Definitions for markers -->
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--border)" />
+          </marker>
+        </defs>
+
+        <!-- Links (Orthogonal Paths) -->
+        <!-- Shipper to Forwarder -->
+        <path d="M 120 180 L 120 230" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Forwarder to Carrier -->
+        <path d="M 120 290 L 120 340 L 220 340" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Carrier to Port -->
+        <path d="M 380 340 L 480 340 L 480 290" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Shipbuilder to Carrier -->
+        <path d="M 300 80 L 300 310" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Class Society to Shipbuilder & Carrier -->
+        <path d="M 450 55 L 380 55" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 530 80 L 530 230" class="eco-link" marker-end="url(#arrowhead)" />
+        <!-- Insurance to Carrier -->
+        <path d="M 700 290 L 700 340 L 380 340" class="eco-link" marker-end="url(#arrowhead)" />
+
+        <!-- Nodes -->
+        <!-- 貨主 -->
+        <rect x="40" y="120" width="160" height="60" rx="8" class="eco-node highlight" />
+        <text x="120" y="145" class="eco-text">貨主 (Shipper)</text>
+        <text x="120" y="165" class="eco-subtext">進出口商 / 貿易商</text>
+
+        <!-- 貨運承攬 -->
+        <rect x="40" y="230" width="160" height="60" rx="8" class="eco-node" />
+        <text x="120" y="255" class="eco-text">貨代 (Forwarder)</text>
+        <text x="120" y="275" class="eco-subtext">物流代理 / 訂艙</text>
+
+        <!-- 船公司 -->
+        <rect x="220" y="310" width="160" height="60" rx="8" class="eco-node highlight" />
+        <text x="300" y="335" class="eco-text">船公司 (Carrier)</text>
+        <text x="300" y="355" class="eco-subtext">船東 (Owner) / 營運商</text>
+
+        <!-- 港口碼頭 -->
+        <rect x="400" y="230" width="160" height="60" rx="8" class="eco-node" />
+        <text x="480" y="255" class="eco-text">港口 (Port / Terminal)</text>
+        <text x="480" y="275" class="eco-subtext">裝卸 / 倉儲</text>
+
+        <!-- 造船廠 -->
+        <rect x="220" y="20" width="160" height="60" rx="8" class="eco-node" />
+        <text x="300" y="45" class="eco-text">造船廠 (Shipbuilder)</text>
+        <text x="300" y="65" class="eco-subtext">新船建造 / 維修</text>
+
+        <!-- 船級社 -->
+        <rect x="450" y="20" width="160" height="60" rx="8" class="eco-node" />
+        <text x="530" y="45" class="eco-text">船級社 (Class Society)</text>
+        <text x="530" y="65" class="eco-subtext">檢驗 / 證照發放</text>
+
+        <!-- 保險與 P&I -->
+        <rect x="620" y="230" width="160" height="60" rx="8" class="eco-node" />
+        <text x="700" y="255" class="eco-text">保險 (P&I Club)</text>
+        <text x="700" y="275" class="eco-subtext">貨責險 / 船體險</text>
+      </svg>
+    </div>
+
+    <p class="cat-label">核心角色說明</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent);">
+        <div class="icard-head">
+          <div class="icard-icon">🚢</div>
+          <div>
+            <div class="icard-title">船公司 (Carrier)</div>
+            <div class="icard-vendor">核心營運者</div>
+          </div>
+        </div>
+        <div class="icard-desc">分為船東 (Vessel Owner) 與營運商 (Operator)。負責船舶的調度、維修與實際貨物運送。主要分為定期航線 (Liner) 與不定期航線 (Tramp)。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">🏗️</div>
+          <div>
+            <div class="icard-title">港口與碼頭營運商</div>
+            <div class="icard-vendor">基礎設施提供者</div>
+          </div>
+        </div>
+        <div class="icard-desc">提供船舶靠泊、貨物裝卸 (Stevedoring) 與暫存。大型營運商如：PSA (新加坡)、和記黃埔 (Hutchison)、招商局港口。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">📦</div>
+          <div>
+            <div class="icard-title">貨運承攬 (Forwarder)</div>
+            <div class="icard-vendor">中間人 / 代理商</div>
+          </div>
+        </div>
+        <div class="icard-desc">不一定擁有船舶，但為貨主提供訂艙、報關、內陸運輸等整合式物流服務 (NVOCC)。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">🛡️</div>
+          <div>
+            <div class="icard-title">船級社 (Class Society)</div>
+            <div class="icard-vendor">安全與技術監督</div>
+          </div>
+        </div>
+        <div class="icard-desc">制定船舶建造標準，並定期檢驗船舶適航性。代表機構：DNV (挪威)、ABS (美國)、NK (日本)、LR (英國)。</div>
+      </div>
+    </div>
+  </div><!-- /panel-ecosystem -->
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 獲利模式
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-profit">
+    <div class="section-heading">
+      <h2>航運獲利模型與成本結構</h2>
+      <p>航運業利潤深受全球經濟、油價及地緣政治影響。主要公式：利潤 = (運費 + 附加費) - (航行成本 + 固定成本)。</p>
+    </div>
+
+    <div class="callout">
+      <h3>核心收入來源</h3>
+      <ul>
+        <li><strong>基本運費 (Ocean Freight)：</strong> 根據貨量 (TEU / 重量 / 體積) 收取的主體運費。</li>
+        <li><strong>附加費 (Surcharges)：</strong> 如燃油附加費 (BAF)、貨幣調整費 (CAF)、旺季附加費 (PSS) 等。</li>
+        <li><strong>租船租金 (Charter Hire)：</strong> 船東將船舶租給他人營運時收取的日租金。</li>
+        <li><strong>滯期費與滯留費 (D&D)：</strong> 貨主延遲歸還貨櫃或延遲提貨收取的罰金。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">成本結構分析</p>
+    <div class="card-grid wide">
+      <div class="icard" style="--card-color: var(--accent-red);">
+        <div class="icard-head">
+          <div class="icard-icon">⛽</div>
+          <div>
+            <div class="icard-title">航行成本 (Voyage Costs)</div>
+            <div class="icard-vendor">變動成本 - 每次航行產生的支出</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          航運最大的變動支出。
+          <ul>
+            <li><strong>燃油 (Bunker)：</strong> 通常佔總營運成本 20-40%。</li>
+            <li><strong>港口費 (Port Dues)：</strong> 靠泊費、領港費、拖船費。</li>
+            <li><strong>通航費：</strong> 如巴拿馬運河、蘇伊士運河通行費。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">🛠️</div>
+          <div>
+            <div class="icard-title">營運成本 (Operating Costs)</div>
+            <div class="icard-vendor">固定成本 - 無論是否航行皆須支付</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          維持船舶基本運作的費用。
+          <ul>
+            <li><strong>人員費 (Crewing)：</strong> 薪資、保險、伙食。</li>
+            <li><strong>維修與保養 (M&R)：</strong> 歲修、備品支出。</li>
+            <li><strong>保險費：</strong> 船體險、責任險 (P&I)。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">關鍵績效指標 (KPI)</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>指標</th>
+            <th>說明</th>
+            <th>對獲利的影響</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">Load Factor (裝載率)</td>
+            <td>實際載貨量 ÷ 船舶最大載重</td>
+            <td class="green">越高代表單位固定成本越低</td>
+          </tr>
+          <tr>
+            <td class="hi">Idle Fleet Rate (閒置率)</td>
+            <td>未投入營運的船舶比例</td>
+            <td class="red">閒置仍需支付固定成本，侵蝕利潤</td>
+          </tr>
+          <tr>
+            <td class="hi">VLSFO Price (低硫燃油價)</td>
+            <td>主要燃油成本基準</td>
+            <td class="orange">油價上漲將顯著增加營運壓力</td>
+          </tr>
+          <tr>
+            <td class="hi">Charter Rate (租船費率)</td>
+            <td>船舶租賃市場的價格指數</td>
+            <td class="blue">影響船東租金收入或營運商租船成本</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-profit -->
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 商業模式
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-business">
+    <div class="section-heading">
+      <h2>航運兩大運作模式</h2>
+      <p>根據航線固定與否，航運業主要分為定期航線 (Liner) 與不定期航線 (Tramp)。</p>
+    </div>
+
+    <div class="card-grid wide">
+      <div class="icard" style="--card-color: var(--accent);">
+        <div class="icard-head">
+          <div class="icard-icon">🚌</div>
+          <div>
+            <div class="icard-title">定期航線 (Liner Shipping)</div>
+            <div class="icard-vendor">類似「公車」模式</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          固定航線、固定港口、固定班表。主要是 <strong>貨櫃航運</strong>。
+          <br><br>
+          <strong>特點：</strong>
+          <ul>
+            <li>主要運送工業製成品、電子產品、民生用品。</li>
+            <li>競爭核心：航線覆蓋度、班次頻率、準點率。</li>
+            <li>獲利關鍵：高裝載率、規模經濟 (大船化)。</li>
+            <li>代表公司：Maersk, MSC, CMA CGM, 長榮 (Evergreen)。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">🚕</div>
+          <div>
+            <div class="icard-title">不定期航線 (Tramp Shipping)</div>
+            <div class="icard-vendor">類似「計程車」模式</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          無固定航線，根據貨主需求決定起訖點。主要是 <strong>散裝航運</strong> 與 <strong>油輪</strong>。
+          <br><br>
+          <strong>特點：</strong>
+          <ul>
+            <li>運送大宗原物料（礦砂、煤、穀物、原油）。</li>
+            <li>競爭核心：運費報價、船舶位置、供需即時媒合。</li>
+            <li>獲利關鍵：租船契約 (Charter Party) 的費率談判、回程載貨率。</li>
+            <li>代表公司：慧洋 (Wisdom), 裕民 (U-Ming), Frontline。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="cat-label">租船合約類型 (Chartering)</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>合約類型</th>
+            <th>主導者</th>
+            <th>燃料費由誰支付</th>
+            <th>人員費由誰支付</th>
+            <th>適用情境</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">論程租船 (Voyage Charter)</td>
+            <td>船東負責營運</td>
+            <td>船東 (Owner)</td>
+            <td>船東 (Owner)</td>
+            <td>單次航次運送 (主要見於散裝/油輪)</td>
+          </tr>
+          <tr>
+            <td class="hi">論時租船 (Time Charter)</td>
+            <td>租船人負責調度</td>
+            <td class="hi">租船人 (Charterer)</td>
+            <td>船東 (Owner)</td>
+            <td>營運商需要增加短期運力</td>
+          </tr>
+          <tr>
+            <td class="hi">光船租船 (Bareboat Charter)</td>
+            <td>租船人完全主導</td>
+            <td class="hi">租船人 (Charterer)</td>
+            <td class="hi">租船人 (Charterer)</td>
+            <td>長期財務租賃方案</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-business -->
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 船型概覽
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-vessels">
+    <div class="section-heading">
+      <h2>主要船舶類型與載貨特徵</h2>
+      <p>不同貨物需要不同結構的船舶。船舶的大小通常以載重噸 (DWT) 或貨櫃容量 (TEU) 衡量。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">📦</div>
+          <div>
+            <div class="icard-title">貨櫃船 (Container Ship)</div>
+            <div class="icard-vendor">Liner 市場主力</div>
+          </div>
+        </div>
+        <div class="icard-desc">專門運送 20 呎與 40 呎標準貨櫃。最大型 (Ultra Large) 可載 24,000 TEU。</div>
+      </div>
+
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">🪨</div>
+          <div>
+            <div class="icard-title">散裝船 (Bulk Carrier)</div>
+            <div class="icard-vendor">Tramp 市場主力</div>
+          </div>
+        </div>
+        <div class="icard-desc">運送鐵礦砂、煤炭、穀物等散裝物料。分為 Capesize (最大)、Panamax、Handysize。</div>
+      </div>
+
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">🛢️</div>
+          <div>
+            <div class="icard-title">油輪 (Tanker)</div>
+            <div class="icard-vendor">液體散裝</div>
+          </div>
+        </div>
+        <div class="icard-desc">運送原油 (VLCC) 或成品油。具備複雜的泵浦系統與防污雙船殼結構。</div>
+      </div>
+
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">❄️</div>
+          <div>
+            <div class="icard-title">液化氣體船 (LNG / LPG)</div>
+            <div class="icard-vendor">高技術門檻</div>
+          </div>
+        </div>
+        <div class="icard-desc">在極低溫下運送天然氣。造價極昂貴，通常配合長期供應合約營運。</div>
+      </div>
+
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">🚗</div>
+          <div>
+            <div class="icard-title">汽車船 (Ro-Ro)</div>
+            <div class="icard-vendor">滾裝船</div>
+          </div>
+        </div>
+        <div class="icard-desc">具備可調整式甲板與斜坡道，讓車輛可直接駛入。用於成車與工程機械運送。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">散裝船大小分級 (常用於乾散裝與油輪)</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>級別</th>
+            <th>載重噸 (DWT)</th>
+            <th>特徵與航線限制</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">Capesize (海岬型)</td>
+            <td>100,000 - 400,000+</td>
+            <td>太大無法通過巴拿馬/蘇伊士運河，須繞行好望角或合恩角。主運鐵礦砂。</td>
+          </tr>
+          <tr>
+            <td class="hi">Panamax (巴拿馬型)</td>
+            <td>60,000 - 80,000</td>
+            <td>符合巴拿馬運河舊水閘寬度上限（32.31米）。</td>
+          </tr>
+          <tr>
+            <td class="hi">Supramax / Ultramax</td>
+            <td>50,000 - 65,000</td>
+            <td>通常自備起重機 (Cranes)，可在基礎設施較差的港口自行裝卸。</td>
+          </tr>
+          <tr>
+            <td class="hi">Handysize (輕便型)</td>
+            <td>15,000 - 35,000</td>
+            <td>萬能型，幾乎能進出所有小港口，運送多樣化貨物。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-vessels -->
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容僅供教育與參考使用</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
