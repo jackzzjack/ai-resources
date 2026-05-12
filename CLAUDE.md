@@ -25,6 +25,7 @@
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
+| `power-industry.html` | 電源與能源產業分析頁面 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
