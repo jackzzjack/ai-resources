@@ -25,6 +25,7 @@
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
+| `ems-industry.html` | EMS 電子代工產業生態系導覽 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
