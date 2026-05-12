@@ -25,6 +25,7 @@
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
+| `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
