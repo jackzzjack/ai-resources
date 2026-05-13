@@ -13,12 +13,14 @@
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
+| `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
 | `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
+| `power-industry.html` | 電源與能源產業分析（全球電力趨勢、台灣能源結構、AI 伺服器電源 PSU 供應鏈） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 
 ---
