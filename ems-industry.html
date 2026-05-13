@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMS 電子代工產業生態系 — Supply Chain · Business Model · Players</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #10b981;
+      --accent2: #34d399;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(16,185,129,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 650px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Category label ── */
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card-grid.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(16,185,129,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .icard-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(16,185,129,0.04); }
+    .comp-table td.muted { color: var(--muted); }
+    .comp-table td.hi { color: var(--accent2); font-weight: 500; }
+    .comp-table td.green { color: var(--accent-green); }
+    .comp-table td.blue { color: var(--accent-blue); }
+    .comp-table td.orange { color: var(--accent-orange); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── Ecosystem SVG ── */
+    .eco-map {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .eco-node {
+      fill: var(--surface2);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .eco-node.highlight {
+      stroke: var(--accent);
+    }
+    .eco-text {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-subtext {
+      fill: var(--muted);
+      font-size: 11px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-link {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .eco-arrow {
+      fill: var(--border);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>EMS 電子代工產業生態系</h1>
+  <p>從半導體、關鍵零組件到全球組裝樞紐，詳解電子製造服務業的供應鏈協作與商業邏輯</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="ecosystem">🌐 產業生態系</div>
+    <div class="tab" data-tab="business">🛠️ 商業模式</div>
+    <div class="tab" data-tab="profit">💰 獲利與成本</div>
+    <div class="tab" data-tab="players">🏆 全球領導大廠</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 產業生態系
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-ecosystem">
+    <div class="section-heading">
+      <h2>電子代工產業鏈全景</h2>
+      <p>電子製造服務 (EMS) 處於產業鏈中游，向上整合各類電子零組件，向下服務品牌商，並最終供應至各個終端市場。</p>
+    </div>
+
+    <div class="eco-map">
+      <svg width="900" height="480" viewBox="0 0 900 480">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--border)" />
+          </marker>
+        </defs>
+
+        <!-- Links -->
+        <!-- Upstream to Midstream -->
+        <path d="M 120 180 L 120 230" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 300 180 L 300 230" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 480 180 L 480 230" class="eco-link" marker-end="url(#arrowhead)" />
+
+        <!-- Midstream to Downstream -->
+        <path d="M 300 290 L 300 340" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 660 290 L 660 340" class="eco-link" marker-end="url(#arrowhead)" />
+
+        <!-- Brands to Markets -->
+        <path d="M 300 400 L 300 440 L 480 440" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 660 400 L 660 440 L 480 440" class="eco-link" marker-end="url(#arrowhead)" />
+
+        <!-- Upstream Nodes -->
+        <rect x="40" y="120" width="160" height="60" rx="8" class="eco-node" />
+        <text x="120" y="145" class="eco-text">半導體 (IC)</text>
+        <text x="120" y="165" class="eco-subtext">台積電 / 英特爾 / 聯發科</text>
+
+        <rect x="220" y="120" width="160" height="60" rx="8" class="eco-node" />
+        <text x="300" y="145" class="eco-text">被動元件 / PCB</text>
+        <text x="300" y="165" class="eco-subtext">國巨 / 欣興 / 華通</text>
+
+        <rect x="400" y="120" width="160" height="60" rx="8" class="eco-node" />
+        <text x="480" y="145" class="eco-text">其他關鍵零組件</text>
+        <text x="480" y="165" class="eco-subtext">面板 / 機殼 / 電源 / 連接器</text>
+
+        <!-- Midstream Nodes -->
+        <rect x="180" y="230" width="240" height="60" rx="8" class="eco-node highlight" />
+        <text x="300" y="255" class="eco-text">EMS / ODM 代工廠</text>
+        <text x="300" y="275" class="eco-subtext">鴻海 / 廣達 / 仁寶 / 緯創</text>
+
+        <rect x="540" y="230" width="240" height="60" rx="8" class="eco-node" />
+        <text x="660" y="255" class="eco-text">供應鏈管理 / 物流</text>
+        <text x="660" y="275" class="eco-subtext">全球運籌 / 倉儲</text>
+
+        <!-- Downstream Nodes -->
+        <rect x="180" y="340" width="240" height="60" rx="8" class="eco-node highlight" />
+        <text x="300" y="365" class="eco-text">品牌商 (OEM / Brands)</text>
+        <text x="300" y="385" class="eco-subtext">Apple / Dell / HP / Tesla</text>
+
+        <rect x="540" y="340" width="240" height="60" rx="8" class="eco-node" />
+        <text x="660" y="365" class="eco-text">電信商 / 零售渠道</text>
+        <text x="660" y="385" class="eco-subtext">AT&T / Best Buy / Amazon</text>
+
+        <!-- Markets -->
+        <rect x="360" y="420" width="240" height="40" rx="20" class="eco-node" />
+        <text x="480" y="445" class="eco-text">最終消費市場</text>
+      </svg>
+    </div>
+
+    <p class="cat-label">供應鏈環節說明</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">🔌</div>
+          <div>
+            <div class="icard-title">上游：零組件供應</div>
+            <div class="icard-vendor">技術密集型</div>
+          </div>
+        </div>
+        <div class="icard-desc">包含半導體 (IC)、被動元件 (MLCC)、PCB 印刷電路板、顯示面板、電池模組、機殼等。此類廠商通常擁有核心專利或高度自動化生產線。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent);">
+        <div class="icard-head">
+          <div class="icard-icon">🏭</div>
+          <div>
+            <div class="icard-title">中游：製造服務</div>
+            <div class="icard-vendor">資本與人力密集</div>
+          </div>
+        </div>
+        <div class="icard-desc">EMS 與 ODM 廠商。負責 SMT (表面黏著)、組裝、測試 (PCBA/系統組裝)、包裝與全球運籌。其價值在於大規模生產的效率與卓越的供應鏈管控。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #7c6aff;">
+        <div class="icard-head">
+          <div class="icard-icon">🍎</div>
+          <div>
+            <div class="icard-title">下游：品牌與市場</div>
+            <div class="icard-vendor">行銷與研發導向</div>
+          </div>
+        </div>
+        <div class="icard-desc">品牌商負責定義產品規格、工業設計、市場行銷與售後服務。將製造外包以專注於高價值的研發與品牌經營。</div>
+      </div>
+    </div>
+  </div><!-- /panel-ecosystem -->
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 商業模式
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-business">
+    <div class="section-heading">
+      <h2>OEM, ODM 與 EMS 的差異</h2>
+      <p>電子代工業隨著產業演進，發展出多種不同的合作模式，主要差異在於設計參與程度與服務廣度。</p>
+    </div>
+
+    <div class="card-grid wide">
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">📋</div>
+          <div>
+            <div class="icard-title">OEM (Original Equipment Manufacturer)</div>
+            <div class="icard-vendor">純委託代工</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          品牌商提供設計圖與規格，代工廠僅負責生產組裝。
+          <br><br>
+          <strong>特點：</strong>
+          <ul>
+            <li>代工廠不介入設計。</li>
+            <li>利潤最低，完全依賴規模經濟。</li>
+            <li>風險較小，主要負擔生產品質。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">✏️</div>
+          <div>
+            <div class="icard-title">ODM (Original Design Manufacturer)</div>
+            <div class="icard-vendor">設計加工</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          代工廠具備自主研發設計能力，提供整機設計方案供品牌商選擇或共同開發。
+          <br><br>
+          <strong>特點：</strong>
+          <ul>
+            <li>代工廠掌握核心設計 (Reference Design)。</li>
+            <li>利潤較 OEM 高，具備技術門檻。</li>
+            <li>代表領域：筆記型電腦、伺服器、平板。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">🌐</div>
+          <div>
+            <div class="icard-title">EMS (Electronics Manufacturing Services)</div>
+            <div class="icard-vendor">電子製造服務</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          除了組裝外，更強調全球佈局、供應鏈管理、物流、維修等一站式服務。
+          <br><br>
+          <strong>特點：</strong>
+          <ul>
+            <li>規模極大，具備強大的採購議價權。</li>
+            <li>全球多點設廠，貼近市場或降低地緣政治風險。</li>
+            <li>代表公司：鴻海 (Foxconn)、Jabil、Flex。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">模式對比表</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>模式</th>
+            <th>設計權</th>
+            <th>零組件採購</th>
+            <th>核心價值</th>
+            <th>代表性領域</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">OEM</td>
+            <td>品牌商</td>
+            <td>品牌商指定 / 共同</td>
+            <td>高品質生產、低成本</td>
+            <td>消費性電子、家電</td>
+          </tr>
+          <tr>
+            <td class="hi">ODM</td>
+            <td>代工廠 / 共同</td>
+            <td>代工廠主導</td>
+            <td>研發設計、快速上市</td>
+            <td>筆電、通訊設備</td>
+          </tr>
+          <tr>
+            <td class="hi">EMS</td>
+            <td>共同 / 少量</td>
+            <td class="hi">代工廠全球採購</td>
+            <td>供應鏈整合、全球佈局</td>
+            <td>手機、AI 伺服器、車用</td>
+          </tr>
+          <tr>
+            <td class="hi">JDM</td>
+            <td class="blue">深度共同開發</td>
+            <td>透明化採購</td>
+            <td>技術資源互補、降低成本</td>
+            <td>雲端業者客製化硬體</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-business -->
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 獲利與成本
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-profit">
+    <div class="section-heading">
+      <h2>代工業的獲利結構</h2>
+      <p>電子代工業通常被視為「茅山道士」(毛利 3~4%)，利潤極薄，因此對成本控制與營運效率有著極致的要求。</p>
+    </div>
+
+    <div class="callout">
+      <h3>核心公式：獲利 = (產量 × 單價) - (材料成本 + 營運費用)</h3>
+      <p>由於單價通常由品牌商壓制，材料成本佔比極高 (80~90%)，代工廠的競爭關鍵在於：</p>
+      <ul>
+        <li><strong>採購成本：</strong> 透過海量採購壓低組件進貨價。</li>
+        <li><strong>良率管理：</strong> 提升直通率 (First Pass Yield)，減少重工與浪費。</li>
+        <li><strong>自動化程度：</strong> 降低直接人工成本，提升產線穩定性。</li>
+        <li><strong>資產周轉率：</strong> 快速的出貨以降低庫存資金佔用。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">成本結構分析</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-red);">
+        <div class="icard-head">
+          <div class="icard-icon">📦</div>
+          <div>
+            <div class="icard-title">材料成本 (BOM Cost)</div>
+            <div class="icard-vendor">佔比 80% - 95%</div>
+          </div>
+        </div>
+        <div class="icard-desc">包含所有電子零組件與包材。EMS 的優勢在於其代採購 (Buy-and-Sell) 模式中產生的返利或價差。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">👨‍🏭</div>
+          <div>
+            <div class="icard-title">加工費 (MVA)</div>
+            <div class="icard-vendor">Manufacturing Value Added</div>
+          </div>
+        </div>
+        <div class="icard-desc">代工廠實際賺取的服務費。包含人工、電力、折舊與利潤。代工廠致力於優化 SMT 稼動率以提升 MVA 效益。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">🏗️</div>
+          <div>
+            <div class="icard-title">固定支出與資本開支</div>
+            <div class="icard-vendor">CapEx</div>
+          </div>
+        </div>
+        <div class="icard-desc">廠房、無塵室、昂貴的 SMT 設備 (如 Fuji, Panasonic)。新世代 AI 伺服器與高階測試設備的投入極大。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">產業升級方向 (提升毛利的關鍵)</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>方向</th>
+            <th>策略</th>
+            <th>範例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">垂直整合</td>
+            <td>自行生產關鍵零組件 (機殼、連接器、散熱)</td>
+            <td class="green">鴻海集團 (準時達、工業富聯)</td>
+          </tr>
+          <tr>
+            <td class="hi">轉向高價值領域</td>
+            <td>從 PC/手機 轉向 AI 伺服器、車用電子、醫療</td>
+            <td class="blue">廣達 (AI 伺服器)、緯創 (車用電子)</td>
+          </tr>
+          <tr>
+            <td class="hi">全球佈局優化</td>
+            <td>分散生產基地至印度、越南、墨西哥，降低關稅影響</td>
+            <td class="orange">和碩、緯創在印度的擴張</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-profit -->
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 全球領導大廠
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-players">
+    <div class="section-heading">
+      <h2>全球電子代工領導者</h2>
+      <p>台灣企業在全球電子代工市場擁有絕對優勢，但也面臨美系與陸系廠商的競爭。</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- Foxconn -->
+      <div class="icard" style="--card-color: #004291;">
+        <div class="icard-head">
+          <div class="icard-icon">🦊</div>
+          <div>
+            <div class="icard-title">鴻海科技集團 (Foxconn)</div>
+            <div class="icard-vendor">全球第一大 EMS</div>
+          </div>
+        </div>
+        <div class="icard-desc">市佔率約 35~40%。以極致的垂直整合與全球佈局著稱。核心業務為 iPhone 組裝、AI 伺服器 (GB200) 以及電動車 (CDMS)。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">iPhone 核心代工</span>
+          <span class="spec-chip blue">AI 伺服器領導者</span>
+          <span class="spec-chip green">垂直整合專家</span>
+        </div>
+      </div>
+
+      <!-- Quanta -->
+      <div class="icard" style="--card-color: #e21d27;">
+        <div class="icard-head">
+          <div class="icard-icon">💻</div>
+          <div>
+            <div class="icard-title">廣達電腦 (Quanta)</div>
+            <div class="icard-vendor">筆電與 AI 伺服器大廠</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球筆電代工龍頭，更是目前 AI 伺服器 (CSP 客製化) 的最大贏家。深度參與 NVIDIA 與 Google/AWS 的硬體開發。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">筆電代工龍頭</span>
+          <span class="spec-chip blue">CSP AI 伺服器首選</span>
+          <span class="spec-chip">雲端運算專家</span>
+        </div>
+      </div>
+
+      <!-- Jabil -->
+      <div class="icard" style="--card-color: #0077c8;">
+        <div class="icard-head">
+          <div class="icard-icon">🇺🇸</div>
+          <div>
+            <div class="icard-title">捷普 (Jabil)</div>
+            <div class="icard-vendor">美系 EMS 代表</div>
+          </div>
+        </div>
+        <div class="icard-desc">美國最大的 EMS 公司之一，專注於醫療、航太、國防與通訊。以高品質與複雜產品組裝聞名。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">醫療 / 航太市場</span>
+          <span class="spec-chip green">高複雜度製造</span>
+          <span class="spec-chip">美系供應鏈核心</span>
+        </div>
+      </div>
+
+      <!-- Pegatron -->
+      <div class="icard" style="--card-color: #f15a24;">
+        <div class="icard-head">
+          <div class="icard-icon">🔄</div>
+          <div>
+            <div class="icard-title">和碩聯合科技 (Pegatron)</div>
+            <div class="icard-vendor">DMS 全方位代工</div>
+          </div>
+        </div>
+        <div class="icard-desc">iPhone 第二大組裝夥伴。轉型投向車用 (Tesla 供應鏈) 與 5G 網通設備。核心策略為設計、製造與服務整合。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">車用電子布局</span>
+          <span class="spec-chip blue">5G O-RAN</span>
+          <span class="spec-chip">消費性電子</span>
+        </div>
+      </div>
+
+      <!-- Flex -->
+      <div class="icard" style="--card-color: #00a1e0;">
+        <div class="icard-head">
+          <div class="icard-icon">🇸🇬</div>
+          <div>
+            <div class="icard-title">偉創力 (Flex)</div>
+            <div class="icard-vendor">全球佈局 EMS</div>
+          </div>
+        </div>
+        <div class="icard-desc">總部位於新加坡，擁有強大的工業與汽車電子業務。強調數位供應鏈管理與產品全生命週期服務。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">工業 4.0 領先</span>
+          <span class="spec-chip">汽車電子代工</span>
+          <span class="spec-chip blue">全球供應鏈平台</span>
+        </div>
+      </div>
+
+      <!-- BYD Electronics -->
+      <div class="icard" style="--card-color: #ee1c25;">
+        <div class="icard-head">
+          <div class="icard-icon">🇨🇳</div>
+          <div>
+            <div class="icard-title">比亞迪電子 (BYDE)</div>
+            <div class="icard-vendor">陸系 EMS 龍頭</div>
+          </div>
+        </div>
+        <div class="icard-desc">比亞迪集團旗下，不僅是手機組裝大廠，更積極進入 Apple iPad 供應鏈與車用電子，是台系代工廠在陸系市場最強勁的對手。</div>
+        <div class="icard-specs">
+          <span class="spec-chip orange">陸系市場主導</span>
+          <span class="spec-chip">iPad 代工夥伴</span>
+          <span class="spec-chip">車載系統整合</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-players -->
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容僅供教育與參考使用</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

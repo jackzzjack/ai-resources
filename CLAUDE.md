@@ -22,9 +22,19 @@
 | `space/solar_system.html` | 太陽系互動視覺化（Canvas 2D，行星軌道 / 縮放 / 速度調整） |
 | `space/galaxy.html` | 銀河系互動視覺化（程序生成旋臂、核球、太陽系定位標記） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽（事件視界、奇點、時間膨脹、霍金輻射） |
+| `space/rocket_physics.html` | 火箭與軌道物理互動指南（發射流程、逃逸速度、引力助推） |
+| `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽（光譜分類、太陽演化、代表性恆星） |
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
+| `5g_architecture.html` | 5G 網路架構互動圖（SBA、切片、介面說明） |
+| `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、永續燃料） |
+| `ai-infrastructure.html` | AI 基礎設施生態系（伺服器、交換器、CPO、NVLink） |
+| `power-industry.html` | 電源與能源產業分析頁面 |
+| `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
+| `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
+| `power-industry.html` | 電源與能源產業分析頁面 |
+| `ems-industry.html` | EMS 電子代工產業生態系導覽 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
