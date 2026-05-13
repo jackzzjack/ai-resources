@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>電源與能源產業分析 — Trends · Taiwan · AI PSU · Future</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #fb923c; /* Power/Energy theme color */
+      --accent2: #fdba74;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-yellow: #fde047;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(251,146,60,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 650px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Category label ── */
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card-grid.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(251,146,60,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .icard-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(251,146,60,0.04); }
+    .comp-table td.hi { color: var(--accent2); font-weight: 500; }
+    .comp-table td.green { color: var(--accent-green); }
+    .comp-table td.blue { color: var(--accent-blue); }
+    .comp-table td.orange { color: var(--accent-orange); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── SVG Supply Chain ── */
+    .svg-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .node-box {
+      fill: var(--surface2);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .node-box.highlight { stroke: var(--accent); }
+    .node-text {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .node-sub {
+      fill: var(--muted);
+      font-size: 11px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .conn-line {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin-top: 8px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: var(--border);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+    .tl-date {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>電源與能源產業分析</h1>
+  <p>從全球電力結構轉型、台灣 2025 能源目標到 AI 伺服器電源供應鏈的全景導覽</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="global">🌍 全球電力趨勢</div>
+    <div class="tab" data-tab="taiwan">🇹🇼 台灣能源情勢</div>
+    <div class="tab" data-tab="ai-psu">⚡ AI 電源供應鏈</div>
+    <div class="tab" data-tab="future">🔮 未來能源技術</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 全球電力趨勢
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-global">
+    <div class="section-heading">
+      <h2>全球電力市場 2025</h2>
+      <p>根據 IEA 最新報告，全球電力需求在 AI、電動車與空調普及推動下正經歷歷史性的加速成長。</p>
+    </div>
+
+    <div class="callout">
+      <h3>IEA Electricity 2025 重點摘要</h3>
+      <ul>
+        <li><strong>需求激增：</strong> 2024 年全球需求成長 4.3%，預計 2025-2027 將維持 4% 年成長，三年新增電力約 3,500 TWh。</li>
+        <li><strong>亞洲動力：</strong> 新增需求 85% 來自新興經濟體，中國貢獻超過一半。</li>
+        <li><strong>低碳化加速：</strong> 再生能源與核能預計滿足全部新增需求，太陽能與風能是主力。</li>
+        <li><strong>電網壓力：</strong> 負電價事件頻率增加，凸顯電網韌性與儲能調度需求。</li>
+      </ul>
+    </div>
+
+    <p class="cat-label">全球發電結構佔比（2024）</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-yellow);">
+        <div class="icard-head">
+          <div class="icard-icon">☀️</div>
+          <div>
+            <div class="icard-title">再生能源 (Renewables)</div>
+            <div class="icard-vendor">~32% 且持續攀升</div>
+          </div>
+        </div>
+        <div class="icard-desc">太陽能、風能、水能與生質能。太陽能貢獻了全球新增電力的一半以上。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--muted);">
+        <div class="icard-head">
+          <div class="icard-icon">🪨</div>
+          <div>
+            <div class="icard-title">燃煤 (Coal)</div>
+            <div class="icard-vendor">~33% 歷史高點但佔比下降</div>
+          </div>
+        </div>
+        <div class="icard-desc">雖是單一最大來源，但佔比首度降至 1/3 以下，主要受中國與印度增量支撐。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">🔥</div>
+          <div>
+            <div class="icard-title">燃氣 (Natural Gas)</div>
+            <div class="icard-vendor">~23% 橋接能源</div>
+          </div>
+        </div>
+        <div class="icard-desc">作為穩定電網的備援與調節角色，提供再生能源波動時的基載與尖峰彈性。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">⚛️</div>
+          <div>
+            <div class="icard-title">核能 (Nuclear)</div>
+            <div class="icard-vendor">~9% 穩定低碳源</div>
+          </div>
+        </div>
+        <div class="icard-desc">多國重啟或延長核電計畫（如美國、歐洲、中國），視其為實現淨零排放的關鍵。</div>
+      </div>
+    </div>
+  </div><!-- /panel-global -->
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 台灣能源情勢
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-taiwan">
+    <div class="section-heading">
+      <h2>台灣電力結構與轉型</h2>
+      <p>台灣面臨能源進口依賴度 96%+ 的挑戰，目前正推動「二次能源轉型」，重點在於多元綠能與儲能韌性。</p>
+    </div>
+
+    <div class="svg-container">
+      <svg width="800" height="400" viewBox="0 0 800 400">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--border)" />
+          </marker>
+        </defs>
+
+        <!-- Generation -->
+        <rect x="50" y="50" width="160" height="60" rx="8" class="node-box highlight" />
+        <text x="130" y="75" class="node-text">燃氣 (Gas)</text>
+        <text x="130" y="95" class="node-sub">2024 佔比 42.45%</text>
+
+        <rect x="50" y="130" width="160" height="60" rx="8" class="node-box" />
+        <text x="130" y="155" class="node-text">燃煤 (Coal)</text>
+        <text x="130" y="175" class="node-sub">2024 佔比 39.27%</text>
+
+        <rect x="50" y="210" width="160" height="60" rx="8" class="node-box highlight" />
+        <text x="130" y="235" class="node-text">再生能源 (Green)</text>
+        <text x="130" y="255" class="node-sub">2024 佔比 11.55%</text>
+
+        <rect x="50" y="290" width="160" height="60" rx="8" class="node-box" />
+        <text x="130" y="315" class="node-text">其他 (Nuclear/Oil)</text>
+        <text x="130" y="335" class="node-sub">核能佔約 4.22%</text>
+
+        <!-- Transmission -->
+        <path d="M 210 80 L 320 80 L 320 200" class="conn-line" marker-end="url(#arrow)" />
+        <path d="M 210 160 L 320 160 L 320 200" class="conn-line" marker-end="url(#arrow)" />
+        <path d="M 210 240 L 320 240 L 320 200" class="conn-line" marker-end="url(#arrow)" />
+        <path d="M 210 320 L 320 320 L 320 200" class="conn-line" marker-end="url(#arrow)" />
+
+        <!-- Grid -->
+        <rect x="320" y="170" width="160" height="60" rx="8" class="node-box highlight" />
+        <text x="400" y="195" class="node-text">強韌電網 / 儲能</text>
+        <text x="400" y="215" class="node-sub">BESS / 智慧電網</text>
+
+        <!-- Consumption -->
+        <path d="M 480 200 L 590 200" class="conn-line" marker-end="url(#arrow)" />
+
+        <rect x="590" y="130" width="160" height="60" rx="8" class="node-box highlight" />
+        <text x="670" y="155" class="node-text">工業與半導體</text>
+        <text x="670" y="175" class="node-sub">消費佔比 55%+</text>
+
+        <rect x="590" y="210" width="160" height="60" rx="8" class="node-box" />
+        <text x="670" y="235" class="node-text">住宅與商業</text>
+        <text x="670" y="255" class="node-sub">民生基本用電</text>
+
+        <text x="400" y="380" class="node-sub">台灣電力供應鏈與消費結構 (2024-2025)</text>
+      </svg>
+    </div>
+
+    <p class="cat-label">2024 台灣發電數據回顧</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>來源</th>
+            <th>發電量 (億度)</th>
+            <th>佔比 (%)</th>
+            <th>成長趨勢</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">燃氣 (Gas)</td>
+            <td>1,224.9</td>
+            <td class="orange">42.45%</td>
+            <td class="green">↗ 首次超過燃煤</td>
+          </tr>
+          <tr>
+            <td class="hi">燃煤 (Coal)</td>
+            <td>1,133.2</td>
+            <td>39.27%</td>
+            <td class="red">↘ 逐步減少</td>
+          </tr>
+          <tr>
+            <td class="hi">再生能源 (Total Green)</td>
+            <td>333.3</td>
+            <td class="green">11.55%</td>
+            <td class="green">↗ 成長 24.07%</td>
+          </tr>
+          <tr>
+            <td>└ 太陽光電</td>
+            <td>148.9</td>
+            <td>5.16%</td>
+            <td>主力成長源</td>
+          </tr>
+          <tr>
+            <td>└ 風力發電</td>
+            <td>103.3</td>
+            <td>3.58%</td>
+            <td class="green">↗ 成長 65.58%</td>
+          </tr>
+          <tr>
+            <td class="hi">核能 (Nuclear)</td>
+            <td>121.8</td>
+            <td>4.22%</td>
+            <td class="red">↘ 逐步除役中</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-taiwan -->
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : AI 電源供應鏈
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-ai-psu">
+    <div class="section-heading">
+      <h2>AI 伺服器電源供應鏈</h2>
+      <p>隨著 NVIDIA Blackwell (GB200) 等高效能 GPU 功耗突破 1,000W，電源供應器 (PSU) 的瓦數、效率與密集成為了核心技術門檻。</p>
+    </div>
+
+    <div class="callout orange">
+      <h3>GB200 帶來的電源革命</h3>
+      <ul>
+        <li><strong>瓦數倍增：</strong> 傳統伺服器 PSU 約 800W-2,000W，GB200 機架單台 PSU 需達 5,500W-8,000W 以上。</li>
+        <li><strong>機架級整合：</strong> 從單機電源轉向機架電源盒 (Power Shelf)，一組機架可能配置 6-9 組高功率 PSU。</li>
+        <li><strong>能效要求：</strong> 必須達到 80 PLUS Titanium (96% 效率) 以減少廢熱並符合法規。</li>
+        <li><strong>散熱連動：</strong> 高功率密度使水冷電源模組 (Liquid Cooled PSU) 成為研發重點。</li>
+      </ul>
+    </div>
+
+    <div class="svg-container">
+      <svg width="800" height="260" viewBox="0 0 800 260">
+        <!-- AI Rack Power Architecture -->
+        <rect x="50" y="40" width="120" height="180" rx="4" class="node-box" />
+        <text x="110" y="30" class="node-sub">AI Server Rack</text>
+
+        <!-- Power Shelf -->
+        <rect x="60" y="60" width="100" height="40" rx="2" class="node-box highlight" />
+        <text x="110" y="85" class="node-text" style="font-size: 10px;">Power Shelf</text>
+
+        <!-- Compute Trays -->
+        <rect x="60" y="110" width="100" height="20" rx="2" class="node-box" />
+        <rect x="60" y="135" width="100" height="20" rx="2" class="node-box" />
+        <rect x="60" y="160" width="100" height="20" rx="2" class="node-box" />
+        <rect x="60" y="185" width="100" height="20" rx="2" class="node-box" />
+
+        <!-- Connection -->
+        <path d="M 160 80 L 240 80" class="conn-line" marker-end="url(#arrow)" />
+        <text x="200" y="70" class="node-sub">DC Busbar (12V/48V)</text>
+
+        <!-- Components -->
+        <rect x="240" y="50" width="140" height="60" rx="8" class="node-box highlight" />
+        <text x="310" y="75" class="node-text">PSU 模組</text>
+        <text x="310" y="95" class="node-sub">5.5kW - 8kW Titanium+</text>
+
+        <path d="M 380 80 L 460 80" class="conn-line" marker-end="url(#arrow)" />
+
+        <rect x="460" y="50" width="140" height="60" rx="8" class="node-box" />
+        <text x="530" y="75" class="node-text">磁性元件 / 電感</text>
+        <text x="530" y="95" class="node-sub">高頻化、小型化</text>
+
+        <path d="M 600 80 L 680 80" class="conn-line" marker-end="url(#arrow)" />
+
+        <rect x="680" y="50" width="100" height="60" rx="8" class="node-box" />
+        <text x="730" y="75" class="node-text">功率半導體</text>
+        <text x="730" y="95" class="node-sub">GaN / SiC</text>
+
+        <text x="400" y="240" class="node-sub">AI 伺服器機架電力分配與核心組件架構</text>
+      </svg>
+    </div>
+
+    <p class="cat-label">電源供應鏈主要玩家</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #004d95;">
+        <div class="icard-head">
+          <div class="icard-icon">🔌</div>
+          <div>
+            <div class="icard-title">台達電 (Delta Electronics)</div>
+            <div class="icard-vendor">全球 PSU 市佔第一</div>
+          </div>
+        </div>
+        <div class="icard-desc">提供從電網、變壓器到機架 Power Shelf 的全鏈解決方案。領先研發 8,000W+ PSU 與 ORv3 標準電源盒。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">NVIDIA 核心合作</span>
+          <span class="spec-chip">ORv3 Power Shelf</span>
+          <span class="spec-chip green">液冷整合解決方案</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #ed1c24;">
+        <div class="icard-head">
+          <div class="icard-icon">🔌</div>
+          <div>
+            <div class="icard-title">光寶科 (Lite-On)</div>
+            <div class="icard-vendor">AI 伺服器電源大廠</div>
+          </div>
+        </div>
+        <div class="icard-desc">專注於雲端資料中心與 AI 伺服器 PSU。其 5.5kW PSU 已切入 Blackwell 供應鏈，並積極佈局水冷系統。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">5.5kW PSU 批量出貨</span>
+          <span class="spec-chip">AI 伺服器佔比提升</span>
+          <span class="spec-chip blue">Titanium+ 效率</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #0076ce;">
+        <div class="icard-head">
+          <div class="icard-icon">🔌</div>
+          <div>
+            <div class="icard-title">康舒 (AcBel)</div>
+            <div class="icard-vendor">併購 ABB 部門擴大佈局</div>
+          </div>
+        </div>
+        <div class="icard-desc">透過併購 ABB Power Conversion，切入電信與資料中心市場，提升高階 PSU 研發能力與專利佈局。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">電信電源領導</span>
+          <span class="spec-chip blue">ABB 技術整合</span>
+          <span class="spec-chip">伺服器佔比成長</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #fb923c;">
+        <div class="icard-head">
+          <div class="icard-icon">🔌</div>
+          <div>
+            <div class="icard-title">全漢 (FSP Group)</div>
+            <div class="icard-vendor">工業與消費電源專家</div>
+          </div>
+        </div>
+        <div class="icard-desc">深耕工業電腦與中小型資料中心电源，提供高度客製化的 PSU 產品線，包括冗餘電源 (Redundant Power)。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">工業電腦電源</span>
+          <span class="spec-chip">客製化設計</span>
+          <span class="spec-chip">GaN 技術應用</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-ai-psu -->
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 未來能源技術
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-future">
+    <div class="section-heading">
+      <h2>未來電力與基礎設施</h2>
+      <p>應對極端氣候與高耗能 AI 時代，電力系統正朝向去中心化、數位化與超高效能發展。</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2024-2026</div>
+        <div class="tl-title">BESS 大型儲能系統與虛擬電廠 (VPP)</div>
+        <div class="tl-desc">為解決再生能源間歇性，大型鋰電池/釩液流電池儲能系統（BESS）大量併網。透過軟體將散佈的儲能、電動車與備援發電機整合為虛擬電廠。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2025-2028</div>
+        <div class="tl-title">GaN / SiC 第三代半導體廣泛應用</div>
+        <div class="tl-desc">氮化鎵 (GaN) 與碳化矽 (SiC) 將 PSU 的功率密度提升至新層次。SiC 在電動車與直流快充站成為標配，GaN 則在 AI 伺服器 PSU 減少能源轉換損耗。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2028+</div>
+        <div class="tl-title">SMR 小型模組化核反應爐</div>
+        <div class="tl-desc">由 Microsoft、Amazon 等科技巨頭推動，研發部署於資料中心旁的 SMR，提供穩定、無碳且不佔空間的 24/7 電源來源。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2030+</div>
+        <div class="tl-title">氫能發電與氨能混燒</div>
+        <div class="tl-desc">將現有燃氣電廠轉型為氫氣/天然氣混燒，最終過渡到純氫發電。氨能則作為遠距離氫能運輸載體，實現跨國綠能貿易。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">核心技術對比</p>
+    <div class="card-grid wide">
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">🔋</div>
+          <div>
+            <div class="icard-title">儲能技術 (Energy Storage)</div>
+            <div class="icard-vendor">電網調節器</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          <strong>鋰電池 (Li-ion)：</strong> 反應快、能量密度高，主流於短時調節。
+          <br><strong>釩液流電池 (Flow Battery)：</strong> 長壽命、安全性高，適合長時大容量儲能。
+          <br><strong>氫能 (Hydrogen)：</strong> 適合季節性與極長時能量移轉。
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">🏙️</div>
+          <div>
+            <div class="icard-title">智慧微電廠 (Microgrid)</div>
+            <div class="icard-vendor">能源自主</div>
+          </div>
+        </div>
+        <div class="icard-desc">
+          資料中心或工業園區建立自己的微電網。
+          <br>整合太陽能、燃料電池、儲能與 AI 能源管理系統 (EMS)，在外部斷電時仍能維持孤島運行 (Islanding Mode)。
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-future -->
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 數據截至 2024-2025 · 僅供參考</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
