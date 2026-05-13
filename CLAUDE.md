@@ -22,9 +22,11 @@
 | `space/solar_system.html` | 太陽系互動視覺化（Canvas 2D，行星軌道 / 縮放 / 速度調整） |
 | `space/galaxy.html` | 銀河系互動視覺化（程序生成旋臂、核球、太陽系定位標記） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽（事件視界、奇點、時間膨脹、霍金輻射） |
+| `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽（光譜分類、太陽演化、代表性恆星） |
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
+| `power-industry.html` | 電源與能源產業分析頁面 |
 | `ems-industry.html` | EMS 電子代工產業生態系導覽 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
