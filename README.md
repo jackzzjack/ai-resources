@@ -20,6 +20,7 @@
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
 | `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
+| `power-industry.html` | 電源與能源產業分析（全球電力趨勢、台灣能源結構、AI 伺服器電源 PSU 供應鏈） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 
 ---
