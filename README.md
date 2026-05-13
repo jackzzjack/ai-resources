@@ -39,7 +39,6 @@
 | Supertools (The Rundown AI) | https://supertools.therundown.ai/ | 9,400+ 工具，233 分類，每日更新 |
 | AITopTools | https://aitoptools.com/ | 10,000+ 工具，含使用者評分 |
 | TopAI.tools | https://topai.tools/ | 120+ 分類，社群排名 |
-| TopAI.tools | https://topai.tools/ | 120+ 分類，社群排名 |
 | TopTools.ai | https://toptools.ai/ | 分類瀏覽，介面簡潔 |
 | AI Tools Directory | https://aitoolsdirectory.com/ | 分類整理的工具目錄 |
 | Insidr.ai | https://www.insidr.ai/ai-tools/ | 500+ 工具，78+ 分類，含比較功能 |
