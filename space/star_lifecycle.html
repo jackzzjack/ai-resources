@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>恆星的生命週期與分類：從星雲到餘燼</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --type-o: #9bb0ff;
+      --type-b: #aabfff;
+      --type-a: #cad7ff;
+      --type-f: #f8f7ff;
+      --type-g: #fff4ea;
+      --type-k: #fff2a1;
+      --type-m: #ffcc6f;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(150,100,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-wrap {
+      background: #000;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .info-card h3 {
+      color: var(--accent2);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      color: var(--text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.85rem;
+    }
+
+    .spec-table th, .spec-table td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .spec-table th { color: var(--muted); font-weight: 500; }
+
+    .color-chip {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .highlight-box {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .tabs { flex-wrap: wrap; }
+      .tab-btn { flex: 1 1 40%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>恆星的生命週期與分類</h1>
+  <p>從星際塵埃的坍縮到壯烈的超新星爆發，探索恆星的一生</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="../index.html">← 返回首頁</a>
+  <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
+  <a class="nav-link" href="galaxy.html">銀河系互動圖</a>
+  <a class="nav-link" href="black_hole.html">黑洞的結構</a>
+  <a class="nav-link" href="rocket_physics.html">火箭與軌道物理</a>
+</nav>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'lifecycle')">1. 生命流程</button>
+    <button class="tab-btn" onclick="switchTab(this, 'classification')">2. 光譜分類</button>
+    <button class="tab-btn" onclick="switchTab(this, 'sun')">3. 我們的太陽</button>
+    <button class="tab-btn" onclick="switchTab(this, 'stars')">4. 代表性恆星</button>
+  </div>
+
+  <!-- Tab: Lifecycle -->
+  <div id="tab-lifecycle" class="tab-panel active">
+    <div class="diagram-wrap">
+      <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Nebula -->
+        <circle cx="80" cy="200" r="40" fill="rgba(167, 139, 250, 0.3)" filter="url(#glow)" />
+        <text x="80" y="260" fill="#a78bfa" font-size="14" text-anchor="middle">星際雲 (Nebula)</text>
+
+        <!-- Path Arrows -->
+        <path d="M 125 200 L 175 200" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+
+        <!-- Average Star Path -->
+        <path d="M 220 180 Q 250 120 300 120" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="330" cy="120" r="15" fill="#fff4ea" filter="url(#glow)" />
+        <text x="330" y="150" fill="#fff4ea" font-size="12" text-anchor="middle">普通恆星</text>
+
+        <path d="M 360 120 L 410 120" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="450" cy="120" r="30" fill="#ffcc6f" filter="url(#glow)" />
+        <text x="450" y="165" fill="#ffcc6f" font-size="12" text-anchor="middle">紅巨星</text>
+
+        <path d="M 490 120 L 540 120" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="580" cy="120" r="25" fill="none" stroke="#f472b6" stroke-dasharray="2,2" />
+        <circle cx="580" cy="120" r="5" fill="#fff" />
+        <text x="580" y="160" fill="#f472b6" font-size="12" text-anchor="middle">行星狀星雲 / 白矮星</text>
+
+        <!-- Massive Star Path -->
+        <path d="M 220 220 Q 250 280 300 280" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="340" cy="280" r="25" fill="#9bb0ff" filter="url(#glow)" />
+        <text x="340" y="320" fill="#9bb0ff" font-size="12" text-anchor="middle">大質量恆星</text>
+
+        <path d="M 380 280 L 430 280" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="480" cy="280" r="45" fill="#ef4444" filter="url(#glow)" />
+        <text x="480" y="340" fill="#ef4444" font-size="12" text-anchor="middle">紅超巨星</text>
+
+        <path d="M 530 280 L 580 280" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <path d="M 620 280 L 610 260 L 630 260 Z" fill="#fbbf24" transform="translate(0, -10)" /> <!-- Supernova simple icon -->
+        <text x="620" y="310" fill="#fbbf24" font-size="12" text-anchor="middle">超新星爆發</text>
+
+        <path d="M 650 260 L 700 230" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="730" cy="220" r="4" fill="#fff" filter="url(#glow)" />
+        <text x="730" y="240" fill="#fff" font-size="11" text-anchor="middle">中子星</text>
+
+        <path d="M 650 300 L 700 330" stroke="#444" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+        <circle cx="730" cy="340" r="8" fill="#000" stroke="#fff" stroke-width="1" />
+        <text x="730" y="365" fill="#fff" font-size="11" text-anchor="middle">黑洞</text>
+
+        <!-- Labels -->
+        <text x="400" y="40" fill="#888" font-size="16" text-anchor="middle" font-weight="bold">恆星生命演化路徑</text>
+      </svg>
+    </div>
+
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🌌 星雲與原恆星</h3>
+        <p>恆星誕生於由氫、氦和塵埃組成的巨大星際雲中。重力導致區域坍縮，中心壓力與溫度升高，形成「原恆星」。</p>
+      </div>
+      <div class="info-card">
+        <h3>⚖️ 主序星階段</h3>
+        <p>當核心溫度達到 1,000 萬 K，氫核融合開始。引力與向外的輻射壓力達成平衡，進入穩定的長壽階段。</p>
+      </div>
+      <div class="info-card">
+        <h3>💥 生命的終焉</h3>
+        <p>小質量恆星（如太陽）最終成為白矮星。大質量恆星則經歷超新星爆發，核心坍縮為中子星或黑洞。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Classification -->
+  <div id="tab-classification" class="tab-panel">
+    <div class="diagram-wrap">
+      <h3 style="margin-bottom: 20px; color: var(--accent2);">摩根-凱南光譜分類 (OBAFGKM)</h3>
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>類型</th>
+            <th>顏色</th>
+            <th>溫度 (K)</th>
+            <th>特色描述</th>
+            <th>代表星</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>O</strong></td>
+            <td><span class="color-chip" style="background:var(--type-o)"></span>藍色</td>
+            <td>> 30,000</td>
+            <td>極高溫、質量巨大、壽命極短</td>
+            <td>獵戶座 ζ (Alnitak)</td>
+          </tr>
+          <tr>
+            <td><strong>B</strong></td>
+            <td><span class="color-chip" style="background:var(--type-b)"></span>藍白</td>
+            <td>10,000 - 30,000</td>
+            <td>亮藍色主序星，強烈氦線</td>
+            <td>角宿一 (Spica)</td>
+          </tr>
+          <tr>
+            <td><strong>A</strong></td>
+            <td><span class="color-chip" style="background:var(--type-a)"></span>白色</td>
+            <td>7,500 - 10,000</td>
+            <td>強烈的氫譜線，最容易觀測</td>
+            <td>天狼星 (Sirius)</td>
+          </tr>
+          <tr>
+            <td><strong>F</strong></td>
+            <td><span class="color-chip" style="background:var(--type-f)"></span>黃白</td>
+            <td>6,000 - 7,500</td>
+            <td>電離鈣譜線開始顯著</td>
+            <td>南河三 (Procyon)</td>
+          </tr>
+          <tr>
+            <td><strong>G</strong></td>
+            <td><span class="color-chip" style="background:var(--type-g)"></span>黃色</td>
+            <td>5,200 - 6,000</td>
+            <td>金屬線與氫線並存</td>
+            <td>太陽 (Sun)</td>
+          </tr>
+          <tr>
+            <td><strong>K</strong></td>
+            <td><span class="color-chip" style="background:var(--type-k)"></span>橙色</td>
+            <td>3,700 - 5,200</td>
+            <td>光譜中金屬線為主</td>
+            <td>大角星 (Arcturus)</td>
+          </tr>
+          <tr>
+            <td><strong>M</strong></td>
+            <td><span class="color-chip" style="background:var(--type-m)"></span>紅橙</td>
+            <td>2,400 - 3,700</td>
+            <td>低溫、最常見的恆星類型</td>
+            <td>參宿四 (Betelgeuse)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box" style="margin-top: 24px; width: 100%;">
+        <p>記憶口訣：<strong>O</strong>h <strong>B</strong>e <strong>A</strong> <strong>F</strong>ine <strong>G</strong>irl/<strong>G</strong>uy, <strong>K</strong>iss <strong>M</strong>e!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Sun -->
+  <div id="tab-sun" class="tab-panel">
+    <div class="content-grid">
+      <div class="info-card" style="grid-column: span 1;">
+        <h3>☀️ 太陽：我們的黃矮星</h3>
+        <p>太陽是一顆 <strong>G2V</strong> 型主序星，目前約 46 億歲，正值壯年。它大約還能在主序星階段待 50 億年。</p>
+        <ul style="font-size: 0.9rem; color: var(--text); padding-left: 1.2rem;">
+          <li>質量：約 2 × 10³⁰ kg</li>
+          <li>表面溫度：5,778 K</li>
+          <li>核心溫度：1,500 萬 K</li>
+          <li>組成：73% 氫, 25% 氦</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>🔄 未來的演化</h3>
+        <p>約 50 億年後，太陽會耗盡核心的氫，膨脹成為<strong>紅巨星</strong>，其半徑可能會延伸到地球軌道附近。最終外層會被拋射，形成行星狀星雲，核心留下<strong>白矮星</strong>。</p>
+      </div>
+    </div>
+    <div class="diagram-wrap" style="margin-top: 24px;">
+      <svg width="600" height="150" viewBox="0 0 600 150">
+        <text x="300" y="30" fill="#888" font-size="14" text-anchor="middle">太陽的演化進程</text>
+        <!-- Timeline -->
+        <line x1="50" y1="80" x2="550" y2="80" stroke="#444" stroke-width="2" />
+        <circle cx="50" cy="80" r="4" fill="#a78bfa" /> <!-- Birth -->
+        <text x="50" y="110" fill="#a78bfa" font-size="11" text-anchor="middle">誕生 (0)</text>
+
+        <circle cx="280" cy="80" r="6" fill="#fbbf24" stroke="#fff" stroke-width="2" /> <!-- Now -->
+        <text x="280" y="110" fill="#fbbf24" font-size="11" text-anchor="middle">現在 (46億年)</text>
+
+        <circle cx="480" cy="80" r="15" fill="#ffcc6f" /> <!-- Red Giant -->
+        <text x="480" y="110" fill="#ffcc6f" font-size="11" text-anchor="middle">紅巨星 (~100億年)</text>
+
+        <circle cx="550" cy="80" r="3" fill="#fff" /> <!-- White Dwarf -->
+        <text x="550" y="110" fill="#fff" font-size="11" text-anchor="middle">白矮星</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Tab: Stars -->
+  <div id="tab-stars" class="tab-panel">
+    <div class="content-grid">
+      <div class="info-card">
+        <h3>🌟 天狼星 (Sirius A)</h3>
+        <p><strong>類型：A1V</strong><br>夜空中最亮的恆星。它有一顆稱為「小狼」的白矮星伴星 (Sirius B)。距離地球僅 8.6 光年。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔴 參宿四 (Betelgeuse)</h3>
+        <p><strong>類型：M1-M2 Ia (紅超巨星)</strong><br>獵戶座的肩膀。體積巨大，若放在太陽系，其邊緣將超過木星軌道。預計在未來萬年內會發生超新星爆發。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔵 織女星 (Vega)</h3>
+        <p><strong>類型：A0V</strong><br>天琴座最亮的星。曾經被作為定義星等 0 等的標準。因自轉極快，其形狀呈現扁球體。</p>
+      </div>
+      <div class="info-card">
+        <h3>🔭 南門二 (Alpha Centauri)</h3>
+        <p><strong>類型：G2V + K1V</strong><br>最靠近太陽系的恆星系統。其中的「比鄰星」(Proxima) 是一顆紅矮星，是目前已知距離我們最近的恆星。</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2024 恆星物理科普 · 採用 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  function switchTab(btn, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#444" />
+    </marker>
+  </defs>
+</svg>
+
+</body>
+</html>
