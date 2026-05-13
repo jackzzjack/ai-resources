@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>散熱產業生態系 — 氣冷 · 液冷 · AI 伺服器解熱</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #60c8ff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #3b82f6;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(96,200,255,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 700px;
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(96,200,255,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .icard-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+    }
+    .spec-chip.hi {
+      color: var(--accent);
+      background: rgba(96,200,255,0.1);
+      border-color: rgba(96,200,255,0.25);
+    }
+    .spec-chip.green {
+      color: var(--accent-green);
+      background: rgba(74,222,128,0.08);
+      border-color: rgba(74,222,128,0.2);
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(96,200,255,0.04); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin-top: 8px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: var(--border);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+    .tl-date {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Ecosystem SVG ── */
+    .eco-map {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .eco-node {
+      fill: var(--surface2);
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+    .eco-node.highlight {
+      stroke: var(--accent);
+    }
+    .eco-text {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-subtext {
+      fill: var(--muted);
+      font-size: 11px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .eco-link {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>散熱產業生態系</h1>
+  <p>從傳統氣冷到 AI 世代的液冷技術革命，解析解熱關鍵零組件與全球供應鏈</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="tech">❄️ 核心技術</div>
+    <div class="tab" data-tab="ai">🖥️ AI 伺服器散熱</div>
+    <div class="tab" data-tab="eco">🏢 產業生態與廠商</div>
+    <div class="tab" data-tab="trend">📈 市場趨勢</div>
+  </div>
+</div>
+
+<main id="mainContent">
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 核心技術
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-tech">
+    <div class="section-heading">
+      <h2>核心散熱技術</h2>
+      <p>從基礎的傳導、對流到相變傳熱，解析目前主流的氣冷與液冷技術方案。</p>
+    </div>
+
+    <div class="callout">
+      <h3>熱管理的基本原理</h3>
+      <p>電子元件散熱主要依賴：<strong>傳導 (Conduction)</strong> 經由金屬底座、<strong>對流 (Convection)</strong> 經由風扇或液體流動、以及 <strong>相變 (Phase Change)</strong> 如熱導管或均溫板內的液氣循環。隨著晶片功耗 (TDP) 突破 700W，散熱技術正從純氣冷全面轉向液冷。</p>
+    </div>
+
+    <p class="cat-label">氣冷技術 (Air Cooling)</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #60c8ff;">
+        <div class="icard-head">
+          <div class="icard-icon">🌬️</div>
+          <div>
+            <div class="icard-title">熱導管與散熱片 (Heat Pipe)</div>
+          </div>
+        </div>
+        <div class="icard-desc">利用銅管內真空植毛結構與工作流體的蒸發凝結循環，快速將熱能從晶片傳導至散熱鰭片。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">成熟技術</span>
+          <span class="spec-chip">成本低</span>
+          <span class="spec-chip">適用 < 400W</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #3b82f6;">
+        <div class="icard-head">
+          <div class="icard-icon">🧊</div>
+          <div>
+            <div class="icard-title">3D 均溫板 (3D Vapor Chamber)</div>
+          </div>
+        </div>
+        <div class="icard-desc">將平面 VC 與熱導管整合，提供比傳統熱導管更高的熱擴散效率。是目前高階氣冷伺服器（如 H100 氣冷版）的主流方案。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">高效能氣冷</span>
+          <span class="spec-chip">解熱能力 700W+</span>
+          <span class="spec-chip">奇鋐/雙鴻強項</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="cat-label">液冷技術 (Liquid Cooling)</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #2dd4bf;">
+        <div class="icard-head">
+          <div class="icard-icon">💧</div>
+          <div>
+            <div class="icard-title">冷板式液冷 (Cold Plate)</div>
+          </div>
+        </div>
+        <div class="icard-desc">冷卻液流經緊貼晶片的微通道金屬板，直接帶走熱量。是目前 Blackwell (GB200) 等新一代 AI 伺服器的標準配備。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">2025 主流</span>
+          <span class="spec-chip green">PUE < 1.1</span>
+          <span class="spec-chip">精密加工需求高</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #a78bfa;">
+        <div class="icard-head">
+          <div class="icard-icon">🛁</div>
+          <div>
+            <div class="icard-title">浸沒式液冷 (Immersion)</div>
+          </div>
+        </div>
+        <div class="icard-desc">將伺服器直接浸泡在不導電的電子液體中。分為單相（液體循環）與兩相（液體蒸發）兩種，解熱效率最高但維護難度大。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">極致解熱</span>
+          <span class="spec-chip">低噪音</span>
+          <span class="spec-chip">初期建置成本高</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : AI 伺服器散熱
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-ai">
+    <div class="section-heading">
+      <h2>AI 伺服器解熱方案</h2>
+      <p>針對 NVIDIA Blackwell 架構與高密度機架設計的液冷系統詳解。</p>
+    </div>
+
+    <div class="callout">
+      <h3>Blackwell 世代的挑戰</h3>
+      <p>GB200 機架單櫃功耗可達 <strong>100kW - 120kW</strong>。傳統氣冷已無法負荷，必須透過「水對氣 (L2A)」或「水對水 (L2L)」的冷卻分配單元 (CDU) 來維持運行。</p>
+    </div>
+
+    <p class="cat-label">液冷關鍵組件 (Sidecar / In-Row)</p>
+    <div class="card-grid">
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">📦</div>
+          <div>
+            <div class="icard-title">CDU (冷卻分配單元)</div>
+          </div>
+        </div>
+        <div class="icard-desc">液冷系統的心臟，負責調節冷卻液流量、壓力與溫度，並確保與機房水路系統的隔離。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">系統核心</span>
+          <span class="spec-chip">台達電/高力</span>
+        </div>
+      </div>
+
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">🐍</div>
+          <div>
+            <div class="icard-title">Manifold (分流管)</div>
+          </div>
+        </div>
+        <div class="icard-desc">安裝於機櫃側邊，負責將 CDU 送來的冷卻液平均分配到每一台伺服器節點。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">不鏽鋼加工</span>
+          <span class="spec-chip">無洩漏需求</span>
+        </div>
+      </div>
+
+      <div class="icard">
+        <div class="icard-head">
+          <div class="icard-icon">🔌</div>
+          <div>
+            <div class="icard-title">快速接頭 (UQD)</div>
+          </div>
+        </div>
+        <div class="icard-desc">確保伺服器在維護插拔時，液體不會外洩的關鍵組件，精密度要求極高。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">關鍵零組件</span>
+          <span class="spec-chip">單價高</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">解熱效率對比</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>技術方案</th>
+            <th>解熱上限 (TDP)</th>
+            <th>PUE 目標</th>
+            <th>應用案例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>熱導管氣冷</td>
+            <td>~300W</td>
+            <td>1.5 - 1.8</td>
+            <td>一般 PC / 工作站</td>
+          </tr>
+          <tr>
+            <td>3D VC 氣冷</td>
+            <td>~700W</td>
+            <td>1.3 - 1.5</td>
+            <td>H100 伺服器節點</td>
+          </tr>
+          <tr>
+            <td class="hi">冷板液冷 (DLC)</td>
+            <td class="hi">1200W+</td>
+            <td class="green">1.05 - 1.1</td>
+            <td>GB200 / 高標資料中心</td>
+          </tr>
+          <tr>
+            <td>浸沒式液冷</td>
+            <td>2000W+</td>
+            <td class="green">< 1.03</td>
+            <td>超級電腦 / 實驗室</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 產業生態與廠商
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-eco">
+    <div class="section-heading">
+      <h2>產業生態與關鍵廠商</h2>
+      <p>分析散熱供應鏈中的上下游關係與指標性台廠定位。</p>
+    </div>
+
+    <div class="eco-map">
+      <svg width="800" height="400" viewBox="0 0 800 400">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--border)" />
+          </marker>
+        </defs>
+
+        <!-- Links -->
+        <path d="M 120 130 L 120 200" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 300 130 L 300 200" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 480 130 L 480 200" class="eco-link" marker-end="url(#arrowhead)" />
+
+        <path d="M 120 260 L 120 310 L 320 310" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 300 260 L 300 310 L 320 310" class="eco-link" />
+        <path d="M 480 260 L 480 310 L 480 310" class="eco-link" />
+        <path d="M 480 310 L 380 310" class="eco-link" marker-end="url(#arrowhead)" />
+        <path d="M 660 130 L 660 310 L 480 310" class="eco-link" />
+
+        <!-- Upstream -->
+        <rect x="40" y="70" width="160" height="60" rx="8" class="eco-node" />
+        <text x="120" y="95" class="eco-text">原材料與零件</text>
+        <text x="120" y="115" class="eco-subtext">銅、鋁、TIM、風扇</text>
+
+        <!-- Midstream -->
+        <rect x="40" y="200" width="160" height="60" rx="8" class="eco-node highlight" />
+        <text x="120" y="225" class="eco-text">散熱模組/組件</text>
+        <text x="120" y="245" class="eco-subtext">熱導管、VC、冷板</text>
+
+        <rect x="220" y="70" width="160" height="60" rx="8" class="eco-node" />
+        <text x="300" y="95" class="eco-text">均熱片/基板</text>
+        <text x="300" y="115" class="eco-subtext">健策、一詮</text>
+
+        <rect x="220" y="200" width="160" height="60" rx="8" class="eco-node highlight" />
+        <text x="300" y="225" class="eco-text">散熱方案商</text>
+        <text x="300" y="245" class="eco-subtext">奇鋐、雙鴻、力致</text>
+
+        <rect x="400" y="70" width="160" height="60" rx="8" class="eco-node" />
+        <text x="480" y="95" class="eco-text">熱交換組件</text>
+        <text x="480" y="115" class="eco-subtext">高力 (Brazed Plate)</text>
+
+        <rect x="400" y="200" width="160" height="60" rx="8" class="eco-node highlight" />
+        <text x="480" y="225" class="eco-text">系統整合 (CDU)</text>
+        <text x="480" y="245" class="eco-subtext">台達電、Vertiv</text>
+
+        <!-- Downstream -->
+        <rect x="320" y="310" width="160" height="60" rx="8" class="eco-node" />
+        <text x="400" y="335" class="eco-text">終端應用</text>
+        <text x="400" y="355" class="eco-subtext">AI 伺服器、EV、手機</text>
+
+        <rect x="580" y="70" width="160" height="60" rx="8" class="eco-node" />
+        <text x="660" y="95" class="eco-text">電源供應</text>
+        <text x="660" y="115" class="eco-subtext">台達電、光寶</text>
+      </svg>
+    </div>
+
+    <p class="cat-label">散熱模組與組件大廠</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">奇鋐 (AVC)</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球伺服器散熱龍頭，具備風扇、散熱片、VC 及液冷冷板的垂直整合能力。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">NVIDIA 認證</span>
+          <span class="spec-chip">3D VC 首選</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #ff3e3e;">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">雙鴻 (Auras)</div>
+          </div>
+        </div>
+        <div class="icard-desc">專精於高階筆電與伺服器散熱，液冷佈局早，在冷板與 CDU 領域具備強大競爭力。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">液冷先行者</span>
+          <span class="spec-chip">CDU 研發</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #0076ce;">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">台達電 (Delta)</div>
+          </div>
+        </div>
+        <div class="icard-desc">從電源供應器跨足散熱系統，提供機櫃級液冷解決方案 (CDU、風扇、熱交換器)。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">系統整合</span>
+          <span class="spec-chip">電源+散熱</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #fb923c;">
+        <div class="icard-head">
+          <div class="icard-icon">🏗️</div>
+          <div>
+            <div class="icard-title">健策 (Kenly)</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球均熱片 (Heat Spreader) 指標廠，專精於精密沖壓與鍛造技術，供應 CPU/GPU 頂層均熱片。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">AMD/Intel 供應商</span>
+          <span class="spec-chip">上游關鍵件</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: #facc15;">
+        <div class="icard-head">
+          <div class="icard-icon">🔧</div>
+          <div>
+            <div class="icard-title">高力 (Kaori)</div>
+          </div>
+        </div>
+        <div class="icard-desc">硬銲型板式熱交換器專家，為液冷系統提供關鍵的熱交換組件與 CDU 分流技術。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">熱交換器</span>
+          <span class="spec-chip">氫能/液冷</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 市場趨勢
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-trend">
+    <div class="section-heading">
+      <h2>市場趨勢與展望</h2>
+      <p>解讀散熱產業在 AI 浪潮下的成長路徑。</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2023 - 2024</div>
+        <div class="tl-title">氣冷極限與 3D VC 爆發</div>
+        <div class="tl-desc">NVIDIA H100 帶動 3D VC 需求成長，散熱廠營收隨 AI 伺服器出貨量顯著提升。氣冷技術被推向極限。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2025</div>
+        <div class="tl-title">液冷元年 (The Year of Liquid Cooling)</div>
+        <div class="tl-desc">Blackwell GB200 大規模採用液冷方案。冷板 (Cold Plate) 與 CDU 成為出貨主力，液冷滲透率從個位數跳升。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026+</div>
+        <div class="tl-title">機櫃級解決方案與 ESG</div>
+        <div class="tl-desc">資料中心對 PUE 規範更趨嚴格，ESG 壓力促使舊有机房改裝液冷。浸沒式液冷開始在特定場域商用。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="callout">
+      <h3>核心觀察點</h3>
+      <ul>
+        <li><strong>液冷滲透率：</strong> 2025 年預期液冷在 AI 伺服器的滲透率將突破 20%。</li>
+        <li><strong>產值提升：</strong> 液冷系統單價 (ASP) 是氣冷的 5-10 倍，帶動產值呈倍數成長。</li>
+        <li><strong>漏液防護：</strong> 感測器與智慧監控將成為液冷系統的標準配備。</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 持續更新中</p>
+</footer>
+
+<script>
+  function switchTab(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + tabId));
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+</script>
+
+</body>
+</html>

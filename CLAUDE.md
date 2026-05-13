@@ -32,6 +32,9 @@
 | `ai-infrastructure.html` | AI 基礎設施生態系（伺服器、交換器、CPO、NVLink） |
 | `power-industry.html` | 電源與能源產業分析頁面 |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
+| `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
+| `power-industry.html` | 電源與能源產業分析頁面 |
+| `ems-industry.html` | EMS 電子代工產業生態系導覽 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例

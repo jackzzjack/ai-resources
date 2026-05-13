@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>資源入口</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Resources Hub — 互動學習與工具目錄</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg: #0a0a0f;
       --surface: #13131a;
@@ -19,292 +17,207 @@
       --radius: 16px;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
     header {
-      padding: 72px 24px 40px;
+      padding: 80px 24px 40px;
       text-align: center;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(96,200,255,0.08) 0%, transparent 60%);
+      background: radial-gradient(circle at 50% -20%, rgba(124, 106, 255, 0.15), transparent 70%);
     }
 
-    .header-eyebrow {
-      font-size: 0.72rem;
-      letter-spacing: 0.25em;
-      color: var(--accent2);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      opacity: 0.8;
-    }
-
-    header h1 {
-      font-size: clamp(2.2rem, 5vw, 3.6rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
       background: linear-gradient(135deg, #fff 30%, var(--accent2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text; line-height: 1.15;
     }
 
     header p {
-      margin-top: 14px;
       color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 480px;
-      margin-inline: auto;
-      line-height: 1.65;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     main {
-      flex: 1;
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 48px 24px 80px;
-      width: 100%;
-    }
-
-    .section-label {
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 24px;
+      padding: 40px 24px 100px;
     }
 
     .portal-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
     }
 
     .portal-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 28px;
+      padding: 32px;
       text-decoration: none;
       color: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
       position: relative;
       overflow: hidden;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      background: var(--surface2);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
 
     .portal-card::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 0% 0%, rgba(124,106,255,0.07) 0%, transparent 65%);
-      opacity: 0;
-      transition: opacity 0.2s;
+      top: 0; left: 0; width: 4px; height: 100%;
+      background: var(--strip-color, var(--accent));
+      opacity: 0.8;
     }
-
-    .portal-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(124,106,255,0.14);
-    }
-
-    .portal-card:hover::before { opacity: 1; }
 
     .card-icon-wrap {
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
+      background: rgba(124, 106, 255, 0.1);
       border-radius: 14px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
-      flex-shrink: 0;
+      font-size: 1.8rem;
+      margin-bottom: 24px;
     }
 
-    .card-body { flex: 1; }
-
     .card-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 8px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
     }
 
     .card-desc {
-      font-size: 0.88rem;
       color: var(--muted);
-      line-height: 1.65;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      flex-grow: 1;
     }
 
     .card-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
+      gap: 8px;
+      margin-bottom: 24px;
     }
 
     .chip {
-      font-size: 0.7rem;
-      color: var(--accent2);
-      background: rgba(124,106,255,0.1);
-      border: 1px solid rgba(124,106,255,0.2);
-      border-radius: 999px;
-      padding: 2px 10px;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
     }
 
     .card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding-top: 20px;
       border-top: 1px solid var(--border);
-      padding-top: 14px;
-      margin-top: auto;
     }
 
     .card-count {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       color: var(--muted);
+      font-weight: 500;
     }
 
     .card-cta {
-      font-size: 0.82rem;
+      font-size: 0.9rem;
+      font-weight: 600;
       color: var(--accent2);
-      font-weight: 500;
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-
-    .portal-card:hover .card-cta { opacity: 1; }
-
-    /* Hero accent strip on card */
-    .portal-card[data-accent]::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--strip-color, var(--accent));
-      border-radius: var(--radius) var(--radius) 0 0;
     }
 
     footer {
       text-align: center;
-      padding: 24px;
-      color: var(--muted);
-      font-size: 0.82rem;
+      padding: 60px 24px;
       border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
     footer a { color: var(--accent2); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      header { padding: 60px 20px 30px; }
+      .portal-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <p class="header-eyebrow">Resources Hub</p>
-  <h1>資源入口</h1>
-  <p>精選工具與互動參考資料，一站直達所有服務</p>
+  <h1>AI Resources Hub</h1>
+  <p>收集 AI 工具目錄、互動式學習工具與產業生態系導覽</p>
 </header>
 
 <main>
-  <p class="section-label">選擇入口</p>
-
   <div class="portal-grid">
 
     <!-- AI 服務入口 -->
     <a class="portal-card" href="ai-services.html" data-accent
-       style="--strip-color: #7c6aff;">
-      <div class="card-icon-wrap">🤖</div>
+       style="--strip-color: #ef4444;">
+      <div class="card-icon-wrap">🚀</div>
       <div class="card-body">
         <div class="card-title">AI 服務入口</div>
         <div class="card-desc">
-          依使用情境分類的 AI 工具導覽：對話寫作、搜尋研究、程式碼、圖像生成、影片、語音音樂、生產力、設計簡報、學習筆記。
+          彙整全球頂尖 AI 服務，包含大型語言模型 (LLM)、圖像生成、影片創作及開發者工具，提供快速存取連結與分類導覽。
         </div>
         <div class="card-chips">
-          <span class="chip">對話與寫作</span>
-          <span class="chip">程式碼</span>
-          <span class="chip">圖像 / 影片</span>
-          <span class="chip">生產力</span>
+          <span class="chip">LLM</span>
+          <span class="chip">Image Gen</span>
+          <span class="chip">Video AI</span>
+          <span class="chip">Agents</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">10 分類 · 35+ 工具</span>
+        <span class="card-count">30+ 服務 · 持續更新</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 互動元素週期表 -->
+    <!-- 互動式元素週期表 -->
     <a class="portal-card" href="periodic_table.html" data-accent
-       style="--strip-color: #2196f3;">
-      <div class="card-icon-wrap">⚗️</div>
+       style="--strip-color: #10b981;">
+      <div class="card-icon-wrap">🧪</div>
       <div class="card-body">
         <div class="card-title">互動元素週期表</div>
         <div class="card-desc">
-          涵蓋 118 種元素的互動參考表，支援搜尋、分類篩選、圖例高亮，點擊元素可查看原子質量、電子排布、電負度與 Bohr 模型。
+          探索化學世界的基石：即時篩選不同族群、查看詳細物理屬性、發現歷史及電子組態。支援互動式導覽與數據視覺化。
         </div>
         <div class="card-chips">
-          <span class="chip">118 元素</span>
-          <span class="chip">互動搜尋</span>
-          <span class="chip">Bohr 模型</span>
-          <span class="chip">分類高亮</span>
+          <span class="chip">化學</span>
+          <span class="chip">數據視覺化</span>
+          <span class="chip">互動教育</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">10 分類 · 完整資料</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- tmux Cheat Sheet -->
-    <a class="portal-card" href="tmux_cheat_sheet.html" data-accent
-       style="--strip-color: #fb923c;">
-      <div class="card-icon-wrap">🖥️</div>
-      <div class="card-body">
-        <div class="card-title">tmux Cheat Sheet</div>
-        <div class="card-desc">
-          Session、Window、Pane 管理、Copy Mode、CLI 指令與 .tmux.conf 常用設定，支援即時搜尋與分類篩選。
-        </div>
-        <div class="card-chips">
-          <span class="chip">Session</span>
-          <span class="chip">Pane</span>
-          <span class="chip">Copy Mode</span>
-          <span class="chip">CLI</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">6 分類 · 80+ 指令</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- minicom Cheat Sheet -->
-    <a class="portal-card" href="minicom_cheat_sheet.html" data-accent
-       style="--strip-color: #60e0ff;">
-      <div class="card-icon-wrap">📡</div>
-      <div class="card-body">
-        <div class="card-title">minicom Cheat Sheet</div>
-        <div class="card-desc">
-          Serial terminal 快速參考，涵蓋連線設定、Baud Rate、檔案傳輸（Zmodem/Xmodem）、擷取記錄與常見問題排除。
-        </div>
-        <div class="card-chips">
-          <span class="chip">UART / Serial</span>
-          <span class="chip">Zmodem</span>
-          <span class="chip">擷取記錄</span>
-          <span class="chip">嵌入式</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">6 分類 · 70+ 指令</span>
+        <span class="card-count">118 元素 · 詳細資料</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
@@ -314,41 +227,40 @@
        style="--strip-color: #4ade80;">
       <div class="card-icon-wrap">⌨️</div>
       <div class="card-body">
-        <div class="card-title">Vim Cheat Sheet</div>
+        <div class="card-title">Vim 指令速查表</div>
         <div class="card-desc">
-          涵蓋移動、插入、編輯、Visual、搜尋替換、巨集、標記、暫存器等所有常用指令，支援即時搜尋與分類篩選。
+          現代化的 Vim 指令參考手冊：支援即時搜尋、分類篩選（移動、編輯、視窗管理），幫助你快速掌握這款強大的文本編輯器。
         </div>
         <div class="card-chips">
-          <span class="chip">移動</span>
-          <span class="chip">編輯</span>
-          <span class="chip">巨集</span>
-          <span class="chip">暫存器</span>
+          <span class="chip">效率工具</span>
+          <span class="chip">即時搜尋</span>
+          <span class="chip">開發者必備</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">10 分類 · 150+ 指令</span>
+        <span class="card-count">100+ 指令 · 分類清晰</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 5G 架構圖 -->
+    <!-- 5G 網路架構互動圖 -->
     <a class="portal-card" href="5g_architecture.html" data-accent
-       style="--strip-color: #10b981;">
-      <div class="card-icon-wrap">📶</div>
+       style="--strip-color: #3b82f6;">
+      <div class="card-icon-wrap">📡</div>
       <div class="card-body">
-        <div class="card-title">5G 網路架構圖</div>
+        <div class="card-title">5G 網路架構互動圖</div>
         <div class="card-desc">
-          基於 3GPP Release 15/16/17 的互動式 5G 系統架構圖，涵蓋核心網（5GC）、服務化架構（SBA）、介面說明與網路切片（Network Slicing）。
+          詳解 5G 核心網 (5GC) 與 無線存取網 (RAN) 架構：包含 3GPP SBA 服務化架構、網路切片、CU/DU 分離與關鍵介面說明。
         </div>
         <div class="card-chips">
-          <span class="chip">5GC / NF</span>
+          <span class="chip">5G Core</span>
           <span class="chip">SBA</span>
           <span class="chip">Network Slicing</span>
-          <span class="chip">3GPP</span>
+          <span class="chip">CU/DU</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">5 分頁 · 16+ 元件</span>
+        <span class="card-count">15+ 網元 · 架構詳解</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
@@ -448,7 +360,7 @@
       <div class="card-body">
         <div class="card-title">黑洞互動導覽</div>
         <div class="card-desc">
-          探索宇宙中最極端的天體：從事件視界到奇點的結構剖析，以及時間膨脹、麵條化與霍金輻射等奇特物理現象。
+          探索宇宙中最極端的天體：從事件視界到奇點的結構剖析，以及時間膨脹、麵條化與霍金輻釋等奇特物理現象。
         </div>
         <div class="card-chips">
           <span class="chip">事件視界</span>
@@ -573,6 +485,28 @@
       </div>
     </a>
 
+    <!-- EMS 電子代工產業生態系 -->
+    <a class="portal-card" href="ems-industry.html" data-accent
+       style="--strip-color: #10b981;">
+      <div class="card-icon-wrap">🏭</div>
+      <div class="card-body">
+        <div class="card-title">EMS 電子代工產業生態系</div>
+        <div class="card-desc">
+          從半導體、關鍵零組件到全球組裝樞紐，詳解電子製造服務業 (EMS) 的供應鏈協作、OEM/ODM 商業模式與全球領導大廠佈局。
+        </div>
+        <div class="card-chips">
+          <span class="chip">供應鏈上下游</span>
+          <span class="chip">OEM / ODM / EMS</span>
+          <span class="chip">獲利結構</span>
+          <span class="chip">全球大廠</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">4 大章節 · 互動生態圖</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
     <!-- 台北捷運路網互動圖 -->
     <a class="portal-card" href="taipei_mrt_map.html" data-accent
        style="--strip-color: #0070bd;">
@@ -595,6 +529,24 @@
       </div>
     </a>
 
+    <!-- 散熱產業生態系 -->
+    <a class="portal-card" href="thermal-industry.html" data-accent
+       style="--strip-color: #60c8ff;">
+      <div class="card-icon-wrap">❄️</div>
+      <div class="card-body">
+        <div class="card-title">散熱產業生態系</div>
+        <div class="card-desc">
+          解析從氣冷到液冷的技術演進，涵蓋 3D VC、冷板液冷 (DLC)、CDU、分流管等關鍵組件，以及全球 AI 伺服器散熱供應鏈。
+        </div>
+        <div class="card-chips">
+          <span class="chip">氣冷 / 3D VC</span>
+          <span class="chip">冷板液冷 (DLC)</span>
+          <span class="chip">CDU / Manifold</span>
+          <span class="chip">AI 伺服器供應鏈</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">4 大章節 · 供應鏈地圖</span>
     <!-- 恆星生命週期與分類 -->
     <a class="portal-card" href="space/star_lifecycle.html" data-accent
        style="--strip-color: #a78bfa;">
@@ -602,6 +554,7 @@
       <div class="card-body">
         <div class="card-title">恆星生命週期與分類</div>
         <div class="card-desc">
+        <div class="card-desc">industry-page-12205941248273561211
           探索恆星從星雲誕生到演化為矮星、中子星或黑洞的一生：包含 OBAFGKM 光譜分類、太陽的演化進程與夜空中的代表性恆星。
         </div>
         <div class="card-chips">
@@ -613,6 +566,48 @@
       </div>
       <div class="card-footer">
         <span class="card-count">4 大章節 · 互動流程圖</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- tmux Cheat Sheet -->
+    <a class="portal-card" href="tmux_cheat_sheet.html" data-accent
+       style="--strip-color: #60b0ff;">
+      <div class="card-icon-wrap">🐚</div>
+      <div class="card-body">
+        <div class="card-title">tmux 指令速查表</div>
+        <div class="card-desc">
+          終端複用器 tmux 常用指令：視窗管理、窗格切換、會話持久化，提升終端機操作效率。
+        </div>
+        <div class="card-chips">
+          <span class="chip">終端工具</span>
+          <span class="chip">Terminal</span>
+          <span class="chip">效率工具</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">4 分類 · 終端必備</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- minicom Cheat Sheet -->
+    <a class="portal-card" href="minicom_cheat_sheet.html" data-accent
+       style="--strip-color: #c080ff;">
+      <div class="card-icon-wrap">🔌</div>
+      <div class="card-body">
+        <div class="card-title">minicom 指令速查表</div>
+        <div class="card-desc">
+          序列埠通訊工具 minicom 快捷鍵與配置指南，適用於嵌入式開發與設備除錯。
+        </div>
+        <div class="card-chips">
+          <span class="chip">Serial Port</span>
+          <span class="chip">Embedded</span>
+          <span class="chip">Debug</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">3 分類 · 硬體開發</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
