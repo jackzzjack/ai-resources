@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>投資評價工具：本益比與估值模型 — P/E Ratio · Valuation · Analysis</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(124, 106, 255, 0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Calculator ── */
+    .calculator-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .input-group {
+      margin-bottom: 24px;
+    }
+    .input-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .input-label span:last-child {
+      color: var(--accent2);
+      font-weight: 700;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      appearance: none;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(124, 106, 255, 0.4);
+    }
+    .result-display {
+      text-align: center;
+      background: var(--surface2);
+      padding: 32px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .result-value {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--accent2);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .result-label {
+      color: var(--muted);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .payback-note {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(124, 106, 255, 0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>投資評價工具：本益比與估值模型</h1>
+  <p>掌握核心財務指標，判斷企業內在價值與市場定價的合理性</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="pe-ratio">📈 本益比 (P/E)</div>
+    <div class="tab" data-tab="valuation">💎 估值方法</div>
+    <div class="tab" data-tab="growth">🚀 成長性分析</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 本益比 (P/E)
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-pe-ratio">
+    <div class="section-heading">
+      <h2>本益比計算機</h2>
+      <p>調整股價與盈餘，直觀觀察市場對利潤的定價倍數。本益比也可視為「在獲利不變下，需要多少年才能回本」。</p>
+    </div>
+
+    <div class="calculator-card">
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div class="input-group">
+            <div class="input-label">
+              <span>每股市價 (Price)</span>
+              <span id="price-val">100</span>
+            </div>
+            <input type="range" id="price-range" min="10" max="1000" value="100">
+          </div>
+          <div class="input-group">
+            <div class="input-label">
+              <span>每股盈餘 (EPS)</span>
+              <span id="eps-val">5.0</span>
+            </div>
+            <input type="range" id="eps-range" min="0.5" max="50" step="0.5" value="5">
+          </div>
+        </div>
+        <div class="result-display">
+          <div class="result-label">當前本益比</div>
+          <div class="result-value" id="pe-result">20.0</div>
+          <div class="payback-note" id="payback-text">代表您需要 20 年才能回本</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">📜</div>
+          <div class="icard-title">滾動本益比 (Trailing P/E)</div>
+        </div>
+        <div class="icard-desc">使用「過去 12 個月」的實際 EPS 來計算。優點是數據真實，缺點是無法反映未來的成長或衰退。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">🔮</div>
+          <div class="icard-title">預估本益比 (Forward P/E)</div>
+        </div>
+        <div class="icard-desc">使用「未來 12 個月」的預估 EPS 來計算。投資看的是未來，因此預估本益比通常更具參考價值。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">⚠️</div>
+          <div class="icard-title">低本益比陷阱</div>
+        </div>
+        <div class="icard-desc">低本益比不代表絕對便宜。若公司獲利正在衰退，明年的 EPS 下降，目前的低本益比只是假象。</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <div class="section-heading">
+        <h2>不同產業的典型本益比</h2>
+        <p>本益比不應跨產業比較，不同產業的資本支出與成長預期截然不同。</p>
+      </div>
+      <div class="comp-table-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>產業類型</th>
+              <th>典型 P/E 範圍</th>
+              <th>背後邏輯</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>科技成長 (AI / 雲端)</td>
+              <td>30 - 60+</td>
+              <td>高成長預期，市場願意溢價預購未來利潤。</td>
+            </tr>
+            <tr>
+              <td>一般消費品 / 製造</td>
+              <td>15 - 25</td>
+              <td>獲利穩健，成長速度與 GDP 同步。</td>
+            </tr>
+            <tr>
+              <td>金融 / 公用事業</td>
+              <td>8 - 12</td>
+              <td>成長空間有限，但具備穩定配息能力。</td>
+            </tr>
+            <tr>
+              <td>景氣循環 (航運 / 鋼鐵)</td>
+              <td>3 - 8</td>
+              <td>獲利波動巨大，高獲利時通常是景氣頂峰。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 估值方法
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-valuation">
+    <div class="section-heading">
+      <h2>常見股價估值模型</h2>
+      <p>除了本益比，投資人還會使用其他指標來多維度衡量企業價值。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div class="icard-title">股價淨值比 (P/B Ratio)</div>
+        </div>
+        <div class="icard-desc">股價 ÷ 每股淨值。適用於資產密集的產業（金融、房地產），用來判斷股價相對於公司清算價值的倍數。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-red);">
+        <div class="icard-head">
+          <div class="icard-icon">💸</div>
+          <div class="icard-title">現金流折現 (DCF)</div>
+        </div>
+        <div class="icard-desc">預測公司未來的現金流，並將其折算回當前的價值。這是學理上最嚴謹，但計算最複雜的方法。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">🛒</div>
+          <div class="icard-title">股價營收比 (P/S Ratio)</div>
+        </div>
+        <div class="icard-desc">股價 ÷ 每股營收。適用於獲利尚未穩定，但營收快速成長的新創科技公司。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 成長性分析
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-growth">
+    <div class="section-heading">
+      <h2>超越本益比：PEG 指標</h2>
+      <p>如果一家公司的 P/E 是 30 倍，它是貴還是便宜？這取決於它的成長率。</p>
+    </div>
+
+    <div class="callout">
+      <h3>PEG = 本益比 ÷ 盈餘成長率</h3>
+      <p>傳奇經理人彼得·林區 (Peter Lynch) 認為，如果一家公司的本益比等於其盈餘成長率，那麼它的定價是合理的（即 PEG = 1）。</p>
+      <ul style="margin-left: 20px; margin-top: 10px; color: var(--muted); font-size: 0.9rem;">
+        <li><strong>PEG < 1：</strong> 代表公司相對其成長潛力被低估。</li>
+        <li><strong>PEG > 1：</strong> 代表市場已經對成長預期給予了溢價。</li>
+      </ul>
+    </div>
+
+    <div class="icard" style="width: 100%; --card-color: var(--accent);">
+       <div class="icard-head">
+          <div class="icard-icon">📈</div>
+          <div class="icard-title">為什麼成長性如此重要？</div>
+       </div>
+       <div class="icard-desc">
+          假設 A、B 兩家公司目前 P/E 都是 20 倍。<br>
+          - 公司 A：盈餘每年成長 5%（成熟型）<br>
+          - 公司 B：盈餘每年成長 50%（高成長型）<br><br>
+          兩年後，公司 B 的 EPS 會成長超過一倍，如果在股價不變的情況下，公司 B 的「預期本益比」會降到 10 倍以下。因此，投資人願意在現在用更高的 P/E 買入公司 B。
+       </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容僅供教育參考，不構成投資建議</p>
+</footer>
+
+<script>
+  // Tab Switching
+  function switchTab(tabElement, targetId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tabElement.classList.add('active');
+    document.getElementById('panel-' + targetId).classList.add('active');
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      switchTab(tab, tab.dataset.tab);
+    });
+  });
+
+  // P/E Calculator logic
+  const priceRange = document.getElementById('price-range');
+  const epsRange = document.getElementById('eps-range');
+  const priceVal = document.getElementById('price-val');
+  const epsVal = document.getElementById('eps-val');
+  const peResult = document.getElementById('pe-result');
+  const paybackText = document.getElementById('payback-text');
+
+  function updateCalc() {
+    const p = parseFloat(priceRange.value);
+    const e = parseFloat(epsRange.value);
+    const pe = (p / e).toFixed(1);
+
+    priceVal.innerText = p;
+    epsVal.innerText = e.toFixed(1);
+    peResult.innerText = pe;
+    paybackText.innerText = `代表您需要 ${pe} 年才能回本`;
+  }
+
+  priceRange.addEventListener('input', updateCalc);
+  epsRange.addEventListener('input', updateCalc);
+
+  // Initial call
+  updateCalc();
+</script>
+
+</body>
+</html>
