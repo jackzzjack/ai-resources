@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linux Kernel 架構全覽</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --c-mm:    #3b82f6;
+      --c-sched: #10b981;
+      --c-net:   #f59e0b;
+      --c-fs:    #ef4444;
+      --c-drv:   #8b5cf6;
+      --c-sec:   #ec4899;
+      --c-ipc:   #06b6d4;
+      --c-arch:  #84cc16;
+      --c-dbg:   #f97316;
+      --c-blk:   #a78bfa;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', monospace, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,.22) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(16,185,129,.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 39px,
+        rgba(124,106,255,.04) 39px,
+        rgba(124,106,255,.04) 40px
+      );
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    header .sub {
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 640px;
+      margin: 0 auto 16px;
+      line-height: 1.6;
+    }
+    .ver-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(124,106,255,.15);
+      border: 1px solid rgba(124,106,255,.35);
+      color: var(--accent2);
+      font-size: .8rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Sticky nav ── */
+    .nav-bar {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .nav-link {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      transition: all .2s;
+    }
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ── Tabs ── */
+    main { flex: 1; padding: 32px 24px 64px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 36px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: .88rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ── Kernel Architecture Diagram ── */
+    .kernel-arch {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .arch-layer {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .arch-layer-title {
+      padding: 8px 16px;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .arch-blocks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--surface2);
+    }
+    .arch-block {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: default;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .arch-block:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+
+    /* ── Component cards ── */
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .component-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .component-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .component-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .card-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .card-code {
+      font-size: .75rem;
+      font-family: 'Courier New', monospace;
+      color: var(--muted);
+      background: var(--surface2);
+      padding: 1px 6px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .card-desc { font-size: .87rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag {
+      font-size: .73rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+
+    /* ── Research topics ── */
+    .research-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .research-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, transform .2s;
+    }
+    .research-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+    .research-heat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .heat-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .heat-label { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .research-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .research-desc { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+    .research-links { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .research-link {
+      font-size: .73rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Version timeline ── */
+    .version-timeline { display: flex; flex-direction: column; gap: 0; }
+    .ver-item {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 0;
+      position: relative;
+    }
+    .ver-item::before {
+      content: '';
+      position: absolute;
+      left: 129px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .ver-label {
+      padding: 20px 16px 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .ver-num {
+      font-size: .95rem;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      color: var(--accent2);
+    }
+    .ver-date { font-size: .72rem; color: var(--muted); }
+    .ver-type {
+      font-size: .65rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: .05em;
+    }
+    .ver-type.lts { background: rgba(16,185,129,.15); color: #10b981; border: 1px solid rgba(16,185,129,.3); }
+    .ver-type.stable { background: rgba(124,106,255,.15); color: var(--accent2); border: 1px solid rgba(124,106,255,.3); }
+    .ver-connector {
+      display: flex;
+      align-items: flex-start;
+      padding-top: 22px;
+    }
+    .ver-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: var(--bg);
+      flex-shrink: 0;
+      transform: translateX(-5.5px);
+      margin-top: 2px;
+    }
+    .ver-dot.lts { border-color: #10b981; }
+    .ver-content {
+      padding: 16px 0 16px 20px;
+      flex: 1;
+    }
+    .ver-content-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .ver-content-inner:hover { border-color: var(--border); }
+    .ver-highlight { font-size: .92rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .ver-features { display: flex; flex-direction: column; gap: 5px; }
+    .ver-feature {
+      display: flex;
+      gap: 8px;
+      font-size: .84rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .ver-feature::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Subsystem map ── */
+    .subsys-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .subsys-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .subsys-card:hover { border-color: var(--accent); }
+    .subsys-head {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .subsys-icon { font-size: 1.1rem; }
+    .subsys-name { font-size: .9rem; font-weight: 700; }
+    .subsys-path {
+      font-size: .72rem;
+      font-family: 'Courier New', monospace;
+      color: var(--muted);
+      background: var(--surface2);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .subsys-maintainer {
+      padding: 4px 14px 10px;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .subsys-items {
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .subsys-item {
+      font-size: .8rem;
+      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--surface2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .subsys-item-name { color: var(--text); font-weight: 500; }
+    .subsys-item-id { font-family: 'Courier New', monospace; font-size: .72rem; color: var(--accent); }
+
+    /* ── Callout ── */
+    .callout {
+      background: rgba(124,106,255,.08);
+      border: 1px solid rgba(124,106,255,.25);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .callout strong { color: var(--accent2); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: .8rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🐧 Linux Kernel 架構全覽</h1>
+  <p class="sub">核心元件、子系統代號、研究熱點與版本演進一覽</p>
+  <span class="ver-badge">kernel.org · v6.x LTS/Stable Series</span>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="index.html">← 首頁</a>
+  <a class="nav-link" href="#arch">架構總覽</a>
+  <a class="nav-link" href="#components">核心元件</a>
+  <a class="nav-link" href="#subsystems">子系統代號</a>
+  <a class="nav-link" href="#research">研究熱點</a>
+  <a class="nav-link" href="#versions">版本特色</a>
+</nav>
+
+<main>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('arch')">🏗 架構總覽</button>
+    <button class="tab-btn" onclick="switchTab('components')">⚙️ 核心元件</button>
+    <button class="tab-btn" onclick="switchTab('subsystems')">📂 子系統代號</button>
+    <button class="tab-btn" onclick="switchTab('research')">🔬 研究熱點</button>
+    <button class="tab-btn" onclick="switchTab('versions')">📋 版本特色</button>
+  </div>
+
+  <!-- ══ TAB: ARCH ══ -->
+  <div id="tab-arch" class="tab-panel active">
+    <div class="section-title"><span class="dot"></span>Linux Kernel 分層架構</div>
+
+    <div class="callout">
+      Linux Kernel 採用 <strong>單體核心（Monolithic Kernel）</strong> 架構，但透過模組化設計（LKM）與嚴格的子系統邊界，兼顧彈性與效能。從 User Space 的系統呼叫介面，到最底層的硬體抽象層，所有程式碼都執行於相同的特權空間（Ring 0）。
+    </div>
+
+    <div class="kernel-arch">
+      <!-- Layer 0: User Space -->
+      <div class="arch-layer">
+        <div class="arch-layer-title">User Space（使用者空間）</div>
+        <div class="arch-blocks">
+          <span class="arch-block" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:#10b981">Applications</span>
+          <span class="arch-block" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:#10b981">glibc / musl</span>
+          <span class="arch-block" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:#10b981">systemd / init</span>
+          <span class="arch-block" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:#10b981">Shell / CLI Tools</span>
+          <span class="arch-block" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:#10b981">Containers (runc, containerd)</span>
+        </div>
+      </div>
+      <!-- Layer 1: Syscall -->
+      <div class="arch-layer">
+        <div class="arch-layer-title">System Call Interface（系統呼叫介面）— 核心邊界</div>
+        <div class="arch-blocks">
+          <span class="arch-block" style="background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#f59e0b">syscall table</span>
+          <span class="arch-block" style="background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#f59e0b">seccomp / BPF filter</span>
+          <span class="arch-block" style="background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#f59e0b">ptrace / audit</span>
+          <span class="arch-block" style="background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#f59e0b">VDSO / vvar</span>
+        </div>
+      </div>
+      <!-- Layer 2: Core Subsystems -->
+      <div class="arch-layer">
+        <div class="arch-layer-title">核心子系統（Core Subsystems）</div>
+        <div class="arch-blocks">
+          <span class="arch-block" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.35);color:#60a5fa">記憶體管理 MM</span>
+          <span class="arch-block" style="background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.35);color:#34d399">行程排程 SCHED</span>
+          <span class="arch-block" style="background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.35);color:#fbbf24">虛擬檔案系統 VFS</span>
+          <span class="arch-block" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#f87171">網路堆疊 NET</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.35);color:#c4b5fd">IPC</span>
+          <span class="arch-block" style="background:rgba(236,72,153,.15);border-color:rgba(236,72,153,.35);color:#f9a8d4">安全模組 LSM</span>
+          <span class="arch-block" style="background:rgba(6,182,212,.15);border-color:rgba(6,182,212,.35);color:#67e8f9">Block Layer</span>
+          <span class="arch-block" style="background:rgba(249,115,22,.15);border-color:rgba(249,115,22,.35);color:#fdba74">eBPF Runtime</span>
+          <span class="arch-block" style="background:rgba(132,204,22,.15);border-color:rgba(132,204,22,.35);color:#bef264">電源管理 PM</span>
+          <span class="arch-block" style="background:rgba(167,139,250,.15);border-color:rgba(167,139,250,.35);color:#c4b5fd">io_uring</span>
+        </div>
+      </div>
+      <!-- Layer 3: Device Drivers -->
+      <div class="arch-layer">
+        <div class="arch-layer-title">裝置驅動層（Device Drivers & Driver Model）</div>
+        <div class="arch-blocks">
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">字元裝置 char</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">區塊裝置 block</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">網路裝置 netdev</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">GPU / DRM</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">USB / PCIe / I2C / SPI</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">IOMMU</span>
+          <span class="arch-block" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.25);color:#c4b5fd">Rust Drivers（新）</span>
+        </div>
+      </div>
+      <!-- Layer 4: Hardware Arch -->
+      <div class="arch-layer">
+        <div class="arch-layer-title">架構相依層（arch/）— Hardware Abstraction</div>
+        <div class="arch-blocks">
+          <span class="arch-block" style="background:rgba(132,204,22,.1);border-color:rgba(132,204,22,.25);color:#bef264">x86 / x86_64</span>
+          <span class="arch-block" style="background:rgba(132,204,22,.1);border-color:rgba(132,204,22,.25);color:#bef264">ARM64 (aarch64)</span>
+          <span class="arch-block" style="background:rgba(132,204,22,.1);border-color:rgba(132,204,22,.25);color:#bef264">RISC-V</span>
+          <span class="arch-block" style="background:rgba(132,204,22,.1);border-color:rgba(132,204,22,.25);color:#bef264">MIPS / PowerPC / s390</span>
+          <span class="arch-block" style="background:rgba(132,204,22,.1);border-color:rgba(132,204,22,.25);color:#bef264">LoongArch（新）</span>
+          <span class="arch-block" style="background:rgba(132,204,22,.1);border-color:rgba(132,204,22,.25);color:#bef264">Hardware（CPU / RAM / 周邊）</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: COMPONENTS ══ -->
+  <div id="tab-components" class="tab-panel">
+    <div class="section-title"><span class="dot"></span>核心元件詳覽</div>
+
+    <div class="component-grid">
+
+      <div class="component-card" style="--c: var(--c-sched)">
+        <style>.component-card:nth-child(1)::before { background: var(--c-sched); }</style>
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(16,185,129,.15)">⏱</div>
+          <div>
+            <div class="card-title">行程排程器（Process Scheduler）</div>
+            <code class="card-code">kernel/sched/</code>
+          </div>
+        </div>
+        <p class="card-desc">決定哪個行程或執行緒在何時使用 CPU。現行主排程器為 <strong>CFS（Completely Fair Scheduler）</strong>，基於紅黑樹排序虛擬執行時間（vruntime）。6.6 起引入可插拔排程框架 <strong>sched_ext（BPF 排程器）</strong>，允許使用者以 eBPF 程式替換排程邏輯。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">CFS</span>
+          <span class="tag" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">RT Sched</span>
+          <span class="tag" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">Deadline Sched</span>
+          <span class="tag" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">sched_ext</span>
+          <span class="tag" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)">NUMA-aware</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(59,130,246,.15)">💾</div>
+          <div>
+            <div class="card-title">記憶體管理（Memory Management）</div>
+            <code class="card-code">mm/</code>
+          </div>
+        </div>
+        <p class="card-desc">管理虛擬記憶體空間、實體頁框分配、交換空間（swap）、頁面回收（kswapd）及 NUMA 拓撲。分配器包含 <strong>Buddy System</strong>（頁框層）、<strong>SLAB/SLUB/SLOB</strong>（物件層）與 <strong>vmalloc</strong>（連續虛擬空間）。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#60a5fa;border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)">Buddy Allocator</span>
+          <span class="tag" style="color:#60a5fa;border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)">SLUB</span>
+          <span class="tag" style="color:#60a5fa;border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)">THP</span>
+          <span class="tag" style="color:#60a5fa;border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)">mmap / mlock</span>
+          <span class="tag" style="color:#60a5fa;border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)">CXL Memory</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,158,11,.15)">📁</div>
+          <div>
+            <div class="card-title">虛擬檔案系統（VFS）</div>
+            <code class="card-code">fs/ · include/linux/fs.h</code>
+          </div>
+        </div>
+        <p class="card-desc">統一的檔案系統抽象層，定義 <strong>inode / dentry / file / super_block</strong> 四大物件。底層可掛載 ext4、XFS、Btrfs、F2FS、EROFS 等真實檔案系統，或 procfs、sysfs、tmpfs 等偽檔案系統。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">ext4</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Btrfs</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">XFS</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">tmpfs</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">Page Cache</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(239,68,68,.15)">🌐</div>
+          <div>
+            <div class="card-title">網路堆疊（Networking Stack）</div>
+            <code class="card-code">net/ · drivers/net/</code>
+          </div>
+        </div>
+        <p class="card-desc">完整的 TCP/IP 協定棧，從 L2 乙太網路到 L7 套接字介面。包含 <strong>Netfilter</strong>（封包過濾/NAT）、<strong>TC（Traffic Control）</strong>、<strong>XDP（eXpress Data Path）</strong> 與 <strong>IPVS</strong>。支援 IPv4/IPv6、MPTCP、QUIC offload。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#f87171;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">TCP/IP</span>
+          <span class="tag" style="color:#f87171;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">XDP</span>
+          <span class="tag" style="color:#f87171;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">Netfilter</span>
+          <span class="tag" style="color:#f87171;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">MPTCP</span>
+          <span class="tag" style="color:#f87171;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">nftables</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(249,115,22,.15)">🔌</div>
+          <div>
+            <div class="card-title">eBPF 執行環境</div>
+            <code class="card-code">kernel/bpf/ · include/linux/bpf.h</code>
+          </div>
+        </div>
+        <p class="card-desc">在核心中安全執行使用者定義位元組碼的沙盒虛擬機器。透過 <strong>JIT 編譯器</strong>轉為原生機器碼，並由驗證器（Verifier）確保安全性。廣泛用於可觀測性、網路加速、安全稽核與排程。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#fdba74;border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.08)">BPF Verifier</span>
+          <span class="tag" style="color:#fdba74;border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.08)">JIT</span>
+          <span class="tag" style="color:#fdba74;border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.08)">BTF</span>
+          <span class="tag" style="color:#fdba74;border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.08)">CO-RE</span>
+          <span class="tag" style="color:#fdba74;border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.08)">bpftool</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(236,72,153,.15)">🔐</div>
+          <div>
+            <div class="card-title">Linux 安全模組（LSM）</div>
+            <code class="card-code">security/</code>
+          </div>
+        </div>
+        <p class="card-desc">可插拔安全框架，允許多個安全策略模組同時運行（LSM Stacking）。內建 <strong>SELinux</strong>（強制存取控制）、<strong>AppArmor</strong>（路徑式 MAC）、<strong>Landlock</strong>（應用程式沙盒）、<strong>SMACK</strong>、<strong>Yama</strong>。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#f9a8d4;border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.08)">SELinux</span>
+          <span class="tag" style="color:#f9a8d4;border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.08)">AppArmor</span>
+          <span class="tag" style="color:#f9a8d4;border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.08)">Landlock</span>
+          <span class="tag" style="color:#f9a8d4;border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.08)">seccomp</span>
+          <span class="tag" style="color:#f9a8d4;border-color:rgba(236,72,153,.3);background:rgba(236,72,153,.08)">integrity (IMA)</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(6,182,212,.15)">💿</div>
+          <div>
+            <div class="card-title">區塊層（Block Layer）</div>
+            <code class="card-code">block/ · drivers/block/</code>
+          </div>
+        </div>
+        <p class="card-desc">統一管理所有區塊裝置 I/O。現行採用 <strong>Multi-Queue Block Layer（blk-mq）</strong> 架構，支援高並發 NVMe SSD。I/O 排程器包含 <strong>mq-deadline</strong>、<strong>BFQ（Budget Fair Queueing）</strong>、<strong>Kyber</strong>。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#67e8f9;border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">blk-mq</span>
+          <span class="tag" style="color:#67e8f9;border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">NVMe</span>
+          <span class="tag" style="color:#67e8f9;border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">BFQ</span>
+          <span class="tag" style="color:#67e8f9;border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">dm / LVM</span>
+          <span class="tag" style="color:#67e8f9;border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08)">io_uring</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(139,92,246,.15)">🔗</div>
+          <div>
+            <div class="card-title">行程間通訊（IPC）</div>
+            <code class="card-code">ipc/ · kernel/signal.c</code>
+          </div>
+        </div>
+        <p class="card-desc">提供行程間交換資料與同步的機制，包含 <strong>Pipe / FIFO</strong>、<strong>Signal</strong>、<strong>System V IPC</strong>（semaphore/shm/msg）、<strong>POSIX MQ</strong>、<strong>Unix Domain Socket</strong> 與現代化的 <strong>io_uring</strong> 非同步介面。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#c4b5fd;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08)">Pipe</span>
+          <span class="tag" style="color:#c4b5fd;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08)">Signal</span>
+          <span class="tag" style="color:#c4b5fd;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08)">Shared Memory</span>
+          <span class="tag" style="color:#c4b5fd;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08)">Unix Socket</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(132,204,22,.15)">⚡</div>
+          <div>
+            <div class="card-title">電源管理（Power Management）</div>
+            <code class="card-code">drivers/cpufreq/ · kernel/power/</code>
+          </div>
+        </div>
+        <p class="card-desc">管理系統、CPU 與裝置的電源狀態，涵蓋 <strong>CPUfreq</strong>（動態頻率調整）、<strong>CPUIdle</strong>（深度睡眠狀態）、<strong>Runtime PM</strong>（裝置按需休眠）與 <strong>ACPI / PSCI</strong> 平台介面。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#bef264;border-color:rgba(132,204,22,.3);background:rgba(132,204,22,.08)">CPUfreq</span>
+          <span class="tag" style="color:#bef264;border-color:rgba(132,204,22,.3);background:rgba(132,204,22,.08)">CPUIdle</span>
+          <span class="tag" style="color:#bef264;border-color:rgba(132,204,22,.3);background:rgba(132,204,22,.08)">ACPI</span>
+          <span class="tag" style="color:#bef264;border-color:rgba(132,204,22,.3);background:rgba(132,204,22,.08)">schedutil</span>
+          <span class="tag" style="color:#bef264;border-color:rgba(132,204,22,.3);background:rgba(132,204,22,.08)">Energy Model</span>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,158,11,.15)">🔭</div>
+          <div>
+            <div class="card-title">核心追蹤與除錯（Tracing & Debug）</div>
+            <code class="card-code">kernel/trace/ · tools/perf/</code>
+          </div>
+        </div>
+        <p class="card-desc">提供核心可觀測性的基礎設施，包含 <strong>ftrace</strong>（函式追蹤）、<strong>kprobes / uprobes</strong>（動態探針）、<strong>tracepoints</strong>（靜態探針）、<strong>perf</strong>（效能事件計數）。eBPF 已成為主流觀測工具（bpftrace, BCC）。</p>
+        <div class="card-tags">
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">ftrace</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">kprobes</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">perf</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">KASAN</span>
+          <span class="tag" style="color:#fbbf24;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)">syzkaller</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ TAB: SUBSYSTEMS ══ -->
+  <div id="tab-subsystems" class="tab-panel">
+    <div class="section-title"><span class="dot"></span>子系統代號與維護者列表</div>
+
+    <div class="callout">
+      Linux Kernel 使用 <strong>MAINTAINERS</strong> 檔案記錄每個子系統的負責人（Maintainer）、郵件列表（Mailing List）與原始碼路徑。以下為主要子系統的代號、路徑與關鍵人物。
+    </div>
+
+    <div class="subsys-map">
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(16,185,129,.08);border-bottom:1px solid rgba(16,185,129,.2)">
+          <span class="subsys-icon">⏱</span>
+          <span class="subsys-name" style="color:#34d399">SCHEDULER</span>
+          <code class="subsys-path">kernel/sched/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Ingo Molnár, Peter Zijlstra · lkml.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">CFS</span><span class="subsys-item-id">SCHED_CFS</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Real-Time Sched</span><span class="subsys-item-id">SCHED_RT</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Deadline Sched</span><span class="subsys-item-id">SCHED_DL</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">BPF Sched Ext</span><span class="subsys-item-id">SCHED_EXT</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Load Balancer</span><span class="subsys-item-id">SMP_BALANCER</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(59,130,246,.08);border-bottom:1px solid rgba(59,130,246,.2)">
+          <span class="subsys-icon">💾</span>
+          <span class="subsys-name" style="color:#60a5fa">MEMORY MANAGEMENT</span>
+          <code class="subsys-path">mm/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Andrew Morton · linux-mm@kvack.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">Huge Pages</span><span class="subsys-item-id">THP / HugeTLB</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Page Reclaim</span><span class="subsys-item-id">kswapd / MGLRU</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">OOM Killer</span><span class="subsys-item-id">oom_kill.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">NUMA Balancing</span><span class="subsys-item-id">NUMA_BALANCING</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">CXL Memory</span><span class="subsys-item-id">DAX / PMEM</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(239,68,68,.08);border-bottom:1px solid rgba(239,68,68,.2)">
+          <span class="subsys-icon">🌐</span>
+          <span class="subsys-name" style="color:#f87171">NETWORKING</span>
+          <code class="subsys-path">net/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Jakub Kicinski, David S. Miller · netdev@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">TCP/IP Stack</span><span class="subsys-item-id">inet / ipv6</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Packet Filter</span><span class="subsys-item-id">Netfilter / nftables</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">eXpress Data Path</span><span class="subsys-item-id">XDP</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Wireless</span><span class="subsys-item-id">mac80211 / cfg80211</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Multipath TCP</span><span class="subsys-item-id">MPTCP</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(249,115,22,.08);border-bottom:1px solid rgba(249,115,22,.2)">
+          <span class="subsys-icon">🔌</span>
+          <span class="subsys-name" style="color:#fdba74">BPF</span>
+          <code class="subsys-path">kernel/bpf/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Alexei Starovoitov, Daniel Borkmann · bpf@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">BPF Verifier</span><span class="subsys-item-id">verifier.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">BPF Maps</span><span class="subsys-item-id">hashtab / array / lru</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">BTF (Type Info)</span><span class="subsys-item-id">btf.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">BPF Link</span><span class="subsys-item-id">bpf_link ops</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Token / Delegate</span><span class="subsys-item-id">BPF_TOKEN</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(245,158,11,.08);border-bottom:1px solid rgba(245,158,11,.2)">
+          <span class="subsys-icon">📁</span>
+          <span class="subsys-name" style="color:#fbbf24">VFS / FILESYSTEMS</span>
+          <code class="subsys-path">fs/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：各 FS 個別維護 · linux-fsdevel@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">ext4</span><span class="subsys-item-id">fs/ext4/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Btrfs</span><span class="subsys-item-id">fs/btrfs/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">XFS</span><span class="subsys-item-id">fs/xfs/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">F2FS</span><span class="subsys-item-id">fs/f2fs/ (Flash)</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">bcachefs（新）</span><span class="subsys-item-id">fs/bcachefs/</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(6,182,212,.08);border-bottom:1px solid rgba(6,182,212,.2)">
+          <span class="subsys-icon">💿</span>
+          <span class="subsys-name" style="color:#67e8f9">BLOCK LAYER</span>
+          <code class="subsys-path">block/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Jens Axboe · linux-block@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">blk-mq</span><span class="subsys-item-id">Multi-Queue</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">io_uring</span><span class="subsys-item-id">io_uring.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">NVMe</span><span class="subsys-item-id">drivers/nvme/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Device Mapper</span><span class="subsys-item-id">drivers/md/dm-*</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">MD RAID</span><span class="subsys-item-id">drivers/md/</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(236,72,153,.08);border-bottom:1px solid rgba(236,72,153,.2)">
+          <span class="subsys-icon">🔐</span>
+          <span class="subsys-name" style="color:#f9a8d4">SECURITY</span>
+          <code class="subsys-path">security/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Paul Moore · linux-security-module@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">SELinux</span><span class="subsys-item-id">security/selinux/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">AppArmor</span><span class="subsys-item-id">security/apparmor/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Landlock</span><span class="subsys-item-id">security/landlock/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">IMA / EVM</span><span class="subsys-item-id">security/integrity/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Keys / Keyring</span><span class="subsys-item-id">security/keys/</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(139,92,246,.08);border-bottom:1px solid rgba(139,92,246,.2)">
+          <span class="subsys-icon">🚗</span>
+          <span class="subsys-name" style="color:#c4b5fd">DRIVER MODEL</span>
+          <code class="subsys-path">drivers/ · drivers/base/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Greg KH · linux-kernel@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">DRM / GPU</span><span class="subsys-item-id">drivers/gpu/drm/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">USB</span><span class="subsys-item-id">drivers/usb/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">PCIe</span><span class="subsys-item-id">drivers/pci/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Rust Drivers</span><span class="subsys-item-id">rust/ (新)</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">Platform Drivers</span><span class="subsys-item-id">drivers/platform/</span></div>
+        </div>
+      </div>
+
+      <div class="subsys-card">
+        <div class="subsys-head" style="background:rgba(132,204,22,.08);border-bottom:1px solid rgba(132,204,22,.2)">
+          <span class="subsys-icon">🔬</span>
+          <span class="subsys-name" style="color:#bef264">TRACING / PERF</span>
+          <code class="subsys-path">kernel/trace/ · tools/perf/</code>
+        </div>
+        <div class="subsys-maintainer">維護者：Steven Rostedt, Arnaldo Melo · linux-trace@vger.kernel.org</div>
+        <div class="subsys-items">
+          <div class="subsys-item"><span class="subsys-item-name">ftrace</span><span class="subsys-item-id">trace/ftrace.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">perf events</span><span class="subsys-item-id">kernel/events/</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">kprobes</span><span class="subsys-item-id">kernel/kprobes.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">KASAN / UBSAN</span><span class="subsys-item-id">mm/kasan/ lib/ubsan.c</span></div>
+          <div class="subsys-item"><span class="subsys-item-name">lockdep</span><span class="subsys-item-id">kernel/locking/</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ TAB: RESEARCH ══ -->
+  <div id="tab-research" class="tab-panel">
+    <div class="section-title"><span class="dot"></span>當前研究熱點（2024–2026）</div>
+
+    <div class="callout">
+      以下議題是目前核心社群（kernel.org、LKML、LPC、Linux Plumbers Conference）最活躍的討論與開發方向，反映工業界與學術界的共同關注。
+    </div>
+
+    <div class="research-grid">
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#ef4444;box-shadow:0 0 8px #ef4444"></div>
+          <span class="heat-label" style="color:#ef4444">🔥 最熱門</span>
+        </div>
+        <div class="research-title">Rust in Linux（核心 Rust 化）</div>
+        <div class="research-desc">
+          自 6.1 起合入 Rust 基礎設施，目前 Rust 可用於撰寫驅動程式與核心模組。主要優勢是記憶體安全——消除 use-after-free、buffer overflow 等 C 語言常見漏洞，佔核心 CVE 的 70%+。Google、微軟、Meta 積極貢獻。
+        </div>
+        <div class="research-links">
+          <span class="research-link">rust/</span>
+          <span class="research-link">drivers/gpu/nova (Rust)</span>
+          <span class="research-link">rust-for-linux.com</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#ef4444;box-shadow:0 0 8px #ef4444"></div>
+          <span class="heat-label" style="color:#ef4444">🔥 最熱門</span>
+        </div>
+        <div class="research-title">eBPF 擴展（BPF Superpowers）</div>
+        <div class="research-desc">
+          eBPF 已成為可觀測性、網路加速、安全稽核、甚至排程（sched_ext）的統一框架。研究方向包含：BPF token（容器化授權）、BPF struct_ops 擴展、BPF arena（大型共享記憶體）與 bpf_lsm 整合。
+        </div>
+        <div class="research-links">
+          <span class="research-link">kernel/bpf/</span>
+          <span class="research-link">SCHED_EXT</span>
+          <span class="research-link">bpftrace</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>
+          <span class="heat-label" style="color:#f59e0b">⚡ 熱門</span>
+        </div>
+        <div class="research-title">PREEMPT_RT 實時核心</div>
+        <div class="research-desc">
+          歷時 20 年的實時補丁終於在 6.12 完整合入主線。將所有自旋鎖替換為可睡眠 mutex，達成完全可搶佔，延遲可低至數十微秒。對工業控制、金融交易、車載系統意義重大。
+        </div>
+        <div class="research-links">
+          <span class="research-link">PREEMPT_RT</span>
+          <span class="research-link">kernel/locking/</span>
+          <span class="research-link">rt-tests</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>
+          <span class="heat-label" style="color:#f59e0b">⚡ 熱門</span>
+        </div>
+        <div class="research-title">io_uring 非同步 I/O</div>
+        <div class="research-desc">
+          由 Jens Axboe 主導，透過共享環形緩衝區大幅降低系統呼叫開銷，在高並發網路與儲存場景效能超越 epoll。io_uring 也進一步擴展為通用非同步執行框架，支援網路操作（send/recv）、行程管理等。
+        </div>
+        <div class="research-links">
+          <span class="research-link">io_uring.c</span>
+          <span class="research-link">liburing</span>
+          <span class="research-link">IORING_OP_*</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>
+          <span class="heat-label" style="color:#f59e0b">⚡ 熱門</span>
+        </div>
+        <div class="research-title">CXL（Compute Express Link）</div>
+        <div class="research-desc">
+          基於 PCIe 5.0 的新型互連技術，允許 CPU 與加速器（GPU、FPGA、Smart NIC）共享記憶體池（Memory Pooling）。Linux 正積極整合 CXL 1.1/2.0/3.0，涉及 NUMA、DAX、pmem 等多個子系統協作。
+        </div>
+        <div class="research-links">
+          <span class="research-link">drivers/cxl/</span>
+          <span class="research-link">linux-cxl@vger</span>
+          <span class="research-link">QEMU CXL</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#8b5cf6;box-shadow:0 0 5px #8b5cf6"></div>
+          <span class="heat-label" style="color:#8b5cf6">💡 上升中</span>
+        </div>
+        <div class="research-title">機密運算（Confidential Computing）</div>
+        <div class="research-desc">
+          Intel TDX（Trust Domain Extensions）、AMD SEV-SNP、ARM CCA 等硬體可信執行環境（TEE）。Linux 提供 TDX Guest 支援、KVM 整合與 remote attestation 機制，讓雲端租戶程式碼對 Hypervisor 不可見。
+        </div>
+        <div class="research-links">
+          <span class="research-link">arch/x86/coco/</span>
+          <span class="research-link">AMD SEV</span>
+          <span class="research-link">Intel TDX</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#8b5cf6;box-shadow:0 0 5px #8b5cf6"></div>
+          <span class="heat-label" style="color:#8b5cf6">💡 上升中</span>
+        </div>
+        <div class="research-title">記憶體安全強化（Memory Safety）</div>
+        <div class="research-desc">
+          除 Rust 引入外，C 端也在強化：CFI（Control Flow Integrity）、KCFI（核心 CFI）、PAC（Pointer Authentication on ARM）、MTE（Memory Tagging Extension）、KFENCE（低開銷記憶體錯誤偵測）。
+        </div>
+        <div class="research-links">
+          <span class="research-link">KCFI</span>
+          <span class="research-link">KFENCE</span>
+          <span class="research-link">KASAN</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#8b5cf6;box-shadow:0 0 5px #8b5cf6"></div>
+          <span class="heat-label" style="color:#8b5cf6">💡 上升中</span>
+        </div>
+        <div class="research-title">能源效率與綠色運算</div>
+        <div class="research-desc">
+          Linux 的 Energy Aware Scheduling（EAS）讓排程器感知 CPU 能耗模型，在 ARM big.LITTLE 架構上優先使用小核。Intel EPP（Energy Performance Preference）、運算域感知電源管理（Per-die PM）也是熱門方向。
+        </div>
+        <div class="research-links">
+          <span class="research-link">EAS</span>
+          <span class="research-link">schedutil</span>
+          <span class="research-link">powercap/</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#06b6d4;box-shadow:0 0 4px #06b6d4"></div>
+          <span class="heat-label" style="color:#06b6d4">🔭 長期議題</span>
+        </div>
+        <div class="research-title">RISC-V 生態完善</div>
+        <div class="research-desc">
+          RISC-V 架構在嵌入式與伺服器領域快速成長，Linux 持續完善 RISC-V 支援：Svnapot（Huge TLB）、Zicbom（Cache Management）、KVM/H 擴展（Hypervisor）與 Vector 擴展（SIMD）。
+        </div>
+        <div class="research-links">
+          <span class="research-link">arch/riscv/</span>
+          <span class="research-link">linux-riscv@lists</span>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <div class="research-heat">
+          <div class="heat-dot" style="background:#06b6d4;box-shadow:0 0 4px #06b6d4"></div>
+          <span class="heat-label" style="color:#06b6d4">🔭 長期議題</span>
+        </div>
+        <div class="research-title">核心隔離與容器安全</div>
+        <div class="research-desc">
+          Namespace、Cgroups v2、Seccomp、Landlock 的組合提供更細緻的容器隔離。研究方向包含：減少 namespace escape 攻擊面、unprivileged container 支援、io_uring 的 cgroup 整合與記憶體壓力回調。
+        </div>
+        <div class="research-links">
+          <span class="research-link">cgroups v2</span>
+          <span class="research-link">Landlock</span>
+          <span class="research-link">userns</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ TAB: VERSIONS ══ -->
+  <div id="tab-versions" class="tab-panel">
+    <div class="section-title"><span class="dot"></span>近期版本特色（6.1 – 6.14）</div>
+
+    <div class="callout">
+      Linux Kernel 約每 <strong>8–10 週</strong>發布一個主要版本，由 Linus Torvalds 主持。版本號格式為 <strong>6.x</strong>（自 5.20 直接跳為 6.0）。每年約有一個版本被選為 <strong>LTS（Long-Term Support）</strong>，維護週期 6 年。
+    </div>
+
+    <div class="version-timeline">
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.14</span>
+          <span class="ver-date">2025 Q2</span>
+          <span class="ver-type stable">stable</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">最新穩定版 — AI 加速與硬體新支援</div>
+              <div class="ver-features">
+                <div class="ver-feature">AMD RDNA 4（RX 9000 系列）初步 GPU 支援（amdgpu）</div>
+                <div class="ver-feature">Intel Panther Lake / Arrow Lake S 平台支援</div>
+                <div class="ver-feature">sched_ext BPF 排程器進一步穩定，加入更多 ops</div>
+                <div class="ver-feature">io_uring 網路操作（zerocopy send）增強</div>
+                <div class="ver-feature">Rust 抽象層擴展：更多 platform bus、PCI、GPIO 綁定</div>
+                <div class="ver-feature">ACPI PPTT v3 拓撲感知（ARM CPU cache hierarchy）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.13</span>
+          <span class="ver-date">2025 Q1</span>
+          <span class="ver-type stable">stable</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">記憶體管理大躍進 + Rust 驅動擴展</div>
+              <div class="ver-features">
+                <div class="ver-feature">MGLRU（Multi-Gen LRU）頁面回收全面預設啟用</div>
+                <div class="ver-feature">Maple Tree 完全取代 VMA 紅黑樹，mmap 效能大幅提升</div>
+                <div class="ver-feature">Rust：nova 驅動（NVIDIA GSP-only 開源驅動原型）</div>
+                <div class="ver-feature">sched_ext scx 介面穩定，Meta/Google 開始在生產環境部署</div>
+                <div class="ver-feature">ARM64 PMU（效能監控）多核心改進</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.12</span>
+          <span class="ver-date">2024 Q4</span>
+          <span class="ver-type lts">LTS</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot lts"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">🏆 LTS 版本 — PREEMPT_RT 完整合入歷史里程碑</div>
+              <div class="ver-features">
+                <div class="ver-feature"><strong>PREEMPT_RT 全面合入主線</strong>：歷時 20 年的 realtime 補丁正式進入 upstream，選項為 CONFIG_PREEMPT_RT</div>
+                <div class="ver-feature">sched_ext（可插拔 BPF 排程器）正式合入主線</div>
+                <div class="ver-feature">bcachefs 檔案系統進入 mainline（5.1 後最重要的新 FS）</div>
+                <div class="ver-feature">ARM64 Permission Overlay Extension（POE）記憶體保護</div>
+                <div class="ver-feature">Intel FRED（更快速的例外/中斷入口）</div>
+                <div class="ver-feature">AMD 下一代 IOMMU v2 改善</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.11</span>
+          <span class="ver-date">2024 Q3</span>
+          <span class="ver-type stable">stable</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">IoT / 嵌入式 + 安全強化</div>
+              <div class="ver-features">
+                <div class="ver-feature">Landlock 網路存取控制（限制行程的 TCP bind/connect）</div>
+                <div class="ver-feature">mseal() 系統呼叫：記憶體區段密封，防止 mprotect 竄改</div>
+                <div class="ver-feature">AMD IOMMU v2：提升 GPU 直通的虛擬化效能</div>
+                <div class="ver-feature">Rust 工具鏈升級至 1.80，新增更多 kernel API 綁定</div>
+                <div class="ver-feature">RISC-V：Sv57 五層頁表支援（128 PB 虛擬位址空間）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.10</span>
+          <span class="ver-date">2024 Q2</span>
+          <span class="ver-type stable">stable</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">GPU 進化 + 時間命名空間</div>
+              <div class="ver-features">
+                <div class="ver-feature">nouveau（NVIDIA 開源驅動）開始支援 GSP 韌體（Turing+ GPU）</div>
+                <div class="ver-feature">Time Namespace：容器可擁有獨立系統時鐘偏移</div>
+                <div class="ver-feature">AMD Zen 5 / Strix Point APU 基礎支援</div>
+                <div class="ver-feature">Intel Xe2 GPU 驅動（Battlemage）初步支援</div>
+                <div class="ver-feature">BPF：Type Matching（更彈性的 BPF-to-kernel 型別驗證）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.9</span>
+          <span class="ver-date">2024 Q2</span>
+          <span class="ver-type stable">stable</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">網路加速 + AI 基礎設施</div>
+              <div class="ver-features">
+                <div class="ver-feature">AMD P-State EPP（Energy Performance Preference）自動調頻改進</div>
+                <div class="ver-feature">virtio-net 吞吐量提升，支援 NIC 熱插拔改進</div>
+                <div class="ver-feature">BPF：BPF arena（大型連續共享記憶體，跨 user/kernel）</div>
+                <div class="ver-feature">RISC-V：T-Head 廠商擴展、SBI 2.0 支援</div>
+                <div class="ver-feature">Intel IFS（In-Field Scan）CPU 診斷支援</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.8</span>
+          <span class="ver-date">2024 Q1</span>
+          <span class="ver-type stable">stable</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">Rust 網路驅動里程碑</div>
+              <div class="ver-features">
+                <div class="ver-feature">第一個 Rust 網路驅動進入上游（Asix USB 網路卡）</div>
+                <div class="ver-feature">Intel Meteor Lake 平台完整支援（EDP 顯示、NPU 初步）</div>
+                <div class="ver-feature">cachestat() 系統呼叫：查詢頁面快取命中狀態</div>
+                <div class="ver-feature">drm/panthor：ARM Mali Valhall/G610 開源驅動合入</div>
+                <div class="ver-feature">FUSE passthrough：容器化 FUSE 效能大幅提升</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.6</span>
+          <span class="ver-date">2023 Q4</span>
+          <span class="ver-type lts">LTS</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot lts"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">🏆 LTS — MGLRU + sched_ext 預覽</div>
+              <div class="ver-features">
+                <div class="ver-feature">MGLRU 預設啟用（Multi-Gen LRU，Android/Meta 長期使用的頁面回收算法）</div>
+                <div class="ver-feature">sched_ext 合入（BPF 可插拔排程器，首個上游版本）</div>
+                <div class="ver-feature">Intel LAM（Linear Address Masking）：x86 位址標籤</div>
+                <div class="ver-feature">Shadow Stack（x86 SHSTK）：防止 ROP 攻擊</div>
+                <div class="ver-feature">AMD TLB 效能改進 on EPYC Genoa/Bergamo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ver-item">
+        <div class="ver-label">
+          <span class="ver-num">v6.1</span>
+          <span class="ver-date">2022 Q4</span>
+          <span class="ver-type lts">LTS</span>
+        </div>
+        <div class="ver-connector"><div class="ver-dot lts"></div>
+          <div class="ver-content">
+            <div class="ver-content-inner">
+              <div class="ver-highlight">🏆 LTS — Rust 正式進入核心</div>
+              <div class="ver-features">
+                <div class="ver-feature"><strong>Rust 語言基礎設施首次合入主線</strong>（rust/ 目錄，含編譯基礎、macro、core bindings）</div>
+                <div class="ver-feature">MGLRU 首次合入（但尚未預設啟用）</div>
+                <div class="ver-feature">Maple Tree：取代 VMA 管理的紅黑樹，提升 mmap 並發安全性</div>
+                <div class="ver-feature">AMD RDNA 3（RX 7000）初步 GPU 支援</div>
+                <div class="ver-feature">LoongArch 架構正式加入（龍芯 3A5000+）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Linux Kernel 架構全覽 · 資料截至 2026 年 5 月 · 資料來源：kernel.org、LKML、Linux Plumbers Conference
+</footer>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    const idx = ['arch','components','subsystems','research','versions'].indexOf(name);
+    document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  }
+</script>
+</body>
+</html>

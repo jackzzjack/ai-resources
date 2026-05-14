@@ -28,6 +28,7 @@
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
+| `linux_kernel_overview.html` | Linux Kernel 架構全覽（元件分層圖、子系統代號、研究熱點、v6.1–6.14 版本特色） |
 
 ---
 
