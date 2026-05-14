@@ -24,6 +24,7 @@
 | `thermal-industry.html` | 散熱產業生態系（3D VC、冷板液冷 DLC、CDU、全球 AI 伺服器散熱供應鏈） |
 | `power-industry.html` | 電源與能源產業分析（全球電力趨勢、台灣能源結構、AI 伺服器電源 PSU 供應鏈） |
 | `ems-industry.html` | EMS 電子代工產業生態系（供應鏈上下游、OEM/ODM 模式、全球領導大廠） |
+| `stock-valuation.html` | 投資評價工具（本益比計算機、回本年限視覺化、不同產業估值邏輯） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
