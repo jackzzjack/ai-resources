@@ -35,6 +35,7 @@
 | `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
 | `power-industry.html` | 電源與能源產業分析頁面 |
 | `ems-industry.html` | EMS 電子代工產業生態系導覽 |
+| `stock-valuation.html` | 投資評價工具（本益比、估值模型、成長性分析） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
