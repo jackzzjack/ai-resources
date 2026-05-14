@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>遺忘的科學：為什麼我們無法主動遺忘？</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --curve-color: #ef4444;
+      --path-color: #10b981;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 30%, rgba(150,100,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 32px 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.4s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-container {
+      background: #050508;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      height: 100%;
+    }
+
+    .icard h3 {
+      color: var(--accent2);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+    }
+
+    .icard p {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .highlight-box {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 20px;
+      margin: 24px 0;
+      border-radius: 0 12px 12px 0;
+    }
+
+    .highlight-box h4 {
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+
+    .callout {
+      border: 1px dashed var(--accent);
+      background: rgba(124, 106, 255, 0.05);
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* SVG Specific Styles */
+    .axis-label { fill: var(--muted); font-size: 12px; }
+    .grid-line { stroke: var(--border); stroke-dasharray: 4; }
+    .curve { stroke-width: 3; fill: none; stroke-linecap: round; }
+    .point { fill: var(--accent2); }
+    .node { fill: var(--surface2); stroke: var(--accent); stroke-width: 2; }
+    .node-text { fill: var(--text); font-size: 13px; font-weight: 500; }
+    .path { stroke: var(--path-color); stroke-width: 2; fill: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>遺忘的科學</h1>
+  <p>探索人類大腦為何會遺忘？揭開「主動記憶」與「無法主動遺忘」之間的神經科學奧秘。</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+</nav>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this, 'curve')">1. 遺忘曲線</button>
+    <button class="tab-btn" onclick="switchTab(this, 'mechanism')">2. 遺忘機制</button>
+    <button class="tab-btn" onclick="switchTab(this, 'paradox')">3. 遺忘悖論</button>
+  </div>
+
+  <!-- Tab 1: Forgetting Curve -->
+  <div id="tab-curve" class="tab-panel active">
+    <div class="diagram-container" id="curve-container">
+      <h3 style="margin-bottom: 20px; color: var(--accent2);">艾賓豪斯遺忘曲線 (The Forgetting Curve)</h3>
+      <svg width="600" height="350" viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+        <!-- Axes -->
+        <line x1="60" y1="300" x2="550" y2="300" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrow)" />
+        <line x1="60" y1="300" x2="60" y2="40" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrow)" />
+
+        <!-- Axis Labels -->
+        <text x="560" y="315" class="axis-label" text-anchor="middle">時間 (天)</text>
+        <text x="40" y="30" class="axis-label" text-anchor="middle">記憶保留率 (%)</text>
+
+        <!-- Y-axis scale -->
+        <text x="50" y="305" class="axis-label" text-anchor="end">0</text>
+        <text x="50" y="180" class="axis-label" text-anchor="end">50</text>
+        <text x="50" y="55" class="axis-label" text-anchor="end">100</text>
+
+        <!-- Grid Lines -->
+        <line x1="60" y1="175" x2="550" y2="175" class="grid-line" />
+        <line x1="60" y1="50" x2="550" y2="50" class="grid-line" />
+
+        <!-- Forgetting Curve (1st review) -->
+        <path d="M 60 50 C 100 150, 200 250, 500 280" class="curve" stroke="var(--curve-color)" stroke-dasharray="1000" stroke-dashoffset="0">
+            <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="2s" fill="freeze" />
+        </path>
+
+        <!-- Review Points -->
+        <circle cx="60" cy="50" r="4" class="point" />
+        <text x="70" y="45" fill="var(--text)" font-size="11">剛記完 (100%)</text>
+
+        <circle cx="100" cy="140" r="4" class="point" />
+        <text x="110" y="135" fill="var(--text)" font-size="11">20分鐘後 (58%)</text>
+
+        <circle cx="200" cy="230" r="4" class="point" />
+        <text x="210" y="225" fill="var(--text)" font-size="11">1天後 (33%)</text>
+
+        <circle cx="500" cy="280" r="4" class="point" />
+        <text x="510" y="275" fill="var(--text)" font-size="11">31天後 (21%)</text>
+
+        <!-- Spaced Repetition Paths (Dashed) -->
+        <path d="M 100 140 Q 120 50, 150 50" stroke="var(--path-color)" stroke-width="2" stroke-dasharray="5,3" fill="none" opacity="0.6" />
+        <path d="M 200 230 Q 220 50, 280 50" stroke="var(--path-color)" stroke-width="2" stroke-dasharray="5,3" fill="none" opacity="0.6" />
+
+        <text x="350" y="150" fill="var(--path-color)" font-size="14" font-weight="bold">間隔重複 (Spaced Repetition)</text>
+        <text x="350" y="170" fill="var(--muted)" font-size="12">及時複習能重置遺忘曲線，使記憶更穩固</text>
+      </svg>
+    </div>
+
+    <div class="content-grid">
+      <div class="icard">
+        <h3>📉 遺忘的速度比你想像中快</h3>
+        <p>1885年，心理學家赫爾曼·艾賓豪斯（Hermann Ebbinghaus）發現了遺忘的規律：遺忘在學習後立即開始，而且<strong>最初的速度極快</strong>，隨後逐漸減慢。</p>
+        <div class="callout">
+            如果你不進行複習，24 小時後大約會遺忘 70% 的內容。
+        </div>
+      </div>
+      <div class="icard">
+        <h3>🔁 對抗遺忘：間隔重複</h3>
+        <p>遺忘並非不可逆。通過在遺忘發生前進行有意識的複習，我們可以重新提高記憶保留率。每一次複習都會讓曲線變得「更平緩」，這就是所謂的<strong>間隔重複效應</strong>。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Mechanisms -->
+  <div id="tab-mechanism" class="tab-panel">
+    <div class="diagram-container" id="neural-container">
+      <h3 style="margin-bottom: 20px; color: var(--accent2);">記憶與遺忘的神經機制</h3>
+      <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Trace Decay Section -->
+        <g transform="translate(50, 50)">
+            <text x="0" y="-10" fill="var(--accent2)" font-size="14" font-weight="bold">1. 痕跡衰退 (Trace Decay)</text>
+            <circle cx="20" cy="50" r="15" class="node" />
+            <circle cx="120" cy="50" r="15" class="node" />
+            <path d="M 35 50 L 105 50" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" opacity="0.8">
+                <animate attributeName="opacity" values="0.8;0.1;0.8" dur="4s" repeatCount="indefinite" />
+                <animate attributeName="stroke-width" values="4;1;4" dur="4s" repeatCount="indefinite" />
+            </path>
+            <text x="70" y="80" fill="var(--muted)" font-size="11" text-anchor="middle">隨時間自然消退</text>
+        </g>
+
+        <!-- Interference Section -->
+        <g transform="translate(250, 50)">
+            <text x="0" y="-10" fill="var(--accent2)" font-size="14" font-weight="bold">2. 干擾理論 (Interference)</text>
+            <circle cx="20" cy="50" r="15" class="node" />
+            <circle cx="150" cy="50" r="15" class="node" />
+            <path d="M 35 50 L 135 50" stroke="var(--accent)" stroke-width="4" />
+
+            <!-- Distraction nodes -->
+            <circle cx="85" cy="20" r="10" fill="#ef4444" opacity="0.6">
+                <animate attributeName="cy" values="20;80;20" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="85" cy="80" r="10" fill="#ef4444" opacity="0.6">
+                <animate attributeName="cy" values="80;20;80" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <text x="85" y="110" fill="var(--muted)" font-size="11" text-anchor="middle">新舊資訊相互競爭</text>
+        </g>
+
+        <!-- Retrieval Failure Section -->
+        <g transform="translate(50, 180)">
+            <text x="0" y="-10" fill="var(--accent2)" font-size="14" font-weight="bold">3. 提取失敗 (Retrieval Failure)</text>
+            <rect x="10" y="30" width="140" height="60" rx="8" fill="var(--surface2)" stroke="var(--border)" />
+            <text x="80" y="65" fill="var(--muted)" font-size="12" text-anchor="middle">記憶存在，但缺乏「線索」</text>
+            <path d="M 180 60 L 220 60" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrow)" />
+            <text x="250" y="65" fill="#fbbf24" font-size="18">❓</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="content-grid">
+      <div class="icard">
+        <h3>🕰️ 痕跡衰退理論</h3>
+        <p>認為記憶像是在沙灘上的腳印。如果長時間不使用，這些生理上的「記憶痕跡」（Engram）會隨著神經細胞代謝與突觸強度減弱而自然消退。</p>
+      </div>
+      <div class="icard">
+        <h3>🔀 干擾理論</h3>
+        <p>記憶並沒有消失，只是被搞混了：</p>
+        <ul style="color: var(--text); font-size: 0.9rem; padding-left: 20px;">
+            <li><strong>前攝干擾：</strong>舊知識阻礙學習新知識。</li>
+            <li><strong>倒攝干擾：</strong>新知識模糊了對舊知識的回憶。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Paradox -->
+  <div id="tab-paradox" class="tab-panel">
+    <div class="diagram-container">
+        <svg width="400" height="200" viewBox="0 0 400 200">
+            <!-- Brain icon -->
+            <circle cx="200" cy="80" r="50" fill="var(--surface2)" stroke="var(--accent)" stroke-width="2" />
+            <text x="200" y="85" font-size="40" text-anchor="middle">🐻‍❄️</text>
+
+            <!-- Monitoring process (Circular arrow) -->
+            <path d="M 260 80 A 60 60 0 1 1 250 50" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)" />
+            <text x="320" y="50" fill="#ef4444" font-size="12">監控過程：正在遺忘白熊嗎？</text>
+
+            <!-- Operational process -->
+            <path d="M 140 80 L 80 80" fill="none" stroke="var(--path-color)" stroke-width="2" marker-end="url(#arrow)" />
+            <text x="60" y="105" fill="var(--path-color)" font-size="12" text-anchor="middle">操作過程：想點別的</text>
+        </svg>
+    </div>
+
+    <div class="icard" style="margin-bottom: 24px;">
+        <h3>🐻 諷刺性過程理論 (Ironic Process Theory)</h3>
+        <p>心理學家丹尼爾·魏格納（Daniel Wegner）曾做過一個著名的實驗：要求參與者「不要去想白熊」。結果發現，被要求壓抑想法的人，反而比其他人更頻繁地想到白熊。這就是所謂的<strong>「白熊效應」</strong>。</p>
+
+        <div class="highlight-box">
+            <h4>為什麼會失敗？</h4>
+            <p>大腦在嘗試遺忘時，會啟動兩個過程：</p>
+            <ul style="color: var(--text); font-size: 0.95rem; padding-left: 20px;">
+                <li><strong>操作過程 (Operational Process)：</strong>主動尋找其他事物來分散注意力（消耗心智資源）。</li>
+                <li><strong>監控過程 (Monitoring Process)：</strong>自動監測目標想法是否出現（潛意識、不消耗資源）。</li>
+            </ul>
+            <p style="margin-top: 10px;">當你累了或壓力大時，「操作過程」會失效，而「監控過程」卻會不斷提醒你：「嘿！你現在沒在想那隻白熊吧？」——結果導致目標想法反而變得更清晰。</p>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="icard">
+            <h3>✅ 記憶是主動的</h3>
+            <p>記憶需要建立神經連結（LTP 長期增益效應），我們可以通過重複、聯想、給予意義來主動「加強」這些連結。</p>
+        </div>
+        <div class="icard">
+            <h3>❌ 遺忘是被動的</h3>
+            <p>遺忘本質上是連結的「衰退」或「提取路徑被堵塞」。我們很難主動去「刪除」一個物理上的神經連結，因為大腦沒有 Delete 鍵。任何試圖「主動遺忘」的行為，在本質上都是在「再次提取」該記憶，反而強化了它。</p>
+        </div>
+    </div>
+
+    <div class="highlight-box" style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.1);">
+        <h4 style="color: #10b981;">💡 正確的處理方式</h4>
+        <p>如果你想忘記某件事，不要嘗試「不去想它」，而是：</p>
+        <p>1. <strong>接受它的存在：</strong>停止監控過程。<br>
+           2. <strong>專注於新連結：</strong>建立大量與該主題無關的新記憶路徑。<br>
+           3. <strong>交給時間：</strong>讓自然衰退（Trace Decay）發揮作用。</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2024 人腦科學探索 · 採用 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  function switchTab(btn, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="var(--muted)" />
+    </marker>
+  </defs>
+</svg>
+
+</body>
+</html>
