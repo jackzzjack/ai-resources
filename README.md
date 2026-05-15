@@ -30,6 +30,7 @@
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
 | `linux_kernel_overview.html` | Linux Kernel 架構全覽（元件分層圖、子系統代號、研究熱點、v6.1–6.14 版本特色） |
 | `philippine_eagle.html` | 菲律賓鷹互動知識頁（物種概覽、習性行為、保育現況、趣味知識） |
+| `dolphin.html` | 海豚互動知識頁（物種概覽、習性行為、智能溝通、主要物種、保育現況） |
 
 ---
 
