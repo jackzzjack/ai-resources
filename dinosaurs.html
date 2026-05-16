@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>恐龍百科：種類、習性與滅絕之謎</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --dino-green: #4ade80;
+      --dino-amber: #fbbf24;
+      --dino-red: #f87171;
+      --dino-sky: #7dd3fc;
+      --dino-orange: #fb923c;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(74,222,128,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(251,191,36,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(251,146,60,0.07) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232a2a3d' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--dino-green) 50%, var(--dino-amber) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .era-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(74,222,128,0.12);
+      border: 1px solid rgba(74,222,128,0.35);
+      color: var(--dino-green);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      flex: 1;
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    /* Timeline / Era strip */
+    .era-timeline {
+      display: flex;
+      gap: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .era-block {
+      flex: 1;
+      padding: 18px 16px;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+
+    .era-block:hover { filter: brightness(1.15); }
+
+    .era-block.triassic { background: linear-gradient(135deg, #7c3aed22, #7c3aed11); border-right: 1px solid var(--border); }
+    .era-block.jurassic { background: linear-gradient(135deg, #16a34a22, #16a34a11); border-right: 1px solid var(--border); }
+    .era-block.cretaceous { background: linear-gradient(135deg, #b45309 22%, #b4530911); }
+
+    .era-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .era-block.triassic .era-name { color: #c084fc; }
+    .era-block.jurassic .era-name { color: var(--dino-green); }
+    .era-block.cretaceous .era-name { color: var(--dino-amber); }
+
+    .era-period {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .era-note {
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Dino cards grid */
+    .dino-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .dino-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dino-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: var(--card-color, var(--accent));
+    }
+
+    .dino-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--card-color, var(--accent));
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .dino-icon {
+      font-size: 2.4rem;
+      margin-bottom: 14px;
+    }
+
+    .dino-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .dino-latin {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+
+    .dino-desc {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .dino-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stat-tag {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .stat-tag.highlight {
+      background: rgba(124,106,255,0.12);
+      border-color: rgba(124,106,255,0.35);
+      color: var(--accent2);
+    }
+
+    /* Habit cards */
+    .habit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .habit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .habit-card:hover {
+      border-color: var(--accent);
+    }
+
+    .habit-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .habit-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .habit-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* Classification tree */
+    .clade-tree {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .clade-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .clade-indent { margin-left: 28px; }
+    .clade-indent2 { margin-left: 56px; }
+
+    .clade-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      white-space: nowrap;
+    }
+
+    .clade-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .clade-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding-top: 8px;
+    }
+
+    /* Extinction section */
+    .extinction-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .ext-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      border-top: 3px solid var(--card-color, var(--accent));
+    }
+
+    .ext-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .ext-title { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .ext-body { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+
+    /* Size comparison bar */
+    .size-compare {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .size-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .size-label {
+      width: 140px;
+      font-size: 0.85rem;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    .size-bar-wrap {
+      flex: 1;
+      background: var(--surface2);
+      border-radius: 4px;
+      height: 22px;
+      overflow: hidden;
+    }
+
+    .size-bar {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(0,0,0,0.8);
+      white-space: nowrap;
+    }
+
+    /* Fun facts */
+    .facts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .fact-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+
+    .fact-item:hover { border-color: var(--accent); }
+
+    .fact-num {
+      min-width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(124,106,255,0.15);
+      border: 1px solid rgba(124,106,255,0.4);
+      color: var(--accent2);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fact-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .fact-text strong { color: var(--dino-amber); }
+
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      header { padding: 36px 20px 24px; }
+      .era-timeline { flex-direction: column; }
+      .era-block { border-right: none !important; border-bottom: 1px solid var(--border); }
+      .dino-grid { grid-template-columns: 1fr; }
+      .habit-grid { grid-template-columns: 1fr; }
+      .extinction-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="font-size:3rem;margin-bottom:12px;">🦕</div>
+  <h1>恐龍百科</h1>
+  <p class="subtitle">統治地球 1.65 億年的史前霸主——種類、習性與滅絕之謎</p>
+  <div class="era-badge">中生代 2.52 億年前 — 6,600 萬年前</div>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="#era">地質年代</a>
+  <a class="nav-link" href="#classification">分類系統</a>
+  <a class="nav-link" href="#species">代表物種</a>
+  <a class="nav-link" href="#habits">習性行為</a>
+  <a class="nav-link" href="#size">體型比較</a>
+  <a class="nav-link" href="#extinction">滅絕之謎</a>
+  <a class="nav-link" href="#facts">冷知識</a>
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+</nav>
+
+<main>
+
+  <!-- 地質年代 -->
+  <section class="section" id="era">
+    <h2 class="section-title">🕰️ 恐龍的地質年代</h2>
+    <p class="section-desc">
+      恐龍出現於約 <strong>2.52 億年前</strong>的三疊紀，經歷侏羅紀的興盛，最終在白堊紀末期（6,600 萬年前）因大滅絕事件消失。牠們統治地球長達 <strong>1.65 億年</strong>——相較之下，人類的歷史不過 30 萬年。
+    </p>
+
+    <div class="era-timeline">
+      <div class="era-block triassic">
+        <div class="era-name">三疊紀</div>
+        <div class="era-period">2.52 — 2.01 億年前</div>
+        <div class="era-note">
+          恐龍誕生時代。早期恐龍體型偏小，與鱷形類競爭。始盜龍、腔骨龍等最早祖先在此時期登場。
+        </div>
+      </div>
+      <div class="era-block jurassic">
+        <div class="era-name">侏羅紀</div>
+        <div class="era-period">2.01 — 1.45 億年前</div>
+        <div class="era-note">
+          恐龍稱霸的黃金時代。蜥腳類體型極大化，異特龍稱霸頂端，始祖鳥在此時期出現。
+        </div>
+      </div>
+      <div class="era-block cretaceous">
+        <div class="era-name">白堊紀</div>
+        <div class="era-period">1.45 — 0.066 億年前</div>
+        <div class="era-note">
+          多樣性最高峰。暴龍、三角龍、甲龍等巨星登場；末期大滅絕終結非鳥恐龍。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 分類系統 -->
+  <section class="section" id="classification">
+    <h2 class="section-title">🌿 恐龍分類系統</h2>
+    <p class="section-desc">
+      恐龍依骨盆結構分為兩大目，再細分為多個主要類群。現代鳥類即是獸腳類恐龍的直系後裔，因此嚴格來說恐龍並未完全滅絕。
+    </p>
+
+    <div class="clade-tree">
+      <div class="clade-row">
+        <div class="clade-label">
+          <div class="clade-dot" style="background:#a78bfa;"></div>
+          恐龍總目 Dinosauria
+        </div>
+      </div>
+
+      <div class="clade-row clade-indent">
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div class="clade-label">
+              <div class="clade-dot" style="background:#4ade80;"></div>
+              蜥臀目 Saurischia（蜥蜴骨盆）
+            </div>
+            <div class="clade-note">恥骨向前，包含蜥腳類與獸腳類</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-left:28px;">
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <div class="clade-label" style="font-size:0.82rem;">
+                <div class="clade-dot" style="background:#86efac;"></div>
+                蜥腳形亞目 Sauropodomorpha
+              </div>
+              <div class="clade-note">四足長頸植食巨獸：迷惑龍、腕龍、梁龍、阿根廷龍</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <div class="clade-label" style="font-size:0.82rem;">
+                <div class="clade-dot" style="background:#fbbf24;"></div>
+                獸腳亞目 Theropoda
+              </div>
+              <div class="clade-note">多為肉食性二足行走：暴龍、迅猛龍、棘龍；現代鳥類即其後裔</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;margin-top:4px;">
+            <div class="clade-label">
+              <div class="clade-dot" style="background:#7dd3fc;"></div>
+              鳥臀目 Ornithischia（鳥類骨盆）
+            </div>
+            <div class="clade-note">恥骨向後，全為植食性</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-left:28px;">
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <div class="clade-label" style="font-size:0.82rem;">
+                <div class="clade-dot" style="background:#93c5fd;"></div>
+                角龍類 Ceratopsia
+              </div>
+              <div class="clade-note">頭盾與角：三角龍、牛角龍、戟龍</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <div class="clade-label" style="font-size:0.82rem;">
+                <div class="clade-dot" style="background:#6ee7b7;"></div>
+                劍龍類 Stegosauria
+              </div>
+              <div class="clade-note">背板與尾刺：劍龍、沱江龍、肯氏龍</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <div class="clade-label" style="font-size:0.82rem;">
+                <div class="clade-dot" style="background:#d9f99d;"></div>
+                甲龍類 Ankylosauria
+              </div>
+              <div class="clade-note">全身骨甲護體：甲龍、包頭龍、結節龍</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <div class="clade-label" style="font-size:0.82rem;">
+                <div class="clade-dot" style="background:#fca5a5;"></div>
+                鴨嘴龍類 Hadrosauridae
+              </div>
+              <div class="clade-note">群居植食：副龍（副栉龙）、大冠蜥龍、鴨嘴龍</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 代表物種 -->
+  <section class="section" id="species">
+    <h2 class="section-title">🦖 代表物種圖鑑</h2>
+    <p class="section-desc">精選 10 種最具代表性的恐龍，涵蓋各大類群與時代。</p>
+
+    <div class="dino-grid">
+
+      <div class="dino-card" style="--card-color: #f87171;">
+        <div class="dino-icon">🦖</div>
+        <div class="dino-name">暴龍（雷克斯暴龍）</div>
+        <div class="dino-latin">Tyrannosaurus rex</div>
+        <div class="dino-desc">
+          白堊紀末期北美洲頂端掠食者。擁有動物界最強咬合力（約 57,000 牛頓），前肢短小但後腿極為強壯。嗅覺極佳，視力敏銳，可能有部分羽毛覆蓋。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 12 公尺</span>
+          <span class="stat-tag">體重 8–14 噸</span>
+          <span class="stat-tag highlight">肉食性</span>
+          <span class="stat-tag">白堊紀末</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #60a5fa;">
+        <div class="dino-icon">🦕</div>
+        <div class="dino-name">腕龍</div>
+        <div class="dino-latin">Brachiosaurus altithorax</div>
+        <div class="dino-desc">
+          侏羅紀北美洲的長頸巨獸，前腿比後腿長，使頸部高高抬起，可取食 9 公尺以上的植被。每日需消耗數百公斤植物，可能需終日進食。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 26 公尺</span>
+          <span class="stat-tag">體重 30–60 噸</span>
+          <span class="stat-tag highlight">植食性</span>
+          <span class="stat-tag">侏羅紀</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #fbbf24;">
+        <div class="dino-icon">🐾</div>
+        <div class="dino-name">迅猛龍（速龍）</div>
+        <div class="dino-latin">Velociraptor mongoliensis</div>
+        <div class="dino-desc">
+          白堊紀亞洲的小型獵食者，真實體型僅如火雞大小。後腳有鐮刀狀利爪，全身覆有羽毛，腦容量相對較大，具一定智能。電影中的形象嚴重誇大。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 1.8 公尺</span>
+          <span class="stat-tag">體重 15–20 公斤</span>
+          <span class="stat-tag highlight">肉食性</span>
+          <span class="stat-tag">有羽毛</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #a78bfa;">
+        <div class="dino-icon">🐊</div>
+        <div class="dino-name">棘龍</div>
+        <div class="dino-latin">Spinosaurus aegyptiacus</div>
+        <div class="dino-desc">
+          史上體型最長的肉食性恐龍，棲息於北非白堊紀河流濕地。背部帆狀骨脊可能用於體溫調節或展示。主要以魚類為食，四肢比例適合半水棲生活。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 14–18 公尺</span>
+          <span class="stat-tag">體重 7–20 噸</span>
+          <span class="stat-tag highlight">魚食 / 肉食</span>
+          <span class="stat-tag">半水棲</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #34d399;">
+        <div class="dino-icon">🦏</div>
+        <div class="dino-name">三角龍</div>
+        <div class="dino-latin">Triceratops horridus</div>
+        <div class="dino-desc">
+          最知名的角龍類，白堊紀末北美洲的大型植食恐龍。三根長角與巨大頭盾兼具展示與防禦功能，有化石證據顯示其曾與暴龍搏鬥。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 9 公尺</span>
+          <span class="stat-tag">體重 6–12 噸</span>
+          <span class="stat-tag highlight">植食性</span>
+          <span class="stat-tag">群居可能</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #fb923c;">
+        <div class="dino-icon">🐢</div>
+        <div class="dino-name">甲龍</div>
+        <div class="dino-latin">Ankylosaurus magniventris</div>
+        <div class="dino-desc">
+          白堊紀末期北美洲的移動裝甲堡壘，全身覆蓋骨板（皮內成骨），尾部有骨錘可對掠食者造成重傷。即使是暴龍也難以突破其防禦。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 6–8 公尺</span>
+          <span class="stat-tag">體重 4–8 噸</span>
+          <span class="stat-tag highlight">植食性</span>
+          <span class="stat-tag">骨甲防禦</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #6ee7b7;">
+        <div class="dino-icon">🦔</div>
+        <div class="dino-name">劍龍</div>
+        <div class="dino-latin">Stegosaurus stenops</div>
+        <div class="dino-desc">
+          侏羅紀北美洲最具代表性的植食恐龍。背部骨板交錯排列，可能用於體溫調節（充血散熱）或吸引配偶；尾部四根骨刺為主要武器。腦部僅如核桃大小。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 9 公尺</span>
+          <span class="stat-tag">體重 2–4 噸</span>
+          <span class="stat-tag highlight">植食性</span>
+          <span class="stat-tag">侏羅紀</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #7dd3fc;">
+        <div class="dino-icon">🦢</div>
+        <div class="dino-name">始祖鳥</div>
+        <div class="dino-latin">Archaeopteryx lithographica</div>
+        <div class="dino-desc">
+          侏羅紀晚期德國的過渡物種，兼具恐龍（牙齒、骨質長尾）與鳥類（翅膀、羽毛）特徵，是恐龍演化為現代鳥類的關鍵化石紀錄。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">翼展 50 公分</span>
+          <span class="stat-tag">體重 0.3–0.5 公斤</span>
+          <span class="stat-tag highlight">雜食性</span>
+          <span class="stat-tag">演化過渡種</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #c4b5fd;">
+        <div class="dino-icon">🐦</div>
+        <div class="dino-name">禽龍</div>
+        <div class="dino-latin">Iguanodon bernissartensis</div>
+        <div class="dino-desc">
+          白堊紀早期歐洲的大型鳥腳類，為史上第二個被科學命名的恐龍。拇指有尖刺（早期誤認為鼻角），可二足或四足行走，以植物為食。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 10 公尺</span>
+          <span class="stat-tag">體重 3–4 噸</span>
+          <span class="stat-tag highlight">植食性</span>
+          <span class="stat-tag">早白堊紀</span>
+        </div>
+      </div>
+
+      <div class="dino-card" style="--card-color: #f9a8d4;">
+        <div class="dino-icon">🐉</div>
+        <div class="dino-name">阿根廷龍</div>
+        <div class="dino-latin">Argentinosaurus huinculensis</div>
+        <div class="dino-desc">
+          可能是史上最重的恐龍，白堊紀中期南美洲的泰坦巨龍類。單節脊椎骨即高達 1.5 公尺，心臟需以極高壓力將血液泵送至長頸末端。
+        </div>
+        <div class="dino-stats">
+          <span class="stat-tag">全長 30–40 公尺</span>
+          <span class="stat-tag">體重 70–100 噸</span>
+          <span class="stat-tag highlight">植食性</span>
+          <span class="stat-tag">史上最重</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 習性行為 -->
+  <section class="section" id="habits">
+    <h2 class="section-title">🧠 恐龍的習性與行為</h2>
+    <p class="section-desc">
+      化石、足跡、蛋巢與骨骼形態揭示了恐龍豐富的行為模式——牠們遠比過去想像的更複雜、更有社會性。
+    </p>
+
+    <div class="habit-grid">
+
+      <div class="habit-card">
+        <div class="habit-icon">🥩</div>
+        <div class="habit-title">飲食策略</div>
+        <div class="habit-body">
+          肉食恐龍（如暴龍）既主動狩獵也拾取腐肉；植食恐龍依體型採不同策略——高瀏覽型（腕龍）、低地採食型（三角龍）、雜食型（偷蛋龍）。部分小型獸腳類以昆蟲、魚類為主食。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">👥</div>
+        <div class="habit-title">群居與社會行為</div>
+        <div class="habit-body">
+          許多植食恐龍（鴨嘴龍、三角龍）留有群聚遷徙的足跡化石。部分蜥腳類的蛋巢呈叢聚分布，推測有集體繁殖場。鴨嘴龍的頭冠可能用於聲音溝通，形成社群訊號。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">🐣</div>
+        <div class="habit-title">繁殖與育幼</div>
+        <div class="habit-body">
+          恐龍均為卵生。慈母龍（Maiasaura）化石顯示牠們會留守巢穴照顧幼崽、帶回食物，推翻了恐龍完全不育幼的假設。蛋的大小有上限（蛋殼厚度限制氣體交換）。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">🏃</div>
+        <div class="habit-title">移動與奔跑速度</div>
+        <div class="habit-body">
+          暴龍估計時速 15–25 km/h（受體重限制）；迅猛龍可達 40 km/h；大型蜥腳類行走速度緩慢，約 5–8 km/h。足跡化石提供步幅與速度的直接估算依據。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">🌡️</div>
+        <div class="habit-title">體溫調節</div>
+        <div class="habit-body">
+          現代研究認為多數恐龍為「中溫動物」——代謝速率介於現代爬行類（冷血）與哺乳類（溫血）之間。骨骼生長環、同位素分析支持此假說。小型獸腳類羽毛有助於保溫。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">🎨</div>
+        <div class="habit-title">體色與展示行為</div>
+        <div class="hint-body">
+          羽毛化石中保存的黑色素體揭示部分恐龍具有彩色羽毛（如近鳥龍），推測用於求偶展示、物種辨識或偽裝。頭冠（副龍）、背板（劍龍）、頭盾（三角龍）也可能有視覺展示功能。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">🦴</div>
+        <div class="habit-title">捕獵技巧</div>
+        <div class="habit-body">
+          大型獸腳類（異特龍）可能以突擊方式獵殺大型獵物，利用頭部重量撞擊；迅猛龍等小型獵手以利爪固定獵物並集中撕咬；棘龍以伏擊方式在水邊捕魚，類似現代鷺鷥。
+        </div>
+      </div>
+
+      <div class="habit-card">
+        <div class="habit-icon">💤</div>
+        <div class="habit-title">睡眠與感官</div>
+        <div class="habit-body">
+          部分恐龍化石呈現典型睡眠姿勢（頭藏於翅下），如梅氏盧卡斯龍。暴龍具高度發達的嗅球，嗅覺可能是主要感知方式；大眼睛的獸腳類（傷齒龍）可能具夜視能力。
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 體型比較 -->
+  <section class="section" id="size">
+    <h2 class="section-title">📏 體型比較</h2>
+    <p class="section-desc">與現代生物對比，感受恐龍的真實尺度（以成年雄性人類身高 1.75 m 為基準 100%）。</p>
+
+    <div class="size-compare">
+
+      <div class="size-row">
+        <div class="size-label">🧑 人類</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:2%;background:#888;">1.75 m</div>
+        </div>
+      </div>
+
+      <div class="size-row">
+        <div class="size-label">🦃 迅猛龍</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:2%;background:#fbbf24;">1.8 m</div>
+        </div>
+      </div>
+
+      <div class="size-row">
+        <div class="size-label">🐅 暴龍</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:17%;background:#f87171;">12 m</div>
+        </div>
+      </div>
+
+      <div class="size-row">
+        <div class="size-label">🐊 棘龍</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:23%;background:#a78bfa;">16 m</div>
+        </div>
+      </div>
+
+      <div class="size-row">
+        <div class="size-label">🦕 腕龍</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:37%;background:#7dd3fc;">26 m</div>
+        </div>
+      </div>
+
+      <div class="size-row">
+        <div class="size-label">🐉 阿根廷龍</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:52%;background:#4ade80;">36 m（估）</div>
+        </div>
+      </div>
+
+      <div class="size-row">
+        <div class="size-label">🏢 101 大樓</div>
+        <div class="size-bar-wrap">
+          <div class="size-bar" style="width:100%;background:#e2e8f0;color:#111;">508 m（參考）</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 滅絕之謎 -->
+  <section class="section" id="extinction">
+    <h2 class="section-title">☄️ 滅絕之謎——K-Pg 大滅絕事件</h2>
+    <p class="section-desc">
+      約 6,600 萬年前，超過 75% 的地球物種（包含所有非鳥恐龍）在短時間內消失。「白堊紀—古近紀滅絕事件（K-Pg）」是地球歷史上五大滅絕事件之一，主流科學認為由多重因素共同造成。
+    </p>
+
+    <div class="extinction-grid">
+
+      <div class="ext-card" style="--card-color: #f87171;">
+        <div class="ext-icon">☄️</div>
+        <div class="ext-title">希克蘇魯伯隕石撞擊</div>
+        <div class="ext-body">
+          直徑約 10–15 公里的小行星撞擊現今墨西哥猶加敦半島，釋放相當於 10 億顆廣島原子彈的能量。撞擊冬天（遮蔽陽光）、海嘯與酸雨導致食物鏈崩潰，為最主流解釋。
+        </div>
+      </div>
+
+      <div class="ext-card" style="--card-color: #fb923c;">
+        <div class="ext-icon">🌋</div>
+        <div class="ext-title">德干高原火山爆發</div>
+        <div class="ext-body">
+          印度德干高原持續數十萬年的超大型火山活動，噴出大量 SO₂ 與 CO₂，導致長期氣候變遷與海洋酸化。部分學者認為此過程在撞擊前已使恐龍數量下降。
+        </div>
+      </div>
+
+      <div class="ext-card" style="--card-color: #fbbf24;">
+        <div class="ext-icon">🌡️</div>
+        <div class="ext-title">氣候驟變</div>
+        <div class="ext-body">
+          撞擊揚起的塵埃與硫磺微粒遮蔽陽光，地球平均溫度驟降約 15–20°C，持續數年至數十年。植被大規模死亡，植食動物首先崩潰，肉食者隨之消亡。
+        </div>
+      </div>
+
+      <div class="ext-card" style="--card-color: #a78bfa;">
+        <div class="ext-icon">🐦</div>
+        <div class="ext-title">恐龍並未完全滅絕</div>
+        <div class="ext-body">
+          現代鳥類（約 10,000 種）是獸腳類恐龍的直系後裔。麻雀、老鷹、雞都是恐龍。體型小、有羽毛、能飛行的鳥類祖先成功度過了這場大滅絕，繁衍至今。
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 冷知識 -->
+  <section class="section" id="facts">
+    <h2 class="section-title">💡 恐龍冷知識 10 則</h2>
+    <p class="section-desc">顛覆你對恐龍既有印象的有趣事實。</p>
+
+    <div class="facts-list">
+      <div class="fact-item">
+        <div class="fact-num">1</div>
+        <div class="fact-text"><strong>「侏羅紀公園」的迅猛龍嚴重失真</strong>——電影中的迅猛龍實際上是猶他盜龍（體型較大），而真正的迅猛龍只有火雞大小，且全身覆羽毛。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">2</div>
+        <div class="fact-text"><strong>暴龍與劍龍從未共存</strong>——劍龍生活在侏羅紀（約 1.55 億年前），而暴龍在白堊紀末（約 6,600 萬年前）。劍龍比暴龍離我們更近，時間差達 8,000 萬年。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">3</div>
+        <div class="fact-text"><strong>恐龍蛋有大小限制</strong>——蛋越大蛋殼越厚，氧氣無法滲入，因此即使是最大的恐龍，蛋也只有籃球大小。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">4</div>
+        <div class="fact-text"><strong>翼龍與魚龍不是恐龍</strong>——翼龍（如無齒翼龍）、魚龍、蛇頸龍均為獨立演化支系，並非恐龍，儘管同屬中生代爬行動物。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">5</div>
+        <div class="fact-text"><strong>暴龍可能有嘴唇</strong>——2023 年研究顯示，暴龍牙齒的琺瑯質脫水痕跡極少，推測其嘴唇像蜥蜴一樣蓋住牙齒，而非像鱷魚一樣外露。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">6</div>
+        <div class="fact-text"><strong>恐龍叫聲可能是低鳴而非怒吼</strong>——2016 年研究認為，恐龍可能像現代鱷魚一樣以閉口低鳴發聲，而非開口怒吼；電影中的嘶吼聲純屬藝術創作。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">7</div>
+        <div class="fact-text"><strong>目前已命名超過 1,000 種恐龍</strong>——但科學家估計實際存在的種數可能高達 2,000–3,000 種，大多數仍埋藏在地層中尚未被發現。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">8</div>
+        <div class="fact-text"><strong>中國是恐龍化石大國</strong>——許多保存羽毛的精緻化石出土於中國遼寧省（義縣組），讓科學家得以確認恐龍與鳥類演化的關係，革命性地改變了恐龍學。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">9</div>
+        <div class="fact-text"><strong>最小的恐龍和蜂鳥差不多大</strong>——2020 年在緬甸琥珀中發現的眼齒鳥（Oculudentavis）估計長約 1 公分，是目前已知體型最小的中生代鳥型恐龍。</div>
+      </div>
+      <div class="fact-item">
+        <div class="fact-num">10</div>
+        <div class="fact-text"><strong>恐龍骨骼有中空結構</strong>——許多獸腳類恐龍的骨骼如同現代鳥類一樣充滿氣囊腔室，不僅減輕體重，也讓單向氣流呼吸更為高效，是在陸地上生存的優勢。</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>資料來源綜合：古生物學期刊、自然史博物館研究報告與現代恐龍學文獻 · <a href="index.html">返回首頁</a></p>
+  <p style="margin-top:8px;">本頁採 <a href="LICENSE">CC BY 4.0</a> 授權</p>
+</footer>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

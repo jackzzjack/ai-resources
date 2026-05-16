@@ -31,6 +31,7 @@
 | `linux_kernel_overview.html` | Linux Kernel 架構全覽（元件分層圖、子系統代號、研究熱點、v6.1–6.14 版本特色） |
 | `philippine_eagle.html` | 菲律賓鷹互動知識頁（物種概覽、習性行為、保育現況、趣味知識） |
 | `dolphin.html` | 海豚互動知識頁（物種概覽、習性行為、智能溝通、主要物種、保育現況） |
+| `dinosaurs.html` | 恐龍百科互動知識頁（地質年代、分類系統、10 大物種圖鑑、習性行為、體型比較、K-Pg 滅絕事件） |
 
 ---
 
