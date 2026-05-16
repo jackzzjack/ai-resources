@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>鯨魚世界：海洋巨獸的習性與奧秘</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --ocean: #0ea5e9;
+      --ocean2: #38bdf8;
+      --deep: #0369a1;
+      --teal: #2dd4bf;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --green: #34d399;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 56px 24px 40px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(14,165,233,0.2) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 10% 50%, rgba(45,212,191,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 90% 50%, rgba(124,106,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(14,165,233,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    /* Wave decoration */
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--ocean), var(--teal), var(--ocean), transparent);
+      opacity: 0.6;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--ocean2) 50%, var(--teal) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .tag-ocean { background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); color: var(--ocean2); }
+    .tag-teal  { background: rgba(45,212,191,0.12); border: 1px solid rgba(45,212,191,0.35); color: var(--teal); }
+    .tag-amber { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.35); color: var(--amber); }
+    .tag-red   { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.35); color: var(--red); }
+
+    /* Nav */
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(14,165,233,0.15);
+      border-color: rgba(14,165,233,0.5);
+      color: var(--ocean2);
+    }
+
+    /* Main layout */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      width: 100%;
+    }
+
+    section {
+      margin-bottom: 60px;
+      scroll-margin-top: 70px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      font-size: 2rem;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(14,165,233,0.1);
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    /* Card grids */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(14,165,233,0.4);
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-emoji {
+      font-size: 1.6rem;
+    }
+
+    .card-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ocean2);
+    }
+
+    .card-latin {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .card-body-text {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    /* Species type badge */
+    .species-type {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .type-baleen { background: rgba(14,165,233,0.15); color: var(--ocean2); border: 1px solid rgba(14,165,233,0.3); }
+    .type-toothed { background: rgba(45,212,191,0.12); color: var(--teal); border: 1px solid rgba(45,212,191,0.3); }
+
+    /* Stat strip */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--ocean2), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* Info box */
+    .info-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--ocean);
+      border-radius: var(--radius);
+      padding: 22px 26px;
+      margin-bottom: 20px;
+    }
+
+    .info-box.teal { border-left-color: var(--teal); }
+    .info-box.amber { border-left-color: var(--amber); }
+    .info-box.red { border-left-color: var(--red); }
+    .info-box.green { border-left-color: var(--green); }
+
+    .info-box-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--ocean2);
+    }
+
+    .info-box.teal .info-box-title { color: var(--teal); }
+    .info-box.amber .info-box-title { color: var(--amber); }
+    .info-box.red .info-box-title { color: var(--red); }
+    .info-box.green .info-box-title { color: var(--green); }
+
+    .info-box p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.75;
+    }
+
+    /* Behavior flow */
+    .behavior-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
+    }
+
+    .behavior-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .behavior-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .behavior-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ocean2);
+      margin-bottom: 8px;
+    }
+
+    .behavior-desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* Conservation status bar */
+    .conservation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .con-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .con-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .con-detail {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .con-badge {
+      padding: 5px 12px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-lc { background: rgba(52,211,153,0.15); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+    .badge-nt { background: rgba(251,191,36,0.12); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
+    .badge-vu { background: rgba(251,146,60,0.12); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+    .badge-en { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+    .badge-cr { background: rgba(220,38,38,0.18); color: #fca5a5; border: 1px solid rgba(220,38,38,0.4); }
+
+    /* Fun fact cards */
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .fact-card {
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(14,165,233,0.05) 100%);
+      border: 1px solid rgba(14,165,233,0.2);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .fact-num {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--ocean), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .fact-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .fact-detail {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .compare-table th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table td {
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      border-bottom: 1px solid rgba(42,42,61,0.5);
+      color: var(--text);
+    }
+
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    .compare-table tr:hover td { background: rgba(14,165,233,0.04); }
+
+    .hl { color: var(--ocean2); font-weight: 600; }
+
+    /* Sound viz */
+    .sound-bar-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .sound-title {
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 16px;
+      font-size: 1rem;
+    }
+
+    .freq-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .freq-label {
+      width: 120px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .freq-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .freq-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--ocean), var(--teal));
+    }
+
+    .freq-value {
+      width: 80px;
+      font-size: 0.78rem;
+      color: var(--ocean2);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--ocean), var(--teal), transparent);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -26px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--ocean);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--ocean);
+    }
+
+    .tl-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--ocean2);
+      margin-bottom: 4px;
+    }
+
+    .tl-body {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.65;
+    }
+
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--ocean2);
+      text-decoration: none;
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 40px 20px 30px; }
+      .stat-strip { grid-template-columns: repeat(2, 1fr); }
+      .compare-table { font-size: 0.8rem; }
+      .compare-table th, .compare-table td { padding: 10px 10px; }
+      .con-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🐋 鯨魚世界</h1>
+  <p class="subtitle">地球上最大的動物，深藏海洋的智慧生命——探索鯨魚的分類、習性、溝通與保育</p>
+  <div class="tag-row">
+    <span class="tag tag-ocean">海洋哺乳類</span>
+    <span class="tag tag-teal">Cetacea 鯨目</span>
+    <span class="tag tag-amber">遷徙動物</span>
+    <span class="tag tag-red">需要保育</span>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="#overview">基本概覽</a>
+  <a class="nav-link" href="#species">主要種類</a>
+  <a class="nav-link" href="#behavior">習性行為</a>
+  <a class="nav-link" href="#communication">溝通方式</a>
+  <a class="nav-link" href="#migration">遷徙路線</a>
+  <a class="nav-link" href="#conservation">保育現況</a>
+  <a class="nav-link" href="#facts">驚人事實</a>
+</nav>
+
+<main>
+
+  <!-- 基本概覽 -->
+  <section id="overview">
+    <div class="section-header">
+      <div class="section-icon">🌊</div>
+      <div>
+        <div class="section-title">基本概覽</div>
+        <div class="section-subtitle">演化、分類與生理特徵</div>
+      </div>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat-card">
+        <span class="stat-number">90+</span>
+        <div class="stat-label">現存鯨豚種類</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">33m</span>
+        <div class="stat-label">藍鯨最大體長</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">200t</span>
+        <div class="stat-label">藍鯨最大體重</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">3000m</span>
+        <div class="stat-label">抹香鯨潛水深度</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">5000萬年</span>
+        <div class="stat-label">鯨魚演化歷史</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">211歲</span>
+        <div class="stat-label">弓頭鯨最長壽命</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">🧬 演化起源</div>
+      <p>鯨魚是完全水生的哺乳動物，屬於鯨目（Cetacea）。牠們的祖先約 5,000 萬年前是陸地上的偶蹄類動物，最接近的現存陸生親戚是河馬。約 3,400 萬年前，鯨魚完全適應海洋生活，前肢演化為鰭狀，後肢退化消失，並發展出水平魚尾（不同於魚類的垂直尾鰭）。</p>
+    </div>
+
+    <div class="card-grid-2">
+      <div class="info-box teal" style="margin-bottom:0">
+        <div class="info-box-title">🫁 呼吸系統</div>
+        <p>鯨魚用肺呼吸，頭頂有噴氣孔（blowhole）。鬚鯨有兩個噴氣孔，齒鯨有一個。潛水時可閉合噴氣孔防水進入。藍鯨噴出的水柱高達 9 公尺，抹香鯨可閉氣超過 90 分鐘。</p>
+      </div>
+      <div class="info-box amber" style="margin-bottom:0">
+        <div class="info-box-title">🌡️ 體溫調節</div>
+        <p>鯨魚是恆溫動物，體溫維持在 35–37°C。厚達 50 公分的皮下脂肪層（鯨脂）是主要隔熱構造，同時也是能量儲存庫，支撐漫長遷徙與繁殖期間的食物短缺。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主要種類 -->
+  <section id="species">
+    <div class="section-header">
+      <div class="section-icon">🐳</div>
+      <div>
+        <div class="section-title">主要種類</div>
+        <div class="section-subtitle">鬚鯨亞目 vs 齒鯨亞目</div>
+      </div>
+    </div>
+
+    <div class="card-grid-2" style="margin-bottom:20px">
+      <div class="info-box" style="margin-bottom:0">
+        <div class="info-box-title">鬚鯨亞目（Mysticeti）</div>
+        <p>以鯨鬚板過濾海水捕食磷蝦與小魚，有兩個噴氣孔。代表種：藍鯨、座頭鯨、露脊鯨、灰鯨。體型通常較齒鯨大，以濾食為主，會唱歌（雄性）。</p>
+      </div>
+      <div class="info-box teal" style="margin-bottom:0">
+        <div class="info-box-title">齒鯨亞目（Odontoceti）</div>
+        <p>有牙齒，主動捕食魚類、魷魚與海洋哺乳類。只有一個噴氣孔。能使用回聲定位（echolocation）。代表種：抹香鯨、虎鯨、白鯨、獨角鯨。</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">💙</div>
+          <div>
+            <div class="card-name">藍鯨</div>
+            <div class="card-latin">Balaenoptera musculus</div>
+          </div>
+        </div>
+        <span class="species-type type-baleen">鬚鯨</span>
+        <div class="card-body-text">地球上有史以來最大的動物。體長可達 33 公尺，體重達 200 噸。心臟如小汽車大，心跳僅 2 次／分鐘。以磷蝦為主食，每天需攝取約 4 噸食物。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🎵</div>
+          <div>
+            <div class="card-name">座頭鯨</div>
+            <div class="card-latin">Megaptera novaeangliae</div>
+          </div>
+        </div>
+        <span class="species-type type-baleen">鬚鯨</span>
+        <div class="card-body-text">以複雜優美的鯨歌聞名，每首歌可長達 20 分鐘。擅長「氣泡網捕食法」：在魚群周圍噴出氣泡形成網狀，再衝上去一口吞食。體型可達 16 公尺。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🦷</div>
+          <div>
+            <div class="card-name">抹香鯨</div>
+            <div class="card-latin">Physeter macrocephalus</div>
+          </div>
+        </div>
+        <span class="species-type type-toothed">齒鯨</span>
+        <div class="card-body-text">最大的齒鯨，頭部佔體長三分之一，內含大量鯨腦油（spermaceti）。可潛至 3,000 公尺深，與大王魷魚搏鬥。回聲定位音量為地球上生物最響之一。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🖤</div>
+          <div>
+            <div class="card-name">虎鯨（殺人鯨）</div>
+            <div class="card-latin">Orcinus orca</div>
+          </div>
+        </div>
+        <span class="species-type type-toothed">齒鯨</span>
+        <div class="card-body-text">海洋頂級掠食者，實為最大的海豚科動物。高度社會化，以母系家族群（pod）為單位生活。不同族群有各自的「方言」與獵食文化，甚至會攻擊大型鯨魚。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🤍</div>
+          <div>
+            <div class="card-name">白鯨</div>
+            <div class="card-latin">Delphinapterus leucas</div>
+          </div>
+        </div>
+        <span class="species-type type-toothed">齒鯨</span>
+        <div class="card-body-text">全身純白，頭頂可塑形的「額隆」（melon）用於聚焦聲波。出色的模仿者，能模仿人聲及其他動物，有「海洋金絲雀」之稱。生活於北極及次北極地區。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🦄</div>
+          <div>
+            <div class="card-name">獨角鯨</div>
+            <div class="card-latin">Monodon monoceros</div>
+          </div>
+        </div>
+        <span class="species-type type-toothed">齒鯨</span>
+        <div class="card-body-text">雄性頭頂有長達 3 公尺的螺旋狀長牙，實為延伸的左上犬齒。長牙充滿神經末梢，可能用於感知環境。是「獨角獸」傳說的真實原型。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🌊</div>
+          <div>
+            <div class="card-name">灰鯨</div>
+            <div class="card-latin">Eschrichtius robustus</div>
+          </div>
+        </div>
+        <span class="species-type type-baleen">鬚鯨</span>
+        <div class="card-body-text">進行地球上最長的哺乳動物遷徙，往返約 20,000 公里（北極至墨西哥）。以側躺姿勢在海底吸食沙中的小甲殼類動物，是少數底棲覓食的鯨魚。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-emoji">🎀</div>
+          <div>
+            <div class="card-name">弓頭鯨</div>
+            <div class="card-latin">Balaena mysticetus</div>
+          </div>
+        </div>
+        <span class="species-type type-baleen">鬚鯨</span>
+        <div class="card-body-text">地球上壽命最長的哺乳動物，已知最高齡達 211 歲。頭骨堅硬，可頂破 60 公分厚的冰層呼吸。完全生活於北極與副北極冰冷海域，鯨鬚板長達 4 公尺。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 習性行為 -->
+  <section id="behavior">
+    <div class="section-header">
+      <div class="section-icon">🌀</div>
+      <div>
+        <div class="section-title">習性與行為</div>
+        <div class="section-subtitle">覓食、社交、繁殖與睡眠</div>
+      </div>
+    </div>
+
+    <div class="behavior-grid">
+
+      <div class="behavior-card">
+        <div class="behavior-icon">🫧</div>
+        <div class="behavior-title">氣泡網捕食</div>
+        <div class="behavior-desc">座頭鯨的群體圍獵策略。多隻鯨魚協作在魚群外側螺旋向上游動，同時噴出氣泡形成「網牆」，迫使魚群向上聚攏，再張口衝上去一次性捕獲。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">🌊</div>
+        <div class="behavior-title">躍身擊浪（Breaching）</div>
+        <div class="behavior-desc">鯨魚躍出水面後重重落下。可能用於通訊（聲響傳播極遠）、驅除寄生蟲（barnacles）、求偶展示，或純粹是玩耍行為。座頭鯨與露脊鯨最為常見。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">💤</div>
+        <div class="behavior-title">單腦睡眠</div>
+        <div class="behavior-desc">鯨魚睡眠時採「半腦睡眠」（unihemispheric sleep），每次只有一半大腦休息，另一半保持清醒維持呼吸。常見垂直靜止於水面下（「漂木」行為）或緩慢游動。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">👨‍👩‍👧</div>
+        <div class="behavior-title">母系社會</div>
+        <div class="behavior-desc">虎鯨社群以祖母為核心，雌性領導族群，終生不離群。研究顯示有祖母的族群存活率更高。抹香鯨同樣以母系群體撫育幼鯨，雄性成年後獨立或組成小型雄性群。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">🤱</div>
+        <div class="behavior-title">哺育幼鯨</div>
+        <div class="behavior-desc">鯨魚母親哺乳期長，藍鯨幼鯨每天喝 380 升鯨乳，每天增重 90 公斤。鯨乳脂肪含量高達 40–50%（牛奶約 3.5%）。虎鯨幼鯨在母親身邊生活長達數十年。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">🎭</div>
+        <div class="behavior-title">文化傳承</div>
+        <div class="behavior-desc">虎鯨不同族群有各自的獵食技術與「方言」，這些習性透過學習代代相傳，是除人類外最具文化複雜度的動物之一。年輕個體觀察並模仿長輩的技巧。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">🤿</div>
+        <div class="behavior-title">深海潛水</div>
+        <div class="behavior-desc">抹香鯨是潛水冠軍，可閉氣超過 90 分鐘，下潛至 3,000 公尺。牠們的血液含有大量血紅素，肌肉中的肌紅素讓肌肉呈深紅色，能儲存大量氧氣以供深潛之用。</div>
+      </div>
+
+      <div class="behavior-card">
+        <div class="behavior-icon">🎯</div>
+        <div class="behavior-title">回聲定位</div>
+        <div class="behavior-desc">齒鯨透過額隆發射超聲波，聲波碰到物體後反射回來，以此判斷距離、大小與方向。精確度可達公釐級，即使在漆黑的深海中也能精準捕食。</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="info-box green">
+        <div class="info-box-title">🌿 覓食策略比較</div>
+        <p>鬚鯨使用「濾食策略」：大口吸入海水後用鯨鬚板過濾磷蝦與小魚，每口可過濾數噸海水。齒鯨則是「主動獵食者」，追逐單一獵物，虎鯨甚至會協同攻擊其他大型鯨魚。抹香鯨則特化為獵取深海頭足類，牠與大王魷魚的搏鬥留下的吸盤疤痕令人驚嘆。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 溝通方式 -->
+  <section id="communication">
+    <div class="section-header">
+      <div class="section-icon">🎵</div>
+      <div>
+        <div class="section-title">溝通方式</div>
+        <div class="section-subtitle">鯨歌、回聲定位與社交信號</div>
+      </div>
+    </div>
+
+    <div class="sound-bar-wrap">
+      <div class="sound-title">各種鯨魚聲頻範圍</div>
+      <div class="freq-row">
+        <div class="freq-label">藍鯨（鯨歌）</div>
+        <div class="freq-bar"><div class="freq-fill" style="width:15%"></div></div>
+        <div class="freq-value">10–40 Hz</div>
+      </div>
+      <div class="freq-row">
+        <div class="freq-label">座頭鯨</div>
+        <div class="freq-bar"><div class="freq-fill" style="width:25%"></div></div>
+        <div class="freq-value">20–9,000 Hz</div>
+      </div>
+      <div class="freq-row">
+        <div class="freq-label">抹香鯨（喀答聲）</div>
+        <div class="freq-bar"><div class="freq-fill" style="width:90%"></div></div>
+        <div class="freq-value">100–30,000 Hz</div>
+      </div>
+      <div class="freq-row">
+        <div class="freq-label">白鯨</div>
+        <div class="freq-bar"><div class="freq-fill" style="width:75%"></div></div>
+        <div class="freq-value">1,000–20,000 Hz</div>
+      </div>
+      <div class="freq-row">
+        <div class="freq-label">虎鯨（方言）</div>
+        <div class="freq-bar"><div class="freq-fill" style="width:60%"></div></div>
+        <div class="freq-value">500–25,000 Hz</div>
+      </div>
+      <div class="freq-row">
+        <div class="freq-label">人耳可聽範圍</div>
+        <div class="freq-bar"><div class="freq-fill" style="width:40%; background: linear-gradient(90deg, #fbbf24, #f87171);"></div></div>
+        <div class="freq-value">20–20,000 Hz</div>
+      </div>
+    </div>
+
+    <div class="card-grid-2">
+      <div class="info-box teal" style="margin-bottom:0">
+        <div class="info-box-title">🎶 座頭鯨之歌</div>
+        <p>繁殖季節，雄性座頭鯨會唱出極為複雜的歌曲，持續時間可達 20 分鐘，並不斷重複。同一族群的雄性會共同「流行」同一首歌，並隨時間逐漸演化，流行版本從太平洋東部向西傳播，速度驚人。</p>
+      </div>
+      <div class="info-box" style="margin-bottom:0">
+        <div class="info-box-title">📡 抹香鯨的喀答聲（Codas）</div>
+        <p>抹香鯨用一連串的喀答聲（codas）進行溝通，不同家族群有獨特的 coda 組合，類似方言。研究發現不同族群的 coda 複雜度不同，並有個體識別的功能，甚至可能傳遞情緒狀態。</p>
+      </div>
+    </div>
+
+    <div class="info-box amber" style="margin-top:20px">
+      <div class="info-box-title">🌐 藍鯨的超低頻聲音</div>
+      <p>藍鯨的鳴聲在 10–40 Hz 之間，遠低於人耳下限（20 Hz），音量高達 188 分貝——是地球上最響的生物聲音之一。在特定深度的「聲音通道」（SOFAR channel）中，這些聲音甚至可以傳播數千公里，讓藍鯨跨越整個大洋進行溝通。</p>
+    </div>
+  </section>
+
+  <!-- 遷徙路線 -->
+  <section id="migration">
+    <div class="section-header">
+      <div class="section-icon">🗺️</div>
+      <div>
+        <div class="section-title">遷徙路線</div>
+        <div class="section-subtitle">季節性移動與覓食策略</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">🌞 夏季（極地覓食）</div>
+        <div class="tl-body">大多數鬚鯨在夏季前往高緯度極地或副極地海域覓食，這裡磷蝦、魚類豐富，日照時間長，生產力極高。藍鯨前往南極磷蝦場，灰鯨抵達北極白令海峽。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">🍂 秋季（開始南遷）</div>
+        <div class="tl-body">隨著極地氣溫下降、食物減少，鯨魚開始向溫帶或熱帶海域遷徙。懷孕雌性通常最先出發，以確保在溫暖水域生產。此時鯨魚依靠積累的鯨脂維持能量。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">❄️ 冬季（繁殖交配）</div>
+        <div class="tl-body">在熱帶或亞熱帶溫暖海域交配與生產。座頭鯨在夏威夷、東加等地聚集。灰鯨在墨西哥下加利福尼亞的瀉湖中生產，雄性座頭鯨在此競爭激烈，伴隨複雜的鯨歌與打鬥。</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">🌸 春季（返回極地）</div>
+        <div class="tl-body">新生幼鯨已足夠強壯，跟隨母親開始返回極地的長途旅程。灰鯨遷徙距離約 20,000 公里（來回），是地球上最長的哺乳動物遷徙記錄。幼鯨需快速成長以儲備過冬脂肪。</div>
+      </div>
+
+    </div>
+
+    <div class="info-box" style="margin-top:24px">
+      <div class="info-box-title">🧭 如何導航？</div>
+      <p>鯨魚可能利用多種機制導航：地球磁場（磁感應）、太陽/星光位置、海底地形回聲定位、洋流溫度與鹽度，以及跟隨母親學習的路線記憶。研究發現鯨魚大腦中有磁鐵礦晶體，支持磁感應假說。</p>
+    </div>
+  </section>
+
+  <!-- 保育現況 -->
+  <section id="conservation">
+    <div class="section-header">
+      <div class="section-icon">🛡️</div>
+      <div>
+        <div class="section-title">保育現況</div>
+        <div class="section-subtitle">IUCN 紅色名錄評估（2024）</div>
+      </div>
+    </div>
+
+    <div class="info-box red" style="margin-bottom:24px">
+      <div class="info-box-title">⚠️ 歷史捕鯨的衝擊</div>
+      <p>20 世紀工業捕鯨期間（1900–1970 年代），全球藍鯨數量從約 350,000 頭銳減至不足 5,000 頭（減少超過 98%）。1986 年國際捕鯨委員會（IWC）頒布商業捕鯨禁令後，部分族群緩慢恢復，但現今威脅轉為船擊、漁網纏繞、噪音污染、氣候變遷與塑膠污染。</p>
+    </div>
+
+    <div class="conservation-list">
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">藍鯨 Blue Whale</div>
+          <div class="con-detail">全球族群估計 10,000–25,000 頭，恢復中但仍遠低於歷史水準。船擊與氣候變遷為主要威脅。</div>
+        </div>
+        <span class="con-badge badge-en">瀕危 EN</span>
+      </div>
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">座頭鯨 Humpback Whale</div>
+          <div class="con-detail">禁捕後顯著恢復，部分族群已逾 80,000 頭。為保育成功的代表案例，但部分地區亞種仍受威脅。</div>
+        </div>
+        <span class="con-badge badge-lc">無危 LC</span>
+      </div>
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">抹香鯨 Sperm Whale</div>
+          <div class="con-detail">全球約 300,000–450,000 頭，是最多的大型鯨魚之一，但深海噪音污染（軍事聲納）對其影響仍待評估。</div>
+        </div>
+        <span class="con-badge badge-vu">易危 VU</span>
+      </div>
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">北大西洋露脊鯨 N. Atlantic Right Whale</div>
+          <div class="con-detail">僅剩約 356 頭（2023），功能性滅絕邊緣。船擊與捕蟹繩纏繞是主要死因，生育率極低。</div>
+        </div>
+        <span class="con-badge badge-cr">極危 CR</span>
+      </div>
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">弓頭鯨 Bowhead Whale</div>
+          <div class="con-detail">族群數量約 10,000–25,000 頭，部分族群因原住民傳統捕鯨仍受輕微壓力，但整體狀況穩定。</div>
+        </div>
+        <span class="con-badge badge-lc">無危 LC</span>
+      </div>
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">虎鯨 Killer Whale</div>
+          <div class="con-detail">全球數量估計 50,000 頭，但某些孤立族群（如南居民虎鯨，僅剩 75 頭）極度瀕危，因鮭魚減少而瀕危。</div>
+        </div>
+        <span class="con-badge badge-nt">近危 NT</span>
+      </div>
+
+      <div class="con-item">
+        <div>
+          <div class="con-name">灰鯨 Gray Whale</div>
+          <div class="con-detail">東太平洋族群恢復良好（約 27,000 頭），但西太平洋族群（日本）僅約 200 頭，極度瀕危。</div>
+        </div>
+        <span class="con-badge badge-lc">無危 LC（東） / CR（西）</span>
+      </div>
+
+    </div>
+
+    <div class="info-box green" style="margin-top:24px">
+      <div class="info-box-title">🌿 現行保育措施</div>
+      <p>國際捕鯨委員會（IWC）商業捕鯨禁令（1986 年至今）・鯨魚保護區設置（南大洋、地中海）・船速限制減少船擊・漁業設備改良（破斷繩索）・海洋噪音管制・氣候行動（保護磷蝦食物來源）・台灣也於 1995 年停止一切捕鯨活動，並設有鯨豚保護法規。</p>
+    </div>
+  </section>
+
+  <!-- 驚人事實 -->
+  <section id="facts">
+    <div class="section-header">
+      <div class="section-icon">✨</div>
+      <div>
+        <div class="section-title">驚人事實</div>
+        <div class="section-subtitle">鯨魚世界的不可思議</div>
+      </div>
+    </div>
+
+    <div class="fact-grid">
+
+      <div class="fact-card">
+        <div class="fact-num">01</div>
+        <div class="fact-text">藍鯨心跳只有 2 下 / 分鐘</div>
+        <div class="fact-detail">深潛時心跳可降至每分鐘 2 次，心臟大如一輛小汽車，每次搏出約 220 公升血液。地面上的人類靜息心跳約 60–100 次。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">02</div>
+        <div class="fact-text">鯨落：死亡後滋養整個生態系</div>
+        <div class="fact-detail">鯨魚死亡後沉入深海，形成「鯨落」（whale fall）。一具藍鯨屍體可維繫深海生態系長達 100 年，養活數百個物種，包括只在鯨落才存在的特有種。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">03</div>
+        <div class="fact-text">鯨魚是氣候英雄</div>
+        <div class="fact-detail">鯨魚排放的糞便富含鐵和氮，刺激浮游植物生長，間接封存大量二氧化碳。估計全球鯨魚族群每年協助封存 CO₂ 相當於數百萬棵樹的作用。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">04</div>
+        <div class="fact-text">抹香鯨的睡姿讓人驚奇</div>
+        <div class="fact-detail">抹香鯨是少數以垂直姿勢群體睡眠的動物，整群鯨魚頭朝下直立漂浮水中，如同一排漂浮的木頭。每次睡眠時間約 10–15 分鐘，每日睡眠佔時約 7%。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">05</div>
+        <div class="fact-text">211 歲的弓頭鯨</div>
+        <div class="fact-detail">科學家在一頭弓頭鯨身上找到 19 世紀的捕鯨槍碎片，結合眼球晶體定年技術，估計該鯨超過 200 歲。弓頭鯨的基因中含有特殊的 DNA 修復機制，或許是長壽秘密。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">06</div>
+        <div class="fact-text">鯨魚乳汁超濃稠</div>
+        <div class="fact-detail">鯨乳脂肪含量約 40–50%，質地如牙膏，以避免在水中溶散。藍鯨幼鯨每天喝下約 380 公升鯨乳，每天增重高達 90 公斤，7 個月斷奶時體重已翻倍。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">07</div>
+        <div class="fact-text">虎鯨會「文化傳遞」</div>
+        <div class="fact-detail">2024 年，西班牙沿海出現虎鯨攻擊帆船的行為，從少數個體迅速傳播至整個族群。科學家認為這是透過社會學習傳播的「流行行為」，而非天生本能。</div>
+      </div>
+
+      <div class="fact-card">
+        <div class="fact-num">08</div>
+        <div class="fact-text">藍鯨的聲音穿越整個大洋</div>
+        <div class="fact-detail">藍鯨的低頻鳴聲（188 dB）在特定水層中可傳播數千公里。在人類工業噪音出現前，藍鯨可能可以跨越整個太平洋與同類溝通，但現今海洋噪音污染已大幅縮短這個距離。</div>
+      </div>
+
+    </div>
+
+    <!-- Comparison table -->
+    <div style="margin-top:32px; overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>種類</th>
+            <th>體長</th>
+            <th>體重</th>
+            <th>壽命</th>
+            <th>潛水深度</th>
+            <th>閉氣時間</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="hl">藍鯨</span></td>
+            <td>24–33 m</td>
+            <td>130–200 t</td>
+            <td>80–90 年</td>
+            <td>~200 m</td>
+            <td>~30 分鐘</td>
+          </tr>
+          <tr>
+            <td><span class="hl">座頭鯨</span></td>
+            <td>13–16 m</td>
+            <td>25–30 t</td>
+            <td>45–80 年</td>
+            <td>~200 m</td>
+            <td>~45 分鐘</td>
+          </tr>
+          <tr>
+            <td><span class="hl">抹香鯨</span></td>
+            <td>11–20 m</td>
+            <td>20–57 t</td>
+            <td>60–80 年</td>
+            <td>~3,000 m</td>
+            <td>90+ 分鐘</td>
+          </tr>
+          <tr>
+            <td><span class="hl">虎鯨</span></td>
+            <td>5.5–9 m</td>
+            <td>3.6–10 t</td>
+            <td>50–90 年</td>
+            <td>~300 m</td>
+            <td>~15 分鐘</td>
+          </tr>
+          <tr>
+            <td><span class="hl">弓頭鯨</span></td>
+            <td>14–18 m</td>
+            <td>75–100 t</td>
+            <td>200+ 年</td>
+            <td>~600 m</td>
+            <td>~40 分鐘</td>
+          </tr>
+          <tr>
+            <td><span class="hl">白鯨</span></td>
+            <td>3–5.5 m</td>
+            <td>0.7–1.6 t</td>
+            <td>35–50 年</td>
+            <td>~700 m</td>
+            <td>~25 分鐘</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>資料來源：IUCN 紅色名錄、American Cetacean Society、NOAA Fisheries · <a href="index.html">← 返回首頁</a></p>
+  <p style="margin-top:8px;">本頁面屬 <a href="index.html">AI Resources Hub</a> 知識庫 · CC BY 4.0</p>
+</footer>
+
+<script>
+  // Smooth scroll & active nav highlight
+  const links = document.querySelectorAll('.nav-link');
+
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const sections = document.querySelectorAll('section[id]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
