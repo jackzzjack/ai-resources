@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>海豚：海洋中的智慧精靈</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --ocean: #22d3ee;
+      --ocean2: #0ea5e9;
+      --deep: #1e3a5f;
+      --seafoam: #34d399;
+      --amber: #fbbf24;
+      --red: #f87171;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34,211,238,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 30%, rgba(14,165,233,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(52,211,153,0.07) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='40' viewBox='0 0 80 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q20 5 40 20 Q60 35 80 20' stroke='%232a2a3d' stroke-width='1' fill='none' opacity='0.4'/%3E%3Cpath d='M0 30 Q20 15 40 30 Q60 45 80 30' stroke='%232a2a3d' stroke-width='1' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+      background-size: 80px 40px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--ocean) 60%, var(--seafoam) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(34,211,238,0.12);
+      border: 1px solid rgba(34,211,238,0.35);
+      color: var(--ocean);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--ocean); }
+
+    main {
+      flex: 1;
+      padding: 28px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 28px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--ocean2);
+      border-color: var(--ocean2);
+      color: #fff;
+    }
+
+    .tab-btn:hover:not(.active) { border-color: var(--ocean); color: var(--text); }
+
+    .tab-panel { display: none; animation: fadeIn 0.35s ease; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Section heading ── */
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ocean);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Cards grid ── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 32px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: var(--ocean); }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .card-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Info table ── */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+    }
+
+    .info-table th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .info-table tr:last-child td { border-bottom: none; }
+    .info-table tr:hover td { background: rgba(34,211,238,0.04); }
+
+    .info-table td:first-child { color: var(--muted); width: 160px; font-size: 0.85rem; }
+
+    /* ── Highlight box ── */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(34,211,238,0.08), rgba(14,165,233,0.05));
+      border: 1px solid rgba(34,211,238,0.25);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 28px;
+    }
+
+    .highlight-box h3 {
+      font-size: 1rem;
+      color: var(--ocean);
+      margin-bottom: 10px;
+    }
+
+    .highlight-box p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* ── List ── */
+    .fact-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .fact-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .fact-list li::before {
+      content: '◈';
+      color: var(--ocean);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .fact-list li strong { color: var(--text); }
+
+    /* ── Species cards ── */
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .species-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .species-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 3px; height: 100%;
+      background: var(--strip, var(--ocean));
+    }
+
+    .species-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .species-card .sci-name {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .species-card p {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .species-tag {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(34,211,238,0.1);
+      color: var(--ocean);
+      border: 1px solid rgba(34,211,238,0.25);
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 6px; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--ocean), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--ocean);
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-item h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ocean);
+      margin-bottom: 4px;
+    }
+
+    .timeline-item p {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Stat row ── */
+    .stat-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: 140px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .stat-box .val {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--ocean);
+      display: block;
+    }
+
+    .stat-box .lbl {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── Conservation badge ── */
+    .conservation-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .badge-lc { background: rgba(52,211,153,0.15); color: var(--seafoam); border: 1px solid rgba(52,211,153,0.3); }
+    .badge-nt { background: rgba(34,211,238,0.15); color: var(--ocean);   border: 1px solid rgba(34,211,238,0.3); }
+    .badge-vu { background: rgba(251,191,36,0.15);  color: var(--amber);   border: 1px solid rgba(251,191,36,0.3); }
+    .badge-en { background: rgba(248,113,113,0.15); color: var(--red);     border: 1px solid rgba(248,113,113,0.3); }
+    .badge-cr { background: rgba(239,68,68,0.2);    color: #f87171;        border: 1px solid rgba(239,68,68,0.4); }
+
+    footer {
+      text-align: center;
+      padding: 28px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { color: var(--ocean); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .stat-row { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="font-size:3rem;margin-bottom:12px;">🐬</div>
+  <h1>海豚：海洋中的智慧精靈</h1>
+  <p class="subtitle">Delphinidae — 高智商哺乳動物的演化奇蹟</p>
+  <span class="status-badge">🌊 齒鯨亞目 · 全球分布 · 超過 90 種</span>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+  <a class="nav-link" href="philippine_eagle.html">菲律賓鷹</a>
+  <a class="nav-link" href="brain_forgetting.html">遺忘的科學</a>
+</nav>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="overview">物種概覽</button>
+    <button class="tab-btn" data-tab="behavior">習性行為</button>
+    <button class="tab-btn" data-tab="intelligence">智能溝通</button>
+    <button class="tab-btn" data-tab="species">主要物種</button>
+    <button class="tab-btn" data-tab="conservation">保育現況</button>
+  </div>
+
+  <!-- ═══════════════ TAB 1: 物種概覽 ═══════════════ -->
+  <div id="tab-overview" class="tab-panel active">
+
+    <div class="section-title">🔬 分類與基本特徵</div>
+    <div class="grid-2">
+      <div>
+        <table class="info-table">
+          <tr><th colspan="2">生物分類</th></tr>
+          <tr><td>界</td><td>動物界 Animalia</td></tr>
+          <tr><td>門</td><td>脊索動物門 Chordata</td></tr>
+          <tr><td>綱</td><td>哺乳綱 Mammalia</td></tr>
+          <tr><td>目</td><td>偶蹄目 Artiodactyla</td></tr>
+          <tr><td>下目</td><td>鯨偶蹄下目 Cetacea</td></tr>
+          <tr><td>亞目</td><td>齒鯨亞目 Odontoceti</td></tr>
+          <tr><td>科</td><td>海豚科 Delphinidae</td></tr>
+          <tr><td>屬/種</td><td>17 屬，約 37 種（廣義逾 90 種）</td></tr>
+        </table>
+      </div>
+      <div>
+        <table class="info-table">
+          <tr><th colspan="2">體型數據</th></tr>
+          <tr><td>體長</td><td>1.2 m（矮海豚）～ 9.5 m（虎鯨）</td></tr>
+          <tr><td>體重</td><td>50 kg ～ 10,000 kg</td></tr>
+          <tr><td>壽命</td><td>一般 20–50 年；虎鯨雌性可達 80–90 年</td></tr>
+          <tr><td>腦重比</td><td>0.94%（僅次於人類的 2%）</td></tr>
+          <tr><td>游速</td><td>巡遊 5–10 km/h；短程衝刺 55 km/h</td></tr>
+          <tr><td>潛水深度</td><td>一般 < 200 m；部分物種達 1,000 m</td></tr>
+          <tr><td>聲波頻率</td><td>0.25 ～ 150 kHz</td></tr>
+          <tr><td>呼吸</td><td>每隔數秒至數分鐘换氣一次</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-title">📊 關鍵數據</div>
+    <div class="stat-row">
+      <div class="stat-box"><span class="val">90+</span><span class="lbl">已知海豚種類</span></div>
+      <div class="stat-box"><span class="val">50 年</span><span class="lbl">平均壽命（瓶鼻）</span></div>
+      <div class="stat-box"><span class="val">55 km/h</span><span class="lbl">最高游速</span></div>
+      <div class="stat-box"><span class="val">360°</span><span class="lbl">聲吶視野</span></div>
+      <div class="stat-box"><span class="val">1,700 g</span><span class="lbl">瓶鼻海豚腦重</span></div>
+    </div>
+
+    <div class="section-title">🐾 外形特徵</div>
+    <div class="highlight-box">
+      <h3>流線型的演化傑作</h3>
+      <p>海豚的身體高度適應水中生活：紡錘形軀體大幅降低阻力；前肢特化為胸鰭，後肢在演化中消失，僅保留退化骨骼；水平尾鰭（flukes）提供強勁推力；背鰭則維持游行穩定。皮膚每 2 小時更新表皮最外層，保持表面光滑，可減少 20% 以上的水流阻力。</p>
+    </div>
+    <ul class="fact-list">
+      <li><strong>呼吸孔</strong>：位於頭頂，可在入水瞬間本能關閉，避免嗆水</li>
+      <li><strong>眼睛</strong>：兩側分置，視野近 360°；有雙層眼膜適應水中折射</li>
+      <li><strong>牙齒</strong>：圓錐形齒，數量 60～260 顆，用以捕魚而非咀嚼</li>
+      <li><strong>色覺</strong>：僅具藍色視錐，對藍綠光最敏感；水下視力佳</li>
+      <li><strong>皮下脂肪</strong>：厚達 2–12 cm，具保溫與能量儲備雙重功能</li>
+      <li><strong>體色</strong>：背深腹淺（反蔭蔽），上方似深海不易被獵物發現，下方似天空不易被掠食者察覺</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════ TAB 2: 習性行為 ═══════════════ -->
+  <div id="tab-behavior" class="tab-panel">
+
+    <div class="section-title">🌊 社會結構</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-icon">👥</span>
+          <span class="card-label">群居生活（Pod）</span>
+        </div>
+        <p>海豚以「群（pod）」為基本社會單位，規模從 2–3 隻的家庭小群，到超過千隻的「超級群（superpod）」。群內有明確的社會階層，雄性之間競爭地位，雌性則形成穩定的聯盟網絡。</p>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-icon">🤝</span>
+          <span class="card-label">利他互助行為</span>
+        </div>
+        <p>海豚會照料受傷的同伴，支撐其浮出水面換氣；也曾記錄多起海豚將人類或其他物種從鯊魚攻擊中救出的案例。這種利他行為在非人類動物中極為罕見。</p>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-icon">🎭</span>
+          <span class="card-label">玩耍行為</span>
+        </div>
+        <p>海豚具有高度發達的玩耍本能：在船頭乘浪（bow-riding）、跳躍旋轉、互相追逐、用海藻或海綿嬉戲。玩耍不僅是幼年期的學習行為，成年後仍持續，被視為高智能的重要指標。</p>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-icon">🌙</span>
+          <span class="card-label">睡眠方式</span>
+        </div>
+        <p>海豚採「單腦半球睡眠（unihemispheric slow-wave sleep）」：大腦左右半球輪流休息，另一半保持清醒以維持游泳、換氣與警戒。每次睡眠時間約 15–30 分鐘，全天多次循環。</p>
+      </div>
+    </div>
+
+    <div class="section-title">🍽️ 覓食策略</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>合作圍捕（Cooperative Hunting）</h4>
+        <p>多隻海豚協力將魚群驅趕成緊密球形（baitball），輪流衝入取食。部分族群分工明確，有「驅趕者」、「衝入捕食者」等角色，效率遠超獨自狩獵。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>泥漿網技術（Mud Ring Feeding）</h4>
+        <p>佛羅里達灣的寬吻海豚會旋轉游行製造環狀泥漿牆，令魚群跳出水面，再張口接食。此技術需數年習得，為文化傳承的典型案例。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>海綿工具使用（Sponging）</h4>
+        <p>澳洲鯊魚灣的海豚將海綿套在吻部，在多岩礁海床翻找獵物，以防止鼻部受傷。此技術幾乎只由母親傳給女兒，是少數非人類動物穩定的工具使用文化。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>擱淺狩獵（Strand Feeding）</h4>
+        <p>南卡羅萊納州及巴西海豚會有意衝上沙灘，撈取擱淺的魚後再滑回海中。此行為風險極高（有擱淺死亡之虞），卻在特定族群中世代相傳。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>聲納驚魚（Acoustic Stunning）</h4>
+        <p>利用高強度聲波脈衝將魚群暫時致昏，再輕鬆捕食。虎鯨（虎鯨屬於廣義海豚科）甚至能以尾擊產生衝擊波擊暈魚群。</p>
+      </div>
+    </div>
+
+    <div class="section-title">❤️ 繁殖與育幼</div>
+    <ul class="fact-list">
+      <li><strong>交配制度</strong>：大多數海豚為多配制（polygamous），雄性競爭激烈，有時形成「聯盟」共同爭奪雌性</li>
+      <li><strong>孕期</strong>：9–17 個月（依物種而異），瓶鼻海豚約 12 個月</li>
+      <li><strong>產仔</strong>：每胎通常 1 隻，尾部先出生以防溺水；雌性每 2–6 年繁殖一次</li>
+      <li><strong>哺乳期</strong>：1.5–3 年，幼豚藉特殊舌頭捲曲形成管狀吸吮母乳</li>
+      <li><strong>母嬰連結</strong>：幼豚出生後緊隨母親，母親以獨特哨聲（signature whistle）讓幼豚辨認自己</li>
+      <li><strong>社會學習期</strong>：幼豚需 4–10 年從母親及群體學習覓食技術、社交規則與族群方言</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════ TAB 3: 智能溝通 ═══════════════ -->
+  <div id="tab-intelligence" class="tab-panel">
+
+    <div class="section-title">🧠 認知能力</div>
+    <div class="highlight-box">
+      <h3>第二聰明的海洋動物</h3>
+      <p>海豚的腦質指數（EQ）達 4–5（人類 7.5，黑猩猩 2.5），是除人類外 EQ 最高的動物群之一。其大腦新皮質具有高度折疊，神經元密度接近人類。研究顯示海豚具備：鏡像自我認知、工具使用、抽象概念理解、數字計數、語法理解，以及預測未來行動等能力。</p>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🪞</span><span class="card-label">鏡像自我認知</span></div>
+        <p>能通過「鏡像測試」，認出鏡中自己身上的標記，顯示具備自我意識，此能力僅見於人類、猿類、大象、喜鵲及海豚。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🔢</span><span class="card-label">數量概念</span></div>
+        <p>實驗顯示海豚能辨別數量多寡並進行簡單加減，對小數字（1–9）的辨識準確率接近 70–80%。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">📚</span><span class="card-label">理解語法</span></div>
+        <p>夏威夷研究中，海豚能理解人工手語的詞序規則（「球推圓圈」vs.「圓圈推球」），顯示語法理解能力。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🗺️</span><span class="card-label">心智地圖</span></div>
+        <p>海豚擁有長期空間記憶，能記住數十公里的海域地形，並追蹤數年不見的同伴位置。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🎨</span><span class="card-label">模仿學習</span></div>
+        <p>能精確模仿人類動作（甚至跨物種）及其他海豚的行為，是文化傳播的基礎。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🔮</span><span class="card-label">計劃未來</span></div>
+        <p>研究顯示海豚能在狩獵前預設策略，並根據隊友行動即時調整計劃，顯示前瞻性思考能力。</p>
+      </div>
+    </div>
+
+    <div class="section-title">📡 聲吶系統（回聲定位）</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🔊</span><span class="card-label">聲吶發射</span></div>
+        <p>海豚以前額的「額隆（melon）」——一種充滿特殊油脂的器官——聚焦高頻聲波（clicks），頻率達 40–150 kHz，遠超人類可聽範圍（20 Hz–20 kHz）。每秒可發射超過 700 個聲波脈衝。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">👂</span><span class="card-label">聲吶接收</span></div>
+        <p>回波由下顎骨內的脂肪傳導至內耳。海豚能從回波中分析目標的形狀、大小、材質、距離，解析度甚至能區分 2 mm 的物體差異，遠優於許多先進聲納技術。</p>
+      </div>
+    </div>
+
+    <div class="section-title">💬 溝通語言</div>
+    <ul class="fact-list">
+      <li><strong>哨聲（Whistles）</strong>：每隻海豚擁有獨特的「簽名哨聲（signature whistle）」，類似名字，從出生後數週便開始發展，一生不變，用於識別與呼喚</li>
+      <li><strong>喀嗒聲（Clicks）</strong>：主要用於回聲定位，但在社交情境下也可傳達情緒</li>
+      <li><strong>爆破脈衝（Burst-pulse sounds）</strong>：快速連續爆發的喀嗒聲，傳達激動、興奮或攻擊意圖</li>
+      <li><strong>肢體語言</strong>：跳躍（breaching）、拍尾（tail-slapping）、頂碰（head-butting）傳達多種社交訊息</li>
+      <li><strong>模仿能力</strong>：研究發現海豚能模仿彼此的哨聲，可能是相互「稱呼」對方，這在非人類動物中極為特殊</li>
+      <li><strong>族群方言</strong>：不同地域族群擁有不同的聲音「口音」，並持續在代際傳承</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════ TAB 4: 主要物種 ═══════════════ -->
+  <div id="tab-species" class="tab-panel">
+
+    <div class="section-title">🌍 代表性物種</div>
+    <div class="species-grid">
+
+      <div class="species-card" style="--strip: #22d3ee;">
+        <h4>🐬 寬吻海豚（瓶鼻海豚）</h4>
+        <div class="sci-name">Tursiops truncatus</div>
+        <p>最廣為人知的海豚種類，廣布全球溫帶至熱帶海域。腦容量大，學習能力強，常見於水族館與研究機構。沿岸族群可與漁民合作，是記錄最多的海豚行為研究對象。</p>
+        <span class="species-tag">全球最廣布</span>
+      </div>
+
+      <div class="species-card" style="--strip: #34d399;">
+        <h4>🌊 熱帶點海豚</h4>
+        <div class="sci-name">Stenella attenuata</div>
+        <p>以體側斑點為特徵，常見於熱帶太平洋。以每群數百至千隻的超大群體著稱，游速快，喜乘船頭浪。幼年個體斑點較少，隨年齡增加而增多。</p>
+        <span class="species-tag">超大群</span>
+      </div>
+
+      <div class="species-card" style="--strip: #7c6aff;">
+        <h4>🎡 旋轉海豚</h4>
+        <div class="sci-name">Stenella longirostris</div>
+        <p>以能在空中連續旋轉 7 圈著稱（旋轉功能可能用於去除魚蝨或社交溝通）。分布熱帶海域，臺灣東部海域常見。吻部修長，群體活躍，是海豚觀察的明星物種。</p>
+        <span class="species-tag">台灣可見</span>
+      </div>
+
+      <div class="species-card" style="--strip: #f59e0b;">
+        <h4>🐋 虎鯨（殺人鯨）</h4>
+        <div class="sci-name">Orcinus orca</div>
+        <p>海豚科最大成員，雄性體長達 9.5 m，體重逾 10 噸。食物鏈頂端，連大白鯊都是其獵物。高度社會化，族群間的捕食文化、溝通方言完全不同，部分學者認為各生態型可能為不同物種。</p>
+        <span class="species-tag">頂級掠食者</span>
+      </div>
+
+      <div class="species-card" style="--strip: #0ea5e9;">
+        <h4>🌐 印太洋駝海豚</h4>
+        <div class="sci-name">Sousa chinensis</div>
+        <p>又稱「中華白海豚」，成年個體為粉白色（幼年灰色）。廣布印度洋至西太平洋沿岸，在香港及台灣西海岸有族群記錄，為近岸物種，受漁業和污染威脅嚴重。</p>
+        <span class="species-tag">易危 VU</span>
+      </div>
+
+      <div class="species-card" style="--strip: #f87171;">
+        <h4>🏔️ 馬氏海豚</h4>
+        <div class="sci-name">Cephalorhynchus hectori maui</div>
+        <p>紐西蘭毛伊海豚亞種，全球最小的海豚之一（體長約 1.2 m）。目前僅剩不到 70 隻，是世界上最瀕危的海洋哺乳動物之一，主要威脅為刺網漁業誤捕。</p>
+        <span class="species-tag badge-cr" style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);">極危 CR</span>
+      </div>
+
+      <div class="species-card" style="--strip: #a78bfa;">
+        <h4>🌟 條紋海豚</h4>
+        <div class="sci-name">Stenella coeruleoalba</div>
+        <p>以側面藍灰條紋為特徵，分布廣泛。是地中海數量最多的海豚，也常見於日本近海（日本傳統有獵捕此種海豚的文化）。游速快，擅長高跳躍特技動作。</p>
+        <span class="species-tag">地中海常見</span>
+      </div>
+
+      <div class="species-card" style="--strip: #10b981;">
+        <h4>🦈 糙齒海豚</h4>
+        <div class="sci-name">Steno bredanensis</div>
+        <p>以粗糙不平的牙齒得名，分布熱帶深水海域。行為特殊：會將獵物「衝灘」，常與其他海豚甚至抹香鯨互動，有跨物種聯盟的記錄，社會行為多樣。</p>
+        <span class="species-tag">深水物種</span>
+      </div>
+    </div>
+
+    <div class="section-title">🇹🇼 台灣周邊常見海豚</div>
+    <ul class="fact-list">
+      <li><strong>旋轉海豚</strong>：東部太平洋側常見，尤以花東外海為主要棲地</li>
+      <li><strong>熱帶點海豚</strong>：夏季隨暖流抵達台灣東部、澎湖附近海域</li>
+      <li><strong>中華白海豚</strong>：台灣西部（苗栗至嘉義近岸）有獨立族群，數量約 60–70 隻，列入「極危」</li>
+      <li><strong>瓶鼻海豚</strong>：全台沿海皆可見，尤以東部及離島海域較常觀察到</li>
+      <li><strong>花紋海豚（Risso's dolphin）</strong>：台灣東部深水區偶見，體表有大量白色疤痕</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════ TAB 5: 保育現況 ═══════════════ -->
+  <div id="tab-conservation" class="tab-panel">
+
+    <div class="section-title">⚠️ 主要威脅</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🎣</span><span class="card-label">漁業誤捕（Bycatch）</span></div>
+        <p>刺網、圍網和延繩釣每年誤捕數十萬隻海豚，是全球海豚族群數量下降的首要原因。金槍魚圍網業曾在東太平洋每年殺死逾 50 萬隻海豚（1960 年代高峰），後因法規改善而大幅下降。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🏭</span><span class="card-label">污染</span></div>
+        <p>持久性有機污染物（POPs）、重金屬（汞）、塑膠微粒積累於海豚脂肪層，影響免疫、生殖與神經系統；噪音污染（船隻、聲納）干擾其聲吶系統與溝通，導致擱淺事件增加。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🌡️</span><span class="card-label">氣候變遷</span></div>
+        <p>海水暖化導致魚群遷移，海豚食物來源減少；珊瑚礁白化破壞沿岸生態系；極端氣候增加海豚擱淺頻率，並改變其季節性遷徙路線。</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-icon">🚢</span><span class="card-icon-right"></span><span class="card-label">船隻碰撞與噪音</span></div>
+        <p>高速船碰撞造成多起海豚死亡，尤其在港灣附近。軍事及商業聲納造成的強烈水下噪音會破壞海豚的定向能力，引發集體擱淺（如 2000 年巴哈馬事件）。</p>
+      </div>
+    </div>
+
+    <div class="section-title">🛡️ 保育進展</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>1972 年 — 海洋哺乳動物保護法（美國 MMPA）</h4>
+        <p>全面禁止在美國水域騷擾、捕捉或殺死海洋哺乳動物，成為全球首部系統性保護海豚的立法，奠定後來各國立法的基礎。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>1990 年代 — 海豚友善金槍魚標章（Dolphin-Safe Label）</h4>
+        <p>推動「海豚友善」捕魚規範，禁止圍網於金槍魚群周圍設網以避免海豚誤捕。此舉使東太平洋海豚誤捕量從每年數十萬隻降至數百隻。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>2010 年代 — 台灣西部海域中華白海豚保育</h4>
+        <p>台灣劃設「台灣白海豚野生動物重要棲息環境」，限制近岸開發與刺網作業；NGO 持續追蹤族群動態，每年發布族群數量報告。</p>
+      </div>
+      <div class="timeline-item">
+        <h4>現況 — 基因庫與跨國合作</h4>
+        <p>國際捕鯨委員會（IWC）旗下的 IUCN 鯨類專家組持續評估各物種保育狀態；多國建立海豚 DNA 資料庫，追蹤族群基因多樣性與遷徙路線。</p>
+      </div>
+    </div>
+
+    <div class="section-title">📋 主要物種保育狀態</div>
+    <table class="info-table">
+      <tr>
+        <th>物種</th>
+        <th>IUCN 狀態</th>
+        <th>估計數量</th>
+        <th>主要威脅</th>
+      </tr>
+      <tr>
+        <td>毛伊海豚（紐西蘭）</td>
+        <td><span class="conservation-badge badge-cr">極危 CR</span></td>
+        <td>< 70 隻</td>
+        <td>刺網誤捕</td>
+      </tr>
+      <tr>
+        <td>中華白海豚（台灣族群）</td>
+        <td><span class="conservation-badge badge-cr">極危 CR</span></td>
+        <td>約 60–70 隻</td>
+        <td>棲地破壞、漁業</td>
+      </tr>
+      <tr>
+        <td>南亞河豚（恒河豚）</td>
+        <td><span class="conservation-badge badge-en">瀕危 EN</span></td>
+        <td>< 2,000 隻</td>
+        <td>河流污染、誤捕</td>
+      </tr>
+      <tr>
+        <td>印太洋駝海豚</td>
+        <td><span class="conservation-badge badge-vu">易危 VU</span></td>
+        <td>數萬隻</td>
+        <td>沿岸開發、漁業</td>
+      </tr>
+      <tr>
+        <td>虎鯨</td>
+        <td><span class="conservation-badge badge-nt">近危 NT</span></td>
+        <td>約 50,000 隻</td>
+        <td>污染、食物短缺</td>
+      </tr>
+      <tr>
+        <td>寬吻海豚</td>
+        <td><span class="conservation-badge badge-lc">無危 LC</span></td>
+        <td>> 600,000 隻</td>
+        <td>人為干擾</td>
+      </tr>
+      <tr>
+        <td>旋轉海豚</td>
+        <td><span class="conservation-badge badge-lc">無危 LC</span></td>
+        <td>> 1,000,000 隻</td>
+        <td>觀光騷擾</td>
+      </tr>
+    </table>
+
+    <div class="highlight-box">
+      <h3>🌊 你可以做的事</h3>
+      <p>選購「海豚友善」標章的金槍魚罐頭 · 減少一次性塑膠使用 · 選擇負責任的海豚生態旅遊業者（保持安全距離、不觸碰、不餵食）· 支持推動刺網法規的海洋保育組織 · 在台灣西部海岸關注中華白海豚的保育進展。</p>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>資料來源：IUCN Red List、Cetacean Society International、NOAA Fisheries、台灣白海豚研究群（TCDSG）</p>
+  <p style="margin-top:8px;">
+    <a href="index.html">← 返回 AI Resources Hub</a>
+  </p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
