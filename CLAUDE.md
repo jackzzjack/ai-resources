@@ -23,6 +23,8 @@
 | `space/galaxy.html` | 銀河系互動視覺化（程序生成旋臂、核球、太陽系定位標記） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽（事件視界、奇點、時間膨脹、霍金輻射） |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南（發射流程、逃逸速度、引力助推） |
+| `space/modern_rockets.html` | 現代火箭構造與回收技術導覽 |
+| `space/space_shuttle.html` | 太空梭構造與飛行任務流程導覽 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽（光譜分類、太陽演化、代表性恆星） |
 | `vim_cheat_sheet.html` | Vim 指令速查表，支援即時搜尋與分類篩選 |
 | `tmux_cheat_sheet.html` | tmux 指令速查表 |
@@ -33,10 +35,17 @@
 | `power-industry.html` | 電源與能源產業分析頁面 |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 | `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
-| `power-industry.html` | 電源與能源產業分析頁面 |
 | `ems-industry.html` | EMS 電子代工產業生態系導覽 |
+| `shipping-industry.html` | 航運產業生態系與商業模式導覽 |
 | `stock-valuation.html` | 投資評價工具（本益比、估值模型、成長性分析） |
+| `gerd_guide.html` | 胃食道逆流完整指南（成因、症狀、治療策略） |
+| `linux_kernel_overview.html` | Linux Kernel 架構與子系統全覽 |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
+| `philippine_eagle.html` | 菲律賓鷹互動知識頁 |
+| `whale_knowledge.html` | 鯨魚世界互動知識庫 |
+| `dolphin.html` | 海豚互動知識頁 |
+| `dinosaurs.html` | 恐龍百科互動知識頁 |
+| `animal_eyes_iris.html` | 動物眼睛與虹膜科學知識頁 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
