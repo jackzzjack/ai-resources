@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>胃食道逆流完整指南</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --info: #3b82f6;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(239,68,68,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 30%, rgba(124,106,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #fca5a5 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(124,106,255,0.15);
+      border-color: var(--accent);
+      color: var(--accent2);
+    }
+
+    main {
+      flex: 1;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    section {
+      scroll-margin-top: 70px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .section-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .section-icon.red    { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.25); }
+    .section-icon.amber  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.25); }
+    .section-icon.blue   { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.25); }
+    .section-icon.green  { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.25); }
+    .section-icon.purple { background: rgba(124,106,255,0.15); border: 1px solid rgba(124,106,255,0.25); }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-header .sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* anatomy diagram */
+    .anatomy-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .anatomy-svg-wrap {
+      flex: 0 0 260px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .anatomy-text {
+      flex: 1 1 280px;
+    }
+
+    .anatomy-text p {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .anatomy-text p:last-child { margin-bottom: 0; }
+
+    .highlight-box {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #fca5a5;
+    }
+
+    /* cards grid */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .card-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+    /* cause list */
+    .cause-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cause-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+
+    .cause-badge {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .cause-badge.primary   { background: rgba(239,68,68,0.15); }
+    .cause-badge.secondary { background: rgba(245,158,11,0.15); }
+    .cause-badge.tertiary  { background: rgba(59,130,246,0.15); }
+
+    .cause-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .cause-content p  { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+    /* symptom severity scale */
+    .severity-scale {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .severity-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+
+    .severity-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .severity-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    .severity-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .severity-bar {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .severity-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      width: 200px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    /* consequence timeline */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--danger), var(--warning), #a855f7);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 28px 24px;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -22px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-item h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .timeline-item p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .timeline-tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    /* treatment accordion */
+    .treatment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .treatment-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .treatment-card:hover { border-color: var(--accent); }
+
+    .treatment-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .treatment-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(124,106,255,0.15);
+      border: 1px solid rgba(124,106,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent2);
+      flex-shrink: 0;
+    }
+
+    .treatment-title { font-size: 1rem; font-weight: 700; flex: 1; }
+    .treatment-arrow { color: var(--muted); transition: transform 0.3s; font-size: 0.8rem; }
+
+    .treatment-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      padding: 0 20px;
+    }
+
+    .treatment-body.open {
+      max-height: 500px;
+      padding: 0 20px 20px;
+    }
+
+    .treatment-arrow.open { transform: rotate(180deg); }
+
+    .treatment-body ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .treatment-body li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .treatment-body li::before {
+      content: '›';
+      color: var(--accent2);
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1.5;
+      flex-shrink: 0;
+    }
+
+    /* video embed */
+    .video-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .video-label {
+      padding: 16px 20px 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .video-label span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    /* info banner */
+    .info-banner {
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      color: #93c5fd;
+      line-height: 1.7;
+    }
+
+    .info-banner .icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent2); }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.7rem; }
+      .anatomy-svg-wrap { flex: 0 0 100%; }
+      .severity-desc { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">消化系統衛教</div>
+  <h1>胃食道逆流完整指南</h1>
+  <p>了解 GERD（Gastroesophageal Reflux Disease）的成因、症狀識別、潛在後果，以及完整治療策略</p>
+</header>
+
+<nav class="nav-bar" aria-label="頁面導覽">
+  <a class="nav-link active" onclick="scrollTo('what')">什麼是逆流</a>
+  <a class="nav-link" onclick="scrollTo('why')">為何發生</a>
+  <a class="nav-link" onclick="scrollTo('symptoms')">症狀辨別</a>
+  <a class="nav-link" onclick="scrollTo('consequences')">潛在後果</a>
+  <a class="nav-link" onclick="scrollTo('treatment')">治療方法</a>
+  <a class="nav-link" onclick="scrollTo('video')">衛教影片</a>
+</nav>
+
+<main>
+
+  <!-- WHAT -->
+  <section id="what">
+    <div class="section-header">
+      <div class="section-icon red">🫁</div>
+      <div>
+        <h2>什麼是胃食道逆流？</h2>
+        <div class="sub">GERD · Gastroesophageal Reflux Disease</div>
+      </div>
+    </div>
+    <div class="anatomy-wrap">
+      <div class="anatomy-svg-wrap">
+        <!-- simplified anatomical diagram -->
+        <svg width="200" height="320" viewBox="0 0 200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- esophagus -->
+          <rect x="82" y="10" width="36" height="120" rx="18" fill="rgba(124,106,255,0.15)" stroke="#7c6aff" stroke-width="1.5"/>
+          <text x="100" y="70" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="sans-serif">食道</text>
+          <!-- LES label -->
+          <rect x="72" y="118" width="56" height="20" rx="6" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="100" y="131" text-anchor="middle" fill="#fca5a5" font-size="9" font-family="sans-serif">下食道括約肌</text>
+          <!-- stomach -->
+          <ellipse cx="96" cy="220" rx="70" ry="68" fill="rgba(59,130,246,0.12)" stroke="#3b82f6" stroke-width="1.5"/>
+          <text x="96" y="215" text-anchor="middle" fill="#93c5fd" font-size="12" font-family="sans-serif">胃</text>
+          <text x="96" y="232" text-anchor="middle" fill="#60a5fa" font-size="9" font-family="sans-serif">（胃酸 pH 1.5–3.5）</text>
+          <!-- reflux arrows (red) -->
+          <path d="M 88 118 C 80 100 74 80 78 50" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+          <path d="M 112 118 C 120 100 126 80 122 50" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill="#ef4444"/>
+            </marker>
+          </defs>
+          <!-- reflux label -->
+          <text x="140" y="85" fill="#ef4444" font-size="10" font-family="sans-serif">逆流</text>
+          <text x="140" y="98" fill="#fca5a5" font-size="9" font-family="sans-serif">↑ 胃酸上升</text>
+          <!-- diaphragm line -->
+          <path d="M 10 145 Q 100 130 190 145" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="14" y="158" fill="#6b7280" font-size="9" font-family="sans-serif">橫膈膜</text>
+        </svg>
+      </div>
+      <div class="anatomy-text">
+        <p>
+          胃食道逆流（GERD）是指胃部的內容物——包括高濃度胃酸與消化酶——頻繁地往上逆行，穿過<strong style="color:var(--text)">下食道括約肌（LES）</strong>，進入食道甚至咽喉的一種慢性病症。
+        </p>
+        <p>
+          正常情況下，LES 是一道位於食道與胃交界處的「單向閥門」，進食時開放讓食物通過，其餘時間保持緊閉，防止胃酸逆流。
+        </p>
+        <p>
+          當 LES 功能失調、壓力不足或被賁門疝（食道裂孔疝）所干擾，這道閥門便無法緊閉，胃酸即得以持續逆流。
+        </p>
+        <div class="highlight-box">
+          ⚠️ 偶爾的胃酸逆流屬正常生理現象；若每週發作兩次以上，持續超過數週，才符合 GERD 的臨床定義，需積極評估與治療。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="section-header">
+      <div class="section-icon amber">⚙️</div>
+      <div>
+        <h2>為什麼會發生胃食道逆流？</h2>
+        <div class="sub">多重因素共同造成 LES 功能失調</div>
+      </div>
+    </div>
+    <div class="cause-list">
+      <div class="cause-item">
+        <div class="cause-badge primary">🚪</div>
+        <div class="cause-content">
+          <h4>下食道括約肌（LES）壓力不足</h4>
+          <p>LES 為肌肉環狀結構。長期飲食失調、某些食物（咖啡因、薄荷、巧克力、高脂食物、酒精）或藥物（鈣離子阻斷劑、抗膽鹼藥物）會使其鬆弛，閥門無法完全閉合。</p>
+        </div>
+      </div>
+      <div class="cause-item">
+        <div class="cause-badge primary">🫙</div>
+        <div class="cause-content">
+          <h4>食道裂孔疝（Hiatal Hernia）</h4>
+          <p>胃的上部穿過橫膈膜上的食道裂孔進入胸腔，使 LES 失去橫膈膜的輔助支撐，幾乎是 GERD 中最常見的解剖異常。</p>
+        </div>
+      </div>
+      <div class="cause-item">
+        <div class="cause-badge primary">⬆️</div>
+        <div class="cause-content">
+          <h4>腹內壓力增高</h4>
+          <p>肥胖、懷孕、長期便秘、舉重訓練或緊身衣物，都會直接將胃往上推擠，增加胃酸突破 LES 的壓力差。</p>
+        </div>
+      </div>
+      <div class="cause-item">
+        <div class="cause-badge secondary">🍽️</div>
+        <div class="cause-content">
+          <h4>飲食與生活習慣</h4>
+          <p>暴飲暴食（胃容積超載）、飯後立即躺臥、睡前進食、吸菸（降低 LES 壓力並減少保護性唾液）皆為重要誘因。</p>
+        </div>
+      </div>
+      <div class="cause-item">
+        <div class="cause-badge secondary">🐌</div>
+        <div class="cause-content">
+          <h4>胃排空延遲（Gastroparesis）</h4>
+          <p>胃的蠕動功能減弱時，食物滯留胃中過久，胃酸持續分泌，內壓升高，更易觸發逆流。常見於糖尿病患者或迷走神經受損者。</p>
+        </div>
+      </div>
+      <div class="cause-item">
+        <div class="cause-badge tertiary">💊</div>
+        <div class="cause-content">
+          <h4>藥物副作用</h4>
+          <p>阿斯匹靈、NSAIDs（布洛芬、那普洛辛）、雙磷酸鹽類（骨質疏鬆藥）、四環素類抗生素等，皆可直接刺激食道黏膜或鬆弛 LES。</p>
+        </div>
+      </div>
+      <div class="cause-item">
+        <div class="cause-badge tertiary">🧬</div>
+        <div class="cause-content">
+          <h4>遺傳與體質因素</h4>
+          <p>家族史、食道蠕動功能先天較弱（食道廓清能力差），以及胃酸分泌量體質性偏高，均屬不可改變的風險因子。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYMPTOMS -->
+  <section id="symptoms">
+    <div class="section-header">
+      <div class="section-icon blue">🔍</div>
+      <div>
+        <h2>如何發現胃食道逆流？</h2>
+        <div class="sub">典型症狀、非典型症狀與診斷方式</div>
+      </div>
+    </div>
+
+    <div class="cards" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-icon">🔥</div>
+        <div class="card-title">胸口灼熱感（Heartburn）</div>
+        <div class="card-desc">俗稱「火燒心」，為最典型症狀。胸骨後方有灼燒感，常於飯後、彎腰或躺下時加劇。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤢</div>
+        <div class="card-title">酸液逆流（Regurgitation）</div>
+        <div class="card-desc">酸苦的液體或未消化食物不自覺地回流至喉嚨或口腔，有時伴隨噁心感。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">😮‍💨</div>
+        <div class="card-title">慢性咳嗽與喉嚨異物感</div>
+        <div class="card-desc">胃酸刺激咽喉與氣管，引發頑固性乾咳、聲音沙啞，或持續清喉嚨的衝動（咽喉逆流 LPR）。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">😮</div>
+        <div class="card-title">吞嚥困難（Dysphagia）</div>
+        <div class="card-desc">食物感覺卡在胸口，可能源自食道痙攣、食道環或長期發炎後的結疤狹窄。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">😴</div>
+        <div class="card-title">夜間症狀</div>
+        <div class="card-desc">躺平時逆流加劇，導致夜咳、睡眠中嗆醒，甚至反覆發作的夜間氣喘症狀。</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🦷</div>
+        <div class="card-title">牙齒侵蝕與口臭</div>
+        <div class="card-desc">長期胃酸到達口腔，腐蝕琺瑯質，造成牙齒敏感與持續口臭，有時牙醫是最先發現 GERD 的人。</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:var(--muted);margin-bottom:14px;">診斷工具嚴重度量表</h3>
+    <div class="severity-scale">
+      <div class="severity-row">
+        <div class="severity-dot" style="background:#10b981;"></div>
+        <div class="severity-label" style="color:#10b981;">自我觀察</div>
+        <div class="severity-bar-wrap"><div class="severity-bar" style="width:20%;background:#10b981;"></div></div>
+        <div class="severity-desc">症狀日誌、飲食紀錄</div>
+      </div>
+      <div class="severity-row">
+        <div class="severity-dot" style="background:#3b82f6;"></div>
+        <div class="severity-label" style="color:#3b82f6;">胃鏡檢查</div>
+        <div class="severity-bar-wrap"><div class="severity-bar" style="width:55%;background:#3b82f6;"></div></div>
+        <div class="severity-desc">直視食道、確認糜爛或巴瑞特</div>
+      </div>
+      <div class="severity-row">
+        <div class="severity-dot" style="background:#f59e0b;"></div>
+        <div class="severity-label" style="color:#f59e0b;">24 小時 pH 監測</div>
+        <div class="severity-bar-wrap"><div class="severity-bar" style="width:75%;background:#f59e0b;"></div></div>
+        <div class="severity-desc">測量食道酸暴露時間的黃金標準</div>
+      </div>
+      <div class="severity-row">
+        <div class="severity-dot" style="background:#ef4444;"></div>
+        <div class="severity-label" style="color:#ef4444;">食道壓力測定</div>
+        <div class="severity-bar-wrap"><div class="severity-bar" style="width:90%;background:#ef4444;"></div></div>
+        <div class="severity-desc">評估 LES 壓力與食道蠕動功能</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSEQUENCES -->
+  <section id="consequences">
+    <div class="section-header">
+      <div class="section-icon red">⚠️</div>
+      <div>
+        <h2>長期未治療的後果</h2>
+        <div class="sub">從輕微炎症到癌變——嚴重性遞進</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f59e0b;"></div>
+        <div class="timeline-tag" style="background:rgba(245,158,11,0.15);color:#fbbf24;">早期</div>
+        <h4>食道炎（Esophagitis）</h4>
+        <p>持續的胃酸侵蝕食道黏膜，造成紅腫、糜爛與潰瘍。輕度食道炎在黏膜修復能力尚佳時可逆轉，但會引發明顯疼痛與吞嚥不適。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f97316;"></div>
+        <div class="timeline-tag" style="background:rgba(249,115,22,0.15);color:#fb923c;">中期</div>
+        <h4>食道狹窄（Peptic Stricture）</h4>
+        <p>反覆潰瘍與癒合形成瘢痕組織，食道管腔逐漸縮窄，導致進行性吞嚥困難，固體食物難以下嚥。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#ef4444;"></div>
+        <div class="timeline-tag" style="background:rgba(239,68,68,0.15);color:#f87171;">中重期</div>
+        <h4>巴瑞特食道（Barrett's Esophagus）</h4>
+        <p>長期酸損傷使食道下段的正常鱗狀上皮化生（轉變）為柱狀上皮，形態類似胃腸道黏膜。此為 GERD 最重要的癌前病變，需每 1–3 年做一次胃鏡追蹤。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#a855f7;"></div>
+        <div class="timeline-tag" style="background:rgba(168,85,247,0.15);color:#c084fc;">嚴重</div>
+        <h4>食道腺癌（Esophageal Adenocarcinoma）</h4>
+        <p>巴瑞特食道若持續惡化，異形增生（dysplasia）可進展為腺癌。雖整體發生率約每年 0.1–0.3%，但食道腺癌預後差，五年存活率低於 20%，早期發現攸關生死。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#6366f1;"></div>
+        <div class="timeline-tag" style="background:rgba(99,102,241,0.15);color:#818cf8;">食道外</div>
+        <h4>呼吸道與口腔併發症</h4>
+        <p>慢性咽喉炎、聲帶損傷（聲音沙啞）、慢性鼻竇炎，以及嚴重者引發吸入性肺炎或加重氣喘；牙齒琺瑯質侵蝕則屬口腔科常見的食道外表現。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TREATMENT -->
+  <section id="treatment">
+    <div class="section-header">
+      <div class="section-icon green">💊</div>
+      <div>
+        <h2>如何治療胃食道逆流？</h2>
+        <div class="sub">階梯式治療策略——從生活調整到外科手術</div>
+      </div>
+    </div>
+    <div class="treatment-list">
+      <div class="treatment-card">
+        <div class="treatment-header" onclick="toggleTreatment(this)">
+          <div class="treatment-num">1</div>
+          <div class="treatment-title">生活型態改變（一線介入）</div>
+          <div class="treatment-arrow">▼</div>
+        </div>
+        <div class="treatment-body open">
+          <ul>
+            <li>減重：體重每降低 5–10%，GERD 症狀顯著改善，為最有效的非藥物介入。</li>
+            <li>抬高床頭 15–20 公分（非僅墊枕頭），利用重力減少夜間逆流。</li>
+            <li>飯後至少 3 小時才躺臥；避免睡前進食。</li>
+            <li>戒菸、限制酒精；減少咖啡、巧克力、薄荷、辛辣與高脂食物攝取。</li>
+            <li>少量多餐取代大餐；細嚼慢嚥，避免暴飲暴食。</li>
+            <li>評估並調整可能導致逆流的藥物（需與醫師討論，勿自行停藥）。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="treatment-card">
+        <div class="treatment-header" onclick="toggleTreatment(this)">
+          <div class="treatment-num">2</div>
+          <div class="treatment-title">制酸藥物（分層使用）</div>
+          <div class="treatment-arrow">▼</div>
+        </div>
+        <div class="treatment-body">
+          <ul>
+            <li><strong style="color:var(--text)">制酸劑（Antacids）</strong>：碳酸鈣、氫氧化鋁等，快速中和已分泌的胃酸，適合偶發症狀的即時緩解，但效果短暫（30–60 分鐘）。</li>
+            <li><strong style="color:var(--text)">H2 受體拮抗劑（H2 Blockers）</strong>：法莫替丁（Famotidine）等，抑制組織胺刺激的胃酸分泌，效果可維持 8–12 小時，適合輕中度症狀。</li>
+            <li><strong style="color:var(--text)">質子幫浦抑制劑（PPIs）</strong>：奧美拉唑（Omeprazole）、雷貝拉唑（Rabeprazole）等，為目前最有效的抑酸藥物，阻斷胃壁細胞質子幫浦，抑酸效果達 80–90%。通常建議飯前 30–60 分鐘服用，療程 4–8 週起。</li>
+            <li>長期使用 PPI 需注意：鎂離子與維生素 B12 吸收下降、骨密度輕微降低、腸道菌群改變，應定期由醫師評估是否需繼續使用。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="treatment-card">
+        <div class="treatment-header" onclick="toggleTreatment(this)">
+          <div class="treatment-num">3</div>
+          <div class="treatment-title">促胃動力藥物</div>
+          <div class="treatment-arrow">▼</div>
+        </div>
+        <div class="treatment-body">
+          <ul>
+            <li>Metoclopramide（滅吐靈）、Domperidone（多潘立酮）等，可加速胃排空、提高 LES 壓力。</li>
+            <li>適用於合併胃排空延遲或以噁心、嘔吐為主要症狀的患者。</li>
+            <li>長期使用可能產生錐體外症候群等副作用，需謹慎評估。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="treatment-card">
+        <div class="treatment-header" onclick="toggleTreatment(this)">
+          <div class="treatment-num">4</div>
+          <div class="treatment-title">內視鏡與微創治療</div>
+          <div class="treatment-arrow">▼</div>
+        </div>
+        <div class="treatment-body">
+          <ul>
+            <li><strong style="color:var(--text)">Stretta 射頻治療</strong>：經口內視鏡對 LES 施以射頻能量，促進組織增厚與神經重塑，強化閥門功能。</li>
+            <li><strong style="color:var(--text)">TIF（經口無切口胃底摺疊術）</strong>：透過內視鏡重建 His 角度，加強抗逆流屏障，避免體表切口。</li>
+            <li>適用於不願長期服藥或藥物療效不佳、但又不希望開腹的中度患者。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="treatment-card">
+        <div class="treatment-header" onclick="toggleTreatment(this)">
+          <div class="treatment-num">5</div>
+          <div class="treatment-title">外科手術（嚴重或難治型）</div>
+          <div class="treatment-arrow">▼</div>
+        </div>
+        <div class="treatment-body">
+          <ul>
+            <li><strong style="color:var(--text)">腹腔鏡胃底摺疊術（Nissen Fundoplication）</strong>：將胃底繞 LES 縫合一圈（360°），建立永久性抗逆流機制，長期療效達 80–90%，為外科手術的黃金標準。</li>
+            <li><strong style="color:var(--text)">磁力括約肌增強術（LINX）</strong>：在 LES 外圍放置一串磁性珠環，吞嚥時可被食物撐開，靜止時磁力閉合防止逆流，可維持正常的打嗝與嘔吐反射。</li>
+            <li>外科手術前需完整的術前評估（食道測壓、24 小時 pH 監測），確認病理機制適合手術。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-banner" style="margin-top:20px;">
+      <div class="icon">ℹ️</div>
+      <div>本頁面提供衛教資訊，<strong>不構成醫療建議</strong>。若您有持續胸口灼熱、吞嚥困難或夜間症狀，請諮詢腸胃科醫師進行正式評估，不應自行調整處方藥物。</div>
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section id="video">
+    <div class="section-header">
+      <div class="section-icon purple">▶️</div>
+      <div>
+        <h2>衛教影片</h2>
+        <div class="sub">深入了解胃食道逆流的機制與治療</div>
+      </div>
+    </div>
+    <div class="video-wrap">
+      <div class="video-label">
+        <span></span>
+        YouTube 衛教影片 · 胃食道逆流（GERD）完整說明
+      </div>
+      <div class="video-container">
+        <iframe
+          src="https://www.youtube.com/embed/v5D5JV12MvQ"
+          title="胃食道逆流衛教影片"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <a class="back-link" href="index.html">← 返回主頁</a>
+
+</main>
+
+<script>
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function toggleTreatment(header) {
+    const body  = header.nextElementSibling;
+    const arrow = header.querySelector('.treatment-arrow');
+    body.classList.toggle('open');
+    arrow.classList.toggle('open');
+  }
+
+  // highlight active nav on scroll
+  const sections = ['what','why','symptoms','consequences','treatment','video'];
+  const links = document.querySelectorAll('.nav-link');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 100) current = id;
+    });
+    links.forEach((l, i) => {
+      l.classList.toggle('active', i === sections.indexOf(current));
+    });
+  }, { passive: true });
+</script>
+
+</body>
+</html>
