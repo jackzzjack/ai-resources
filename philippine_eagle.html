@@ -536,6 +536,45 @@
       font-size: 0.8rem;
       border-top: 1px solid var(--border);
     }
+
+    /* ─── Video embed ─── */
+    .video-section {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    .video-section h3 {
+      color: var(--accent2);
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .video-responsive {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #000;
+    }
+
+    .video-responsive iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    .video-caption {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -552,6 +591,7 @@
   <a class="nav-link" href="#" onclick="switchTab(document.querySelectorAll('.tab-btn')[1], 'behavior'); return false;">習性行為</a>
   <a class="nav-link" href="#" onclick="switchTab(document.querySelectorAll('.tab-btn')[2], 'conservation'); return false;">保育現況</a>
   <a class="nav-link" href="#" onclick="switchTab(document.querySelectorAll('.tab-btn')[3], 'facts'); return false;">趣味知識</a>
+  <a class="nav-link" href="#" onclick="switchTab(document.querySelectorAll('.tab-btn')[4], 'video'); return false;">影片欣賞</a>
 </nav>
 
 <main>
@@ -560,6 +600,7 @@
     <button class="tab-btn" onclick="switchTab(this, 'behavior')">2. 習性行為</button>
     <button class="tab-btn" onclick="switchTab(this, 'conservation')">3. 保育現況</button>
     <button class="tab-btn" onclick="switchTab(this, 'facts')">4. 趣味知識</button>
+    <button class="tab-btn" onclick="switchTab(this, 'video')">5. 影片欣賞</button>
   </div>
 
   <!-- ═══ Tab 1: Overview ═══ -->
@@ -1134,6 +1175,49 @@
     <div class="highlight" style="margin-top:24px;">
       <strong>你知道嗎？</strong>菲律賓鷹的臉部輪廓從正面看，因冠羽圍繞、大眼居中、鼻梁突出，外型酷似人臉，這讓牠在社群媒體上大受歡迎，常被稱為「世界上最帥的鳥」。這種獨特外型也有科學原因：面部朝前的眼睛提供強大的立體視覺，是森林頂級掠食者的必備能力。
     </div>
+  </div>
+
+  <!-- ═══ Tab 5: Video ═══ -->
+  <div id="tab-video" class="tab-panel">
+
+    <div class="video-section">
+      <h3>&#127909; 菲律賓鷹影片紀錄</h3>
+      <div class="video-responsive">
+        <iframe
+          src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fv%2F18pyVF6UYM%2F&width=1280&show_text=false&height=720&appId"
+          scrolling="no"
+          frameborder="0"
+          allowfullscreen="true"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+        </iframe>
+      </div>
+      <div class="video-caption">
+        影片來源：Facebook　·　菲律賓鷹（Philippine Eagle）真實生態影像紀錄
+      </div>
+    </div>
+
+    <div class="highlight">
+      <strong>關於本影片：</strong>本段影片呈現菲律賓鷹的真實樣貌與生態環境，包含其標誌性的獅鬃冠羽、銳利眼神與森林棲地。觀看時可留意牠的體型比例、飛行姿態與冠羽展開的細節，這些都是野外辨識的重要依據。
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <span class="card-icon">&#128247;</span>
+        <h3>觀察重點：冠羽</h3>
+        <p>影片中可見頭部四周放射狀的淡棕色長羽——這是菲律賓鷹最具標誌性的特徵。冠羽豎起時狀如獅鬃，靜止時則向後貼覆，情緒激動時會完全展開。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128065;</span>
+        <h3>觀察重點：藍灰色眼睛</h3>
+        <p>菲律賓鷹的虹膜呈罕見的藍灰色，雙眼朝前配置，具備極強的立體視覺。觀察影片時可感受其眼神的銳利度與深度感知能力。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#127807;</span>
+        <h3>觀察重點：棲地環境</h3>
+        <p>背景展現菲律賓熱帶雨林的原始樣貌——高大的龍腦香科喬木、濃密的樹冠層，正是菲律賓鷹賴以生存的家園，也是最需要保護的生態系統。</p>
+      </div>
+    </div>
+
   </div>
 
 </main>
