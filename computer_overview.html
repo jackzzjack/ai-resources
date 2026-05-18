@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電腦全覽：歷史・組成・架構・趨勢</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #7c6aff;
+    --accent2: #00d4ff;
+    --accent3: #ff6a9b;
+    --accent4: #6affb0;
+    --text: #e8e8f0;
+    --text-muted: #888899;
+    --gold: #ffd166;
+    --orange: #ff9f43;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    min-height: 56px;
+  }
+  .nav-logo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-right: 1rem;
+    white-space: nowrap;
+  }
+  .nav-btn {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,106,255,0.1);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 5rem 1rem 3rem;
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,106,255,0.15) 0%, transparent 70%);
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+  .hero p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .hero-chips {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+    scroll-margin-top: 70px;
+  }
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+  }
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), var(--accent3), transparent);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 2rem;
+    cursor: pointer;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -2.45rem;
+    top: 0.6rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .tl-item:hover::before {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px var(--accent);
+  }
+  .tl-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .tl-item:hover .tl-card {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  .tl-year {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .tl-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .tl-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .tl-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    font-weight: 600;
+  }
+  .badge-hw { background: rgba(124,106,255,0.2); color: var(--accent); }
+  .badge-sw { background: rgba(0,212,255,0.2); color: var(--accent2); }
+  .badge-net { background: rgba(106,255,176,0.2); color: var(--accent4); }
+  .badge-era { background: rgba(255,106,155,0.2); color: var(--accent3); }
+
+  .tl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 2rem;
+  }
+  @media (max-width: 700px) {
+    .tl-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── COMPONENTS ── */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .comp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-color, var(--accent));
+    border-radius: 14px 14px 0 0;
+  }
+  .comp-card:hover {
+    border-color: var(--card-color, var(--accent));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .comp-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+  }
+  .comp-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .comp-en {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.03em;
+  }
+  .comp-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .comp-specs {
+    display: none;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .comp-card.open .comp-specs { display: block; }
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .spec-key { color: var(--text-muted); }
+  .spec-val { color: var(--text); font-weight: 500; }
+
+  /* ── ARCHITECTURE DIAGRAM ── */
+  .arch-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    overflow-x: auto;
+  }
+  .arch-svg-wrap {
+    min-width: 700px;
+  }
+  .arch-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .arch-tab {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .arch-tab.active {
+    background: rgba(124,106,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Von Neumann SVG boxes */
+  .vn-box {
+    fill: var(--surface2);
+    stroke: var(--border);
+    stroke-width: 1.5;
+    rx: 10;
+    transition: all 0.3s;
+  }
+  .vn-box:hover { stroke: var(--accent); fill: rgba(124,106,255,0.1); cursor: pointer; }
+  .vn-text { fill: var(--text); font-family: inherit; font-size: 13px; }
+  .vn-sub { fill: var(--text-muted); font-family: inherit; font-size: 10px; }
+  .vn-arrow { stroke: var(--border); stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+  .vn-arrow-bi { stroke: var(--accent2); stroke-width: 1.5; fill: none; marker-end: url(#arrowhead2); marker-start: url(#arrowhead2-start); }
+
+  /* ── MODERN ARCH LAYERS ── */
+  .layers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .layer-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .layer-label {
+    width: 90px;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .layer-bar {
+    flex: 1;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .layer-bar:hover {
+    transform: scaleX(1.01);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  /* ── TRENDS ── */
+  .trends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  .trend-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .trend-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .trend-glow {
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+  .trend-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .trend-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .trend-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .trend-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.55; }
+  .trend-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.9rem; }
+  .trend-tag {
+    font-size: 0.72rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  /* ── PROGRESS BARS ── */
+  .progress-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .progress-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: var(--text-muted);
+  }
+  .prog-row {
+    margin-bottom: 1rem;
+  }
+  .prog-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+  .prog-bar-bg {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .prog-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-content {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 50;
+  }
+  .tooltip-wrap:hover .tooltip-content { opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .comp-grid { grid-template-columns: 1fr; }
+    .trends-grid { grid-template-columns: 1fr; }
+    nav { gap: 0.3rem; }
+  }
+
+  /* ── INTERACTIVE CPU PIPELINE ── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1rem 0;
+  }
+  .pipe-stage {
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+    min-width: 80px;
+  }
+  .pipe-stage.active {
+    background: rgba(124,106,255,0.2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .pipe-arrow {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    padding: 0 0.2rem;
+  }
+  .pipe-desc {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    min-height: 60px;
+    transition: opacity 0.3s;
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">💻 電腦全覽</div>
+  <button class="nav-btn active" onclick="scrollTo('history')">歷史</button>
+  <button class="nav-btn" onclick="scrollTo('components')">組成</button>
+  <button class="nav-btn" onclick="scrollTo('architecture')">架構</button>
+  <button class="nav-btn" onclick="scrollTo('pipeline')">CPU 流水線</button>
+  <button class="nav-btn" onclick="scrollTo('trends')">現代趨勢</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>電腦全覽</h1>
+  <p>從第一台機械計算機到量子運算，探索電腦的歷史演進、硬體組成、系統架構，與當代技術趨勢。</p>
+  <div class="hero-chips">
+    <span class="chip">⏱ 約 10 分鐘閱讀</span>
+    <span class="chip">🖱 全互動式</span>
+    <span class="chip">📐 Von Neumann 架構</span>
+    <span class="chip">🚀 AI 加速時代</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  SECTION 1 : 歷史                                   -->
+<!-- ═══════════════════════════════════════════════════ -->
+<hr class="section-divider">
+<section id="history">
+  <div class="section-title">⏳ 電腦歷史演進</div>
+  <p class="section-subtitle">從機械齒輪到矽晶片，電腦走過超過四個世代的革命性演變。</p>
+
+  <!-- Generation filter -->
+  <div class="arch-tabs" style="margin-bottom:2rem;" id="gen-tabs">
+    <button class="arch-tab active" onclick="filterGen('all', this)">全部</button>
+    <button class="arch-tab" onclick="filterGen('1', this)">第一代（真空管）</button>
+    <button class="arch-tab" onclick="filterGen('2', this)">第二代（電晶體）</button>
+    <button class="arch-tab" onclick="filterGen('3', this)">第三代（IC）</button>
+    <button class="arch-tab" onclick="filterGen('4', this)">第四代（VLSI）</button>
+    <button class="arch-tab" onclick="filterGen('5', this)">第五代（AI/量子）</button>
+  </div>
+
+  <div class="tl-grid">
+    <div class="timeline" id="tl-left"></div>
+    <div class="timeline" id="tl-right"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  SECTION 2 : 組成                                   -->
+<!-- ═══════════════════════════════════════════════════ -->
+<hr class="section-divider">
+<section id="components">
+  <div class="section-title">🔩 電腦組成元件</div>
+  <p class="section-subtitle">點擊各元件卡片，展開規格細節與功能說明。</p>
+  <div class="comp-grid" id="comp-grid"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  SECTION 3 : 架構                                   -->
+<!-- ═══════════════════════════════════════════════════ -->
+<hr class="section-divider">
+<section id="architecture">
+  <div class="section-title">🏗 電腦系統架構</div>
+  <p class="section-subtitle">Von Neumann 架構奠定了現代電腦的基礎藍圖，至今仍是主流。</p>
+
+  <div class="arch-container">
+    <div class="arch-tabs" id="arch-tabs">
+      <button class="arch-tab active" onclick="showArch('vonneumann', this)">Von Neumann 架構</button>
+      <button class="arch-tab" onclick="showArch('harvard', this)">Harvard 架構</button>
+      <button class="arch-tab" onclick="showArch('layers', this)">系統層次模型</button>
+    </div>
+
+    <!-- Von Neumann -->
+    <div id="arch-vonneumann" class="arch-svg-wrap">
+      <svg viewBox="0 0 760 420" width="100%" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4a4a6a"/>
+          </marker>
+          <marker id="arrowhead2" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#00d4ff"/>
+          </marker>
+          <marker id="arrowhead2-start" markerWidth="8" markerHeight="6" refX="2" refY="3" orient="auto-start-reverse">
+            <polygon points="0 0, 8 3, 0 6" fill="#00d4ff"/>
+          </marker>
+        </defs>
+
+        <!-- Input -->
+        <rect x="20" y="170" width="120" height="80" rx="10" class="vn-box" style="stroke:#6affb0"/>
+        <text x="80" y="205" text-anchor="middle" class="vn-text" fill="#6affb0" font-weight="700">輸入裝置</text>
+        <text x="80" y="222" text-anchor="middle" class="vn-sub">鍵盤・滑鼠・麥克風</text>
+        <text x="80" y="237" text-anchor="middle" class="vn-sub">掃描器・攝影機</text>
+
+        <!-- CPU -->
+        <rect x="220" y="60" width="320" height="300" rx="12" fill="rgba(124,106,255,0.07)" stroke="#7c6aff" stroke-width="1.5"/>
+        <text x="380" y="88" text-anchor="middle" class="vn-text" fill="#7c6aff" font-weight="700" font-size="15">中央處理器 CPU</text>
+
+        <!-- CU -->
+        <rect x="240" y="105" width="130" height="70" rx="8" class="vn-box" style="stroke:#ffd166"/>
+        <text x="305" y="136" text-anchor="middle" class="vn-text" fill="#ffd166" font-weight="700">控制單元 CU</text>
+        <text x="305" y="153" text-anchor="middle" class="vn-sub">指令解碼・時序控制</text>
+        <text x="305" y="166" text-anchor="middle" class="vn-sub">程式計數器 PC</text>
+
+        <!-- ALU -->
+        <rect x="390" y="105" width="130" height="70" rx="8" class="vn-box" style="stroke:#ff6a9b"/>
+        <text x="455" y="136" text-anchor="middle" class="vn-text" fill="#ff6a9b" font-weight="700">算術邏輯單元 ALU</text>
+        <text x="455" y="153" text-anchor="middle" class="vn-sub">加減乘除・邏輯運算</text>
+        <text x="455" y="166" text-anchor="middle" class="vn-sub">移位・比較</text>
+
+        <!-- Registers -->
+        <rect x="240" y="200" width="280" height="60" rx="8" class="vn-box" style="stroke:#00d4ff"/>
+        <text x="380" y="226" text-anchor="middle" class="vn-text" fill="#00d4ff" font-weight="700">暫存器組 Registers</text>
+        <text x="380" y="245" text-anchor="middle" class="vn-sub">通用暫存器・狀態暫存器・堆疊指標</text>
+
+        <!-- Cache -->
+        <rect x="240" y="285" width="280" height="55" rx="8" class="vn-box" style="stroke:#ff9f43"/>
+        <text x="380" y="309" text-anchor="middle" class="vn-text" fill="#ff9f43" font-weight="700">快取記憶體 Cache</text>
+        <text x="380" y="327" text-anchor="middle" class="vn-sub">L1 / L2 / L3 多層快取</text>
+
+        <!-- Memory -->
+        <rect x="300" y="390" width="160" height="20" rx="4" fill="none"/>
+        <rect x="220" y="380" width="320" height="30" rx="8" class="vn-box" style="stroke:#888899" fill="rgba(30,30,50,0.5)"/>
+        <text x="380" y="400" text-anchor="middle" class="vn-sub">匯流排 Bus（位址・資料・控制）</text>
+
+        <!-- Memory unit -->
+        <rect x="580" y="130" width="140" height="160" rx="10" class="vn-box" style="stroke:#00d4ff"/>
+        <text x="650" y="163" text-anchor="middle" class="vn-text" fill="#00d4ff" font-weight="700">記憶體</text>
+        <text x="650" y="180" text-anchor="middle" class="vn-sub">RAM（主記憶體）</text>
+        <line x1="650" y1="192" x2="650" y2="193" stroke="none"/>
+        <text x="650" y="207" text-anchor="middle" class="vn-sub">程式指令</text>
+        <text x="650" y="222" text-anchor="middle" class="vn-sub">＋</text>
+        <text x="650" y="237" text-anchor="middle" class="vn-sub">資料</text>
+        <text x="650" y="258" text-anchor="middle" class="vn-sub">（共用儲存）</text>
+        <text x="650" y="280" text-anchor="middle" class="vn-sub">—冯·諾依曼瓶頸—</text>
+
+        <!-- Output -->
+        <rect x="620" y="360" width="120" height="36" rx="8" class="vn-box" style="stroke:#6affb0"/>
+
+        <!-- Output device -->
+        <rect x="620" y="170" width="1" height="1" fill="none"/>
+        <rect x="20" y="320" width="120" height="70" rx="10" class="vn-box" style="stroke:#6affb0"/>
+        <text x="80" y="351" text-anchor="middle" class="vn-text" fill="#6affb0" font-weight="700">輸出裝置</text>
+        <text x="80" y="368" text-anchor="middle" class="vn-sub">螢幕・印表機</text>
+        <text x="80" y="383" text-anchor="middle" class="vn-sub">喇叭・投影機</text>
+
+        <!-- Storage -->
+        <rect x="580" y="310" width="140" height="60" rx="10" class="vn-box" style="stroke:#ff9f43"/>
+        <text x="650" y="337" text-anchor="middle" class="vn-text" fill="#ff9f43" font-weight="700">儲存裝置</text>
+        <text x="650" y="354" text-anchor="middle" class="vn-sub">HDD / SSD / NVMe</text>
+        <text x="650" y="367" text-anchor="middle" class="vn-sub">光碟 / 磁帶</text>
+
+        <!-- Arrows: Input → CPU -->
+        <line x1="140" y1="210" x2="218" y2="210" class="vn-arrow"/>
+
+        <!-- CPU ↔ Memory -->
+        <line x1="542" y1="180" x2="578" y2="180" class="vn-arrow-bi"/>
+        <line x1="542" y1="220" x2="578" y2="220" class="vn-arrow-bi"/>
+
+        <!-- CPU → Output -->
+        <line x1="218" y1="345" x2="140" y2="355" class="vn-arrow"/>
+
+        <!-- Memory ↔ Storage -->
+        <line x1="650" y1="292" x2="650" y2="308" class="vn-arrow-bi"/>
+
+        <!-- CU ↔ ALU -->
+        <line x1="372" y1="140" x2="388" y2="140" class="vn-arrow-bi"/>
+
+        <!-- CU/ALU → Registers -->
+        <line x1="305" y1="177" x2="305" y2="198" class="vn-arrow"/>
+        <line x1="455" y1="177" x2="455" y2="198" class="vn-arrow"/>
+
+        <!-- Registers → Cache -->
+        <line x1="380" y1="262" x2="380" y2="283" class="vn-arrow"/>
+      </svg>
+    </div>
+
+    <!-- Harvard -->
+    <div id="arch-harvard" style="display:none">
+      <svg viewBox="0 0 760 340" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah3" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4a4a6a"/>
+          </marker>
+          <marker id="ah4" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#6affb0"/>
+          </marker>
+        </defs>
+
+        <!-- CPU -->
+        <rect x="280" y="100" width="200" height="140" rx="12" fill="rgba(124,106,255,0.07)" stroke="#7c6aff" stroke-width="1.5"/>
+        <text x="380" y="128" text-anchor="middle" class="vn-text" fill="#7c6aff" font-weight="700" font-size="14">CPU</text>
+        <rect x="300" y="140" width="70" height="45" rx="6" class="vn-box" style="stroke:#ffd166"/>
+        <text x="335" y="162" text-anchor="middle" class="vn-text" fill="#ffd166" font-size="11" font-weight="700">CU</text>
+        <text x="335" y="177" text-anchor="middle" class="vn-sub">控制單元</text>
+        <rect x="390" y="140" width="70" height="45" rx="6" class="vn-box" style="stroke:#ff6a9b"/>
+        <text x="425" y="162" text-anchor="middle" class="vn-text" fill="#ff6a9b" font-size="11" font-weight="700">ALU</text>
+        <text x="425" y="177" text-anchor="middle" class="vn-sub">算術邏輯</text>
+        <rect x="300" y="200" width="160" height="30" rx="6" class="vn-box" style="stroke:#00d4ff"/>
+        <text x="380" y="220" text-anchor="middle" class="vn-text" fill="#00d4ff" font-size="11" font-weight="700">暫存器</text>
+
+        <!-- Instruction Memory -->
+        <rect x="40" y="110" width="160" height="120" rx="10" class="vn-box" style="stroke:#6affb0"/>
+        <text x="120" y="143" text-anchor="middle" class="vn-text" fill="#6affb0" font-weight="700">程式記憶體</text>
+        <text x="120" y="162" text-anchor="middle" class="vn-sub">Instruction Memory</text>
+        <text x="120" y="182" text-anchor="middle" class="vn-sub">唯讀 ROM / Flash</text>
+        <text x="120" y="200" text-anchor="middle" class="vn-sub">指令匯流排</text>
+        <text x="120" y="217" text-anchor="middle" class="vn-sub">（只取指令）</text>
+
+        <!-- Data Memory -->
+        <rect x="560" y="110" width="160" height="120" rx="10" class="vn-box" style="stroke:#ff9f43"/>
+        <text x="640" y="143" text-anchor="middle" class="vn-text" fill="#ff9f43" font-weight="700">資料記憶體</text>
+        <text x="640" y="162" text-anchor="middle" class="vn-sub">Data Memory</text>
+        <text x="640" y="182" text-anchor="middle" class="vn-sub">讀寫 RAM</text>
+        <text x="640" y="200" text-anchor="middle" class="vn-sub">資料匯流排</text>
+        <text x="640" y="217" text-anchor="middle" class="vn-sub">（只存取資料）</text>
+
+        <!-- Arrows -->
+        <line x1="202" y1="170" x2="278" y2="170" stroke="#6affb0" stroke-width="1.5" fill="none" marker-end="url(#ah4)"/>
+        <line x1="482" y1="170" x2="558" y2="170" stroke="#ff9f43" stroke-width="1.5" fill="none" marker-end="url(#ah3)"/>
+        <line x1="558" y1="190" x2="482" y2="190" stroke="#ff9f43" stroke-width="1.5" fill="none" marker-end="url(#ah3)"/>
+
+        <text x="240" y="160" text-anchor="middle" class="vn-sub" fill="#6affb0">指令流</text>
+        <text x="520" y="160" text-anchor="middle" class="vn-sub" fill="#ff9f43">讀取</text>
+        <text x="520" y="202" text-anchor="middle" class="vn-sub" fill="#ff9f43">寫入</text>
+
+        <!-- Comparison box -->
+        <rect x="160" y="270" width="440" height="50" rx="10" fill="rgba(106,255,176,0.06)" stroke="rgba(106,255,176,0.3)" stroke-width="1"/>
+        <text x="380" y="291" text-anchor="middle" class="vn-text" fill="#6affb0" font-size="12" font-weight="700">Harvard 優勢：指令與資料可同時存取，消除馮·諾依曼瓶頸</text>
+        <text x="380" y="310" text-anchor="middle" class="vn-sub">廣泛用於：DSP、微控制器（ARM Cortex-M）、GPU 著色器架構</text>
+      </svg>
+    </div>
+
+    <!-- System Layers -->
+    <div id="arch-layers" style="display:none">
+      <div class="layers">
+        <div class="layer-row">
+          <div class="layer-label">最高層</div>
+          <div class="layer-bar" style="background:rgba(255,106,155,0.15);border-color:rgba(255,106,155,0.4);color:#ff6a9b" onclick="showLayerInfo('app')">應用程式層（Application）</div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-label"></div>
+          <div class="layer-bar" style="background:rgba(255,159,67,0.15);border-color:rgba(255,159,67,0.4);color:#ff9f43" onclick="showLayerInfo('lib')">程式庫 / 中介軟體（Libraries / Middleware）</div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-label"></div>
+          <div class="layer-bar" style="background:rgba(253,209,102,0.15);border-color:rgba(253,209,102,0.4);color:#ffd166" onclick="showLayerInfo('os')">作業系統（OS）</div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-label"></div>
+          <div class="layer-bar" style="background:rgba(106,255,176,0.15);border-color:rgba(106,255,176,0.4);color:#6affb0" onclick="showLayerInfo('isa')">指令集架構（ISA）x86 / ARM / RISC-V</div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-label"></div>
+          <div class="layer-bar" style="background:rgba(0,212,255,0.15);border-color:rgba(0,212,255,0.4);color:#00d4ff" onclick="showLayerInfo('micro')">微架構（Microarchitecture）流水線・超純量</div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-label">最低層</div>
+          <div class="layer-bar" style="background:rgba(124,106,255,0.15);border-color:rgba(124,106,255,0.4);color:#7c6aff" onclick="showLayerInfo('logic')">數位邏輯層（Logic Gates / Transistors）</div>
+        </div>
+      </div>
+      <div id="layer-info" class="pipe-desc" style="max-width:700px;margin:1rem auto 0;">
+        ← 點擊各層，查看詳細說明
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  SECTION 4 : CPU Pipeline                           -->
+<!-- ═══════════════════════════════════════════════════ -->
+<hr class="section-divider">
+<section id="pipeline">
+  <div class="section-title">⚙️ CPU 指令流水線</div>
+  <p class="section-subtitle">現代 CPU 以流水線（Pipeline）方式平行處理多道指令，大幅提升效能。點擊各階段查看詳情。</p>
+
+  <div class="arch-container">
+    <div class="pipeline" id="pipeline-stages"></div>
+    <div class="pipe-desc" id="pipe-desc">← 點擊流水線階段，查看說明</div>
+
+    <div style="margin-top:2rem">
+      <div class="progress-title">⚡ 效能指標比較（相對值）</div>
+      <div class="prog-row">
+        <div class="prog-label"><span>單核心時脈速度</span><span>5 GHz</span></div>
+        <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="85" style="background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label"><span>IPC（每週期指令數）</span><span>高</span></div>
+        <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="78" style="background:linear-gradient(90deg,var(--accent2),var(--accent4))"></div></div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label"><span>快取命中率</span><span>L1: ~95%</span></div>
+        <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="95" style="background:linear-gradient(90deg,var(--accent4),var(--gold))"></div></div>
+      </div>
+      <div class="prog-row">
+        <div class="prog-label"><span>分支預測準確率</span><span>~99%</span></div>
+        <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="99" style="background:linear-gradient(90deg,var(--gold),var(--orange))"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  SECTION 5 : 現代趨勢                               -->
+<!-- ═══════════════════════════════════════════════════ -->
+<hr class="section-divider">
+<section id="trends">
+  <div class="section-title">🚀 現代電腦趨勢</div>
+  <p class="section-subtitle">2020 年代，電腦架構正在經歷半個世紀以來最劇烈的轉型。</p>
+  <div class="trends-grid" id="trends-grid"></div>
+
+  <!-- Moore's Law -->
+  <div class="progress-section fade-in" style="margin-top:2rem">
+    <div class="progress-title">📉 製程節點演進（邏輯閘縮小里程碑）</div>
+    <div class="prog-row">
+      <div class="prog-label"><span>Intel 4004（1971）— 10 µm</span><span>起點</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="100" style="background:rgba(124,106,255,0.6)"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label"><span>Intel Pentium（1993）— 800 nm</span><span>× 12.5 縮小</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="70" style="background:rgba(124,106,255,0.6)"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label"><span>Intel Core（2006）— 65 nm</span><span>× 154 縮小</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="50" style="background:rgba(0,212,255,0.6)"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label"><span>Apple M1（2020）— 5 nm</span><span>× 2000 縮小</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="25" style="background:rgba(106,255,176,0.6)"></div></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label"><span>TSMC N2（2025）— 2 nm</span><span>× 5000 縮小</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" data-width="8" style="background:linear-gradient(90deg,var(--accent3),var(--gold))"></div></div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:1rem">
+      ⚠️ 摩爾定律（Moore's Law）每 18-24 個月電晶體數量翻倍，在 2 nm 以下已接近物理極限，業界正尋求 3D 堆疊、異質整合等新路徑。
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="text-align:center;padding:3rem 1rem;color:var(--text-muted);font-size:0.85rem;border-top:1px solid var(--border)">
+  <p>電腦全覽 · 純靜態 HTML · CC BY 4.0</p>
+  <p style="margin-top:0.5rem">資料截至 2025 年 · 持續更新中</p>
+</footer>
+
+<script>
+/* ── DATA ─────────────────────────────────────────── */
+
+const tlData = [
+  { year: '1823', gen: '1', badge: 'hw', badgeText: '機械', title: '差分機（Difference Engine）', desc: 'Charles Babbage 設計世界第一台機械計算機，以齒輪齒條自動運算多項式。雖未完成，奠定了可程式化計算的概念基礎。' },
+  { year: '1843', gen: '1', badge: 'sw', badgeText: '軟體先驅', title: 'Ada Lovelace 撰寫第一個演算法', desc: '為 Babbage 分析機設計計算伯努利數的程序，被譽為世界第一位程式設計師。' },
+  { year: '1936', gen: '1', badge: 'hw', badgeText: '理論', title: 'Turing Machine 理論模型', desc: 'Alan Turing 提出通用計算機的理論模型，定義了「可計算性」，為所有現代電腦奠定數學基礎。' },
+  { year: '1945', gen: '1', badge: 'era', badgeText: '第一代', title: 'Von Neumann 架構論文', desc: 'John von Neumann 發表 EDVAC 報告，提出儲存程式計算機架構，程式與資料同存於記憶體。此架構沿用至今。' },
+  { year: '1946', gen: '1', badge: 'hw', badgeText: '第一代', title: 'ENIAC — 第一台電子計算機', desc: '採用 18,000 支真空管，佔地 170 平方公尺，重達 30 噸，耗電 150 kW。每秒可執行 5,000 次加法，是當時最快的計算機器。' },
+  { year: '1951', gen: '1', badge: 'hw', badgeText: '商用', title: 'UNIVAC I — 首台商業電腦', desc: '美國人口普查局採購使用，成為第一台大規模商業電腦，標誌電腦從科研邁向實用。' },
+  { year: '1947', gen: '2', badge: 'hw', badgeText: '關鍵發明', title: '電晶體（Transistor）發明', desc: 'Bell Labs 的 Bardeen、Brattain、Shockley 發明電晶體，取代真空管，體積小、耗電低、可靠度高，三人共獲 1956 年諾貝爾物理獎。' },
+  { year: '1957', gen: '2', badge: 'era', badgeText: '第二代', title: 'IBM 608 — 全電晶體商業電腦', desc: '以電晶體全面取代真空管，體積縮小 10 倍，可靠度大幅提升，開啟第二代電腦時代。' },
+  { year: '1958', gen: '3', badge: 'hw', badgeText: '關鍵發明', title: '積體電路（IC）發明', desc: 'Jack Kilby（Texas Instruments）與 Robert Noyce（Fairchild）分別獨立發明 IC，將多個電晶體整合於單一矽晶片。Kilby 獲 2000 年諾貝爾物理獎。' },
+  { year: '1964', gen: '3', badge: 'era', badgeText: '第三代', title: 'IBM System/360 系列', desc: '採用 IC 的大型主機系列，引入「相容系列」概念，同一軟體可在不同規格主機執行，確立企業電腦標準架構。' },
+  { year: '1965', gen: '3', badge: 'hw', badgeText: '定律', title: '摩爾定律提出', desc: 'Intel 共同創辦人 Gordon Moore 預測：每 18-24 個月，積體電路上的電晶體數量將翻倍，成本持續下降。此定律驅動半世紀的科技進步。' },
+  { year: '1971', gen: '4', badge: 'era', badgeText: '第四代', title: 'Intel 4004 — 第一顆商用微處理器', desc: '4 位元微處理器，2,300 個電晶體，10 µm 製程，時脈 740 kHz。開啟微處理器革命，讓個人電腦成為可能。' },
+  { year: '1975', gen: '4', badge: 'sw', badgeText: '軟體', title: 'Altair 8800 — 個人電腦先驅', desc: '第一台面向消費者的個人電腦套件，啟發 Bill Gates 與 Paul Allen 成立 Microsoft，為個人電腦時代揭幕。' },
+  { year: '1981', gen: '4', badge: 'hw', badgeText: '個人電腦', title: 'IBM PC 發布', desc: 'IBM 採用 Intel 8088 處理器與 Microsoft DOS，開放架構允許相容機製造，成就 x86 生態系統，主導 PC 市場至今。' },
+  { year: '1984', gen: '4', badge: 'sw', badgeText: 'GUI', title: 'Apple Macintosh — 圖形介面普及', desc: '首款以圖形使用者介面（GUI）與滑鼠為核心的商業電腦，將電腦帶入一般大眾生活，改變人機互動方式。' },
+  { year: '1989', gen: '4', badge: 'net', badgeText: '網路', title: 'World Wide Web 發明', desc: 'Tim Berners-Lee 在 CERN 提出 WWW 概念，將電腦從孤立運算工具轉變為全球連接的資訊平台，徹底改變人類社會。' },
+  { year: '1993', gen: '4', badge: 'hw', badgeText: 'RISC', title: 'PowerPC 與 RISC 架構崛起', desc: 'Apple、IBM、Motorola 聯合推出 PowerPC，精簡指令集（RISC）挑戰 x86 複雜指令集，奠定 ARM 後來主宰行動運算的基礎。' },
+  { year: '2007', gen: '4', badge: 'hw', badgeText: '行動', title: 'iPhone — 行動運算革命', desc: 'Apple 推出 iPhone，採用 ARM 架構 SoC，推動 ARM 成為行動裝置主流，促使晶片設計轉向低功耗、異質整合路線。' },
+  { year: '2012', gen: '5', badge: 'sw', badgeText: 'AI', title: 'AlexNet — 深度學習突破', desc: 'GPU 平行運算能力使深度神經網路訓練成為可能，觸發 AI 浪潮，GPU 從遊戲晶片演變為 AI 計算核心。' },
+  { year: '2016', gen: '5', badge: 'hw', badgeText: 'AI 晶片', title: 'Google TPU — AI 專用處理器', desc: 'Google Tensor Processing Unit 首度公開，針對神經網路矩陣運算優化，標誌 AI 加速器從通用 GPU 走向專用 ASIC。' },
+  { year: '2019', gen: '5', badge: 'hw', badgeText: 'Chiplet', title: 'AMD Ryzen / EPYC Chiplet 架構', desc: 'AMD 採用 Chiplet（小晶片拼接）設計，突破單一大晶片良率瓶頸，多顆小晶片透過 Infinity Fabric 互連，開啟異質整合新時代。' },
+  { year: '2020', gen: '5', badge: 'hw', badgeText: 'ARM', title: 'Apple M1 — ARM 桌機革命', desc: 'Apple Silicon M1 採用台積電 5nm 製程，將 CPU、GPU、NPU、記憶體整合於單一 SoC，以超低功耗實現頂級效能，迫使業界重新思考 PC 架構。' },
+  { year: '2023', gen: '5', badge: 'sw', badgeText: 'GenAI', title: 'ChatGPT / LLM 時代', desc: 'GPT-4 等大型語言模型引爆生成式 AI 浪潮，對計算力的需求呈指數成長，驅動 HBM 記憶體、NVLink 互連、液冷散熱等基礎設施快速演進。' },
+  { year: '2025', gen: '5', badge: 'hw', badgeText: '量子', title: 'Google Willow — 量子糾錯里程碑', desc: 'Google 105 量子位元晶片達成指數級量子糾錯改進，傳統超級電腦需 10²⁵ 年的計算，量子電腦僅需 5 分鐘，量子優勢時代逼近。' },
+];
+
+const compData = [
+  {
+    icon: '🧠', name: '中央處理器', en: 'CPU — Central Processing Unit',
+    color: '#7c6aff',
+    desc: '電腦的核心「大腦」，負責執行所有運算指令。現代 CPU 整合數十個核心、超執行緒、多層快取，以及分支預測、亂序執行等技術。',
+    specs: [
+      { k: '架構', v: 'x86-64 / ARM / RISC-V' },
+      { k: '核心數', v: '消費級 8-24 核 / 伺服器 96-192 核' },
+      { k: '時脈速度', v: '3-5 GHz（基礎），最高可達 6+ GHz' },
+      { k: '製程節點', v: '3nm ~ 5nm（2025 年主流）' },
+      { k: '快取層次', v: 'L1（~1MB）/ L2（~4MB）/ L3（~32MB）' },
+      { k: '熱設計功耗', v: '15W（行動）~ 400W（伺服器）' },
+    ]
+  },
+  {
+    icon: '🎮', name: '圖形處理器', en: 'GPU — Graphics Processing Unit',
+    color: '#00d4ff',
+    desc: '原用於遊戲畫面渲染，現已成為 AI/ML 訓練的主力。GPU 擁有數千個簡單核心，極擅長大規模平行矩陣運算，與 CPU 形成異質運算組合。',
+    specs: [
+      { k: '核心數', v: '數千個 CUDA/Shader Core' },
+      { k: '記憶體頻寬', v: 'HBM3e：3.5 TB/s（H100）' },
+      { k: '視訊記憶體', v: '消費：8-24 GB / 資料中心：80-192 GB' },
+      { k: 'AI 效能', v: '4 PetaFLOPS FP8（H100 SXM）' },
+      { k: '互連介面', v: 'PCIe 5.0 / NVLink 4.0' },
+      { k: '主要廠商', v: 'NVIDIA / AMD / Intel Arc' },
+    ]
+  },
+  {
+    icon: '💾', name: '隨機存取記憶體', en: 'RAM — Random Access Memory',
+    color: '#6affb0',
+    desc: '系統主記憶體，CPU 直接存取的工作空間。執行中的程式與資料暫存於此。斷電即消失（揮發性），存取速度遠快於硬碟但慢於快取。',
+    specs: [
+      { k: '類型', v: 'DDR5（主流）/ LPDDR5X（行動）/ HBM3e（AI）' },
+      { k: '頻寬', v: 'DDR5-6400：約 51 GB/s' },
+      { k: '延遲', v: '60-80 ns（DRAM），快取 ~1ns' },
+      { k: '消費容量', v: '8-64 GB / 工作站：256GB-2TB' },
+      { k: '電壓', v: 'DDR5：1.1V（省電 20% vs DDR4）' },
+    ]
+  },
+  {
+    icon: '💿', name: '儲存裝置', en: 'Storage — SSD / HDD / NVMe',
+    color: '#ff9f43',
+    desc: '永久性資料儲存，斷電後資料仍保留。從旋轉磁盤（HDD）演進至固態硬碟（SSD），再到 PCIe NVMe，速度提升千倍，但與記憶體仍有鴻溝。',
+    specs: [
+      { k: 'NVMe SSD 速度', v: '讀 7 GB/s / 寫 6.5 GB/s（PCIe 5.0）' },
+      { k: 'SATA SSD', v: '讀/寫 ~550 MB/s' },
+      { k: 'HDD 速度', v: '讀/寫 ~200 MB/s，旋轉延遲高' },
+      { k: '耐久性', v: 'SSD TBW：300-3600 TBW' },
+      { k: '容量', v: 'HDD 最大 ~30 TB / SSD ~8 TB（消費）' },
+    ]
+  },
+  {
+    icon: '🔌', name: '主機板', en: 'Motherboard — System Board',
+    color: '#ffd166',
+    desc: '連接所有元件的核心電路板。透過各種插槽、匯流排與介面（PCIe、DDR、USB、SATA），協調 CPU、記憶體、顯示卡、I/O 設備之間的通訊。',
+    specs: [
+      { k: '規格', v: 'ATX / Micro-ATX / ITX / E-ATX' },
+      { k: 'CPU 插槽', v: 'LGA1851（Intel）/ AM5（AMD）' },
+      { k: 'PCIe 版本', v: 'PCIe 5.0（主流）/ PCIe 6.0（新興）' },
+      { k: '供電相數', v: '16-24 相（高階主機板）' },
+      { k: '晶片組', v: 'Intel Z890 / AMD X870E' },
+    ]
+  },
+  {
+    icon: '⚡', name: '電源供應器', en: 'PSU — Power Supply Unit',
+    color: '#ff6a9b',
+    desc: '將市電（AC 110/220V）轉換為電腦各元件所需的直流電（DC 3.3V、5V、12V）。效率認證（80 Plus）影響電費與散熱，現代 AI 工作站需 1000W+。',
+    specs: [
+      { k: '認證等級', v: '80+ Bronze / Gold / Platinum / Titanium' },
+      { k: '最高效率', v: 'Titanium：~96%（負載 50% 時）' },
+      { k: '消費功率', v: '550-1000W / AI 工作站：1600-2400W' },
+      { k: '保護機制', v: 'OVP / OCP / OPP / SCP / UVP' },
+      { k: '規格標準', v: 'ATX 3.1 / 12VHPWR 600W 接頭' },
+    ]
+  },
+  {
+    icon: '🌀', name: '散熱系統', en: 'Cooling System',
+    color: '#00d4ff',
+    desc: '維持晶片在安全溫度範圍（CPU <90°C，GPU <85°C）。從空冷散熱器、AIO 一體水冷，到資料中心的浸沒式液冷（Immersion Cooling），散熱成本日益關鍵。',
+    specs: [
+      { k: '空冷', v: '散熱器 + 風扇，TDP 250W 以下' },
+      { k: 'AIO 水冷', v: '240/360mm 排，TDP 350W' },
+      { k: '直接液冷 DLC', v: '伺服器 HPC，TDP 1000W+' },
+      { k: '浸沒冷卻', v: 'AI 資料中心，PUE 接近 1.0' },
+      { k: '熱阻', v: 'CPU 散熱膏：液態金屬 0.01-0.03°C/W' },
+    ]
+  },
+  {
+    icon: '🌐', name: '網路介面', en: 'Network Interface',
+    color: '#6affb0',
+    desc: '連接區域網路與網際網路的橋梁。從百兆乙太網路演進至萬兆光纖、InfiniBand，AI 叢集需要超低延遲、超高頻寬的 RDMA 網路（如 RoCE、InfiniBand HDR/NDR）。',
+    specs: [
+      { k: '消費級', v: '2.5G / 5G Base-T 乙太網路' },
+      { k: '資料中心', v: '100G / 400G / 800G 乙太網路' },
+      { k: 'AI 叢集', v: 'InfiniBand NDR：400G，延遲 <1µs' },
+      { k: 'RDMA', v: 'RoCEv2 / iWARP，繞過 CPU 直接記憶體傳輸' },
+      { k: '無線', v: 'Wi-Fi 7（802.11be）：最高 46 Gbps' },
+    ]
+  },
+];
+
+const trendsData = [
+  {
+    icon: '🧩', color: '#7c6aff', title: 'Chiplet 異質整合', sub: 'Heterogeneous Integration',
+    desc: '將不同功能、不同製程的小晶片（Chiplet）拼接於同一封裝，突破單一大晶片良率瓶頸。AMD EPYC、Intel Ponte Vecchio、Apple M4 Ultra 均採此路線。',
+    tags: ['UCIe 標準', 'CoWoS 封裝', 'SiPh 矽光子', '2.5D/3D 堆疊']
+  },
+  {
+    icon: '🤖', color: '#00d4ff', title: 'AI 專用加速器', sub: 'AI Accelerator / NPU / TPU',
+    desc: '針對 Transformer、矩陣乘法（GEMM）、卷積運算設計專用電路，效能功耗比遠優於通用 GPU。已下沉至手機 SoC（Apple Neural Engine、高通 Hexagon）。',
+    tags: ['NVIDIA H200', 'Google TPU v5', 'Groq LPU', 'NPU on-chip']
+  },
+  {
+    icon: '⚡', color: '#6affb0', title: '近記憶體運算 PIM', sub: 'Processing In Memory',
+    desc: '將運算單元直接整合於記憶體晶片中，消除馮·諾依曼瓶頸。Samsung HBM-PIM、SK Hynix AiM 已商業化，可降低 AI 推論能耗 60% 以上。',
+    tags: ['HBM-PIM', '記憶體頻寬瓶頸', 'CXL 協定', 'Near-data Processing']
+  },
+  {
+    icon: '🔬', color: '#ff9f43', title: '量子計算', sub: 'Quantum Computing',
+    desc: '利用量子疊加（Superposition）與量子糾纏（Entanglement）進行計算，在特定問題（密碼學、藥物模擬、優化）上可指數級超越傳統電腦。IBM 達 1,121 量子位元。',
+    tags: ['超導量子位元', '拓撲量子位元', 'QEC 量子糾錯', 'Google Willow']
+  },
+  {
+    icon: '💡', color: '#ffd166', title: '光子運算', sub: 'Photonic Computing',
+    desc: '以光子取代電子進行訊號傳輸與運算，光速傳播、低能耗、零電磁干擾。矽光子（Silicon Photonics）已用於資料中心光互連，Lightmatter 推進光子矩陣運算。',
+    tags: ['矽光子 SiPh', 'Lightmatter', 'Luminance', 'CPO 共封裝光學']
+  },
+  {
+    icon: '🌡️', color: '#ff6a9b', title: '功耗與散熱革命', sub: 'Power & Thermal Management',
+    desc: 'AI 資料中心 PUE（電力使用效率）成核心競爭力。液冷（直接液冷 DLC）、浸沒式冷卻（Immersion）、兩相冷卻快速普及。單機架功率從 15kW 增至 100kW+。',
+    tags: ['液冷 DLC', '浸沒冷卻', 'PUE<1.1', '散熱材料 TIM']
+  },
+  {
+    icon: '🔒', color: '#6affb0', title: '機密運算', sub: 'Confidential Computing',
+    desc: '在執行過程中保護資料隱私，即使雲端供應商也無法讀取。Intel TDX、AMD SEV-SNP、ARM CCA 利用硬體 TEE（可信執行環境）實現「可驗證的隱私」。',
+    tags: ['Intel TDX', 'AMD SEV-SNP', 'TEE 可信執行', 'Attestation']
+  },
+  {
+    icon: '🌿', color: '#00d4ff', title: '永續運算', sub: 'Green / Sustainable Computing',
+    desc: '資料中心佔全球電力消耗約 1-2%，預估 2030 年達 8%。晶片設計轉向功耗優先（Power-first），RISC-V 開源架構降低設計門檻，推動計算民主化。',
+    tags: ['碳中和目標', 'RISC-V', '可再生能源', '功耗優先設計']
+  },
+];
+
+const pipelineStages = [
+  { name: 'IF\n取指', label: '取指 (IF)', desc: '⬅️ Instruction Fetch：CPU 從程式計數器（PC）所指向的記憶體位址取出指令，通常從 L1 指令快取讀取。若快取未命中，需等待數十至數百個週期，這是流水線效能的主要瓶頸之一。' },
+  { name: 'ID\n解碼', label: '解碼 (ID)', desc: '🔍 Instruction Decode：控制單元（CU）解析指令的操作碼（Opcode）與運算元（Operand），確定需要哪些 ALU 功能與暫存器，同時讀取來源暫存器的值。' },
+  { name: 'EX\n執行', label: '執行 (EX)', desc: '⚙️ Execute：算術邏輯單元（ALU）執行實際運算（加減乘除、邏輯運算、位移）。現代超純量 CPU 擁有多個 ALU，可同時執行多道指令（指令級平行 ILP）。' },
+  { name: 'MEM\n記憶體', label: '記憶體 (MEM)', desc: '💾 Memory Access：對於 Load/Store 指令，此階段存取資料快取（L1 D-Cache）。現代 CPU 採用亂序執行（Out-of-Order Execution），讓後續指令不必等待記憶體操作完成。' },
+  { name: 'WB\n寫回', label: '寫回 (WB)', desc: '✍️ Write Back：將運算結果寫入目標暫存器。在亂序執行架構中，此階段也稱為「提交（Commit/Retire）」，確保指令按程式順序可見，維護架構狀態一致性。' },
+];
+
+const layerInfo = {
+  app: '🖥️ 應用程式層：使用者直接互動的軟體（瀏覽器、Office、遊戲）。以高階語言（Python、JavaScript、Swift）撰寫，透過作業系統提供的 API 呼叫下層服務，完全不感知硬體細節。',
+  lib: '📚 程式庫/中介軟體：提供可重用功能的程式碼集合（libc、OpenGL、CUDA、TensorFlow）。中介軟體（Middleware）連接應用程式與作業系統，處理網路、資料庫、訊息佇列等複雜任務。',
+  os: '🐧 作業系統：管理硬體資源（CPU 排程、記憶體分配、I/O 控制）的核心軟體。Linux、Windows、macOS 提供系統呼叫（Syscall）介面，讓程式安全地使用硬體，並實現多工多使用者隔離。',
+  isa: '📐 指令集架構（ISA）：CPU 硬體與軟體之間的抽象介面，定義了處理器能執行的指令集合。x86-64 主宰桌機/伺服器，ARM 主宰行動裝置，RISC-V 以開源特性快速崛起於嵌入式與 AI 領域。',
+  micro: '⚙️ 微架構：ISA 的具體硬體實作方式。同一個 ISA（如 x86-64）可由不同的微架構實作，各有不同的效能、功耗特性。核心技術：超純量（Superscalar）、亂序執行（OoO）、分支預測、多層快取、SIMD 向量運算。',
+  logic: '⚡ 數位邏輯層：由數十億個電晶體（MOSFET）組成的邏輯閘（AND、OR、NOT、NAND），進而構成加法器、多工器、正反器（Flip-flop）等基本電路單元。現代製程節點（2-3nm）讓電晶體尺寸接近原子尺度。',
+};
+
+/* ── RENDER TIMELINE ─────────────────────────────── */
+function renderTimeline(filter = 'all') {
+  const items = filter === 'all' ? tlData : tlData.filter(d => d.gen === filter);
+  const left = document.getElementById('tl-left');
+  const right = document.getElementById('tl-right');
+  left.innerHTML = '';
+  right.innerHTML = '';
+  items.forEach((d, i) => {
+    const badgeClass = `badge-${d.badge}`;
+    const html = `
+      <div class="tl-item fade-in">
+        <div class="tl-card">
+          <div class="tl-year">${d.year}</div>
+          <div class="tl-title">${d.title}</div>
+          <div class="tl-desc">${d.desc}</div>
+          <span class="tl-badge ${badgeClass}">${d.badgeText}</span>
+        </div>
+      </div>`;
+    if (i % 2 === 0) left.insertAdjacentHTML('beforeend', html);
+    else right.insertAdjacentHTML('beforeend', html);
+  });
+  observeFadeIns();
+}
+
+function filterGen(gen, btn) {
+  document.querySelectorAll('#gen-tabs .arch-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTimeline(gen);
+}
+
+/* ── RENDER COMPONENTS ───────────────────────────── */
+function renderComponents() {
+  const grid = document.getElementById('comp-grid');
+  grid.innerHTML = compData.map(c => `
+    <div class="comp-card fade-in" style="--card-color:${c.color}" onclick="toggleComp(this)">
+      <div class="comp-icon">${c.icon}</div>
+      <div class="comp-name">${c.name}</div>
+      <div class="comp-en">${c.en}</div>
+      <div class="comp-desc">${c.desc}</div>
+      <div class="comp-specs">
+        ${c.specs.map(s => `<div class="spec-row"><span class="spec-key">${s.k}</span><span class="spec-val">${s.v}</span></div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function toggleComp(el) {
+  el.classList.toggle('open');
+}
+
+/* ── RENDER PIPELINE ─────────────────────────────── */
+function renderPipeline() {
+  const container = document.getElementById('pipeline-stages');
+  container.innerHTML = pipelineStages.map((s, i) => `
+    ${i > 0 ? '<div class="pipe-arrow">→</div>' : ''}
+    <div class="pipe-stage" onclick="selectStage(${i}, this)">${s.name}</div>
+  `).join('');
+}
+
+function selectStage(idx, el) {
+  document.querySelectorAll('.pipe-stage').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pipe-desc').textContent = pipelineStages[idx].desc;
+}
+
+/* ── RENDER TRENDS ───────────────────────────────── */
+function renderTrends() {
+  const grid = document.getElementById('trends-grid');
+  grid.innerHTML = trendsData.map(t => `
+    <div class="trend-card fade-in">
+      <div class="trend-glow" style="background:${t.color}"></div>
+      <div class="trend-icon">${t.icon}</div>
+      <div class="trend-title">${t.title}</div>
+      <div class="trend-sub">${t.sub}</div>
+      <div class="trend-desc">${t.desc}</div>
+      <div class="trend-tags">${t.tags.map(tag => `<span class="trend-tag">${tag}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+/* ── ARCH TABS ───────────────────────────────────── */
+function showArch(id, btn) {
+  ['vonneumann','harvard','layers'].forEach(k => {
+    document.getElementById('arch-' + k).style.display = k === id ? '' : 'none';
+  });
+  document.querySelectorAll('#arch-tabs .arch-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function showLayerInfo(key) {
+  document.getElementById('layer-info').textContent = layerInfo[key];
+}
+
+/* ── NAV SCROLL ──────────────────────────────────── */
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+/* ── PROGRESS BAR ANIMATION ──────────────────────── */
+function animateProgressBars() {
+  document.querySelectorAll('.prog-bar-fill').forEach(bar => {
+    const w = bar.dataset.width;
+    bar.style.width = w + '%';
+  });
+}
+
+/* ── INTERSECTION OBSERVER ───────────────────────── */
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      fadeObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+const progressObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateProgressBars();
+      progressObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+function observeFadeIns() {
+  document.querySelectorAll('.fade-in:not(.visible)').forEach(el => fadeObserver.observe(el));
+}
+
+/* ── NAV ACTIVE ON SCROLL ────────────────────────── */
+const sections = ['history','components','architecture','pipeline','trends'];
+const navBtns = document.querySelectorAll('.nav-btn');
+
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = sections.indexOf(e.target.id);
+      if (idx >= 0) {
+        navBtns.forEach(b => b.classList.remove('active'));
+        if (navBtns[idx]) navBtns[idx].classList.add('active');
+      }
+    }
+  });
+}, { threshold: 0.3 });
+
+/* ── INIT ────────────────────────────────────────── */
+renderTimeline();
+renderComponents();
+renderPipeline();
+renderTrends();
+
+document.querySelectorAll('section').forEach(s => {
+  if (sections.includes(s.id)) sectionObserver.observe(s);
+});
+
+document.querySelectorAll('.progress-section').forEach(el => progressObserver.observe(el));
+observeFadeIns();
+</script>
+</body>
+</html>
