@@ -532,12 +532,12 @@
 </header>
 
 <nav class="nav-bar" aria-label="頁面導覽">
-  <a class="nav-link active" onclick="scrollTo('what')">什麼是逆流</a>
-  <a class="nav-link" onclick="scrollTo('why')">為何發生</a>
-  <a class="nav-link" onclick="scrollTo('symptoms')">症狀辨別</a>
-  <a class="nav-link" onclick="scrollTo('consequences')">潛在後果</a>
-  <a class="nav-link" onclick="scrollTo('treatment')">治療方法</a>
-  <a class="nav-link" onclick="scrollTo('video')">衛教影片</a>
+  <a class="nav-link active" onclick="scrollToSection(this, 'what')">什麼是逆流</a>
+  <a class="nav-link" onclick="scrollToSection(this, 'why')">為何發生</a>
+  <a class="nav-link" onclick="scrollToSection(this, 'symptoms')">症狀辨別</a>
+  <a class="nav-link" onclick="scrollToSection(this, 'consequences')">潛在後果</a>
+  <a class="nav-link" onclick="scrollToSection(this, 'treatment')">治療方法</a>
+  <a class="nav-link" onclick="scrollToSection(this, 'video')">衛教影片</a>
 </nav>
 
 <main>
@@ -901,10 +901,13 @@
 </main>
 
 <script>
-  function scrollTo(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  function scrollToSection(el, id) {
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    event.target.classList.add('active');
+    el.classList.add('active');
   }
 
   function toggleTreatment(header) {
