@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中國歷史全覽：從史前到現代</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --gold: #f59e0b;
+      --gold2: #fcd34d;
+      --red: #ef4444;
+      --jade: #10b981;
+      --sky: #38bdf8;
+      --rose: #fb7185;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      padding: 56px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245,158,11,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 40%, rgba(239,68,68,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(124,106,255,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 39px, rgba(245,158,11,0.06) 39px, rgba(245,158,11,0.06) 40px
+      ), repeating-linear-gradient(
+        90deg, transparent, transparent 39px, rgba(245,158,11,0.06) 39px, rgba(245,158,11,0.06) 40px
+      );
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--gold2) 40%, var(--gold) 70%, var(--red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      position: relative;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      position: relative;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      position: relative;
+    }
+
+    .header-badge {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .badge-gold  { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4); color: var(--gold2); }
+    .badge-red   { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.4);  color: #fca5a5; }
+    .badge-jade  { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+
+    /* ─── NAV ─── */
+    .nav-bar {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-link {
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px 100px;
+    }
+
+    .section { margin-bottom: 72px; }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(245,158,11,0.4), transparent);
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+    }
+
+    /* ─── TIMELINE ─── */
+    .timeline-scroll {
+      overflow-x: auto;
+      padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .timeline {
+      display: flex;
+      gap: 0;
+      min-width: max-content;
+      padding: 16px 0 24px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      top: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border), rgba(245,158,11,0.3), var(--border));
+    }
+
+    .tl-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 0 6px;
+      min-width: 80px;
+      transition: transform 0.2s;
+    }
+
+    .tl-item:hover { transform: translateY(-3px); }
+
+    .tl-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid;
+      background: var(--bg);
+      margin: 8px 0;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .tl-item:hover .tl-dot,
+    .tl-item.active .tl-dot {
+      transform: scale(1.6);
+    }
+
+    .tl-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .tl-year {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .tl-bar {
+      height: 4px;
+      border-radius: 2px;
+      position: relative;
+      top: -2px;
+    }
+
+    /* ─── ERA COLORS ─── */
+    .era-ancient   { color: #a8956a; border-color: #a8956a; }
+    .era-zhou      { color: #c084fc; border-color: #c084fc; }
+    .era-imperial1 { color: var(--gold); border-color: var(--gold); }
+    .era-imperial2 { color: #34d399; border-color: #34d399; }
+    .era-medieval  { color: var(--sky); border-color: var(--sky); }
+    .era-late      { color: var(--rose); border-color: var(--rose); }
+    .era-modern    { color: var(--accent2); border-color: var(--accent2); }
+
+    /* ─── DYNASTY CARDS GRID ─── */
+    .dynasty-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .dynasty-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .dynasty-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .card-header {
+      padding: 18px 20px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-meta { flex: 1; }
+
+    .card-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .card-period {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--surface2);
+    }
+
+    .card-body { padding: 16px 20px; }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: #c8c8e0;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .card-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .highlight {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.83rem;
+    }
+
+    .hl-icon { flex-shrink: 0; }
+    .hl-text { color: #b0b0cc; line-height: 1.5; }
+
+    .card-footer {
+      padding: 12px 20px;
+      background: var(--surface2);
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .duration-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+    }
+
+    .bar-track {
+      width: 80px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    /* ─── DETAIL PANEL ─── */
+    .detail-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 24px;
+      animation: slideDown 0.3s ease;
+    }
+
+    .detail-panel.open { display: block; }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-cols {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .detail-stat {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+    .stat-value { font-size: 1rem; font-weight: 600; }
+
+    .detail-section { margin-bottom: 18px; }
+
+    .detail-section h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(245,158,11,0.2);
+    }
+
+    .detail-section p, .detail-section li {
+      font-size: 0.88rem;
+      color: #b8b8d4;
+      line-height: 1.8;
+    }
+
+    .detail-section ul {
+      padding-left: 18px;
+    }
+
+    /* ─── KEY FIGURES ─── */
+    .figures-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .figure-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 16px;
+      text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .figure-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .figure-avatar {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .figure-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .figure-title {
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .figure-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ─── CONCEPTS ─── */
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .concept-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .concept-card:hover { border-color: var(--accent); }
+
+    .concept-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .concept-name { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .concept-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── BIG EVENTS ─── */
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .events-list::before {
+      content: '';
+      position: absolute;
+      left: 22px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--gold), var(--accent), var(--jade));
+    }
+
+    .event-item {
+      display: flex;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .event-dot {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    .event-content { flex: 1; padding-top: 6px; }
+
+    .event-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .event-year {
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .event-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ─── TIPS BOX ─── */
+    .tip-box {
+      background: rgba(124,106,255,0.08);
+      border: 1px solid rgba(124,106,255,0.3);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+    }
+
+    .tip-box p {
+      font-size: 0.88rem;
+      color: #b8b0f0;
+      line-height: 1.8;
+    }
+
+    .tip-box strong { color: var(--accent2); }
+
+    /* ─── COMPARISON TABLE ─── */
+    .compare-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.85rem;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .compare-table thead {
+      background: var(--surface2);
+    }
+
+    .compare-table th, .compare-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table th { color: var(--gold); font-weight: 600; font-size: 0.82rem; }
+    .compare-table td { color: #b8b8d4; }
+    .compare-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 600px) {
+      .dynasty-grid { grid-template-columns: 1fr; }
+      .figures-grid  { grid-template-columns: repeat(2, 1fr); }
+      .concepts-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>中國歷史全覽</h1>
+  <p class="subtitle">從上古神話到現代中國，五千年文明一覽</p>
+  <div class="header-badges">
+    <span class="header-badge badge-gold">5000+ 年歷史</span>
+    <span class="header-badge badge-red">25 個主要王朝</span>
+    <span class="header-badge badge-jade">四大發明</span>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <span class="nav-link active" onclick="showSection('timeline-sec', this)">時間軸</span>
+  <span class="nav-link" onclick="showSection('dynasties-sec', this)">歷代王朝</span>
+  <span class="nav-link" onclick="showSection('figures-sec', this)">歷史人物</span>
+  <span class="nav-link" onclick="showSection('events-sec', this)">重大事件</span>
+  <span class="nav-link" onclick="showSection('culture-sec', this)">文化成就</span>
+  <span class="nav-link" onclick="showSection('compare-sec', this)">一覽表</span>
+</nav>
+
+<main>
+
+  <!-- ────────────── 時間軸 ────────────── -->
+  <section class="section" id="timeline-sec">
+    <h2 class="section-title">📅 時間軸總覽</h2>
+    <p class="section-desc">點擊各朝代節點查看簡介</p>
+
+    <div class="tip-box">
+      <p>
+        中國歷史橫跨約 <strong>五千年</strong>，習慣上分為「先秦」、「秦漢」、「魏晉南北朝」、「隋唐」、「宋元明清」與「近現代」六大段。
+        每段都有其獨特的政治體制、文化風貌與對外關係。下方時間軸從遠古到現代，讓你快速建立整體感。
+      </p>
+    </div>
+
+    <div class="timeline-scroll">
+      <div class="timeline" id="mainTimeline">
+        <!-- 由 JS 生成 -->
+      </div>
+    </div>
+
+    <div class="detail-panel" id="tlDetail"></div>
+  </section>
+
+  <!-- ────────────── 歷代王朝 ────────────── -->
+  <section class="section" id="dynasties-sec" style="display:none">
+    <h2 class="section-title">🏯 歷代王朝</h2>
+    <p class="section-desc">點擊卡片展開詳細說明</p>
+    <div class="dynasty-grid" id="dynastyGrid"></div>
+    <div class="detail-panel" id="dynastyDetail"></div>
+  </section>
+
+  <!-- ────────────── 歷史人物 ────────────── -->
+  <section class="section" id="figures-sec" style="display:none">
+    <h2 class="section-title">👑 歷史人物</h2>
+    <p class="section-desc">影響中國歷史走向的關鍵人物</p>
+    <div class="figures-grid" id="figuresGrid"></div>
+  </section>
+
+  <!-- ────────────── 重大事件 ────────────── -->
+  <section class="section" id="events-sec" style="display:none">
+    <h2 class="section-title">⚡ 改變歷史的重大事件</h2>
+    <p class="section-desc">10 個扭轉乾坤的歷史轉折點</p>
+    <div class="events-list" id="eventsList"></div>
+  </section>
+
+  <!-- ────────────── 文化成就 ────────────── -->
+  <section class="section" id="culture-sec" style="display:none">
+    <h2 class="section-title">🎨 文化與科技成就</h2>
+    <p class="section-desc">中華文明對世界的貢獻</p>
+    <div class="concepts-grid" id="cultureGrid"></div>
+  </section>
+
+  <!-- ────────────── 一覽表 ────────────── -->
+  <section class="section" id="compare-sec" style="display:none">
+    <h2 class="section-title">📊 王朝速查一覽表</h2>
+    <p class="section-desc">主要朝代基本資料對照</p>
+    <div style="overflow-x:auto">
+      <table class="compare-table" id="compareTable"></table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  資料僅供學習參考，部分年代為學術估算 &nbsp;·&nbsp; CC BY 4.0
+</footer>
+
+<script>
+/* ═══════════════════════════════
+   資料定義
+═══════════════════════════════ */
+const DYNASTIES = [
+  {
+    id: 'prehistoric',
+    name: '史前 / 三皇五帝',
+    era: 'era-ancient',
+    period: '約 2800–2070 BCE',
+    start: -2800, end: -2070,
+    icon: '🌄',
+    tags: ['神話', '部落', '傳說'],
+    color: '#a8956a',
+    desc: '中國文明的起源時代，包含傳說中的三皇（伏羲、神農、黃帝等）與五帝（黃帝、顓頊、帝嚳、堯、舜）。此時期農業、陶器與部落聯盟逐漸成形。',
+    highlights: [
+      { icon: '🌾', text: '神農氏教人耕種、嚐百草' },
+      { icon: '📜', text: '倉頡據說創造了最早的文字' },
+      { icon: '💧', text: '大禹治水，奠定華夏共同體認同' },
+    ],
+    detail: {
+      capital: '—（無固定）',
+      founder: '傳說人物',
+      duration: '約 730 年',
+      keyEvent: '大禹治水、黃帝蚩尤之戰',
+      culture: '彩陶文化、龍山文化、仰韶文化',
+      significance: '此時期為後世「天命」政治哲學奠基，也建立了農耕文明的基礎型態，「炎黃子孫」的概念即源自此時。',
+    }
+  },
+  {
+    id: 'xia',
+    name: '夏朝',
+    era: 'era-ancient',
+    period: '約 2070–1600 BCE',
+    start: -2070, end: -1600,
+    icon: '🏺',
+    tags: ['世襲制', '青銅器', '傳說'],
+    color: '#a8956a',
+    desc: '中國傳統認定的第一個王朝，由大禹之子啟建立，開創「家天下」的王位世襲制度，取代了「禪讓」傳統。',
+    highlights: [
+      { icon: '👑', text: '啟廢禪讓，確立世襲王制' },
+      { icon: '🏛️', text: '二里頭遺址被認為是夏代都城' },
+      { icon: '📅', text: '中國最早的曆法雛形「夏曆」' },
+    ],
+    detail: {
+      capital: '陽城（今河南登封）',
+      founder: '禹 → 啟',
+      duration: '約 470 年',
+      keyEvent: '夏桀暴政，商湯滅夏',
+      culture: '二里頭文化，已有青銅器與玉器禮制',
+      significance: '夏朝的存在仍有爭議，但在中國歷史敘事中代表文明國家的起點，奠定了「朝代更替」的歷史模式。',
+    }
+  },
+  {
+    id: 'shang',
+    name: '商朝',
+    era: 'era-ancient',
+    period: '約 1600–1046 BCE',
+    start: -1600, end: -1046,
+    icon: '🦁',
+    tags: ['甲骨文', '青銅器', '占卜'],
+    color: '#a8956a',
+    desc: '中國第一個有確切文字記錄的朝代。甲骨文的發現提供了直接歷史證據。商朝以青銅器鑄造、占卜文化與神權政治著稱。',
+    highlights: [
+      { icon: '📜', text: '甲骨文——世界最早成熟文字之一' },
+      { icon: '🥁', text: '司母戊大方鼎，重達 832 公斤' },
+      { icon: '🔮', text: '以龜甲、獸骨占卜國家大事' },
+    ],
+    detail: {
+      capital: '殷（今安陽）',
+      founder: '商湯',
+      duration: '約 554 年',
+      keyEvent: '盤庚遷殷（穩定政局）、紂王失德周武王伐商',
+      culture: '青銅禮器文化、甲骨文、殷商神學',
+      significance: '甲骨文是中國文字的直接祖先，也是研究商代政治、宗教的第一手史料，讓中國歷史從傳說進入信史。',
+    }
+  },
+  {
+    id: 'zhou',
+    name: '西周',
+    era: 'era-zhou',
+    period: '1046–771 BCE',
+    start: -1046, end: -771,
+    icon: '🏰',
+    tags: ['封建制', '禮樂', '宗法'],
+    color: '#c084fc',
+    desc: '周武王滅商後建立，以「封建制度」分封諸侯，以「禮樂制度」維繫政治秩序。周公制禮作樂，影響中國兩千年。',
+    highlights: [
+      { icon: '⚖️', text: '天命論：德者居之，失德者失天下' },
+      { icon: '🎭', text: '周公制禮作樂，建立儒家思想前身' },
+      { icon: '🗺️', text: '分封七十多個諸侯國' },
+    ],
+    detail: {
+      capital: '鎬京（今西安）',
+      founder: '周武王姬發',
+      duration: '275 年',
+      keyEvent: '牧野之戰滅商、西元前 771 年犬戎攻破鎬京',
+      culture: '青銅禮器達巔峰、金文（鐘鼎文）盛行',
+      significance: '西周建立的禮樂制度與宗法倫理成為中國文化的核心骨幹，「周禮」思想後來成為儒家最重要的理想。',
+    }
+  },
+  {
+    id: 'eastzhouspring',
+    name: '春秋',
+    era: 'era-zhou',
+    period: '770–476 BCE',
+    start: -770, end: -476,
+    icon: '⚔️',
+    tags: ['諸侯爭霸', '孔子', '百家爭鳴'],
+    color: '#c084fc',
+    desc: '東周前半段，王室式微，諸侯爭霸。孔子、老子等思想家輩出，開啟中國哲學的黃金時代。',
+    highlights: [
+      { icon: '🧠', text: '孔子、老子、孫武活躍於此時' },
+      { icon: '📖', text: '《孫子兵法》、《詩經》成書' },
+      { icon: '🏛️', text: '五霸爭雄：齊桓、晉文、楚莊等' },
+    ],
+    detail: {
+      capital: '洛邑（周室象徵首都）',
+      founder: '周平王東遷',
+      duration: '約 295 年',
+      keyEvent: '管仲改革稱霸、孔子周遊列國',
+      culture: '百家爭鳴萌芽、禮崩樂壞',
+      significance: '儒、道、兵、法等思想雛形皆誕生於春秋。孔子整理《詩》《書》《禮》《易》，奠定中國人文教育傳統。',
+    }
+  },
+  {
+    id: 'warring',
+    name: '戰國',
+    era: 'era-zhou',
+    period: '476–221 BCE',
+    start: -476, end: -221,
+    icon: '🗡️',
+    tags: ['兼并戰爭', '法家', '合縱連橫'],
+    color: '#c084fc',
+    desc: '七雄並立，大規模兼并戰爭不斷。法家思想崛起，各國變法圖強，最終秦國勝出統一天下。',
+    highlights: [
+      { icon: '🔥', text: '商鞅變法讓秦國崛起' },
+      { icon: '📚', text: '諸子百家：儒墨道法兵名農' },
+      { icon: '🏗️', text: '各國築長城、修水利' },
+    ],
+    detail: {
+      capital: '各諸侯自立首都',
+      founder: '— （東周延續）',
+      duration: '255 年',
+      keyEvent: '商鞅變法、長平之戰（秦殺趙兵 40 萬）',
+      culture: '百家爭鳴巔峰、《莊子》《荀子》《韓非子》成書',
+      significance: '戰國時代是中國思想史上最豐富多元的時期，同時奠定中央集權的制度基礎，為秦統一鋪路。',
+    }
+  },
+  {
+    id: 'qin',
+    name: '秦朝',
+    era: 'era-imperial1',
+    period: '221–206 BCE',
+    start: -221, end: -206,
+    icon: '🐉',
+    tags: ['統一', '皇帝制', '書同文'],
+    color: '#f59e0b',
+    desc: '中國第一個大一統帝國。秦始皇統一六國，廢封建、立郡縣、書同文、車同軌，建立沿用兩千年的帝制框架。',
+    highlights: [
+      { icon: '🏯', text: '萬里長城初步成形（連接各國城牆）' },
+      { icon: '🗿', text: '兵馬俑：地下軍隊守護始皇陵' },
+      { icon: '📏', text: '統一度量衡、文字、貨幣' },
+    ],
+    detail: {
+      capital: '咸陽',
+      founder: '秦始皇嬴政',
+      duration: '15 年',
+      keyEvent: '滅六國、焚書坑儒、陳勝吳廣起義',
+      culture: '小篆統一文字、建阿房宮',
+      significance: '雖然只存在 15 年，但秦朝確立的郡縣制、皇帝制度成為中國兩千年政治的基本模板，「中國」(China) 一詞也源自「秦」。',
+    }
+  },
+  {
+    id: 'han',
+    name: '漢朝',
+    era: 'era-imperial1',
+    period: '206 BCE–220 CE',
+    start: -206, end: 220,
+    icon: '☀️',
+    tags: ['絲路', '儒學', '盛世'],
+    color: '#f59e0b',
+    desc: '中國歷史上最重要的朝代之一。「漢族」與「漢字」的名稱皆源自於此。漢武帝開拓疆土，開通絲路，確立儒學為國學。',
+    highlights: [
+      { icon: '🛣️', text: '絲綢之路連結東西方文明' },
+      { icon: '📚', text: '太學建立、儒學成正統思想' },
+      { icon: '🌍', text: '張騫出使西域，班超經略西域' },
+    ],
+    detail: {
+      capital: '長安（西漢）、洛陽（東漢）',
+      founder: '漢高祖劉邦',
+      duration: '426 年',
+      keyEvent: '楚漢相爭、漢武帝北伐匈奴、王莽篡漢',
+      culture: '造紙術改良、太史公《史記》',
+      significance: '漢朝奠定中華民族的主體認同，其疆域政策影響至今。東漢末年的宦官外戚之爭成為三國分裂的根源。',
+    }
+  },
+  {
+    id: 'threekingdoms',
+    name: '三國',
+    era: 'era-imperial2',
+    period: '220–280 CE',
+    start: 220, end: 280,
+    icon: '⚔️',
+    tags: ['魏蜀吳', '英雄時代', '赤壁'],
+    color: '#34d399',
+    desc: '東漢滅亡後，曹魏、蜀漢、東吳三國鼎立。這段英雄輩出的時代深入中國人的文化記憶，《三國演義》影響至今。',
+    highlights: [
+      { icon: '🔥', text: '赤壁之戰：以少勝多的經典戰役' },
+      { icon: '🧙', text: '諸葛亮：智謀的象徵人物' },
+      { icon: '🎭', text: '《三國演義》為四大名著之一' },
+    ],
+    detail: {
+      capital: '洛陽（魏）、成都（蜀）、建業（吳）',
+      founder: '曹丕、劉備、孫權',
+      duration: '60 年',
+      keyEvent: '官渡之戰、赤壁之戰、諸葛亮北伐',
+      culture: '建安文學、曹操詩歌',
+      significance: '三國時期雖是亂世，但留下極豐富的文化遺產，也是後世對「英雄」、「義氣」與「謀略」最核心的歷史想像。',
+    }
+  },
+  {
+    id: 'jinnanbeichao',
+    name: '晉・南北朝',
+    era: 'era-imperial2',
+    period: '265–589 CE',
+    start: 265, end: 589,
+    icon: '🌊',
+    tags: ['民族融合', '佛教', '士族'],
+    color: '#34d399',
+    desc: '中國歷史上大規模民族大融合時期。北方由胡人各族建立政權，南方漢族政權保存文化。佛教在此時大舉傳入並深根。',
+    highlights: [
+      { icon: '🛕', text: '佛教大規模傳入，石窟藝術興盛（龍門、敦煌）' },
+      { icon: '🌏', text: '五胡十六國：匈奴、鮮卑、氐等建立政權' },
+      { icon: '🎨', text: '書法藝術的黃金時代（王羲之）' },
+    ],
+    detail: {
+      capital: '多個並立首都',
+      founder: '司馬炎（西晉）',
+      duration: '324 年',
+      keyEvent: '八王之亂、永嘉之亂、北魏孝文帝漢化改革',
+      culture: '玄學盛行、謝靈運山水詩、王羲之書法',
+      significance: '此時期奠定漢族與北方民族的大融合，鮮卑等族逐漸漢化，為隋唐的大一統準備了民族基礎。',
+    }
+  },
+  {
+    id: 'sui',
+    name: '隋朝',
+    era: 'era-medieval',
+    period: '581–618 CE',
+    start: 581, end: 618,
+    icon: '🌉',
+    tags: ['大運河', '科舉', '短命'],
+    color: '#38bdf8',
+    desc: '結束近四百年分裂、重新統一中國。隋煬帝開鑿大運河、創立科舉制度，雖功在千秋但耗盡民力，短命而亡。',
+    highlights: [
+      { icon: '🛶', text: '大運河貫通南北，全長 2700 公里' },
+      { icon: '📋', text: '科舉制度：打破門閥、以才選官' },
+      { icon: '🏗️', text: '修洛陽城、長城，三征高句麗' },
+    ],
+    detail: {
+      capital: '大興（長安）',
+      founder: '隋文帝楊堅',
+      duration: '37 年',
+      keyEvent: '隋文帝統一、隋煬帝三征高句麗失敗、農民大起義',
+      culture: '科舉制、大運河工程',
+      significance: '隋朝雖短命，但其科舉制與大運河對後世影響深遠。科舉制度是世界最早的文官考試制度，影響東亞一千三百年。',
+    }
+  },
+  {
+    id: 'tang',
+    name: '唐朝',
+    era: 'era-medieval',
+    period: '618–907 CE',
+    start: 618, end: 907,
+    icon: '🌸',
+    tags: ['盛唐', '絲路', '詩歌'],
+    color: '#38bdf8',
+    desc: '中國最受推崇的黃金盛世之一。政治開明、經濟繁榮、文化包容，長安是當時世界最大的國際都市。詩歌達到歷史最高峰。',
+    highlights: [
+      { icon: '📝', text: '李白、杜甫、白居易——唐詩三大家' },
+      { icon: '🌍', text: '長安人口逾百萬，胡商雲集' },
+      { icon: '👸', text: '武則天——中國唯一正史女皇帝' },
+    ],
+    detail: {
+      capital: '長安（今西安）',
+      founder: '唐高祖李淵',
+      duration: '289 年',
+      keyEvent: '玄武門之變、貞觀之治、安史之亂（由盛轉衰）',
+      culture: '唐詩、唐三彩、絲路佛教藝術',
+      significance: '「唐人」至今仍是海外華人的自稱，唐朝的文化影響滲透整個東亞。安史之亂（755-763）是盛唐轉衰的關鍵節點。',
+    }
+  },
+  {
+    id: 'song',
+    name: '宋朝',
+    era: 'era-medieval',
+    period: '960–1279 CE',
+    start: 960, end: 1279,
+    icon: '📖',
+    tags: ['文治', '印刷術', '商品經濟'],
+    color: '#38bdf8',
+    desc: '軍事相對弱勢，但文化、科技、商業高度發達。活字印刷術、火藥、指南針的實用化使宋朝成為「科技革命」的搖籃。',
+    highlights: [
+      { icon: '🖨️', text: '畢昇發明活字印刷術（約 1040 年）' },
+      { icon: '🧭', text: '指南針用於航海，開啟大航海時代前奏' },
+      { icon: '💰', text: '世界最早紙幣「交子」' },
+    ],
+    detail: {
+      capital: '開封（北宋）、臨安（南宋）',
+      founder: '宋太祖趙匡胤',
+      duration: '319 年',
+      keyEvent: '陳橋兵變、靖康之恥（金滅北宋）、崖山海戰',
+      culture: '宋詞、理學、《清明上河圖》',
+      significance: '宋朝的 GDP 估計佔當時世界的 30%，是史上商品化程度最高的前現代社會之一，也是東西方最重要的科技傳播者。',
+    }
+  },
+  {
+    id: 'yuan',
+    name: '元朝',
+    era: 'era-medieval',
+    period: '1271–1368 CE',
+    start: 1271, end: 1368,
+    icon: '🐎',
+    tags: ['蒙古', '馬可波羅', '驛站'],
+    color: '#38bdf8',
+    desc: '蒙古人建立的大一統帝國，版圖空前龐大。忽必烈定都大都（今北京），首次將北京定為中國政治中心。馬可波羅在此時來到中國。',
+    highlights: [
+      { icon: '🌍', text: '蒙古帝國連結歐亞，促進東西交流' },
+      { icon: '🚉', text: '驛站制度（站赤）高效連絡帝國各地' },
+      { icon: '🎭', text: '元雜劇興盛——《竇娥冤》、《西廂記》' },
+    ],
+    detail: {
+      capital: '大都（今北京）',
+      founder: '忽必烈（元世祖）',
+      duration: '97 年',
+      keyEvent: '忽必烈建元、兩次征日本失敗、朱元璋起義滅元',
+      culture: '元曲（雜劇）、多元宗教並存',
+      significance: '元朝奠定現代中國的大致版圖，並首次將西藏納入中國版圖。北京作為首都的傳統從此延續至今。',
+    }
+  },
+  {
+    id: 'ming',
+    name: '明朝',
+    era: 'era-late',
+    period: '1368–1644 CE',
+    start: 1368, end: 1644,
+    icon: '🌊',
+    tags: ['鄭和', '長城', '閉關'],
+    color: '#fb7185',
+    desc: '漢族重新建立的王朝。鄭和七次下西洋展示海上實力，但後期海禁政策轉向保守。萬里長城主體在此時完成。',
+    highlights: [
+      { icon: '⛵', text: '鄭和七下西洋（1405-1433），遠達非洲' },
+      { icon: '🏯', text: '現存萬里長城主體為明代所建' },
+      { icon: '📚', text: '《永樂大典》：最早百科全書之一' },
+    ],
+    detail: {
+      capital: '南京 → 北京',
+      founder: '朱元璋（洪武帝）',
+      duration: '276 年',
+      keyEvent: '靖難之役（朱棣奪位）、土木堡之變、李自成起義',
+      culture: '《西遊記》《水滸傳》《三國演義》成書、青花瓷',
+      significance: '明朝的海禁政策是中國錯過大航海時代的關鍵轉折，西方此後逐漸在技術上超越東方，對世界格局影響深遠。',
+    }
+  },
+  {
+    id: 'qing',
+    name: '清朝',
+    era: 'era-late',
+    period: '1644–1912 CE',
+    start: 1644, end: 1912,
+    icon: '🎎',
+    tags: ['滿族', '康雍乾', '近代衰落'],
+    color: '#fb7185',
+    desc: '最後一個封建王朝，由滿族建立。康熙、雍正、乾隆三帝創「康乾盛世」，但 19 世紀面對西方衝擊後急速衰落。',
+    highlights: [
+      { icon: '🌏', text: '版圖達 1300 萬平方公里（現中國兩倍）' },
+      { icon: '💣', text: '鴉片戰爭（1840）：第一個不平等條約' },
+      { icon: '✊', text: '太平天國、義和團、辛亥革命相繼爆發' },
+    ],
+    detail: {
+      capital: '北京',
+      founder: '皇太極 / 順治帝（入關後）',
+      duration: '268 年',
+      keyEvent: '吳三桂引清入關、康乾盛世、鴉片戰爭、辛亥革命',
+      culture: '《紅樓夢》、京劇成熟、西學東漸',
+      significance: '清朝由盛轉衰的過程深刻影響中國的「近代化」認同，「落後就要挨打」的集體記憶塑造了近現代中國的政治心理。',
+    }
+  },
+  {
+    id: 'roc',
+    name: '中華民國',
+    era: 'era-modern',
+    period: '1912–1949 CE',
+    start: 1912, end: 1949,
+    icon: '🚩',
+    tags: ['民主', '軍閥', '抗日'],
+    color: '#a78bfa',
+    desc: '孫中山領導辛亥革命推翻清朝，建立亞洲第一個共和國。歷經軍閥混戰、北伐、抗日戰爭與國共內戰。',
+    highlights: [
+      { icon: '🗽', text: '孫中山三民主義：民族、民權、民生' },
+      { icon: '⚔️', text: '八年抗日戰爭（1937-1945）' },
+      { icon: '🌊', text: '五四運動：現代中國思想解放' },
+    ],
+    detail: {
+      capital: '南京（後遷台北）',
+      founder: '孫中山 / 袁世凱（竊奪）',
+      duration: '37 年（大陸）',
+      keyEvent: '辛亥革命、五四運動、北伐、抗日戰爭、國共內戰',
+      culture: '新文化運動、白話文、魯迅文學',
+      significance: '中華民國在台灣持續存在至今。大陸時期的現代化改革雖未完成，但新文化運動對語言、教育的影響延續至今。',
+    }
+  },
+  {
+    id: 'prc',
+    name: '中華人民共和國',
+    era: 'era-modern',
+    period: '1949 CE–今',
+    start: 1949, end: 2024,
+    icon: '⭐',
+    tags: ['共產黨', '改革開放', '崛起'],
+    color: '#a78bfa',
+    desc: '毛澤東領導中共在內戰中取勝，1949 年建國。歷經文化大革命的動盪，鄧小平改革開放後迅速崛起為世界第二大經濟體。',
+    highlights: [
+      { icon: '🏭', text: '改革開放（1978）：引發中國經濟奇蹟' },
+      { icon: '🚀', text: '「神舟」載人航天、「嫦娥」探月工程' },
+      { icon: '🌐', text: 'GDP 超越日本，成世界第二大經濟體' },
+    ],
+    detail: {
+      capital: '北京',
+      founder: '毛澤東',
+      duration: '75 年（至今）',
+      keyEvent: '大躍進、文化大革命、改革開放、天安門事件',
+      culture: '現代文學、電影、科技創新',
+      significance: '中國在 40 年內完成工業化、城市化，是人類歷史上規模最大的經濟轉型。現今的地緣政治格局深受中國崛起影響。',
+    }
+  },
+];
+
+const FIGURES = [
+  { icon: '🧠', name: '孔子', title: '儒家宗師', desc: '春秋時代，創立儒家思想，提倡仁義禮智，影響中國兩千年教育與政治。' },
+  { icon: '🧙', name: '老子', title: '道家始祖', desc: '著《道德經》，提出「無為而治」，是中國哲學中與儒家並稱的最大影響力。' },
+  { icon: '🐉', name: '秦始皇', title: '千古一帝', desc: '統一六國、建立帝制，奠定中國兩千年政治框架，同時以暴政加速了秦朝滅亡。' },
+  { icon: '⚔️', name: '劉邦', title: '漢高祖', desc: '草根出身的開國皇帝，擊敗項羽建立漢朝，「約法三章」展現懷柔治術。' },
+  { icon: '👸', name: '武則天', title: '唯一女皇', desc: '中國歷史上唯一稱帝的女性，重科舉、抑門閥，在位期間政治穩定。' },
+  { icon: '☀️', name: '唐太宗', title: '貞觀之治', desc: '李世民以「水能載舟亦能覆舟」為座右銘，開創唐朝最輝煌的治世。' },
+  { icon: '🌊', name: '鄭和', title: '航海探險家', desc: '率巨型寶船艦隊七下西洋，最遠到達非洲東岸，是世界航海史上的壯舉。' },
+  { icon: '✊', name: '孫中山', title: '國父', desc: '提出三民主義，領導辛亥革命推翻清朝，建立亞洲第一個共和國。' },
+  { icon: '📖', name: '毛澤東', title: '開國領袖', desc: '領導中共建立中華人民共和國，既有「建國之功」也有文化大革命的巨大爭議。' },
+  { icon: '🏭', name: '鄧小平', title: '改革開放總設計師', desc: '推行改革開放政策，將中國從計劃經濟轉向市場經濟，創造「中國奇蹟」。' },
+  { icon: '🗡️', name: '項羽', title: '西楚霸王', desc: '力拔山兮氣蓋世，鉅鹿之戰大破秦軍，卻在楚漢相爭中因剛愎自用敗於劉邦。' },
+  { icon: '🧩', name: '諸葛亮', title: '蜀漢丞相', desc: '三國最著名的謀士政治家，「鞠躬盡瘁死而後已」是中國忠誠智慧的象徵。' },
+];
+
+const EVENTS = [
+  { icon: '🔥', name: '秦始皇統一六國', year: '西元前 221 年', desc: '結束春秋戰國五百年分裂，建立第一個大一統帝國，確立「中國」疆域的雛形，書同文、車同軌成為文明整合的基礎。' },
+  { icon: '📜', name: '漢武帝罷黜百家、獨尊儒術', year: '西元前 136 年', desc: '儒家從此成為中國政治與教育的官方思想，直到 20 世紀。這個決定深刻塑造了中國人的倫理觀、家庭觀與政治文化。' },
+  { icon: '💥', name: '安史之亂', year: '755–763 CE', desc: '唐朝由盛轉衰的關鍵轉折。安祿山叛亂席捲中原，此後唐朝藩鎮割據，最終走向滅亡。' },
+  { icon: '❄️', name: '靖康之恥', year: '1127 CE', desc: '金兵攻破北宋首都汴京，擄走徽、欽二帝，北宋滅亡，南宋偏安江南。此事件成為漢人最深的屈辱記憶之一。' },
+  { icon: '🌊', name: '鄭和下西洋', year: '1405–1433 CE', desc: '最大寶船長達 127 公尺，艦隊規模遠超同時代任何航海力量。但明朝隨後海禁，錯失引領大航海時代的機會。' },
+  { icon: '💣', name: '鴉片戰爭', year: '1840–1842 CE', desc: '英國炮艦打開中國大門，簽訂《南京條約》割讓香港、開放五口通商。中國「百年屈辱」時代的開始。' },
+  { icon: '✊', name: '太平天國運動', year: '1851–1864 CE', desc: '洪秀全建立「太平天國」，席捲中南部，死亡人數估計達 2000–3000 萬，是人類歷史上規模最大的內戰之一。' },
+  { icon: '🔔', name: '辛亥革命', year: '1911 CE', desc: '武昌起義引爆全國，清朝覆滅，中華民國建立，結束兩千年帝制。孫中山成為第一任臨時大總統。' },
+  { icon: '📖', name: '五四運動', year: '1919 CE', desc: '巴黎和會中國外交失敗引爆學生示威，掀起以「民主」與「科學」為旗幟的新文化運動，深刻改變中國現代思潮。' },
+  { icon: '⭐', name: '中華人民共和國成立', year: '1949 年 10 月 1 日', desc: '毛澤東在天安門宣告建國，結束國共內戰。此後中國走上社會主義道路，1978 年改革開放後躍升為世界強權。' },
+];
+
+const CULTURE = [
+  { icon: '📜', name: '四大發明', desc: '造紙術、印刷術、火藥、指南針——這四項發明從中國傳至全球，直接推動歐洲文藝復興與大航海時代。' },
+  { icon: '📚', name: '儒道釋三家', desc: '儒家強調倫理秩序，道家重視自然無為，佛教（傳入後本土化）關注心靈解脫，三家共同構成中國人的精神底蘊。' },
+  { icon: '🎨', name: '唐詩宋詞元曲', desc: '中國文學的三座高峰。李白的豪放、杜甫的沉鬱、蘇軾的曠達、關漢卿的戲劇，各成一代典範。' },
+  { icon: '🏯', name: '萬里長城', desc: '東起山海關、西至嘉峪關，總長超過 21,000 公里，是人類歷史上最大的軍事防禦工程，也是中華文明的象徵。' },
+  { icon: '🧧', name: '科舉制度', desc: '隋朝創立、延續 1300 年的文官考試制度，打破貴族壟斷、以才取人，是現代公務員考試制度的鼻祖。' },
+  { icon: '🌐', name: '絲綢之路', desc: '漢代開通的陸上與海上貿易路線，連結長安到羅馬，傳遞絲綢、瓷器、香料，也帶來宗教、藝術與思想的交流。' },
+  { icon: '🍵', name: '茶文化', desc: '源於中國的茶葉改變了整個世界的飲食習慣，英國為保護茶葉貿易利益而引發的衝突，甚至直接觸發美國獨立戰爭。' },
+  { icon: '🎭', name: '四大名著', desc: '《三國演義》、《水滸傳》、《西遊記》、《紅樓夢》，集合了中國歷史、英雄、神話與人情，是東方文學的巔峰。' },
+  { icon: '🏥', name: '中醫與本草', desc: '《黃帝內經》、《本草綱目》建立了整套診療理論，針灸、草藥至今仍廣泛使用，成為世界醫學的重要一支。' },
+];
+
+/* ═══════════════════════════════
+   渲染函數
+═══════════════════════════════ */
+
+function renderTimeline() {
+  const tl = document.getElementById('mainTimeline');
+  const MAX_DURATION = 500;
+  DYNASTIES.forEach(d => {
+    const dur = d.end - d.start;
+    const barW = Math.max(40, Math.min(dur / MAX_DURATION * 120, 120));
+    const item = document.createElement('div');
+    item.className = 'tl-item';
+    item.dataset.id = d.id;
+    item.innerHTML = `
+      <div class="tl-label ${d.era}" style="color:${d.color}">${d.name}</div>
+      <div class="tl-dot ${d.era}"></div>
+      <div class="tl-bar" style="width:${barW}px;background:${d.color};opacity:0.4"></div>
+      <div class="tl-year" style="color:${d.color}80">${d.period}</div>
+    `;
+    item.addEventListener('click', () => showTlDetail(d, item));
+    tl.appendChild(item);
+  });
+}
+
+function showTlDetail(d, el) {
+  document.querySelectorAll('.tl-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const panel = document.getElementById('tlDetail');
+  panel.classList.add('open');
+  panel.innerHTML = `
+    <div class="detail-title" style="color:${d.color}">${d.icon} ${d.name}</div>
+    <div class="detail-cols">
+      <div class="detail-stat"><div class="stat-label">時期</div><div class="stat-value">${d.period}</div></div>
+      <div class="detail-stat"><div class="stat-label">首都</div><div class="stat-value">${d.detail.capital}</div></div>
+      <div class="detail-stat"><div class="stat-label">建立者</div><div class="stat-value">${d.detail.founder}</div></div>
+      <div class="detail-stat"><div class="stat-label">延續時間</div><div class="stat-value">${d.detail.duration}</div></div>
+    </div>
+    <div class="detail-section">
+      <h4>🔍 簡介</h4><p>${d.desc}</p>
+    </div>
+    <div class="detail-section">
+      <h4>⚡ 關鍵事件</h4><p>${d.detail.keyEvent}</p>
+    </div>
+    <div class="detail-section">
+      <h4>🎨 文化特色</h4><p>${d.detail.culture}</p>
+    </div>
+    <div class="detail-section">
+      <h4>💡 歷史意義</h4><p>${d.detail.significance}</p>
+    </div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderDynastyGrid() {
+  const grid = document.getElementById('dynastyGrid');
+  DYNASTIES.forEach(d => {
+    const dur = d.end - d.start;
+    const pct = Math.min(dur / 500 * 100, 100);
+    const card = document.createElement('div');
+    card.className = 'dynasty-card';
+    card.style.borderTopColor = d.color;
+    card.style.borderTopWidth = '3px';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-icon">${d.icon}</div>
+        <div class="card-meta">
+          <div class="card-name" style="color:${d.color}">${d.name}</div>
+          <div class="card-period">${d.period}</div>
+          <div class="card-tags">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">${d.desc}</p>
+        <div class="card-highlights">
+          ${d.highlights.map(h=>`<div class="highlight"><span class="hl-icon">${h.icon}</span><span class="hl-text">${h.text}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>🔑 ${d.detail.keyEvent.split('、')[0]}</span>
+        <div class="duration-bar">
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${d.color}"></div></div>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      const panel = document.getElementById('dynastyDetail');
+      const alreadyOpen = panel.dataset.id === d.id && panel.classList.contains('open');
+      panel.classList.remove('open');
+      if (alreadyOpen) { panel.dataset.id = ''; return; }
+      panel.dataset.id = d.id;
+      panel.classList.add('open');
+      panel.innerHTML = `
+        <div class="detail-title" style="color:${d.color}">${d.icon} ${d.name} 詳細資料</div>
+        <div class="detail-cols">
+          <div class="detail-stat"><div class="stat-label">首都</div><div class="stat-value">${d.detail.capital}</div></div>
+          <div class="detail-stat"><div class="stat-label">建立者</div><div class="stat-value">${d.detail.founder}</div></div>
+          <div class="detail-stat"><div class="stat-label">延續時間</div><div class="stat-value">${d.detail.duration}</div></div>
+        </div>
+        <div class="detail-section"><h4>⚡ 關鍵事件</h4><p>${d.detail.keyEvent}</p></div>
+        <div class="detail-section"><h4>🎨 文化特色</h4><p>${d.detail.culture}</p></div>
+        <div class="detail-section"><h4>💡 歷史意義</h4><p>${d.detail.significance}</p></div>
+      `;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    grid.appendChild(card);
+  });
+}
+
+function renderFigures() {
+  const grid = document.getElementById('figuresGrid');
+  FIGURES.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'figure-card';
+    card.innerHTML = `
+      <div class="figure-avatar">${f.icon}</div>
+      <div class="figure-name">${f.name}</div>
+      <div class="figure-title">${f.title}</div>
+      <div class="figure-desc">${f.desc}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderEvents() {
+  const list = document.getElementById('eventsList');
+  EVENTS.forEach(e => {
+    const item = document.createElement('div');
+    item.className = 'event-item';
+    item.innerHTML = `
+      <div class="event-dot">${e.icon}</div>
+      <div class="event-content">
+        <div class="event-name">${e.name}</div>
+        <div class="event-year">📅 ${e.year}</div>
+        <div class="event-desc">${e.desc}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function renderCulture() {
+  const grid = document.getElementById('cultureGrid');
+  CULTURE.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'concept-card';
+    card.innerHTML = `
+      <div class="concept-icon">${c.icon}</div>
+      <div class="concept-name">${c.name}</div>
+      <div class="concept-desc">${c.desc}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderCompareTable() {
+  const tbl = document.getElementById('compareTable');
+  const headers = ['朝代', '時期', '持續年數', '都城', '建立者', '代表成就'];
+  tbl.innerHTML = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>`;
+  const tbody = document.createElement('tbody');
+  DYNASTIES.forEach(d => {
+    const dur = Math.abs(d.end - d.start);
+    const ach = d.tags.join(' · ');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:${d.color};font-weight:600">${d.icon} ${d.name}</td>
+      <td>${d.period}</td>
+      <td>${dur} 年</td>
+      <td>${d.detail.capital}</td>
+      <td>${d.detail.founder}</td>
+      <td>${ach}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+}
+
+/* ═══════════════════════════════
+   Nav / Section 切換
+═══════════════════════════════ */
+const SECTIONS = ['timeline-sec','dynasties-sec','figures-sec','events-sec','culture-sec','compare-sec'];
+
+function showSection(id, navEl) {
+  SECTIONS.forEach(sid => {
+    document.getElementById(sid).style.display = sid === id ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+  navEl.classList.add('active');
+}
+
+/* ═══════════════════════════════
+   初始化
+═══════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderTimeline();
+  renderDynastyGrid();
+  renderFigures();
+  renderEvents();
+  renderCulture();
+  renderCompareTable();
+});
+</script>
+</body>
+</html>
