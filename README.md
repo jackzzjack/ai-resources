@@ -28,6 +28,7 @@
 | `shipping-industry.html` | 航運產業生態系（定期與不定期航線模式、全球供應鏈協作、船舶分級） |
 | `stock-valuation.html` | 投資評價工具（本益比計算機、回本年限視覺化、不同產業估值邏輯） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
+| `metro_knowledge.html` | 捷運系統知識庫（形式分類、技術規格、信號系統、知名廠商、世界著名系統） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
 | `linux_kernel_overview.html` | Linux Kernel 架構全覽（元件分層圖、子系統代號、研究熱點、v6.1–6.14 版本特色） |
@@ -37,6 +38,7 @@
 | `dinosaurs.html` | 恐龍百科互動知識頁（地質年代、分類系統、10 大物種圖鑑、習性行為、體型比較、K-Pg 滅絕事件） |
 | `gerd_guide.html` | 胃食道逆流完整指南（GERD 成因、症狀辨別、潛在後果、治療策略、衛教影片嵌入） |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學（眼球構造、虹膜調光機制、顏色成因與遺傳、動物瞳孔多樣性） |
+| `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
 
 ---
 

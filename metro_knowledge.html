@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>捷運系統知識庫</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --blue: #3b82f6;
+      --indigo: #6366f1;
+      --cyan: #06b6d4;
+      --amber: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
+      --orange: #f97316;
+      --purple: #a855f7;
+      --teal: #14b8a6;
+      --steel: #64748b;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 56px 24px 40px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 10% 50%, rgba(99,102,241,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 90% 50%, rgba(6,182,212,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--cyan), var(--indigo), transparent);
+      opacity: 0.7;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .tag {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    /* ── Nav ── */
+    .nav-bar {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      padding: 7px 18px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .nav-btn:hover { border-color: var(--accent); color: var(--text); }
+    .nav-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+    /* ── Layout ── */
+    main { flex: 1; padding: 40px 24px 80px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    /* ── Cards grid ── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .card-icon { font-size: 2rem; margin-bottom: 12px; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .card .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; }
+    .card p { font-size: 0.88rem; line-height: 1.7; color: #c8c8e0; }
+
+    .spec-list { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .spec-row { display: flex; justify-content: space-between; font-size: 0.83rem; padding: 6px 10px; background: var(--surface2); border-radius: 8px; }
+    .spec-label { color: var(--muted); }
+    .spec-val { color: var(--text); font-weight: 600; }
+
+    /* ── Tags inside card ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Comparison table ── */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    thead { background: var(--surface2); }
+    thead th { padding: 12px 16px; text-align: left; font-weight: 700; color: var(--accent2); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+    tbody td { padding: 11px 16px; vertical-align: middle; }
+    .td-name { font-weight: 700; }
+    .rating-bar { display: flex; align-items: center; gap: 8px; }
+    .bar { height: 6px; border-radius: 3px; background: var(--border); flex: 1; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+
+    /* ── Signal / System blocks ── */
+    .signal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .signal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .signal-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .signal-card p { font-size: 0.85rem; color: #b0b0cc; line-height: 1.65; }
+    .signal-tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; margin-bottom: 8px; }
+
+    /* ── Vendor cards ── */
+    .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+    .vendor-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+    .vendor-card:hover { border-color: var(--accent); }
+    .vendor-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .vendor-logo {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .vendor-name { font-size: 1.1rem; font-weight: 800; }
+    .vendor-country { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    .vendor-body p { font-size: 0.86rem; line-height: 1.65; color: #c0c0da; margin-bottom: 10px; }
+    .product-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .product-pill {
+      padding: 3px 10px; border-radius: 8px;
+      font-size: 0.76rem; font-weight: 600;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    .case-list { font-size: 0.82rem; color: var(--muted); line-height: 1.8; }
+    .case-list span { color: var(--text); }
+
+    /* ── World metro timeline ── */
+    .world-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .metro-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .metro-card:hover { border-color: var(--accent); }
+    .metro-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .metro-name { font-size: 1rem; font-weight: 700; }
+    .metro-year { font-size: 0.78rem; background: var(--surface2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 8px; color: var(--muted); }
+    .metro-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .metro-stat { background: var(--surface2); padding: 8px 10px; border-radius: 8px; }
+    .metro-stat-label { font-size: 0.72rem; color: var(--muted); }
+    .metro-stat-val { font-size: 0.9rem; font-weight: 700; margin-top: 2px; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .cards { grid-template-columns: 1fr; }
+      .vendor-grid { grid-template-columns: 1fr; }
+      .world-grid { grid-template-columns: 1fr; }
+      .signal-grid { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚇 捷運系統知識庫</h1>
+  <p class="subtitle">從形式分類、技術規格、信號系統到全球知名廠商——捷運世界完整導覽</p>
+  <div class="tag-row">
+    <span class="tag" style="color:#60a5fa;border-color:#3b82f6;background:rgba(59,130,246,0.12)">形式分類</span>
+    <span class="tag" style="color:#34d399;border-color:#10b981;background:rgba(16,185,129,0.12)">技術規格</span>
+    <span class="tag" style="color:#f59e0b;border-color:#d97706;background:rgba(245,158,11,0.12)">信號系統</span>
+    <span class="tag" style="color:#a78bfa;border-color:#7c3aed;background:rgba(124,58,237,0.12)">知名廠商</span>
+    <span class="tag" style="color:#fb7185;border-color:#e11d48;background:rgba(225,29,72,0.12)">世界系統</span>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <button class="nav-btn active" onclick="showTab('types')">🚊 形式類型</button>
+  <button class="nav-btn" onclick="showTab('specs')">📐 技術規格</button>
+  <button class="nav-btn" onclick="showTab('signals')">📡 信號系統</button>
+  <button class="nav-btn" onclick="showTab('vendors')">🏭 知名廠商</button>
+  <button class="nav-btn" onclick="showTab('world')">🌍 世界系統</button>
+</nav>
+
+<main>
+
+  <!-- ════════════════ TAB 1：形式類型 ════════════════ -->
+  <section id="tab-types" class="section active">
+    <h2 class="section-title">捷運形式類型</h2>
+    <p class="section-desc">依軌道形式、路線位置、車輛技術與運量可將捷運系統分為六大類型，各具不同特性與適用場景。</p>
+
+    <div class="cards">
+
+      <!-- 重型捷運 -->
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#3b82f6,#6366f1)"></div>
+        <div class="card-icon">🚇</div>
+        <h3>重型捷運（Heavy Rail Metro）</h3>
+        <div class="card-sub">Subway · Underground · U-Bahn · 地下鐵</div>
+        <p>最主流的捷運形式，採全封閉專用路權（ROW A），通常以地下隧道為主，部分路段亦有高架或地面段。容量大、班次密、速度快，適合大都市核心幹線。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">最高時速</span><span class="spec-val">80 – 120 km/h</span></div>
+          <div class="spec-row"><span class="spec-label">每小時每向最大運量</span><span class="spec-val">40,000 – 80,000 人</span></div>
+          <div class="spec-row"><span class="spec-label">班距</span><span class="spec-val">90秒 – 5 分鐘</span></div>
+          <div class="spec-row"><span class="spec-label">列車長度</span><span class="spec-val">4 – 10 節車廂</span></div>
+          <div class="spec-row"><span class="spec-label">軌距（常見）</span><span class="spec-val">1435 mm（標準軌）</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge" style="background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid #3b82f6">全封閉路權</span>
+          <span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid #10b981">高運量</span>
+          <span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid #d97706">全自動可行</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.8rem;color:var(--muted)">代表：東京地鐵、倫敦 Tube、紐約地鐵、北京地鐵、台北捷運（文湖線除外）</div>
+      </div>
+
+      <!-- 輕軌運輸 -->
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#10b981,#06b6d4)"></div>
+        <div class="card-icon">🚋</div>
+        <h3>輕軌運輸（Light Rail Transit, LRT）</h3>
+        <div class="card-sub">Tramway · Streetcar · 路面電車</div>
+        <p>可與道路混行（ROW C）或採半獨立路權（ROW B），彈性高、建設成本低，適合中低密度城區或舊城區更新。現代低地板輕軌大幅提升無障礙性。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">最高時速</span><span class="spec-val">50 – 80 km/h</span></div>
+          <div class="spec-row"><span class="spec-label">每小時每向最大運量</span><span class="spec-val">2,000 – 20,000 人</span></div>
+          <div class="spec-row"><span class="spec-label">班距</span><span class="spec-val">3 – 15 分鐘</span></div>
+          <div class="spec-row"><span class="spec-label">車輛類型</span><span class="spec-val">低地板 / 部分低地板</span></div>
+          <div class="spec-row"><span class="spec-label">供電</span><span class="spec-val">架空線（750V DC）</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid #10b981">低建設成本</span>
+          <span class="badge" style="background:rgba(6,182,212,0.15);color:#22d3ee;border:1px solid #0891b2">無障礙友善</span>
+          <span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid #d97706">路面共用可行</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.8rem;color:var(--muted)">代表：高雄輕軌、波特蘭 MAX、阿姆斯特丹路面電車、波爾多無架空線輕軌</div>
+      </div>
+
+      <!-- 膠輪捷運 / AGT -->
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#f59e0b,#f97316)"></div>
+        <div class="card-icon">🚃</div>
+        <h3>膠輪捷運 / 自動導引（AGT）</h3>
+        <div class="card-sub">Rubber-tyred Metro · Automated Guideway Transit</div>
+        <p>以橡膠輪胎行駛於混凝土導軌，爬坡能力強、噪音低，通常採全自動無人駕駛（UTO）。台北捷運文湖線（中運量）為典型案例，另有法國 VAL 系統。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">最高時速</span><span class="spec-val">70 – 90 km/h</span></div>
+          <div class="spec-row"><span class="spec-label">每小時每向最大運量</span><span class="spec-val">10,000 – 40,000 人</span></div>
+          <div class="spec-row"><span class="spec-label">最大爬坡</span><span class="spec-val">高達 60 ‰（6%）</span></div>
+          <div class="spec-row"><span class="spec-label">導引方式</span><span class="spec-val">中央導軌 / 側導軌</span></div>
+          <div class="spec-row"><span class="spec-label">自動化等級</span><span class="spec-val">GoA 4（完全無人）</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid #d97706">強爬坡力</span>
+          <span class="badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid #dc2626">低噪音</span>
+          <span class="badge" style="background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid #6366f1">全自動</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.8rem;color:var(--muted)">代表：台北捷運文湖線、巴黎 VAL（14號線）、里昂 D 線、新加坡 Bukit Panjang LRT</div>
+      </div>
+
+      <!-- 單軌 -->
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#ef4444,#f97316)"></div>
+        <div class="card-icon">🚝</div>
+        <h3>單軌系統（Monorail）</h3>
+        <div class="card-sub">Straddle / Suspended Monorail</div>
+        <p>車輛跨騎（Straddle）或懸掛（Suspended）於單根導軌上，結構輕巧適合狹窄都市空間，視覺景觀佳。分跨座式（如東京百合海鷗線）與懸掛式（如千葉都市單軌）兩種。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">最高時速</span><span class="spec-val">65 – 80 km/h</span></div>
+          <div class="spec-row"><span class="spec-label">每小時每向最大運量</span><span class="spec-val">5,000 – 25,000 人</span></div>
+          <div class="spec-row"><span class="spec-label">轉彎半徑</span><span class="spec-val">小（適合彎道多路線）</span></div>
+          <div class="spec-row"><span class="spec-label">導軌寬度</span><span class="spec-val">約 850 – 1000 mm</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid #dc2626">視覺景觀佳</span>
+          <span class="badge" style="background:rgba(249,115,22,0.15);color:#fdba74;border:1px solid #ea580c">轉彎半徑小</span>
+          <span class="badge" style="background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid #6366f1">適合觀光路線</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.8rem;color:var(--muted)">代表：東京百合海鷗線、吉隆坡 KL Monorail、拉斯維加斯 Monorail、千葉都市單軌電車</div>
+      </div>
+
+      <!-- 磁浮 -->
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#a855f7,#6366f1)"></div>
+        <div class="card-icon">⚡</div>
+        <h3>磁浮系統（Maglev）</h3>
+        <div class="card-sub">Magnetic Levitation Railway</div>
+        <p>利用電磁力使車輛懸浮於導軌上，消除機械摩擦，噪音極低、加速平穩、維護成本低。分為超導磁浮（日本 SCMaglev）與常導磁浮（上海磁浮）兩種技術路線。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">都市型最高時速</span><span class="spec-val">100 – 140 km/h</span></div>
+          <div class="spec-row"><span class="spec-label">超高速型</span><span class="spec-val">500 – 600 km/h（幹線用）</span></div>
+          <div class="spec-row"><span class="spec-label">懸浮高度</span><span class="spec-val">8 – 15 mm（常導）</span></div>
+          <div class="spec-row"><span class="spec-label">噪音</span><span class="spec-val">極低（無輪軌接觸）</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge" style="background:rgba(168,85,247,0.15);color:#d8b4fe;border:1px solid #7c3aed">無摩擦</span>
+          <span class="badge" style="background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid #6366f1">超低噪音</span>
+          <span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid #10b981">高加速性</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.8rem;color:var(--muted)">代表：上海浦東磁浮、長沙磁浮快線、日本超導 SCMaglev（L0系，試驗中）、首爾仁川機場磁浮</div>
+      </div>
+
+      <!-- 纜索鐵路 / 纜車 -->
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#14b8a6,#06b6d4)"></div>
+        <div class="card-icon">🚡</div>
+        <h3>纜索鐵路（Funicular / Cable Car）</h3>
+        <div class="card-sub">Funicular · Aerial Tram · Cable-propelled Transit</div>
+        <p>以鋼索牽引車輛，特別適合坡度極大的山坡地形（最大坡度可達 48%），或作為都市補充連接系統。現代地下纜索系統（如哥倫比亞麥德林）亦整合入大眾運輸網路。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">最高時速</span><span class="spec-val">20 – 40 km/h</span></div>
+          <div class="spec-row"><span class="spec-label">最大坡度</span><span class="spec-val">高達 480 ‰（48%）</span></div>
+          <div class="spec-row"><span class="spec-label">適用場景</span><span class="spec-val">山丘地形、觀光景點</span></div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge" style="background:rgba(20,184,166,0.15);color:#5eead4;border:1px solid #0d9488">極強爬坡</span>
+          <span class="badge" style="background:rgba(6,182,212,0.15);color:#22d3ee;border:1px solid #0891b2">低碳環保</span>
+        </div>
+        <div style="margin-top:10px;font-size:0.8rem;color:var(--muted)">代表：舊金山纜車、香港山頂纜車、哥倫比亞麥德林城市纜車、里斯本升降機</div>
+      </div>
+
+    </div><!-- /cards -->
+
+    <div class="divider"></div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px">路權等級（Right-of-Way）</h3>
+    <div class="signal-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(59,130,246,0.2);color:#60a5fa">ROW A — 完全獨立</div>
+        <h4>全封閉路權</h4>
+        <p>與其他交通完全隔離，通常為地下隧道或圍欄高架。重型捷運標準配置，安全性最高，班距可壓至 90 秒。</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(245,158,11,0.2);color:#fbbf24">ROW B — 半獨立</div>
+        <h4>半封閉路權</h4>
+        <p>有專屬路廊但部分交叉口與道路交會，適合輕軌。速度與班次介於 A 與 C 之間，彈性佳。</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(239,68,68,0.2);color:#fca5a5">ROW C — 混合行駛</div>
+        <h4>路面混行路權</h4>
+        <p>與道路車輛共用路面，傳統路面電車模式。班距受紅燈與交通影響，適合低速、低密度路段。</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ════════════════ TAB 2：技術規格 ════════════════ -->
+  <section id="tab-specs" class="section">
+    <h2 class="section-title">技術規格比較</h2>
+    <p class="section-desc">捷運系統的關鍵技術參數，包括軌距、供電、車輛尺寸與自動化等級，決定系統性能與建設成本。</p>
+
+    <!-- 軌距 -->
+    <h3 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:12px">▍軌距規格（Track Gauge）</h3>
+    <div class="table-wrap" style="margin-bottom:32px">
+      <table>
+        <thead>
+          <tr>
+            <th>軌距名稱</th>
+            <th>軌距寬度</th>
+            <th>主要使用地區</th>
+            <th>代表系統</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-name" style="color:#60a5fa">標準軌</td>
+            <td>1435 mm</td>
+            <td>歐洲、中國、美國、台灣</td>
+            <td>台北捷運（淡水信義、板南等線）、巴黎地鐵（大部分）、北京地鐵</td>
+          </tr>
+          <tr>
+            <td class="td-name" style="color:#34d399">米軌</td>
+            <td>1000 mm</td>
+            <td>東南亞、部分歐洲</td>
+            <td>曼谷 BTS Skytrain、新加坡 MRT（北南線初期）</td>
+          </tr>
+          <tr>
+            <td class="td-name" style="color:#fbbf24">1067 mm 窄軌</td>
+            <td>1067 mm</td>
+            <td>日本（主流）、南非</td>
+            <td>東京都營地下鐵（淺草線）、大阪地下鐵（御堂筋除外）</td>
+          </tr>
+          <tr>
+            <td class="td-name" style="color:#a78bfa">1520 mm 寬軌</td>
+            <td>1520 mm</td>
+            <td>俄羅斯、前蘇聯國家</td>
+            <td>莫斯科地鐵、聖彼得堡地鐵、基輔地鐵</td>
+          </tr>
+          <tr>
+            <td class="td-name" style="color:#fb7185">762 mm 窄軌</td>
+            <td>762 mm</td>
+            <td>歷史遺留，少數地區</td>
+            <td>香港舊版輕鐵部分、部分山地鐵路</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 供電 -->
+    <h3 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:12px">▍供電方式（Power Supply）</h3>
+    <div class="cards" style="margin-bottom:32px">
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#f59e0b,#ef4444)"></div>
+        <h3>第三軌供電（Third Rail）</h3>
+        <p style="font-size:0.86rem;line-height:1.7">沿軌道旁設置帶電導軌，集電靴從側方或底部接觸取電。建設成本低，不需架設電線，適合地下隧道段。主要電壓：<strong style="color:#fbbf24">750V DC</strong> 或 <strong style="color:#fbbf24">1500V DC</strong>。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">優點</span><span class="spec-val">隧道淨空需求低</span></div>
+          <div class="spec-row"><span class="spec-label">缺點</span><span class="spec-val">高架段裸露有觸電風險</span></div>
+          <div class="spec-row"><span class="spec-label">代表</span><span class="spec-val">倫敦地鐵、紐約地鐵</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#3b82f6,#06b6d4)"></div>
+        <h3>架空電纜（Overhead Catenary）</h3>
+        <p style="font-size:0.86rem;line-height:1.7">透過車頂集電弓（Pantograph）從架空導線取電。適合高架與地面路段，電壓可較高。主要電壓：<strong style="color:#60a5fa">750V DC</strong>、<strong style="color:#60a5fa">1500V DC</strong>、<strong style="color:#60a5fa">25kV AC</strong>。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">優點</span><span class="spec-val">電壓可更高，傳輸效率佳</span></div>
+          <div class="spec-row"><span class="spec-label">缺點</span><span class="spec-val">隧道淨空需求高</span></div>
+          <div class="spec-row"><span class="spec-label">代表</span><span class="spec-val">台北捷運、高雄輕軌</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#10b981,#a855f7)"></div>
+        <h3>無線感應 / 儲能（新技術）</h3>
+        <p style="font-size:0.86rem;line-height:1.7">利用地面感應線圈（WPT）或車載超級電容 / 鋰電池，在停靠站快速充電，行駛段無需架空線，改善市區景觀。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">代表技術</span><span class="spec-val">APS（法）、SRS（西門子）</span></div>
+          <div class="spec-row"><span class="spec-label">代表路線</span><span class="spec-val">波爾多輕軌、塞維亞輕軌</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自動化等級 -->
+    <h3 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:12px">▍自動化等級（Grade of Automation, GoA）</h3>
+    <div class="table-wrap" style="margin-bottom:32px">
+      <table>
+        <thead>
+          <tr>
+            <th>等級</th>
+            <th>名稱</th>
+            <th>駕駛員需求</th>
+            <th>功能說明</th>
+            <th>代表系統</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:#ef4444">GoA 1</strong></td>
+            <td>人工駕駛</td>
+            <td>全程在車</td>
+            <td>駕駛員負責牽引、煞車、月台監控</td>
+            <td>傳統地鐵、大多數舊線</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#f97316">GoA 2</strong></td>
+            <td>半自動</td>
+            <td>全程在車</td>
+            <td>系統自動牽引煞車，駕駛員監控及緊急處理</td>
+            <td>台北捷運（淡水信義線）、香港 MTR 大部分</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#f59e0b">GoA 3</strong></td>
+            <td>條件自動</td>
+            <td>列車員在車</td>
+            <td>全自動行駛，列車員負責開關門與緊急處理</td>
+            <td>新加坡 NEL、哥本哈根地鐵</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#10b981">GoA 4</strong></td>
+            <td>完全無人</td>
+            <td>無人員在車</td>
+            <td>完全無人駕駛，遠端監控中心管理</td>
+            <td>台北文湖線、杜拜 Metro、巴黎 14號線、吉隆坡 Kelana Jaya</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 月台型式 -->
+    <h3 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:12px">▍月台型式與月台門</h3>
+    <div class="cards">
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div>
+        <h3>島式月台（Island Platform）</h3>
+        <p style="font-size:0.86rem;line-height:1.7">月台位於兩股軌道中間，乘客可選擇任一側上下車。土地利用效率高，適合高架與地下站。台北捷運大多數車站採用此型式。</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#a855f7,#6366f1)"></div>
+        <h3>側式月台（Side Platform）</h3>
+        <p style="font-size:0.86rem;line-height:1.7">月台各在軌道兩側，站寬可較大，候車空間充裕。適合高流量車站或需分離進出站人流的設計。</p>
+      </div>
+      <div class="card">
+        <div class="card-accent" style="background:linear-gradient(90deg,#14b8a6,#06b6d4)"></div>
+        <h3>月台門（Platform Screen Doors, PSD）</h3>
+        <p style="font-size:0.86rem;line-height:1.7">分為全高式（Full-height）與半高式（Half-height）。提升安全性、隔離空調環境（節能）、防止異物入軌，GoA 3/4 系統的標準配備。</p>
+        <div class="spec-list">
+          <div class="spec-row"><span class="spec-label">全高式</span><span class="spec-val">隔音隔熱效果最佳</span></div>
+          <div class="spec-row"><span class="spec-label">半高式</span><span class="spec-val">改裝舊站成本較低</span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ════════════════ TAB 3：信號系統 ════════════════ -->
+  <section id="tab-signals" class="section">
+    <h2 class="section-title">信號與控制系統</h2>
+    <p class="section-desc">信號系統是捷運的「神經系統」，決定安全間距、行車密度與自動化程度。從傳統固定閉塞到現代移動閉塞，技術持續演進。</p>
+
+    <div class="signal-grid">
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(239,68,68,0.2);color:#fca5a5">傳統技術</div>
+        <h4>固定閉塞（Fixed Block）</h4>
+        <p>將軌道劃分為固定長度的「閉塞區間」，每區間同時只容許一列車。安全但效率受限，班距難以低於 3 分鐘，適合舊線改造。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(245,158,11,0.2);color:#fbbf24">現代主流</div>
+        <h4>移動閉塞 / CBTC（Communication-Based Train Control）</h4>
+        <p>列車與控制中心持續雙向通訊，即時計算每列車的安全防護區段。班距可壓低至 <strong>90 秒</strong>，大幅提升線路容量，是新建捷運的標準配置。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(59,130,246,0.2);color:#60a5fa">歐洲標準</div>
+        <h4>ETCS / ERTMS（European Train Control System）</h4>
+        <p>歐洲統一列車控制標準，分 Level 1、2、3 三個等級。Level 2 採無線通訊（GSM-R / 5G），Level 3 實現真正移動閉塞，跨境互通性強。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(16,185,129,0.2);color:#34d399">子系統</div>
+        <h4>ATP（Automatic Train Protection）</h4>
+        <p>自動列車保護：持續監測速度與間距，當違規時強制煞車。是所有現代捷運的安全底線，即使在手動駕駛模式下仍強制執行。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(16,185,129,0.2);color:#34d399">子系統</div>
+        <h4>ATO（Automatic Train Operation）</h4>
+        <p>自動列車操作：在 ATP 保護下自動完成加速、巡航、減速與停靠（精準停車誤差 ±30cm）。GoA 2 以上的必備系統，可精準執行時刻表。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(16,185,129,0.2);color:#34d399">子系統</div>
+        <h4>ATS（Automatic Train Supervision）</h4>
+        <p>自動列車監控：從控制中心俯瞰全線列車位置與時刻，自動調度、調整班距、處理延誤。是 OCC（運作控制中心）的核心軟體。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(168,85,247,0.2);color:#d8b4fe">新興技術</div>
+        <h4>虛擬連結（Virtual Coupling）</h4>
+        <p>多列列車以極小間距（數十公尺）行駛，透過列車間直接通訊協調，形同「虛擬長車廂」，在不增加基礎設施下大幅提升容量。仍在研發驗證階段。</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-tag" style="background:rgba(6,182,212,0.2);color:#22d3ee">主要供應商</div>
+        <h4>CBTC 主要廠商</h4>
+        <p>
+          <strong style="color:#60a5fa">Alstom</strong>：Urbalis 系列（原 Alcatel Transport）<br>
+          <strong style="color:#60a5fa">Siemens</strong>：Trainguard MT<br>
+          <strong style="color:#60a5fa">Hitachi</strong>：SelTrac（原 Thales）<br>
+          <strong style="color:#60a5fa">Bombardier / Alstom</strong>：Cityflo 650<br>
+          <strong style="color:#60a5fa">CRRC</strong>：自研 CBTC 系統（中國城市）
+        </p>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:16px">信號系統演進時間軸</h3>
+    <div style="display:flex;flex-direction:column;gap:0;position:relative;padding-left:32px">
+      <div style="position:absolute;left:10px;top:8px;bottom:8px;width:2px;background:var(--border)"></div>
+      <div style="display:flex;gap:0" id="timeline"></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;padding-left:32px;position:relative">
+      <div style="position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)"></div>
+
+      <div style="position:relative;padding-left:20px;padding-bottom:24px">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:#ef4444;border:2px solid var(--bg)"></div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:2px">1860s – 1950s</div>
+        <div style="font-weight:700;margin-bottom:4px">機械/電氣固定閉塞</div>
+        <div style="font-size:0.85rem;color:#c0c0da;line-height:1.6">色燈信號、軌道電路感應列車位置，人工調度員控制進路，班距 3-5 分鐘以上。</div>
+      </div>
+
+      <div style="position:relative;padding-left:20px;padding-bottom:24px">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:#f59e0b;border:2px solid var(--bg)"></div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:2px">1960s – 1980s</div>
+        <div style="font-weight:700;margin-bottom:4px">ATC 系統普及（ATP + ATO + ATS）</div>
+        <div style="font-size:0.85rem;color:#c0c0da;line-height:1.6">三子系統整合，自動牽引煞車，班距降至 2-3 分鐘。倫敦維多利亞線（1969）為首條全自動運行地鐵。</div>
+      </div>
+
+      <div style="position:relative;padding-left:20px;padding-bottom:24px">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2px solid var(--bg)"></div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:2px">1990s – 2000s</div>
+        <div style="font-weight:700;margin-bottom:4px">CBTC 移動閉塞商業化</div>
+        <div style="font-size:0.85rem;color:#c0c0da;line-height:1.6">Alcatel（現 Alstom）推出 SelTrac，紐約地鐵 L 線（1998）首次部署，班距可達 90 秒。台北捷運文湖線採同期技術。</div>
+      </div>
+
+      <div style="position:relative;padding-left:20px;padding-bottom:24px">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:#10b981;border:2px solid var(--bg)"></div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:2px">2010s – 今</div>
+        <div style="font-weight:700;margin-bottom:4px">全自動無人駕駛普及（GoA 4）</div>
+        <div style="font-size:0.85rem;color:#c0c0da;line-height:1.6">杜拜、巴黎、新加坡等城市大規模採用 GoA 4，搭配月台門與 CBTC，班距 80–90 秒，營運彈性大幅提升。</div>
+      </div>
+
+      <div style="position:relative;padding-left:20px">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:#a855f7;border:2px solid var(--bg)"></div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:2px">2020s 以後</div>
+        <div style="font-weight:700;margin-bottom:4px">AI 調度 / 5G 通訊 / 虛擬連結</div>
+        <div style="font-size:0.85rem;color:#c0c0da;line-height:1.6">機器學習預測需求調度列車，5G 取代 TETRA/GSM-R 提供更低延遲通訊，虛擬連結技術持續研發中。</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ════════════════ TAB 4：知名廠商 ════════════════ -->
+  <section id="tab-vendors" class="section">
+    <h2 class="section-title">知名廠商</h2>
+    <p class="section-desc">全球捷運車輛與系統集成市場由歐洲、日本、中國、韓國廠商主導。近年因產業整併，格局已大幅集中。</p>
+
+    <div class="vendor-grid">
+
+      <!-- Alstom -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(0,100,200,0.15)">🚄</div>
+          <div>
+            <div class="vendor-name">Alstom</div>
+            <div class="vendor-country">🇫🇷 法國 | 1928年創立</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>全球最大軌道交通集團之一，2021年收購 Bombardier Transportation，整合後產品線橫跨重型捷運、輕軌、高速鐵路與信號系統。</p>
+          <div class="product-pills">
+            <span class="product-pill">Metropolis（重型捷運）</span>
+            <span class="product-pill">Citadis X05（輕軌）</span>
+            <span class="product-pill">Innovia（膠輪 AGT）</span>
+            <span class="product-pill">Movia（區域捷運）</span>
+            <span class="product-pill">Urbalis CBTC</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>巴黎地鐵 MF19、孟買 Metro 2A/7、聖保羅地鐵、多倫多 TTC、吉隆坡 Putrajaya 線、台北捷運（部分車廂）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Siemens Mobility -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(0,150,255,0.15)">⚡</div>
+          <div>
+            <div class="vendor-name">Siemens Mobility</div>
+            <div class="vendor-country">🇩🇪 德國 | 軌道業務自 1879年</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>西門子旗下獨立事業部，以可靠性著稱，在歐洲高速鐵路與城市捷運市場均有強大地位，信號系統 Trainguard 是 CBTC 市場主要選手。</p>
+          <div class="product-pills">
+            <span class="product-pill">Inspiro（重型捷運）</span>
+            <span class="product-pill">Avenio（輕軌）</span>
+            <span class="product-pill">Velaro（高速）</span>
+            <span class="product-pill">Trainguard MT CBTC</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>慕尼黑 U-Bahn、華沙地鐵 II 線、洛杉磯 Metro Gold Line、里雅德地鐵、波蘭 PKM Trójmiasto</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRRC -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(220,30,30,0.15)">🚆</div>
+          <div>
+            <div class="vendor-name">CRRC（中國中車）</div>
+            <div class="vendor-country">🇨🇳 中國 | 2015年合併成立</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>全球最大軌道車輛製造商（按產量），由南車與北車合併。在中國城市地鐵市場佔絕對主導，近年積極開拓海外市場，但因地緣政治受到部分國家限制。</p>
+          <div class="product-pills">
+            <span class="product-pill">A / B / C 型地鐵</span>
+            <span class="product-pill">磁浮列車</span>
+            <span class="product-pill">智慧捷運（無人駕駛）</span>
+            <span class="product-pill">氫燃料電池列車</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>中國 40+ 城市地鐵、美國波士頓 MBTA（Red/Orange Line）、阿根廷布宜諾斯艾利斯、以色列特拉維夫輕軌</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hitachi Rail -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(200,0,50,0.15)">🔴</div>
+          <div>
+            <div class="vendor-name">Hitachi Rail</div>
+            <div class="vendor-country">🇯🇵🇮🇹 日本/義大利 | 收購 Ansaldo</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>日立鐵道於 2015 年收購義大利 Ansaldo Breda，2021 年進一步收購 Thales 陸上交通業務（含 SelTrac CBTC），成為兼具車輛與信號系統的垂直整合廠商。</p>
+          <div class="product-pills">
+            <span class="product-pill">A-train（日本都市）</span>
+            <span class="product-pill">Caravaggio（義大利）</span>
+            <span class="product-pill">Class 395 / 800（英國）</span>
+            <span class="product-pill">SelTrac CBTC</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>英國 Thameslink / Elizabeth line、羅馬地鐵 C 線、巴塞隆納地鐵、香港 MTR（部分）、夏威夷 Skyline</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kawasaki Heavy Industries -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(0,80,180,0.15)">🔵</div>
+          <div>
+            <div class="vendor-name">川崎車輛（Kawasaki）</div>
+            <div class="vendor-country">🇯🇵 日本 | 2021 年分拆為川崎車輛</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>川崎重工旗下軌道事業，以高品質不鏽鋼車體聞名，在北美市場（紐約、舊金山）及日本、台灣均有大量案例，持有 efWING 轉向架等核心技術。</p>
+          <div class="product-pills">
+            <span class="product-pill">efACE（不鏽鋼車體）</span>
+            <span class="product-pill">efWING 轉向架</span>
+            <span class="product-pill">NYC R179/R211</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>紐約地鐵 R179 / R211、BART（舊金山）、首爾地鐵、東京都營地鐵、台北捷運（301型車廂）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hyundai Rotem -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(0,120,200,0.15)">🔷</div>
+          <div>
+            <div class="vendor-name">現代 Rotem</div>
+            <div class="vendor-country">🇰🇷 韓國 | 現代集團旗下</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>韓國現代集團鐵路事業，韓國國內地鐵市場主要供應商，積極拓展中東、美洲市場。近年在氫燃料電池列車、超高速 Hyperloop 技術有所投入。</p>
+          <div class="product-pills">
+            <span class="product-pill">VVVF 地鐵列車</span>
+            <span class="product-pill">KTX 高速列車</span>
+            <span class="product-pill">氫燃料電池列車</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>首爾地鐵（1-9號線）、台灣高鐵（KTX 技術授權）、洛杉磯地鐵 P3、費城 SEPTA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAF -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(200,60,0,0.15)">🟠</div>
+          <div>
+            <div class="vendor-name">CAF（Construcciones y Auxiliar de Ferrocarriles）</div>
+            <div class="vendor-country">🇪🇸 西班牙 | 1917年創立</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>西班牙老字號軌道廠商，旗下擁有 Urbos 輕軌品牌及 Signalling 信號事業。在歐洲輕軌與拉丁美洲市場有顯著份額，收購 Solaris 進入巴士市場。</p>
+          <div class="product-pills">
+            <span class="product-pill">Urbos（輕軌）</span>
+            <span class="product-pill">Civity（區域列車）</span>
+            <span class="product-pill">CAF Signalling</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>比爾巴鄂地鐵、都柏林 Luas 輕軌、愛丁堡輕軌、奧斯陸輕軌、雪梨輕軌、波士頓輕軌</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stadler Rail -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(200,0,100,0.15)">🔺</div>
+          <div>
+            <div class="vendor-name">Stadler Rail</div>
+            <div class="vendor-country">🇨🇭 瑞士 | 1942年創立</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>瑞士精密製造代表，以模組化設計著稱，靈活應對各種軌距與供電規格。在區域列車、齒軌鐵路、輕軌均有獨特產品線，近年積極進入北美市場。</p>
+          <div class="product-pills">
+            <span class="product-pill">FLIRT（區域電聯車）</span>
+            <span class="product-pill">KISS（雙層）</span>
+            <span class="product-pill">Tango（輕軌）</span>
+            <span class="product-pill">METRO（全自動捷運）</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>巴塞爾輕軌、洛桑地鐵（M2，全球最長全自動齒軌捷運）、洛杉磯 APM、達拉斯輕軌</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 近畿車輛 -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(0,100,0,0.15)">🟩</div>
+          <div>
+            <div class="vendor-name">近畿車輛（Kinki Sharyo）</div>
+            <div class="vendor-country">🇯🇵 日本 | 1920年創立</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>日本關西地區重要鐵路車輛製造商，與大阪地鐵（Osaka Metro）有深厚合作，在台灣、美國均有供貨紀錄。2019 年被 Tokyu Car Corporation 合併。</p>
+          <div class="product-pills">
+            <span class="product-pill">大阪地鐵車廂</span>
+            <span class="product-pill">美國輕軌（PCCIIe）</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>大阪地鐵御堂筋線 21系、台北捷運（101型車廂）、洛杉磯 Metro Blue Line 初期車廂</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Škoda -->
+      <div class="vendor-card">
+        <div class="vendor-header">
+          <div class="vendor-logo" style="background:rgba(0,80,40,0.15)">🟢</div>
+          <div>
+            <div class="vendor-name">Škoda Transportation</div>
+            <div class="vendor-country">🇨🇿 捷克 | 收購後更名 Škoda Group</div>
+          </div>
+        </div>
+        <div class="vendor-body">
+          <p>捷克主要軌道車輛廠商，在東歐地鐵、輕軌市場佔有重要地位，收購多家歐洲廠商後擴大產品線，近年進入西歐市場競標。</p>
+          <div class="product-pills">
+            <span class="product-pill">ForCity 輕軌</span>
+            <span class="product-pill">Emil Zola 區域列車</span>
+            <span class="product-pill">Sofía 地鐵</span>
+          </div>
+          <div class="case-list">
+            代表案例：<span>布拉格地鐵（部分）、索非亞地鐵、芬蘭 Tampere 輕軌、赫爾辛基輕軌</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /vendor-grid -->
+
+    <div class="divider"></div>
+
+    <h3 style="font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:16px">全球市場份額概況（2020s）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>廠商</th>
+            <th>總部</th>
+            <th>全球市佔（車輛）</th>
+            <th>強勢市場</th>
+            <th>近期重大收購</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-name">CRRC</td>
+            <td>🇨🇳 中國</td>
+            <td>
+              <div class="rating-bar"><div class="bar"><div class="bar-fill" style="width:38%;background:#ef4444"></div></div><span>~38%</span></div>
+            </td>
+            <td>中國、亞洲部分、南美</td>
+            <td>各子公司整合</td>
+          </tr>
+          <tr>
+            <td class="td-name">Alstom</td>
+            <td>🇫🇷 法國</td>
+            <td>
+              <div class="rating-bar"><div class="bar"><div class="bar-fill" style="width:18%;background:#3b82f6"></div></div><span>~18%</span></div>
+            </td>
+            <td>歐洲、中東、印度</td>
+            <td>Bombardier Transportation（2021）</td>
+          </tr>
+          <tr>
+            <td class="td-name">Siemens Mobility</td>
+            <td>🇩🇪 德國</td>
+            <td>
+              <div class="rating-bar"><div class="bar"><div class="bar-fill" style="width:12%;background:#60a5fa"></div></div><span>~12%</span></div>
+            </td>
+            <td>歐洲、北美、中東</td>
+            <td>—（與 Alstom 合併遭否決）</td>
+          </tr>
+          <tr>
+            <td class="td-name">Hitachi Rail</td>
+            <td>🇯🇵🇮🇹 日本/義大利</td>
+            <td>
+              <div class="rating-bar"><div class="bar"><div class="bar-fill" style="width:8%;background:#fbbf24"></div></div><span>~8%</span></div>
+            </td>
+            <td>英國、義大利、澳洲</td>
+            <td>Thales 陸上（2021）</td>
+          </tr>
+          <tr>
+            <td class="td-name">CAF</td>
+            <td>🇪🇸 西班牙</td>
+            <td>
+              <div class="rating-bar"><div class="bar"><div class="bar-fill" style="width:5%;background:#f97316"></div></div><span>~5%</span></div>
+            </td>
+            <td>歐洲輕軌、拉美</td>
+            <td>Solaris（巴士，2018）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- ════════════════ TAB 5：世界系統 ════════════════ -->
+  <section id="tab-world" class="section">
+    <h2 class="section-title">世界著名捷運系統</h2>
+    <p class="section-desc">全球超過 200 個城市擁有城市軌道交通系統，以下精選各洲代表性系統，涵蓋規模、歷史與技術特色。</p>
+
+    <!-- 亞洲 -->
+    <h3 style="font-size:1rem;font-weight:700;color:#f59e0b;margin-bottom:16px">🌏 亞洲</h3>
+    <div class="world-grid" style="margin-bottom:32px">
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇯🇵 東京地鐵（Tokyo Metro + 都營）</div>
+          <div class="metro-year">1927年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">全球最繁忙的地鐵系統之一，以精準守時聞名，誤點以秒計算。Tokyo Metro 與都營地下鐵共 13 條路線，與 JR、私鐵大量直通運轉。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">13 條</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">車站數</div><div class="metro-stat-val" style="color:#60a5fa">285 站</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~860 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">軌距</div><div class="metro-stat-val">1067 / 1435mm</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇨🇳 北京地鐵</div>
+          <div class="metro-year">1969年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">全球路線里程最長的地鐵系統之一，高速擴張，2000年代以後每年新增多條路線，票價低廉，採 CRRC 車廂與自研信號系統。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">27 條</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">836 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~1,000 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">GoA</div><div class="metro-stat-val">GoA 2–4</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇸🇬 新加坡 MRT</div>
+          <div class="metro-year">1987年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">以全自動化與高可靠性著稱，Circuit Line（CCL）與 North-East Line（NEL）為全自動 GoA 4，Thomson-East Coast Line 採最新 CBTC，系統整合度高。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">6 條 MRT + 3 LRT</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">~200 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~340 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">GoA</div><div class="metro-stat-val">GoA 2–4</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇹🇼 台北捷運（TRTC）</div>
+          <div class="metro-year">1996年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">以高準點率、高清潔度聞名，榮獲多項國際肯定。分重運量（鋼輪鋼軌）與中運量（膠輪 AGT，文湖線）系統，機場線（桃園 MRT）延伸至桃園國際機場。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">6 條（含機場線）</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">131 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~230 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">GoA</div><div class="metro-stat-val">GoA 2 / GoA 4</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇰🇷 首爾地鐵</div>
+          <div class="metro-year">1974年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">大首爾都會區最主要交通骨幹，涵蓋首爾市及周邊城市，票價依距離計算，轉乘優惠完善，T-money 卡生態系統成熟。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">23 條（含廣域）</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">~1,000 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~800 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">供電</div><div class="metro-stat-val">1500V DC</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇦🇪 杜拜 Metro</div>
+          <div class="metro-year">2009年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">全球最長全自動無人駕駛（GoA 4）城市捷運系統，由 Hitachi Rail（原 Ansaldo）建造。設有黃金車廂（頭等艙）和女性兒童專用車廂，外觀設計前衛。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">2 條（Red + Green）</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">90 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">GoA</div><div class="metro-stat-val" style="color:#34d399">GoA 4（完全無人）</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">車廂型式</div><div class="metro-stat-val">膠輪 AGT</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 歐洲 -->
+    <h3 style="font-size:1rem;font-weight:700;color:#60a5fa;margin-bottom:16px">🌍 歐洲</h3>
+    <div class="world-grid" style="margin-bottom:32px">
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇬🇧 倫敦地鐵（London Underground）</div>
+          <div class="metro-year">1863年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">全球最古老的地下鐵路，暱稱 "The Tube"，標誌性設計語言（Johnston 字體、Harry Beck 路線圖）影響全球地鐵視覺識別。Elizabeth Line（2022年）為近年最大擴建。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">11 條</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">402 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">車站數</div><div class="metro-stat-val" style="color:#34d399">272 站</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">供電</div><div class="metro-stat-val">630V DC 第三軌</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇫🇷 巴黎地鐵（Métro de Paris）</div>
+          <div class="metro-year">1900年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">覆蓋密度極高、車站間距短（平均約 500m），為市區出行首選。14 號線為全自動膠輪捷運，Grand Paris Express 計劃正在大規模擴建外環路線。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">16 條（含 RER）</div></div>
+          <div class="metro-stat"><div class="metro-stat-val" style="color:#60a5fa">301 站</div><div class="metro-stat-label">地鐵站</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~500 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">特色</div><div class="metro-stat-val">膠輪 + 鋼輪混合</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇩🇪 柏林地鐵（U-Bahn）</div>
+          <div class="metro-year">1902年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">柏林都市鐵路系統由 U-Bahn（地鐵）與 S-Bahn（城郊鐵路）共同構成，歷史跨越東西德分裂時代，部分路線見證冷戰歷史，「幽靈車站」已成文化地標。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">U-Bahn 路線</div><div class="metro-stat-val" style="color:#f59e0b">10 條</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">155 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">車站數</div><div class="metro-stat-val" style="color:#34d399">175 站</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">軌距</div><div class="metro-stat-val">1435mm</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 美洲 -->
+    <h3 style="font-size:1rem;font-weight:700;color:#34d399;margin-bottom:16px">🌎 美洲</h3>
+    <div class="world-grid" style="margin-bottom:32px">
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇺🇸 紐約地鐵（NYC Subway）</div>
+          <div class="metro-year">1904年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">全球站數最多的地鐵系統，24小時全天候運行（除維修外），車廂新舊混搭，L 線為 CBTC 改造標竿，正逐步推進全線現代化。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">36 條服務線</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">車站數</div><div class="metro-stat-val" style="color:#60a5fa">472 站</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">全天候運行</div><div class="metro-stat-val" style="color:#34d399">24/7</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">供電</div><div class="metro-stat-val">625V DC 第三軌</div></div>
+        </div>
+      </div>
+
+      <div class="metro-card">
+        <div class="metro-header">
+          <div class="metro-name">🇧🇷 聖保羅地鐵</div>
+          <div class="metro-year">1974年</div>
+        </div>
+        <p style="font-size:0.83rem;color:#b0b0cc;line-height:1.65;margin-bottom:8px">南美洲最大地鐵系統之一，由 Metro SP（公營）與 ViaMobilidade（特許）共同營運，4號線為全自動膠輪捷運，與 CPTM 通勤鐵路整合轉乘。</p>
+        <div class="metro-stats">
+          <div class="metro-stat"><div class="metro-stat-label">路線數</div><div class="metro-stat-val" style="color:#f59e0b">6 條（含特許）</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">總里程</div><div class="metro-stat-val" style="color:#60a5fa">~100 km</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">日均客運量</div><div class="metro-stat-val" style="color:#34d399">~400 萬人次</div></div>
+          <div class="metro-stat"><div class="metro-stat-label">特色</div><div class="metro-stat-val">GoA 4（4號線）</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 台灣 -->
+    <h3 style="font-size:1rem;font-weight:700;color:#a78bfa;margin-bottom:16px">🇹🇼 台灣捷運系統一覽</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>系統</th>
+            <th>開通年份</th>
+            <th>路線數</th>
+            <th>總里程</th>
+            <th>技術特色</th>
+            <th>主要車輛廠商</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-name">台北捷運（TRTC）</td>
+            <td>1996</td>
+            <td>6條</td>
+            <td>131 km</td>
+            <td>重運量 GoA 2；文湖線 GoA 4 膠輪 AGT</td>
+            <td>川崎、近畿車輛、Alstom</td>
+          </tr>
+          <tr>
+            <td class="td-name">桃園捷運（Taoyuan MRT）</td>
+            <td>2017</td>
+            <td>2條</td>
+            <td>53 km</td>
+            <td>機場線採直達快車設計；中路線規劃中</td>
+            <td>Bombardier（現 Alstom）</td>
+          </tr>
+          <tr>
+            <td class="td-name">高雄捷運（KRTC）</td>
+            <td>2008</td>
+            <td>2條</td>
+            <td>42 km</td>
+            <td>GoA 2；紅線與橘線交叉，覆蓋主要商圈</td>
+            <td>Siemens（Inspiro）</td>
+          </tr>
+          <tr>
+            <td class="td-name">高雄輕軌（KLRT）</td>
+            <td>2015</td>
+            <td>1條（C1線）</td>
+            <td>22 km（全線）</td>
+            <td>低地板輕軌，部分路段無架空線（儲能）</td>
+            <td>CAF Urbos</td>
+          </tr>
+          <tr>
+            <td class="td-name">台中捷運（TMRT）</td>
+            <td>2021</td>
+            <td>1條（綠線）</td>
+            <td>16.7 km</td>
+            <td>高架膠輪 AGT，GoA 4 全自動</td>
+            <td>日立 / Ansaldo</td>
+          </tr>
+          <tr>
+            <td class="td-name">新北捷運（三鶯線等）</td>
+            <td>興建中</td>
+            <td>規劃多條</td>
+            <td>—</td>
+            <td>三鶯線採高架 AGT，環狀線已部分通車</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  捷運系統知識庫 · 資料整理自 UITP、各城市交通局官方資料及學術文獻 · 部分數據為概略值，以官方最新公告為準
+</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
