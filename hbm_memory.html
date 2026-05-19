@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HBM 高頻寬記憶體完整解析 — 原理、架構與世代演進</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --accent-yellow: #fbbf24;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      line-height: 1.65;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(124,106,255,0.22) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 580px;
+      margin-inline: auto;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.875rem;
+      font-family: inherit;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+    /* ── Main ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Cards & Grids ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+    }
+    .info-card .card-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .info-card .card-value {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+    .info-card .card-sub {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── Section heading ── */
+    .sec-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .sec-sub {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-bottom: 28px;
+      max-width: 680px;
+    }
+
+    /* ── Highlight box ── */
+    .highlight-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .highlight-box.green { border-left-color: var(--accent-green); }
+    .highlight-box.blue  { border-left-color: var(--accent-blue);  }
+    .highlight-box.orange{ border-left-color: var(--accent-orange);}
+
+    /* ── Comparison table ── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+    .compare-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      font-weight: 600;
+    }
+    .compare-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-green  { background: rgba(74,222,128,0.15); color: var(--accent-green); }
+    .badge-blue   { background: rgba(96,200,255,0.15); color: var(--accent-blue); }
+    .badge-orange { background: rgba(251,146,60,0.15); color: var(--accent-orange); }
+    .badge-purple { background: rgba(124,106,255,0.15); color: var(--accent2); }
+    .badge-red    { background: rgba(248,113,113,0.15); color: var(--accent-red); }
+    .badge-yellow { background: rgba(251,191,36,0.15); color: var(--accent-yellow); }
+
+    /* ── Architecture diagram ── */
+    .arch-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+    .arch-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    /* HBM Stack visual */
+    .stack-visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      margin: 0 auto 16px;
+      max-width: 360px;
+    }
+    .stack-layer {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .layer-dram   { background: rgba(96,200,255,0.15); border: 1px solid rgba(96,200,255,0.35); color: var(--accent-blue); }
+    .layer-logic  { background: rgba(124,106,255,0.2); border: 1px solid rgba(124,106,255,0.4); color: var(--accent2); }
+    .layer-tsv    { background: rgba(251,191,36,0.1);  border: 1px dashed rgba(251,191,36,0.4);  color: var(--accent-yellow); font-size: 0.75rem; padding: 5px 16px; }
+    .layer-interposer { background: rgba(45,212,191,0.12); border: 1px solid rgba(45,212,191,0.35); color: var(--accent-teal); }
+    .layer-gpu    { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.35); color: var(--accent-red); }
+    .stack-arrow  { color: var(--muted); font-size: 1.2rem; }
+    .stack-note   { font-size: 0.78rem; color: var(--muted); text-align: center; }
+
+    /* TSV detail */
+    .tsv-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .tsv-item {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.85rem;
+    }
+    .tsv-item strong { display: block; color: var(--accent2); margin-bottom: 4px; font-size: 0.8rem; }
+
+    /* ── Generation timeline ── */
+    .gen-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .gen-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .gen-badge {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .gen-body h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .gen-body p  { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+    .gen-body .gen-specs {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+    }
+    .gen-spec-chip {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+    }
+    .gen-spec-chip span { color: var(--text); font-weight: 600; }
+
+    /* ── Use-case cards ── */
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .usecase-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .usecase-icon { font-size: 2rem; margin-bottom: 10px; }
+    .usecase-card h4 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .usecase-card p  { font-size: 0.84rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── Vendor list ── */
+    .vendor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .vendor-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .vendor-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .vendor-country { font-size: 0.78rem; color: var(--muted); }
+    .vendor-badge { margin-top: 8px; }
+
+    /* ── Bandwidth visual ── */
+    .bw-bar-wrap { margin-bottom: 32px; }
+    .bw-row { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .bw-label { font-size: 0.82rem; color: var(--muted); width: 110px; flex-shrink: 0; text-align: right; }
+    .bw-bar-bg { flex: 1; background: var(--surface2); border-radius: 6px; height: 28px; overflow: hidden; }
+    .bw-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 0.8rem; font-weight: 700; color: #fff; white-space: nowrap; transition: width 0.6s ease; }
+    .bw-value { font-size: 0.8rem; color: var(--text); width: 100px; flex-shrink: 0; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 640px) {
+      .gen-item { grid-template-columns: 1fr; }
+      .tsv-grid { grid-template-columns: 1fr; }
+      .tabs { padding: 0 12px; }
+      .tab-btn { padding: 12px 14px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回首頁</a>
+  <h1>HBM 高頻寬記憶體</h1>
+  <p>從 3D 堆疊原理到世代演進，深解 HBM 如何突破傳統記憶體的頻寬瓶頸，成為 AI 時代 GPU 的核心</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="overview">概覽</button>
+    <button class="tab-btn" data-tab="arch">架構原理</button>
+    <button class="tab-btn" data-tab="compare">與傳統記憶體比較</button>
+    <button class="tab-btn" data-tab="gen">世代演進</button>
+    <button class="tab-btn" data-tab="usecase">應用場景</button>
+    <button class="tab-btn" data-tab="vendor">廠商生態</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════
+       TAB 1 : 概覽
+  ═══════════════════════════════════ -->
+  <section class="section active" id="tab-overview">
+    <h2 class="sec-title">什麼是 HBM？</h2>
+    <p class="sec-sub">High Bandwidth Memory（高頻寬記憶體）是 AMD 與 SK Hynix 於 2013 年聯合定義的新一代記憶體標準，2015 年首款採用 HBM 的 GPU — Fiji — 正式量產上市。</p>
+
+    <div class="highlight-box">
+      HBM 的核心理念：<strong>把 DRAM 晶粒垂直堆疊（3D Stacking）</strong>，再透過超寬匯流排（1024-bit 起跳）直接連到 GPU / CPU 的矽中介層（Silicon Interposer）旁，大幅縮短訊號路徑、降低功耗，同時將頻寬推升到傳統 GDDR 的數倍乃至十數倍。
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="card-label">最小介面寬度</div>
+        <div class="card-value">1,024 bit</div>
+        <div class="card-sub">GDDR6 僅 32 bit（每顆）</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">HBM3E 頻寬（單顆）</div>
+        <div class="card-value">1.2 TB/s</div>
+        <div class="card-sub">H200 搭載 8 顆 = 9.6 TB/s</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">堆疊層數</div>
+        <div class="card-value">最多 16 層</div>
+        <div class="card-sub">HBM3E 單顆最大 36 GB</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">互連方式</div>
+        <div class="card-value">TSV</div>
+        <div class="card-sub">Through-Silicon Via 垂直穿孔</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">封裝平台</div>
+        <div class="card-value">CoWoS / FOVEROS</div>
+        <div class="card-sub">矽中介層與 GPU 並排</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">功耗效率提升</div>
+        <div class="card-value">3×</div>
+        <div class="card-sub">同頻寬下 vs. GDDR5</div>
+      </div>
+    </div>
+
+    <h2 class="sec-title" style="margin-top:16px;">為什麼 AI 需要 HBM？</h2>
+    <p class="sec-sub">大型語言模型（LLM）在推理時，模型權重需從記憶體不斷搬入 GPU 計算核心，<strong>記憶體頻寬</strong>往往才是效能瓶頸，而非算力。</p>
+
+    <div class="highlight-box blue">
+      <strong>記憶體牆（Memory Wall）</strong><br>
+      GPU 算力每兩年翻 2–4 倍，但傳統 DRAM 頻寬只成長 1–1.5 倍，造成 GPU 「吃不飽」的局面。HBM 透過 3D 堆疊與超寬匯流排，在合理面積與功耗下，把頻寬提升到與算力相稱的水準。
+    </div>
+
+    <div class="highlight-box green">
+      <strong>實際案例：NVIDIA H100 vs. A100</strong><br>
+      H100 SXM（HBM3）頻寬 3.35 TB/s，A100（HBM2e）頻寬 2.0 TB/s，Transformer 類工作負載的 token 生成速度約提升 2–3 倍。而 H200（HBM3E）頻寬再升至 4.8 TB/s，更進一步解決推理瓶頸。
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       TAB 2 : 架構原理
+  ═══════════════════════════════════ -->
+  <section class="section" id="tab-arch">
+    <h2 class="sec-title">HBM 架構原理</h2>
+    <p class="sec-sub">HBM 整合了三大關鍵技術：3D 晶粒堆疊、TSV 垂直互連與矽中介層封裝。</p>
+
+    <div class="arch-diagram">
+      <div class="arch-title">HBM 堆疊剖面示意圖（由上而下）</div>
+      <div class="stack-visual">
+        <div class="stack-layer layer-dram">DRAM Die 8（最頂層）</div>
+        <div class="stack-layer layer-tsv">▪ TSV 垂直穿孔貫穿每層</div>
+        <div class="stack-layer layer-dram">DRAM Die 7</div>
+        <div class="stack-layer layer-tsv">▪ Micro-Bump 焊接相鄰層</div>
+        <div class="stack-layer layer-dram">DRAM Die 6</div>
+        <div class="stack-layer layer-dram">DRAM Die 5</div>
+        <div class="stack-layer layer-dram">DRAM Die 4</div>
+        <div class="stack-layer layer-dram">DRAM Die 3</div>
+        <div class="stack-layer layer-dram">DRAM Die 2</div>
+        <div class="stack-layer layer-dram">DRAM Die 1（底層）</div>
+        <div class="stack-layer layer-logic">Base Logic Die（控制器、I/O 緩衝）</div>
+        <div class="stack-arrow">↕ Microbump 連接</div>
+        <div class="stack-layer layer-interposer">矽中介層（Silicon Interposer）</div>
+        <div class="stack-arrow">↕ C4 Bump 倒裝</div>
+        <div class="stack-layer layer-gpu">GPU / CPU Die</div>
+      </div>
+      <p class="stack-note">矽中介層同時承載 GPU 與多顆 HBM 堆疊，透過極短的高密度金屬線互連</p>
+    </div>
+
+    <h3 style="font-size:1.05rem; color:#fff; margin-bottom:14px;">① Through-Silicon Via（TSV）垂直穿孔</h3>
+    <div class="highlight-box">
+      TSV 是一種在矽晶圓上垂直鑽孔並填充金屬（通常為銅）的技術。HBM 的每層 DRAM 晶粒都有數千個 TSV，讓訊號直接從頂層穿透到底部的 Logic Die，無需繞道傳統封裝的外部引線。
+    </div>
+    <div class="tsv-grid">
+      <div class="tsv-item">
+        <strong>TSV 直徑</strong>~5–10 µm（遠小於傳統封裝引線）
+      </div>
+      <div class="tsv-item">
+        <strong>每顆 HBM 的 TSV 數量</strong>數千至上萬個，構成超寬並行匯流排
+      </div>
+      <div class="tsv-item">
+        <strong>信號延遲</strong>垂直距離極短（< 0.1 mm），延遲遠低於 PCB 走線
+      </div>
+      <div class="tsv-item">
+        <strong>功耗優化</strong>短距訊號不需要強驅動電路，I/O 電壓可降低至 1.2V 以下
+      </div>
+    </div>
+
+    <h3 style="font-size:1.05rem; color:#fff; margin: 24px 0 14px;">② 超寬介面匯流排</h3>
+    <div class="highlight-box blue">
+      每顆 HBM 有 <strong>1024 條並行資料線</strong>（HBM2/3 為 1024-bit per stack），分成 8 個獨立通道（channel），每個通道 128-bit。相比之下，一顆 GDDR6 顆粒只有 32-bit 介面寬度，即使 GPU 接 12 顆 GDDR6 也只達 384-bit。
+    </div>
+
+    <h3 style="font-size:1.05rem; color:#fff; margin: 24px 0 14px;">③ CoWoS 矽中介層封裝</h3>
+    <div class="highlight-box orange">
+      <strong>Chip on Wafer on Substrate（CoWoS）</strong>是台積電主要的 2.5D 封裝技術：GPU 晶片與多顆 HBM 堆疊一同放置在同一片矽中介層上，透過細密金屬內連線（pitch 約 0.4 µm）傳遞超寬頻寬資料，同時大幅縮短訊號路徑至毫米等級。
+      <br><br>HBM 之所以不像 GDDR 那樣焊在 PCB 上，是因為矽中介層的連線密度遠高於 PCB（相差 100 倍以上），這是實現 1024-bit 介面的必要條件。
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       TAB 3 : 與傳統記憶體比較
+  ═══════════════════════════════════ -->
+  <section class="section" id="tab-compare">
+    <h2 class="sec-title">HBM vs. 傳統記憶體</h2>
+    <p class="sec-sub">從頻寬、介面寬度、功耗到應用場景，全方位比較各類記憶體的差異。</p>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px;">頻寬比較（單一記憶體顆粒 / 堆疊）</h3>
+    <div class="bw-bar-wrap">
+      <div class="bw-row">
+        <div class="bw-label">DDR5-6400</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:5%; background:var(--accent-orange);">~51 GB/s</div></div>
+        <div class="bw-value" style="color:var(--accent-orange);">51 GB/s</div>
+      </div>
+      <div class="bw-row">
+        <div class="bw-label">LPDDR5X</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:7%; background:var(--accent-orange);">~77 GB/s</div></div>
+        <div class="bw-value" style="color:var(--accent-orange);">77 GB/s</div>
+      </div>
+      <div class="bw-row">
+        <div class="bw-label">GDDR6（×12）</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:17%; background:var(--accent-yellow);">~576 GB/s</div></div>
+        <div class="bw-value" style="color:var(--accent-yellow);">576 GB/s</div>
+      </div>
+      <div class="bw-row">
+        <div class="bw-label">GDDR6X（×12）</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:24%; background:var(--accent-yellow);">~912 GB/s</div></div>
+        <div class="bw-value" style="color:var(--accent-yellow);">912 GB/s</div>
+      </div>
+      <div class="bw-row">
+        <div class="bw-label">HBM2e（×8）</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:53%; background:var(--accent-blue);">2.0 TB/s</div></div>
+        <div class="bw-value" style="color:var(--accent-blue);">2.0 TB/s</div>
+      </div>
+      <div class="bw-row">
+        <div class="bw-label">HBM3（×8）</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:72%; background:var(--accent2);">3.35 TB/s</div></div>
+        <div class="bw-value" style="color:var(--accent2);">3.35 TB/s</div>
+      </div>
+      <div class="bw-row">
+        <div class="bw-label">HBM3E（×8）</div>
+        <div class="bw-bar-bg"><div class="bw-bar" style="width:100%; background:var(--accent-green);">4.8 TB/s</div></div>
+        <div class="bw-value" style="color:var(--accent-green);">4.8 TB/s</div>
+      </div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--muted); margin-top:-18px; margin-bottom:28px;">* GDDR 數值為 GPU 典型搭配顆數下的系統頻寬；HBM 數值為 GPU 配置下的系統頻寬</p>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px;">全方位規格比較表</h3>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>規格</th>
+          <th>DDR5</th>
+          <th>LPDDR5X</th>
+          <th>GDDR6X</th>
+          <th>HBM3E</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>介面寬度（單顆）</td>
+          <td>64-bit</td>
+          <td>64-bit</td>
+          <td>32-bit</td>
+          <td><strong style="color:var(--accent-green)">1,024-bit</strong></td>
+        </tr>
+        <tr>
+          <td>單顆頻寬</td>
+          <td>~51 GB/s</td>
+          <td>~77 GB/s</td>
+          <td>~76 GB/s</td>
+          <td><strong style="color:var(--accent-green)">~600 GB/s</strong></td>
+        </tr>
+        <tr>
+          <td>封裝方式</td>
+          <td>DIMM / 板載</td>
+          <td>PoP / 板載</td>
+          <td>焊接 PCB</td>
+          <td><strong style="color:var(--accent2)">CoWoS 中介層</strong></td>
+        </tr>
+        <tr>
+          <td>記憶體容量（單位）</td>
+          <td>每條 16–128 GB</td>
+          <td>板載 8–32 GB</td>
+          <td>每顆 1–2 GB</td>
+          <td><strong>每顆堆疊最大 36 GB</strong></td>
+        </tr>
+        <tr>
+          <td>傳輸距離</td>
+          <td>數百 mm（PCB）</td>
+          <td>~50 mm（PCB）</td>
+          <td>~30 mm（PCB）</td>
+          <td><strong style="color:var(--accent-green)">~1–5 mm（中介層）</strong></td>
+        </tr>
+        <tr>
+          <td>每位功耗效率</td>
+          <td>基準</td>
+          <td>略好於 DDR5</td>
+          <td>較好</td>
+          <td><strong style="color:var(--accent-green)">3–5× 優於 DDR5</strong></td>
+        </tr>
+        <tr>
+          <td>可更換 / 升級</td>
+          <td><span class="badge badge-green">✓ DIMM 可換</span></td>
+          <td><span class="badge badge-red">✗ 板焊固定</span></td>
+          <td><span class="badge badge-red">✗ 板焊固定</span></td>
+          <td><span class="badge badge-red">✗ 封裝整合</span></td>
+        </tr>
+        <tr>
+          <td>主要應用</td>
+          <td>桌機 / 伺服器</td>
+          <td>手機 / 筆電</td>
+          <td>消費級 GPU</td>
+          <td><span class="badge badge-purple">AI 加速器 / HPC</span></td>
+        </tr>
+        <tr>
+          <td>製造難度</td>
+          <td>成熟</td>
+          <td>成熟</td>
+          <td>成熟</td>
+          <td><span class="badge badge-orange">高（良率挑戰）</span></td>
+        </tr>
+        <tr>
+          <td>單顆成本</td>
+          <td>低</td>
+          <td>中</td>
+          <td>中</td>
+          <td><span class="badge badge-red">極高（5–10×）</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px;">HBM 相對於 GDDR 的核心優勢</h3>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="card-label">頻寬密度</div>
+        <div class="card-value" style="color:var(--accent-green)">↑ 5×</div>
+        <div class="card-sub">同封裝面積下，頻寬遠超 GDDR6X</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">功耗效率</div>
+        <div class="card-value" style="color:var(--accent-green)">↑ 3–5×</div>
+        <div class="card-sub">相同頻寬下耗電更少</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">封裝面積</div>
+        <div class="card-value" style="color:var(--accent-green)">↓ 60%</div>
+        <div class="card-sub">不需大量 GDDR 顆粒佔用 PCB 面積</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">訊號延遲</div>
+        <div class="card-value" style="color:var(--accent-green)">↓ 大幅降低</div>
+        <div class="card-sub">中介層距離 vs. PCB 走線</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px;">HBM 的限制與挑戰</h3>
+    <div class="highlight-box orange">
+      <strong>成本高昂：</strong>CoWoS 封裝製程複雜，良率低，一顆 H100 的 8 個 HBM3 堆疊成本估計超過整體 BOM 的 30–40%。<br><br>
+      <strong>容量受限：</strong>HBM 因面積限制，目前單顆最大 36 GB（HBM3E 12-Hi），系統容量遠不如 DDR5 DIMM。<br><br>
+      <strong>不可更換：</strong>HBM 與 GPU 封裝整合，無法像 DIMM 般升級或維修，增加維護複雜度。<br><br>
+      <strong>供應鏈集中：</strong>目前 HBM 生產主要由 SK Hynix、Samsung、Micron 三家壟斷，供貨緊缺時直接限制 AI 加速器出貨量。
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       TAB 4 : 世代演進
+  ═══════════════════════════════════ -->
+  <section class="section" id="tab-gen">
+    <h2 class="sec-title">HBM 世代演進</h2>
+    <p class="sec-sub">從 2015 年 HBM1 問世至今，每一世代都大幅提升頻寬、容量與能源效率。</p>
+
+    <div class="gen-list">
+
+      <div class="gen-item">
+        <div>
+          <div class="gen-badge" style="background:rgba(96,200,255,0.15); color:var(--accent-blue);">HBM1<br>2015</div>
+        </div>
+        <div class="gen-body">
+          <h4>第一代 HBM — 概念驗證</h4>
+          <p>由 SK Hynix 與 AMD 合作，首次於 AMD Fiji GPU（Radeon R9 Fury X）商用化。採用 4-Hi 堆疊（4 層），確立了 1024-bit / stack 的寬匯流排架構。</p>
+          <div class="gen-specs">
+            <span class="gen-spec-chip">頻寬 <span>128 GB/s / stack</span></span>
+            <span class="gen-spec-chip">堆疊 <span>4-Hi</span></span>
+            <span class="gen-spec-chip">容量 <span>1 GB / stack</span></span>
+            <span class="gen-spec-chip">介面 <span>1024-bit</span></span>
+            <span class="gen-spec-chip">代表 GPU <span>AMD Fiji</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gen-item">
+        <div>
+          <div class="gen-badge" style="background:rgba(124,106,255,0.15); color:var(--accent2);">HBM2<br>2016</div>
+        </div>
+        <div class="gen-body">
+          <h4>第二代 HBM — 進入 HPC 主流</h4>
+          <p>JEDEC 標準化，容量翻倍（8-Hi 堆疊），頻寬大幅提升，進入 NVIDIA P100（Pascal）、AMD Vega 等高效能計算產品。成為深度學習加速器的標配。</p>
+          <div class="gen-specs">
+            <span class="gen-spec-chip">頻寬 <span>256 GB/s / stack</span></span>
+            <span class="gen-spec-chip">堆疊 <span>8-Hi</span></span>
+            <span class="gen-spec-chip">容量 <span>8 GB / stack</span></span>
+            <span class="gen-spec-chip">代表 GPU <span>NVIDIA P100 · AMD Vega</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gen-item">
+        <div>
+          <div class="gen-badge" style="background:rgba(74,222,128,0.12); color:var(--accent-green);">HBM2E<br>2020</div>
+        </div>
+        <div class="gen-body">
+          <h4>HBM2E — 頻寬與容量雙提升</h4>
+          <p>強化版 HBM2，頻率提高至 3.6 Gbps，容量最大 16 GB / stack（16-Hi）。搭載於 NVIDIA A100、AMD MI250 等，成為主流 AI 訓練加速器。</p>
+          <div class="gen-specs">
+            <span class="gen-spec-chip">頻寬 <span>460 GB/s / stack</span></span>
+            <span class="gen-spec-chip">堆疊 <span>8-Hi / 16-Hi</span></span>
+            <span class="gen-spec-chip">容量 <span>8–16 GB / stack</span></span>
+            <span class="gen-spec-chip">代表 GPU <span>NVIDIA A100 · AMD MI250</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gen-item">
+        <div>
+          <div class="gen-badge" style="background:rgba(251,146,60,0.15); color:var(--accent-orange);">HBM3<br>2022</div>
+        </div>
+        <div class="gen-body">
+          <h4>HBM3 — AI 訓練新標準</h4>
+          <p>JEDEC 定義 HBM3，每 stack 頻寬突破 800 GB/s，容量支援至 24 GB，通道數倍增（16 channels），引入偽通道（pseudo-channel）提升效率。NVIDIA H100 SXM 為代表產品。</p>
+          <div class="gen-specs">
+            <span class="gen-spec-chip">頻寬 <span>&gt;800 GB/s / stack</span></span>
+            <span class="gen-spec-chip">堆疊 <span>12-Hi</span></span>
+            <span class="gen-spec-chip">容量 <span>16–24 GB / stack</span></span>
+            <span class="gen-spec-chip">通道 <span>16 channels</span></span>
+            <span class="gen-spec-chip">代表 GPU <span>NVIDIA H100</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gen-item">
+        <div>
+          <div class="gen-badge" style="background:rgba(167,139,250,0.2); color:#d8b4fe;">HBM3E<br>2024</div>
+        </div>
+        <div class="gen-body">
+          <h4>HBM3E — 當前最高規格</h4>
+          <p>在 HBM3 基礎上提升頻率至 9.6 Gbps，單顆最大容量達 36 GB（12-Hi），NVIDIA H200 與 GB200 搭載 8 顆可達 4.8 TB/s。AMD MI300X 更整合 8 顆達 5.3 TB/s，成為大型語言模型推理的頂配方案。</p>
+          <div class="gen-specs">
+            <span class="gen-spec-chip">頻寬 <span>~1.2 TB/s / stack</span></span>
+            <span class="gen-spec-chip">堆疊 <span>12-Hi / 16-Hi</span></span>
+            <span class="gen-spec-chip">容量 <span>24–36 GB / stack</span></span>
+            <span class="gen-spec-chip">代表 GPU <span>NVIDIA H200 · AMD MI300X</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gen-item">
+        <div>
+          <div class="gen-badge" style="background:rgba(248,113,113,0.12); color:var(--accent-red);">HBM4<br>2025+</div>
+        </div>
+        <div class="gen-body">
+          <h4>HBM4 — 次世代（開發中）</h4>
+          <p>預計 2025–2026 年量產，介面升至 2048-bit，單顆容量可能突破 48–64 GB，目標頻寬 2 TB/s / stack。SK Hynix 已宣佈量產路線圖，首發搭載於 NVIDIA Rubin 架構 GPU。</p>
+          <div class="gen-specs">
+            <span class="gen-spec-chip">目標頻寬 <span>~2 TB/s / stack</span></span>
+            <span class="gen-spec-chip">介面 <span>2048-bit</span></span>
+            <span class="gen-spec-chip">目標容量 <span>48–64 GB / stack</span></span>
+            <span class="gen-spec-chip">代表 GPU <span>NVIDIA Rubin（預計）</span></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       TAB 5 : 應用場景
+  ═══════════════════════════════════ -->
+  <section class="section" id="tab-usecase">
+    <h2 class="sec-title">HBM 應用場景</h2>
+    <p class="sec-sub">超高頻寬與低功耗使 HBM 成為頻寬密集型工作負載的首選，但高成本也限制其主要應用於高端市場。</p>
+
+    <div class="usecase-grid">
+      <div class="usecase-card">
+        <div class="usecase-icon">🤖</div>
+        <h4>AI 模型訓練</h4>
+        <p>大型 Transformer 訓練中，梯度與啟動值需頻繁讀寫，HBM 的超高頻寬可最大化 GPU 算力利用率，避免記憶體成為瓶頸。</p>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-icon">💬</div>
+        <h4>LLM 推理加速</h4>
+        <p>生成 token 時需連續讀取數十億個模型權重參數，記憶體頻寬直接決定 token/s 輸出速度，HBM3E 讓單機推理速度提升 2–3 倍。</p>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-icon">🔬</div>
+        <h4>HPC 科學計算</h4>
+        <p>氣候模擬、分子動力學、流體力學等計算密集型應用，大量矩陣運算高度依賴記憶體頻寬，HBM 是超級電腦節點的標配。</p>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-icon">🎮</div>
+        <h4>旗艦遊戲 GPU（早期）</h4>
+        <p>HBM1 首次應用於 AMD Fury X，但成本過高難以普及消費端，後由 GDDR6/X 主導遊戲市場。HBM 現已退出消費級 GPU 市場。</p>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-icon">🗄️</div>
+        <h4>記憶體計算（PIM）</h4>
+        <p>Processing In Memory 技術將簡單計算單元整合至 HBM 的 Logic Die，減少資料移動，進一步提升能源效率，為下一代架構方向。</p>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-icon">📡</div>
+        <h4>網路處理 / 智慧 NIC</h4>
+        <p>高速封包處理（400G/800G）需要極低延遲的大容量查找表，HBM 整合於 ASIC 中可同時滿足頻寬與低延遲需求。</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px;">為何消費級顯卡不用 HBM？</h3>
+    <div class="highlight-box orange">
+      <strong>成本因素：</strong>一顆 HBM3E 堆疊成本約 200–400 美元，8 顆即超過 2000 美元，遠超一張消費級 GPU 的總售價。<br><br>
+      <strong>CoWoS 產能限制：</strong>矽中介層封裝需要特殊的 2.5D IC 整合製程（主要由台積電提供），產能受限、排單困難，無法支撐大規模消費市場出貨量。<br><br>
+      <strong>GDDR7 已夠用：</strong>GeForce RTX 5090 採用 GDDR7，192-bit 介面仍可達 1.8 TB/s 頻寬，對大多數遊戲工作負載已綽綽有餘，無需 HBM 的極致頻寬。
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       TAB 6 : 廠商生態
+  ═══════════════════════════════════ -->
+  <section class="section" id="tab-vendor">
+    <h2 class="sec-title">HBM 廠商生態</h2>
+    <p class="sec-sub">HBM 產業鏈橫跨記憶體製造、封裝代工與系統整合三大環節，供應鏈高度集中。</p>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px;">記憶體製造商</h3>
+    <div class="vendor-grid">
+      <div class="vendor-card">
+        <div class="vendor-name">SK Hynix</div>
+        <div class="vendor-country">🇰🇷 韓國</div>
+        <div class="vendor-badge"><span class="badge badge-purple">市場領導者</span></div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">HBM 技術開創者，H100 / H200 的 HBM3/3E 獨家供應商，市占率約 50%+</p>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-name">Samsung</div>
+        <div class="vendor-country">🇰🇷 韓國</div>
+        <div class="vendor-badge"><span class="badge badge-blue">第二供應商</span></div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">HBM3E 良率曾遭質疑，但持續改善；也是 AMD MI300X 的 HBM3E 供應商之一</p>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-name">Micron</div>
+        <div class="vendor-country">🇺🇸 美國</div>
+        <div class="vendor-badge"><span class="badge badge-green">後起之秀</span></div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">2024 年開始量產 HBM3E，配合美國半導體政策發展，是 NVIDIA 未來多元化供應鏈的重要選項</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px; margin-top:8px;">封裝代工廠</h3>
+    <div class="vendor-grid">
+      <div class="vendor-card">
+        <div class="vendor-name">TSMC</div>
+        <div class="vendor-country">🇹🇼 台灣</div>
+        <div class="vendor-badge"><span class="badge badge-purple">CoWoS 主力</span></div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">CoWoS-S / CoWoS-L 封裝技術提供商，NVIDIA / AMD / Google TPU 的主要 2.5D 封裝夥伴</p>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-name">ASE Group</div>
+        <div class="vendor-country">🇹🇼 台灣</div>
+        <div class="vendor-badge"><span class="badge badge-blue">先進封裝</span></div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">提供 FOCoS 等 2.5D/3D 封裝解決方案，為台積電 CoWoS 的補充供應商</p>
+      </div>
+      <div class="vendor-card">
+        <div class="vendor-name">Intel Foundry</div>
+        <div class="vendor-country">🇺🇸 美國</div>
+        <div class="vendor-badge"><span class="badge badge-green">FOVEROS</span></div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">自家 Ponte Vecchio / Gaudi 系列搭配 EMIB + Foveros 技術，也有 HBM 整合能力</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--accent2); margin-bottom:16px; margin-top:8px;">主要 HBM 採購商（系統整合）</h3>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>廠商</th>
+          <th>產品</th>
+          <th>HBM 規格</th>
+          <th>總頻寬</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NVIDIA</strong></td>
+          <td>H100 SXM</td>
+          <td>HBM3 × 5 stacks</td>
+          <td>3.35 TB/s</td>
+        </tr>
+        <tr>
+          <td><strong>NVIDIA</strong></td>
+          <td>H200 SXM</td>
+          <td>HBM3E × 8 stacks</td>
+          <td>4.8 TB/s</td>
+        </tr>
+        <tr>
+          <td><strong>NVIDIA</strong></td>
+          <td>GB200 (Blackwell)</td>
+          <td>HBM3E × 8 stacks</td>
+          <td>8.0 TB/s</td>
+        </tr>
+        <tr>
+          <td><strong>AMD</strong></td>
+          <td>MI300X</td>
+          <td>HBM3E × 8 stacks</td>
+          <td>5.3 TB/s</td>
+        </tr>
+        <tr>
+          <td><strong>Google</strong></td>
+          <td>TPU v5p</td>
+          <td>HBM2E</td>
+          <td>2.76 TB/s</td>
+        </tr>
+        <tr>
+          <td><strong>Intel</strong></td>
+          <td>Gaudi 3</td>
+          <td>HBM2E × 6 stacks</td>
+          <td>3.7 TB/s</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <strong>供應鏈瓶頸：CoWoS 產能</strong><br>
+      2023–2025 年間，AI 加速器出貨的最大限制因素不是 GPU 算力本身，而是台積電的 <strong>CoWoS 封裝產能</strong>。一片 CoWoS 中介層的製程複雜度媲美先進邏輯晶片，台積電為此大幅擴充產能，預計 2025 年 CoWoS 月產能可達 35,000 片以上，較 2023 年增加逾 3 倍。
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>HBM 高頻寬記憶體知識庫 · 資料截至 2025 年 · <a href="index.html" style="color:var(--accent2); text-decoration:none;">返回首頁</a></p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('.section');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
