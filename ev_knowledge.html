@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>電動車知識庫 — EV 系統架構全覽</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #10b981;
+      --accent2: #34d399;
+      --accent-orange: #f97316;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-yellow: #eab308;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(16,185,129,0.18) 0%, transparent 65%);
+      border-bottom: 1px solid var(--border);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 580px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* Tabs */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Main content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .section-heading { margin-bottom: 32px; }
+    .section-heading h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.65;
+      max-width: 720px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 12px; height: 12px;
+      border-radius: 3px;
+    }
+
+    /* ── DIAGRAM BOXES ── */
+    .diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      overflow-x: auto;
+      margin-bottom: 28px;
+    }
+
+    /* Component box */
+    .comp {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      border: 2px solid;
+      padding: 10px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      min-width: 90px;
+    }
+    .comp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+    .comp .comp-sub {
+      font-size: 0.68rem;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+
+    /* color variants */
+    .c-hv  { border-color: var(--accent-orange); color: var(--accent-orange); background: rgba(249,115,22,0.1); }
+    .c-lv  { border-color: var(--accent-blue);   color: var(--accent-blue);   background: rgba(59,130,246,0.1); }
+    .c-th  { border-color: var(--accent-cyan);   color: var(--accent-cyan);   background: rgba(6,182,212,0.1); }
+    .c-mech{ border-color: #9ca3af;              color: #9ca3af;              background: rgba(156,163,175,0.08); }
+    .c-ev  { border-color: var(--accent);        color: var(--accent);        background: rgba(16,185,129,0.1); }
+    .c-pur { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(139,92,246,0.1); }
+    .c-red { border-color: var(--accent-red);    color: var(--accent-red);    background: rgba(239,68,68,0.1); }
+    .c-yel { border-color: var(--accent-yellow); color: var(--accent-yellow); background: rgba(234,179,8,0.1); }
+
+    /* Arrow */
+    .arr {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 1.1rem;
+      padding: 0 6px;
+      position: relative;
+    }
+    .arr.animated::after {
+      content: '';
+      position: absolute;
+      width: 6px; height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+      animation: flowDot 1.4s linear infinite;
+    }
+    .arr.arr-v { flex-direction: column; padding: 4px 0; }
+
+    @keyframes flowDot {
+      0%   { transform: translateX(-16px); opacity: 0; }
+      20%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateX(16px); opacity: 0; }
+    }
+    .arr.arr-v.animated::after {
+      animation: flowDotV 1.4s linear infinite;
+    }
+    @keyframes flowDotV {
+      0%   { transform: translateY(-10px); opacity: 0; }
+      20%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(10px); opacity: 0; }
+    }
+    .arr.bidir { color: var(--accent2); }
+
+    /* Flow row */
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: nowrap;
+      margin-bottom: 20px;
+    }
+    .flow-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Grid diagrams */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    /* Subsystem row */
+    .sub-row {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    /* Info cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .icard:hover {
+      border-color: var(--card-accent, var(--accent));
+      box-shadow: 0 8px 32px rgba(16,185,129,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-accent, var(--accent));
+    }
+    .icard-icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .icard-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .icard-body { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+    .icard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .tag.hi { background: rgba(16,185,129,0.15); border-color: var(--accent); color: var(--accent); }
+    .tag.or { background: rgba(249,115,22,0.15); border-color: var(--accent-orange); color: var(--accent-orange); }
+    .tag.bl { background: rgba(59,130,246,0.15); border-color: var(--accent-blue); color: var(--accent-blue); }
+    .tag.pu { background: rgba(139,92,246,0.15); border-color: var(--accent-purple); color: var(--accent-purple); }
+    .tag.cy { background: rgba(6,182,212,0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+    .data-table th {
+      background: var(--surface2);
+      color: var(--accent);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(16,185,129,0.04); }
+
+    /* Tooltip */
+    .tooltip-host { position: relative; }
+    .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      width: 200px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--text);
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.2s;
+      white-space: normal;
+      text-align: left;
+      font-weight: 400;
+    }
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--border);
+    }
+    .tooltip-host:hover .tooltip,
+    .tooltip-host:focus .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* Highlight box */
+    .hbox {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .hbox.or { border-left-color: var(--accent-orange); }
+    .hbox.bl { border-left-color: var(--accent-blue); }
+    .hbox.cy { border-left-color: var(--accent-cyan); }
+    .hbox strong { color: var(--accent2); }
+
+    /* Motor compare */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 600px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      .arch-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Torque curve */
+    .torque-chart {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+    }
+    .torque-chart .axis-label {
+      position: absolute;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .torque-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Config grid */
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 560px) { .config-grid { grid-template-columns: 1fr; } }
+
+    .config-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.15s;
+    }
+    .config-box:hover { border-color: var(--accent); }
+    .config-box h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--accent2); }
+
+    /* Charging power bars */
+    .power-bar-wrap { margin-bottom: 28px; }
+    .power-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .power-label { width: 90px; font-size: 0.8rem; color: var(--muted); flex-shrink: 0; text-align: right; }
+    .power-bar-bg {
+      flex: 1;
+      height: 24px;
+      background: var(--surface2);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .power-bar {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: #fff;
+      transition: width 1s ease;
+      white-space: nowrap;
+    }
+
+    /* BMS diagram */
+    .bms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .bms-cell {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.75rem;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: default;
+    }
+    .bms-cell:hover {
+      border-color: var(--accent);
+      background: rgba(16,185,129,0.08);
+    }
+    .bms-cell .bms-icon { font-size: 1.2rem; display: block; margin-bottom: 5px; }
+
+    /* Connector badges */
+    .connector-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .connector-badge {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      text-align: center;
+      min-width: 130px;
+      cursor: default;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .connector-badge:hover { transform: translateY(-3px); }
+    .connector-badge .cb-icon { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+    .connector-badge .cb-name { font-size: 0.85rem; font-weight: 700; }
+    .connector-badge .cb-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+    /* V2G */
+    .v2g-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* Flow animation for charging */
+    @keyframes flowRight {
+      0%   { transform: translateX(-20px); opacity: 0; }
+      30%  { opacity: 1; }
+      70%  { opacity: 1; }
+      100% { transform: translateX(20px); opacity: 0; }
+    }
+    @keyframes flowLeft {
+      0%   { transform: translateX(20px); opacity: 0; }
+      30%  { opacity: 1; }
+      70%  { opacity: 1; }
+      100% { transform: translateX(-20px); opacity: 0; }
+    }
+
+    /* Section sub-label */
+    .sub-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    /* Fuse diagram */
+    .fuse-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .fuse-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fuse-item::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--dot-color, var(--accent));
+      flex-shrink: 0;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-link">← 返回首頁</a>
+  <h1>⚡ 電動車知識庫</h1>
+  <p>EV 系統架構全覽 — 電池、動力、電氣、充電系統完整解析</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="arch">整體架構</div>
+    <div class="tab" data-tab="battery">電池包構造</div>
+    <div class="tab" data-tab="power">動力傳遞</div>
+    <div class="tab" data-tab="elec">車上電氣系統</div>
+    <div class="tab" data-tab="charge">充電系統</div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════════════
+     TAB 1: 整體架構
+══════════════════════════════════════ -->
+<section class="tab-panel active" id="tab-arch">
+  <div class="section-heading">
+    <h2>整體架構 — EV 系統概覽</h2>
+    <p>電動車由高壓動力系統、低壓輔助系統、熱管理系統與機械傳動系統共同組成。各子系統之間透過 CAN bus / Ethernet 進行通訊協調。</p>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-orange)"></div>高壓系統 (~400V / 800V)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div>低壓系統 (12V)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-cyan)"></div>熱管理系統</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div>機械傳動</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>雙向能量流</div>
+  </div>
+
+  <!-- Main power flow -->
+  <div class="diagram-wrap">
+    <div class="sub-label">主動力流向</div>
+    <div class="flow-row" style="justify-content:center;flex-wrap:wrap;gap:8px;">
+      <div class="comp c-hv tooltip-host" style="min-width:110px;">
+        🔋 高壓電池包
+        <span class="comp-sub">HV Battery Pack<br>400V / 800V</span>
+        <div class="tooltip">由數百至數千顆電芯串並聯組成，電壓通常為 400V 或 800V 系統。包含 BMS 進行狀態監控與保護。</div>
+      </div>
+      <div class="arr animated c-hv" style="color:var(--accent-orange)">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:110px;">
+        🔄 逆變器
+        <span class="comp-sub">Inverter<br>DC → AC</span>
+        <div class="tooltip">將電池輸出的直流電（DC）轉換為三相交流電（AC），驅動電動馬達。同時在回生制動時將 AC 轉回 DC 給電池充電。</div>
+      </div>
+      <div class="arr animated bidir" style="color:var(--accent-orange)">⟺</div>
+      <div class="comp c-hv tooltip-host" style="min-width:110px;">
+        ⚙️ 電動馬達
+        <span class="comp-sub">Electric Motor<br>PMSM / IM</span>
+        <div class="tooltip">將電能轉換為機械旋轉力。常見類型：永磁同步馬達（PMSM）效率高；感應馬達（IM）耐用性佳。回生制動時反向運作為發電機。</div>
+      </div>
+      <div class="arr animated" style="color:#9ca3af">⟶</div>
+      <div class="comp c-mech tooltip-host" style="min-width:110px;">
+        🔩 減速齒輪箱
+        <span class="comp-sub">Gearbox<br>固定單速</span>
+        <div class="tooltip">EV 通常使用固定比例單速減速箱（約 7:1 至 12:1），無需換檔。將馬達高轉速轉換為輪軸適合的低轉速與高扭矩。</div>
+      </div>
+      <div class="arr animated" style="color:#9ca3af">⟶</div>
+      <div class="comp c-mech tooltip-host">
+        🚗 車輪
+        <span class="comp-sub">Wheels</span>
+        <div class="tooltip">最終驅動輸出。雙馬達 AWD 車型在前後軸各配置一套逆變器 + 馬達，可獨立控制扭矩分配，實現扭矩向量控制。</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:0.75rem;color:var(--accent2);margin-bottom:20px;">
+      ↕ 回生制動時能量反向流動（Wheels → Motor(Generator) → Inverter → Battery）
+    </div>
+
+    <hr class="divider" style="margin:20px 0;">
+
+    <div class="sub-label">輔助子系統</div>
+    <div class="sub-row">
+      <div class="comp c-hv tooltip-host" style="min-width:120px;">
+        🔌 車載充電器
+        <span class="comp-sub">OBC<br>AC → DC</span>
+        <div class="tooltip">Onboard Charger：將家用或公共 AC 電源轉換為 DC 對高壓電池充電。功率通常 3.3kW ~ 22kW。DC 快充時繞過 OBC，直接輸入電池。</div>
+      </div>
+      <div class="comp c-lv tooltip-host" style="min-width:120px;">
+        ⬇️ DC-DC 轉換器
+        <span class="comp-sub">DC-DC Conv.<br>400V → 12V</span>
+        <div class="tooltip">將高壓電池電壓步降至 12V，供應車上所有低壓電子設備（燈光、音響、ECU、感測器等），取代傳統燃油車的交流發電機角色。</div>
+      </div>
+      <div class="comp c-lv tooltip-host" style="min-width:120px;">
+        🔋 12V 輔助電池
+        <span class="comp-sub">12V Aux Battery<br>鉛酸 / LFP</span>
+        <div class="tooltip">提供車輛靜止時的低壓電力維持（門鎖、防盜、接收遠端指令），以及高壓系統啟動前的初始電力。現代 EV 逐漸採用 LFP 小電池取代傳統鉛酸。</div>
+      </div>
+      <div class="comp c-th tooltip-host" style="min-width:120px;">
+        🌡️ 熱管理系統
+        <span class="comp-sub">TMS<br>電池 / 馬達 / 駕駛艙</span>
+        <div class="tooltip">控制電池、馬達、逆變器的工作溫度。包含液冷迴路、電動壓縮機、PTC 加熱器或熱泵。電池最佳工作溫度約 20~35°C。</div>
+      </div>
+      <div class="comp c-pur tooltip-host" style="min-width:120px;">
+        📡 VCU / BMS
+        <span class="comp-sub">整車控制器<br>電池管理系統</span>
+        <div class="tooltip">VCU（Vehicle Control Unit）統籌協調所有子系統。BMS 即時監控每顆電芯的電壓、溫度、SOC、SOH，執行均衡與保護策略。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture info cards -->
+  <div class="card-grid">
+    <div class="icard" style="--card-accent:var(--accent-orange)">
+      <div class="icard-icon">⚡</div>
+      <div class="icard-title">高壓系統 (HV)</div>
+      <div class="icard-body">電池包輸出電壓通常為 400V（標準）或 800V（高性能/快充）。高壓系統包含電池、逆變器、馬達、OBC、電動壓縮機、PTC 加熱器。高壓線束採用橙色標識，需嚴格安全隔離。</div>
+      <div class="icard-tags">
+        <span class="tag or">400V 系統</span>
+        <span class="tag or">800V 系統</span>
+        <span class="tag or">橙色線束</span>
+      </div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-blue)">
+      <div class="icard-icon">🔵</div>
+      <div class="icard-title">低壓系統 (LV 12V)</div>
+      <div class="icard-body">由 DC-DC 轉換器從高壓側降壓供電。覆蓋範圍：車身控制模組（BCM）、燈光、雨刷、車窗升降、中控娛樂、ADAS 感測器、ECU 網路（CAN/LIN/Ethernet）。</div>
+      <div class="icard-tags">
+        <span class="tag bl">12V / 48V</span>
+        <span class="tag bl">CAN Bus</span>
+        <span class="tag bl">BCM</span>
+      </div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-cyan)">
+      <div class="icard-icon">❄️</div>
+      <div class="icard-title">熱管理系統 (TMS)</div>
+      <div class="icard-body">整合電池冷卻、馬達冷卻、座艙空調三個液冷迴路。先進熱泵系統可在低溫下從環境取熱，大幅減少冬季電耗。電池預熱功能改善低溫充電接受度。</div>
+      <div class="icard-tags">
+        <span class="tag cy">熱泵</span>
+        <span class="tag cy">液冷</span>
+        <span class="tag cy">電動壓縮機</span>
+      </div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-purple)">
+      <div class="icard-icon">🧠</div>
+      <div class="icard-title">整車電子架構</div>
+      <div class="icard-body">現代 EV 採用集中式 E/E 架構，以 1~3 顆中央計算域控制器（Domain ECU / Zonal ECU）取代傳統數十顆分散 ECU。車用乙太網路（100BASE-T1 / 1000BASE-T1）傳輸大頻寬數據。</div>
+      <div class="icard-tags">
+        <span class="tag pu">域控制器</span>
+        <span class="tag pu">OTA 更新</span>
+        <span class="tag pu">車用乙太網</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TAB 2: 電池包構造
+══════════════════════════════════════ -->
+<section class="tab-panel" id="tab-battery">
+  <div class="section-heading">
+    <h2>電池包構造 — Cell → Module → Pack</h2>
+    <p>電動車電池系統採用三層式架構，從最小的電芯單元逐步組合為模組，再整合成電池包。BMS 全程監控，確保安全與效能。</p>
+  </div>
+
+  <!-- Hierarchy diagram -->
+  <div class="diagram-wrap">
+    <div class="sub-label">層級架構</div>
+    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;padding:10px 0;">
+      <div style="text-align:center;">
+        <div class="comp c-hv tooltip-host" style="width:100px;height:80px;font-size:0.72rem;">
+          🔋 電芯
+          <span class="comp-sub">Battery Cell<br>3.2 ~ 4.2V</span>
+          <div class="tooltip">最小能量單元。單芯電壓視化學成分而定：NMC 約 3.6V，LFP 約 3.2V。形狀分為圓柱、方形（鋁殼）、軟包三種。</div>
+        </div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">×n 串聯/並聯</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange);font-size:1.4rem;">⟶</div>
+      <div style="text-align:center;">
+        <div class="comp c-hv tooltip-host" style="width:120px;height:80px;font-size:0.72rem;">
+          📦 模組
+          <span class="comp-sub">Battery Module<br>數十顆電芯</span>
+          <div class="tooltip">將多顆電芯以串並聯方式組裝，配有模組級匯流排、溫度感測器與模組 BMS。具結構支撐與熱傳導功能，損壞時可模組級替換。</div>
+        </div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">×n 串聯</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange);font-size:1.4rem;">⟶</div>
+      <div style="text-align:center;">
+        <div class="comp c-hv tooltip-host" style="width:140px;height:80px;font-size:0.72rem;">
+          🏭 電池包
+          <span class="comp-sub">Battery Pack<br>完整系統</span>
+          <div class="tooltip">包含所有模組、主繼電器（Main Relay）、預充電路、電流感測器、冷卻板、Pack BMS、碰撞保護外殼。整包電壓 400V 或 800V。</div>
+        </div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:6px;">完整系統</div>
+      </div>
+    </div>
+
+    <hr class="divider" style="margin:20px 0;">
+    <div class="sub-label">BMS 監控功能</div>
+    <div class="bms-grid">
+      <div class="bms-cell"><span class="bms-icon">📊</span>SOC 估算<br><span style="color:var(--muted);font-size:0.65rem;">剩餘電量 %</span></div>
+      <div class="bms-cell"><span class="bms-icon">🏥</span>SOH 評估<br><span style="color:var(--muted);font-size:0.65rem;">電池健康度</span></div>
+      <div class="bms-cell"><span class="bms-icon">🌡️</span>溫度監控<br><span style="color:var(--muted);font-size:0.65rem;">每模組感測</span></div>
+      <div class="bms-cell"><span class="bms-icon">⚡</span>電壓均衡<br><span style="color:var(--muted);font-size:0.65rem;">主/被動均衡</span></div>
+      <div class="bms-cell"><span class="bms-icon">🛡️</span>過壓保護<br><span style="color:var(--muted);font-size:0.65rem;">OVP / UVP</span></div>
+      <div class="bms-cell"><span class="bms-icon">🔥</span>過溫保護<br><span style="color:var(--muted);font-size:0.65rem;">OTP 切斷</span></div>
+      <div class="bms-cell"><span class="bms-icon">⚡</span>過流保護<br><span style="color:var(--muted);font-size:0.65rem;">OCP / SCP</span></div>
+      <div class="bms-cell"><span class="bms-icon">📡</span>通訊介面<br><span style="color:var(--muted);font-size:0.65rem;">CAN / SMBus</span></div>
+    </div>
+  </div>
+
+  <!-- Cell format cards -->
+  <div class="sub-label">電芯形態比較</div>
+  <div class="card-grid" style="margin-bottom:28px;">
+    <div class="icard" style="--card-accent:var(--accent-orange)">
+      <div class="icard-icon">🔴</div>
+      <div class="icard-title">圓柱型 Cylindrical</div>
+      <div class="icard-body">
+        <strong style="color:var(--accent2)">規格：</strong>18650（18×65mm）、21700（21×70mm）、4680（46×80mm）<br><br>
+        結構強度高，自動化生產成熟，散熱效果較差（需良好冷卻設計）。Tesla 的 4680 大圓柱採用無極耳設計（Tabless）大幅降低內阻。
+      </div>
+      <div class="icard-tags">
+        <span class="tag or">Tesla</span>
+        <span class="tag or">Panasonic</span>
+        <span class="tag or">18650/21700/4680</span>
+      </div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-blue)">
+      <div class="icard-icon">🔷</div>
+      <div class="icard-title">方形鋁殼 Prismatic</div>
+      <div class="icard-body">
+        <strong style="color:var(--accent2)">規格：</strong>各廠商自定義尺寸（如 BYD 刀片電池）<br><br>
+        空間利用率高，散熱面積大，機械強度佳。刀片電池（Blade Battery）將 LFP 刀片芯直接作為結構件，大幅提升體積能量密度。
+      </div>
+      <div class="icard-tags">
+        <span class="tag bl">BYD</span>
+        <span class="tag bl">CATL</span>
+        <span class="tag bl">刀片電池</span>
+      </div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent)">
+      <div class="icard-icon">📃</div>
+      <div class="icard-title">軟包 Pouch</div>
+      <div class="icard-body">
+        <strong style="color:var(--accent2)">特點：</strong>鋁塑複合膜封裝，形狀靈活可客製化<br><br>
+        能量密度最高，重量輕，但外殼較脆弱，需結構件保護，且充放電膨脹需預留空間。LG、SK On、Samsung SDI 為主要供應商。
+      </div>
+      <div class="icard-tags">
+        <span class="tag hi">LG Energy</span>
+        <span class="tag hi">SK On</span>
+        <span class="tag hi">Samsung SDI</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chemistry table -->
+  <div class="sub-label">電芯化學成分比較</div>
+  <div class="diagram-wrap" style="padding:0;overflow:hidden;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>特性</th>
+          <th>LFP（磷酸鋰鐵）</th>
+          <th>NMC（鎳錳鈷）</th>
+          <th>NCA（鎳鈷鋁）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>標稱電壓</td><td>3.2V</td><td>3.6V</td><td>3.6V</td></tr>
+        <tr><td>能量密度（重量）</td><td>⭐⭐ 150~180 Wh/kg</td><td>⭐⭐⭐ 200~280 Wh/kg</td><td>⭐⭐⭐ 250~300 Wh/kg</td></tr>
+        <tr><td>循環壽命</td><td>⭐⭐⭐ 3000~6000+ 次</td><td>⭐⭐ 1000~2000 次</td><td>⭐⭐ 800~1500 次</td></tr>
+        <tr><td>熱穩定性/安全性</td><td>⭐⭐⭐ 極佳</td><td>⭐⭐ 良好</td><td>⭐ 需嚴格管理</td></tr>
+        <tr><td>低溫性能</td><td>⭐ 較差（需預熱）</td><td>⭐⭐ 尚可</td><td>⭐⭐⭐ 良好</td></tr>
+        <tr><td>成本</td><td>⭐⭐⭐ 低（無鈷）</td><td>⭐⭐ 中</td><td>⭐ 高</td></tr>
+        <tr><td>主要應用車型</td><td>標準續航 EV、商用車</td><td>中高端乘用車</td><td>高性能 Tesla</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="hbox" style="margin-top:20px;">
+    <strong>Pack 設計新趨勢：</strong>CTP（Cell-to-Pack）與 CTB（Cell-to-Body）技術直接省略模組層，將電芯整合進電池包或車身結構，可提升體積能量密度 10~20%，同時減少零件數量與重量。
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TAB 3: 動力傳遞
+══════════════════════════════════════ -->
+<section class="tab-panel" id="tab-power">
+  <div class="section-heading">
+    <h2>動力傳遞 — 逆變器、馬達與扭矩</h2>
+    <p>電能從電池經逆變器轉換後驅動電動馬達，產生扭矩推動車輛。制動時馬達反向運作回收動能。</p>
+  </div>
+
+  <!-- Power flow -->
+  <div class="diagram-wrap">
+    <div class="sub-label">動力流程圖</div>
+    <div class="flow-row" style="justify-content:center;flex-wrap:wrap;gap:6px;">
+      <div class="comp c-hv tooltip-host" style="min-width:100px;">
+        🔋 DC 電池
+        <span class="comp-sub">~400V 直流</span>
+        <div class="tooltip">高壓電池包輸出直流電（DC），電壓視 SOC 而浮動，400V 系統約 320~420V，800V 系統約 650~820V。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange);">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:120px;">
+        🔄 逆變器
+        <span class="comp-sub">DC → 三相 AC<br>IGBT / SiC MOSFET</span>
+        <div class="tooltip">使用 PWM（脈寬調變）技術，透過高速切換功率半導體（IGBT 或 SiC MOSFET）將 DC 轉換為可調頻調壓的三相 AC。SiC 切換頻率更高、損耗更低。</div>
+      </div>
+      <div class="arr animated bidir" style="color:var(--accent-orange);">⟺</div>
+      <div class="comp c-hv tooltip-host" style="min-width:120px;">
+        ⚙️ 三相 AC 馬達
+        <span class="comp-sub">電能 → 機械能<br>PMSM / IM</span>
+        <div class="tooltip">接受逆變器輸出的三相交流電，透過電磁感應產生旋轉力（扭矩）。制動時反向運作，旋轉動能轉為電能（回生制動）。</div>
+      </div>
+      <div class="arr animated" style="color:#9ca3af">⟶</div>
+      <div class="comp c-mech tooltip-host" style="min-width:100px;">
+        ⚙️ 減速箱
+        <span class="comp-sub">固定齒比<br>約 8:1~10:1</span>
+        <div class="tooltip">EV 無需多檔變速箱。固定減速比將馬達高轉速（最高 15000~20000 RPM）降至車輪適用轉速，同時放大扭矩。</div>
+      </div>
+      <div class="arr animated" style="color:#9ca3af">⟶</div>
+      <div class="comp c-mech tooltip-host">
+        🚗 驅動軸/車輪
+        <span class="comp-sub">機械輸出</span>
+        <div class="tooltip">透過半軸（CV joint）將扭矩傳遞至驅動輪。電子差速功能在轉彎時自動調節左右輪扭矩分配，無需機械差速器。</div>
+      </div>
+    </div>
+
+    <div class="hbox" style="margin-top:16px;border-left-color:var(--accent2);">
+      <strong>回生制動路徑（反向）：</strong>車輪旋轉 → 馬達（發電機模式）→ 逆變器（整流 AC→DC）→ 高壓電池充電。可回收 10~30% 制動能量，配合液壓制動由 ABS/ESC 系統協調混合制動。
+    </div>
+  </div>
+
+  <!-- Motor compare -->
+  <div class="sub-label">馬達類型比較</div>
+  <div class="compare-grid">
+    <div class="config-box">
+      <h4>⚡ 永磁同步馬達 PMSM</h4>
+      <div style="font-size:0.83rem;color:var(--muted);line-height:1.7;">
+        <div style="margin-bottom:6px;">轉子嵌有永久磁鐵（釹鐵硼），與定子旋轉磁場同步轉動。</div>
+        <div style="color:var(--accent);font-weight:600;">優點</div>
+        <div>• 效率極高（90~98%）</div>
+        <div>• 功率密度高，體積小</div>
+        <div>• 低轉速大扭矩響應快</div>
+        <div style="color:var(--accent-red);font-weight:600;margin-top:6px;">缺點</div>
+        <div>• 依賴稀土材料（Nd 釹）</div>
+        <div>• 高速弱磁控制複雜</div>
+        <div style="margin-top:8px;font-size:0.75rem;background:var(--surface2);padding:6px 10px;border-radius:6px;">
+          應用：Tesla Model 3/Y 後馬達、BYD、Hyundai Ioniq
+        </div>
+      </div>
+    </div>
+    <div class="config-box">
+      <h4>🔄 感應馬達 Induction Motor (IM)</h4>
+      <div style="font-size:0.83rem;color:var(--muted);line-height:1.7;">
+        <div style="margin-bottom:6px;">依靠定子旋轉磁場在轉子導體產生感應電流，形成驅動力矩（非同步）。</div>
+        <div style="color:var(--accent);font-weight:600;">優點</div>
+        <div>• 結構簡單，成本低</div>
+        <div>• 無稀土依賴</div>
+        <div>• 高速性能佳，耐用</div>
+        <div style="color:var(--accent-red);font-weight:600;margin-top:6px;">缺點</div>
+        <div>• 效率略低於 PMSM</div>
+        <div>• 需要電流維持磁場（功率因數低）</div>
+        <div style="margin-top:8px;font-size:0.75rem;background:var(--surface2);padding:6px 10px;border-radius:6px;">
+          應用：Tesla Model S/X 前馬達（雙馬達 AWD 搭配）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Torque curve -->
+  <div class="sub-label">EV 扭矩特性曲線（示意圖）</div>
+  <div class="torque-chart">
+    <svg viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Axes -->
+      <line x1="50" y1="10" x2="50" y2="140" stroke="#2a2a3d" stroke-width="1.5"/>
+      <line x1="50" y1="140" x2="540" y2="140" stroke="#2a2a3d" stroke-width="1.5"/>
+      <!-- Axis labels -->
+      <text x="12" y="80" fill="#8888aa" font-size="10" transform="rotate(-90,12,80)">扭矩 / 功率</text>
+      <text x="290" y="158" fill="#8888aa" font-size="10" text-anchor="middle">轉速 (RPM) →</text>
+      <!-- Grid lines -->
+      <line x1="50" y1="100" x2="540" y2="100" stroke="#2a2a3d" stroke-width="0.5" stroke-dasharray="4"/>
+      <line x1="50" y1="60" x2="540" y2="60" stroke="#2a2a3d" stroke-width="0.5" stroke-dasharray="4"/>
+      <!-- Torque curve: flat then droops -->
+      <polyline points="50,30 200,30 380,90 540,130" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Power curve: rises then flat -->
+      <polyline points="50,135 200,75 300,50 540,50" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 3"/>
+      <!-- Base speed line -->
+      <line x1="200" y1="15" x2="200" y2="140" stroke="#f97316" stroke-width="1" stroke-dasharray="3"/>
+      <text x="205" y="25" fill="#f97316" font-size="9">額定轉速</text>
+      <!-- Labels -->
+      <text x="100" y="25" fill="#10b981" font-size="10" font-weight="bold">扭矩</text>
+      <text x="380" y="45" fill="#34d399" font-size="10" font-weight="bold">功率 (虛線)</text>
+      <!-- Annotations -->
+      <text x="55" y="50" fill="#8888aa" font-size="9">恆扭矩區</text>
+      <text x="280" y="50" fill="#8888aa" font-size="9">弱磁區（恆功率）</text>
+      <!-- Max torque label -->
+      <text x="55" y="26" fill="#10b981" font-size="9">最大扭矩</text>
+    </svg>
+  </div>
+  <div class="hbox cy" style="margin-top:-10px;">
+    <strong>EV 扭矩特性：</strong>從零轉速即可輸出最大扭矩（恆扭矩區），提供優異的起步加速性能。超過額定轉速後進入「弱磁」控制，功率維持恆定，扭矩隨轉速提升而下降。相較於內燃機需達特定轉速才有峰值扭矩，EV 的扭矩響應更直接。
+  </div>
+
+  <!-- Drive configs -->
+  <div class="sub-label" style="margin-top:24px;">驅動配置</div>
+  <div class="config-grid">
+    <div class="config-box">
+      <h4>RWD 單馬達後驅</h4>
+      <div style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+        <div style="display:flex;justify-content:center;align-items:center;gap:8px;padding:12px 0;flex-wrap:wrap;">
+          <div class="comp c-mech" style="padding:6px 10px;font-size:0.7rem;min-width:60px;">前軸<br><span class="comp-sub">從動輪</span></div>
+          <div style="font-size:1rem;color:var(--muted)">━━</div>
+          <div class="comp c-hv" style="padding:6px 10px;font-size:0.7rem;min-width:80px;">後馬達<br><span class="comp-sub">Motor + 逆變器</span></div>
+          <div style="font-size:1rem;color:var(--muted)">━━</div>
+          <div class="comp c-mech" style="padding:6px 10px;font-size:0.7rem;min-width:60px;">後軸<br><span class="comp-sub">驅動輪</span></div>
+        </div>
+        成本低、重量輕、效率高。適合城市通勤，極速受限於單馬達功率。
+      </div>
+    </div>
+    <div class="config-box">
+      <h4>AWD 雙馬達全輪驅動</h4>
+      <div style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+        <div style="display:flex;flex-direction:column;gap:6px;padding:8px 0;">
+          <div style="display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;">
+            <div class="comp c-hv" style="padding:5px 8px;font-size:0.68rem;min-width:70px;">前馬達<br><span class="comp-sub">IM / PMSM</span></div>
+            <div style="color:var(--muted)">→</div>
+            <div class="comp c-mech" style="padding:5px 8px;font-size:0.68rem;min-width:60px;">前軸</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;">
+            <div class="comp c-hv" style="padding:5px 8px;font-size:0.68rem;min-width:70px;">後馬達<br><span class="comp-sub">PMSM 主驅</span></div>
+            <div style="color:var(--muted)">→</div>
+            <div class="comp c-mech" style="padding:5px 8px;font-size:0.68rem;min-width:60px;">後軸</div>
+          </div>
+        </div>
+        前後獨立扭矩控制，0~100 km/h 可達 2~3 秒。低附著力路面抓地力更強。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TAB 4: 車上電氣系統
+══════════════════════════════════════ -->
+<section class="tab-panel" id="tab-elec">
+  <div class="section-heading">
+    <h2>車上電氣系統 — 高低壓配電</h2>
+    <p>EV 同時運作兩套電壓系統：高壓（HV）驅動大功率負載，低壓（12V/LV）供應一般電子設備，透過 DC-DC 轉換器橋接。</p>
+  </div>
+
+  <!-- HV/LV split diagram -->
+  <div class="diagram-wrap">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:start;">
+      <!-- HV side -->
+      <div>
+        <div class="sub-label" style="color:var(--accent-orange);">高壓負載 (~400V)</div>
+        <div class="comp c-hv" style="width:100%;margin-bottom:10px;padding:12px;">
+          🔋 高壓電池包
+          <span class="comp-sub">主電源 400V / 800V</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--muted);text-align:center;margin-bottom:8px;">↓ 高壓配電盒 (HV Junction Box)</div>
+        <div class="fuse-row" style="flex-direction:column;gap:6px;">
+          <div class="fuse-item" style="--dot-color:var(--accent-orange)">⚙️ 驅動馬達 + 逆変器（主推進）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-orange)">❄️ 電動壓縮機（空調）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-orange)">🔥 PTC 加熱器 / 熱泵</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-orange)">🔌 OBC 車載充電器（AC 充電）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-orange)">⬇️ DC-DC 轉換器（降壓至 12V）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-orange)">🔥 電池加熱墊（低溫預熱）</div>
+        </div>
+      </div>
+
+      <!-- Center DC-DC -->
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:60px;gap:6px;">
+        <div class="comp c-lv tooltip-host" style="min-width:100px;text-align:center;">
+          ⬇️ DC-DC
+          <span class="comp-sub">400V → 12V<br>1~3 kW</span>
+          <div class="tooltip">步降轉換器，效率通常 >93%。持續為 12V 系統供電，並維持 12V 輔助電池充電狀態。車輛靜止時可降功運作。</div>
+        </div>
+        <div style="font-size:1.2rem;color:var(--accent-blue);">↓</div>
+      </div>
+
+      <!-- LV side -->
+      <div>
+        <div class="sub-label" style="color:var(--accent-blue);">低壓負載 (12V)</div>
+        <div class="comp c-lv" style="width:100%;margin-bottom:10px;padding:12px;">
+          🔋 12V 輔助電池
+          <span class="comp-sub">鉛酸 / LFP 備援</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--muted);text-align:center;margin-bottom:8px;">↓ 12V 配電盒 (LV Fuse Box)</div>
+        <div class="fuse-row" style="flex-direction:column;gap:6px;">
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">💡 前後燈具（LED 大燈、尾燈）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">🎵 娛樂資訊系統（Infotainment）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">🧠 ECU 網路（VCU、BCM、ADAS）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">🪟 電動車窗 / 天窗馬達</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">🌧️ 雨刷馬達 / 噴水幫浦</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">📡 感測器（雷達/超聲波/攝影機供電）</div>
+          <div class="fuse-item" style="--dot-color:var(--accent-blue)">🔊 喇叭 / 警報器</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Protection concept -->
+  <div class="sub-label">保護電路概念</div>
+  <div class="card-grid">
+    <div class="icard" style="--card-accent:var(--accent-red)">
+      <div class="icard-icon">🛡️</div>
+      <div class="icard-title">主繼電器 Main Relay</div>
+      <div class="icard-body">高壓電池正負極各一顆，碰撞感測或異常時立即斷開高壓回路。預充繼電器（Pre-charge Relay）與限流電阻串聯，防止電容器組瞬間大電流衝擊。</div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-orange)">
+      <div class="icard-icon">💥</div>
+      <div class="icard-title">手動維修開關 MSD</div>
+      <div class="icard-body">Manual Service Disconnect：維修時由技師手動拔除，物理隔離高壓電路中段，消除觸電風險。通常位於電池包中央便於存取位置。</div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-purple)">
+      <div class="icard-icon">⚡</div>
+      <div class="icard-title">絕緣監測 IMD</div>
+      <div class="icard-body">Insulation Monitoring Device：持續監測高壓系統對車身金屬底盤的絕緣電阻（應 >500Ω/V）。絕緣降低時立即告警並可觸發保護動作，防止觸電事故。</div>
+    </div>
+    <div class="icard" style="--card-accent:var(--accent-cyan)">
+      <div class="icard-icon">🔧</div>
+      <div class="icard-title">高壓互鎖 HVIL</div>
+      <div class="icard-body">High Voltage Interlock Loop：貫穿所有高壓連接器的低壓監測信號線路。任何連接器鬆脫時信號中斷，BMS/VCU 立即切斷高壓電源，防止帶電插拔意外。</div>
+    </div>
+  </div>
+
+  <!-- HV bus diagram -->
+  <div class="hbox or">
+    <strong>高壓安全顏色標準（ISO 6469）：</strong>所有 HV 線束使用橙色外皮，連接器使用橙色標識。維修人員必須使用 1000V 等級絕緣工具，並確認 HV 系統完全放電（電容放電時間約 5 分鐘）後才可進行維修作業。
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TAB 5: 充電系統
+══════════════════════════════════════ -->
+<section class="tab-panel" id="tab-charge">
+  <div class="section-heading">
+    <h2>充電系統 — AC 慢充、DC 快充與 V2G</h2>
+    <p>EV 充電系統涵蓋從家用 Level 1 到超高速 DC 快充的完整功率範圍，以及未來的雙向 V2G 能源交互技術。</p>
+  </div>
+
+  <!-- AC charging flow -->
+  <div class="diagram-wrap">
+    <div class="sub-label">AC 交流充電 (Level 1 / Level 2)</div>
+    <div class="flow-row" style="justify-content:center;flex-wrap:wrap;gap:8px;">
+      <div class="comp c-lv tooltip-host" style="min-width:100px;">
+        🏠 電網 AC
+        <span class="comp-sub">110V/220V/380V<br>家用/公共</span>
+        <div class="tooltip">Level 1：110~120V 單相（北美）。Level 2：220~240V 單相或三相 AC。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-blue)">⟶</div>
+      <div class="comp c-lv tooltip-host" style="min-width:110px;">
+        🔌 充電槍/EVSE
+        <span class="comp-sub">充電站/充電盒<br>CP 信號通訊</span>
+        <div class="tooltip">EVSE（Electric Vehicle Supply Equipment）提供 AC 電源並透過 Pilot 信號（CP）與車輛握手，確認額定電流後才開始充電。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-blue)">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:120px;">
+        ⚡ OBC
+        <span class="comp-sub">車載充電器<br>AC → DC 整流</span>
+        <div class="tooltip">Onboard Charger 將 AC 整流、功因校正（PFC）後輸出穩定 DC 電壓，支援 3.3kW ~ 22kW 功率範圍。功率越大體積越重。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange)">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:100px;">
+        🔋 高壓電池
+        <span class="comp-sub">CC-CV 充電<br>BMS 監控</span>
+        <div class="tooltip">BMS 協調充電電流曲線：先恆流（CC）快速充入，近滿電時切換恆壓（CV）緩充，保護電芯延長壽命。通常充至 80% 較快，80~100% 速度大幅降低。</div>
+      </div>
+    </div>
+
+    <hr class="divider" style="margin:20px 0;">
+
+    <div class="sub-label">DC 直流快充（繞過 OBC）</div>
+    <div class="flow-row" style="justify-content:center;flex-wrap:wrap;gap:8px;">
+      <div class="comp c-lv tooltip-host" style="min-width:100px;">
+        ⚡ 電網 AC
+        <span class="comp-sub">三相高壓<br>380V / 10kV</span>
+        <div class="tooltip">DC 快充站需要三相高壓供電，功率 50kW~350kW 等級需工業電力基礎設施支援。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange)">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:130px;">
+        🏭 站端充電模組
+        <span class="comp-sub">Off-board Charger<br>整流 + DCDC</span>
+        <div class="tooltip">快充站內建大功率整流器與 DC-DC 轉換器，將 AC 轉為可調電壓的 DC 直接輸出。模組化設計支援功率動態分配。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange)">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:110px;">
+        🔌 DC 充電槍
+        <span class="comp-sub">CCS / CHAdeMO<br>NACS / GB/T</span>
+        <div class="tooltip">DC 快充直接輸出高壓 DC（最高 1000V），繞過車上 OBC，直接進入電池組。通訊協議：CCS 使用 PLC、CHAdeMO 使用 CAN。</div>
+      </div>
+      <div class="arr animated" style="color:var(--accent-orange)">⟶</div>
+      <div class="comp c-hv tooltip-host" style="min-width:100px;">
+        🔋 高壓電池
+        <span class="comp-sub">直接入電<br>BMS 控制電流</span>
+        <div class="tooltip">BMS 向充電站即時傳送充電需求（電壓、最大電流）。電芯溫度、電壓均衡狀態影響最大接受電流，BMS 動態調節保護電芯。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector types -->
+  <div class="sub-label">充電接頭標準</div>
+  <div class="connector-row">
+    <div class="connector-badge" style="border-color:var(--accent-blue);">
+      <span class="cb-icon">🔵</span>
+      <div class="cb-name">CCS Combo 1/2</div>
+      <div class="cb-sub">歐美主流 AC+DC 合一<br>最高 350kW</div>
+    </div>
+    <div class="connector-badge" style="border-color:var(--accent-orange);">
+      <span class="cb-icon">🟠</span>
+      <div class="cb-name">CHAdeMO</div>
+      <div class="cb-sub">日系車廠，支援 V2G<br>最高 400kW（3.0版）</div>
+    </div>
+    <div class="connector-badge" style="border-color:var(--accent);">
+      <span class="cb-icon">🟢</span>
+      <div class="cb-name">NACS / J3400</div>
+      <div class="cb-sub">Tesla 標準，已成北美通用<br>最高 250kW+</div>
+    </div>
+    <div class="connector-badge" style="border-color:var(--accent-red);">
+      <span class="cb-icon">🔴</span>
+      <div class="cb-name">GB/T 20234</div>
+      <div class="cb-sub">中國國標，分 AC/DC 口<br>DC 最高 250kW</div>
+    </div>
+    <div class="connector-badge" style="border-color:var(--accent-purple);">
+      <span class="cb-icon">🟣</span>
+      <div class="cb-name">MCS（兆瓦充電）</div>
+      <div class="cb-sub">商用重型車用<br>最高 3.75MW</div>
+    </div>
+  </div>
+
+  <!-- Charging power bars -->
+  <div class="sub-label">充電功率等級比較</div>
+  <div class="power-bar-wrap">
+    <div class="power-row">
+      <div class="power-label">Level 1<br>3.3 kW</div>
+      <div class="power-bar-bg">
+        <div class="power-bar" style="width:1%;background:var(--accent-blue);">~1%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);width:160px;">家用 110V 插座，約 30hr 充滿</div>
+    </div>
+    <div class="power-row">
+      <div class="power-label">Level 2<br>7.2 kW</div>
+      <div class="power-bar-bg">
+        <div class="power-bar" style="width:2%;background:var(--accent-blue);">2%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);width:160px;">家用壁掛充電盒，約 12hr</div>
+    </div>
+    <div class="power-row">
+      <div class="power-label">Level 2+<br>11 kW</div>
+      <div class="power-bar-bg">
+        <div class="power-bar" style="width:3%;background:var(--accent-blue);">3%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);width:160px;">三相 AC，約 7~8hr</div>
+    </div>
+    <div class="power-row">
+      <div class="power-label">DC 快充<br>50 kW</div>
+      <div class="power-bar-bg">
+        <div class="power-bar" style="width:14%;background:var(--accent);">14%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);width:160px;">早期公共快充，約 1hr</div>
+    </div>
+    <div class="power-row">
+      <div class="power-label">DC 快充<br>150 kW</div>
+      <div class="power-bar-bg">
+        <div class="power-bar" style="width:43%;background:var(--accent);">43%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);width:160px;">主流超快充，20~30min</div>
+    </div>
+    <div class="power-row">
+      <div class="power-label">DC 超快充<br>350 kW</div>
+      <div class="power-bar-bg">
+        <div class="power-bar" style="width:100%;background:linear-gradient(90deg,var(--accent),var(--accent-orange));"> 100% — 最高規格乘用車 10~15min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V2G -->
+  <div class="sub-label">V2G 車網互動（Vehicle-to-Grid）</div>
+  <div class="v2g-box">
+    <div class="flow-row" style="justify-content:center;flex-wrap:wrap;gap:10px;">
+      <div class="comp c-ev tooltip-host" style="min-width:110px;">
+        ☀️ 再生能源
+        <span class="comp-sub">太陽能/風能<br>電網供電</span>
+        <div class="tooltip">離峰時段低廉電力或再生能源過剩時對 EV 充電，儲存多餘電能。</div>
+      </div>
+      <div class="arr bidir animated" style="color:var(--accent);font-size:1.2rem;">⟺</div>
+      <div class="comp c-ev tooltip-host" style="min-width:120px;">
+        🔋 EV 電池
+        <span class="comp-sub">移動式儲能<br>40~100 kWh</span>
+        <div class="tooltip">EV 電池可作為分散式儲能裝置，容量相當於一般家庭 2~5 天的用電量。</div>
+      </div>
+      <div class="arr bidir animated" style="color:var(--accent);font-size:1.2rem;">⟺</div>
+      <div class="comp c-ev tooltip-host" style="min-width:120px;">
+        🏠 家庭/電網
+        <span class="comp-sub">V2H / V2G<br>高峰回饋</span>
+        <div class="tooltip">V2H（Vehicle-to-Home）：EV 反向供電給家庭。V2G（Vehicle-to-Grid）：向電網售電，電力公司按需調配，可獲補償。需支援雙向 OBC 或 CHAdeMO 外部設備。</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:0.83rem;color:var(--muted);line-height:1.7;text-align:center;">
+      <strong style="color:var(--accent2);">V2G 效益：</strong>削峰填谷穩定電網 | 車主獲得電力補償收益 | 提升再生能源利用率<br>
+      <strong style="color:var(--accent-orange);">挑戰：</strong>需雙向 OBC（成本較高）| 電網通訊標準統一 | 頻繁充放影響電池壽命（需 BMS 最佳化）
+    </div>
+  </div>
+
+  <!-- Charging table -->
+  <div class="sub-label">充電技術規格彙整</div>
+  <div class="diagram-wrap" style="padding:0;overflow:hidden;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>充電類型</th>
+          <th>電源</th>
+          <th>功率</th>
+          <th>充電時間（75kWh）</th>
+          <th>接頭標準</th>
+          <th>備註</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Level 1 AC</td><td>110~120V 單相</td><td>1.4~1.9 kW</td><td>~40~55 hr</td><td>Type 1 (J1772)</td><td>家用插座，北美常見</td></tr>
+        <tr><td>Level 2 AC</td><td>220~240V 單相</td><td>3.3~22 kW</td><td>3~24 hr</td><td>Type 1/2, NACS</td><td>家用壁掛充電盒</td></tr>
+        <tr><td>三相 AC</td><td>380V 三相</td><td>11~43 kW</td><td>2~7 hr</td><td>Type 2 (Mennekes)</td><td>歐洲公共場站常見</td></tr>
+        <tr><td>DC 快充 L1</td><td>直流輸出</td><td>50~100 kW</td><td>45~90 min</td><td>CCS / CHAdeMO</td><td>早期公共快充站</td></tr>
+        <tr><td>DC 超快充</td><td>直流高壓</td><td>150~350 kW</td><td>15~30 min</td><td>CCS2 / NACS</td><td>Tesla V3、Ionity</td></tr>
+        <tr><td>800V 超充</td><td>直流 800V</td><td>270~350 kW</td><td>~18 min (10→80%)</td><td>CCS2</td><td>Porsche/Hyundai 800V 車型</td></tr>
+        <tr><td>MCS 重車</td><td>直流</td><td>最高 3750 kW</td><td>&lt;30 min</td><td>MCS (J3068)</td><td>電動卡車、大客車</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const target = document.getElementById('tab-' + tab.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+  });
+
+  // Animate power bars on tab switch
+  function animatePowerBars() {
+    document.querySelectorAll('.power-bar').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0';
+      setTimeout(() => { bar.style.width = w; }, 50);
+    });
+  }
+
+  document.querySelector('[data-tab="charge"]').addEventListener('click', () => {
+    setTimeout(animatePowerBars, 100);
+  });
+
+  // Highlight component on click
+  document.querySelectorAll('.comp').forEach(comp => {
+    comp.addEventListener('click', () => {
+      comp.style.transform = 'scale(1.08)';
+      comp.style.transition = 'transform 0.1s';
+      setTimeout(() => {
+        comp.style.transform = '';
+      }, 300);
+    });
+  });
+</script>
+</body>
+</html>
