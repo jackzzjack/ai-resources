@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英國歷史全覽：從史前到現代</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --royal-red: #ef4444;
+      --royal-gold: #f59e0b;
+      --royal-blue: #3b82f6;
+      --royal-green: #22c55e;
+      --royal-purple: #a855f7;
+      --royal-teal: #14b8a6;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 56px 24px 40px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(239,68,68,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(245,158,11,0.1) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '🏴󠁧󠁢󠁥󠁮󠁧󠁿';
+      position: absolute;
+      font-size: 200px;
+      opacity: 0.04;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      user-select: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #ef4444, #7c6aff, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Nav tabs */
+    .nav-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 4px;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 7px 16px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover { color: var(--text); background: var(--surface2); }
+    .tab-btn.active { color: var(--accent2); background: rgba(124,106,255,0.15); border-color: var(--accent); }
+
+    /* Main layout */
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Era intro card */
+    .era-intro {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .era-intro::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--era-color, var(--accent));
+    }
+
+    .era-intro h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .era-intro .era-period {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .era-intro p {
+      color: #c0c0d8;
+      line-height: 1.75;
+      font-size: 0.95rem;
+    }
+
+    /* Event grid */
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .event-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .event-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--card-color, var(--accent));
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+
+    .event-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .event-card:hover::after { transform: scaleX(1); }
+
+    .event-year {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--card-color, var(--accent2));
+      margin-bottom: 8px;
+    }
+
+    .event-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .event-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .event-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin-bottom: 28px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--item-color, var(--accent));
+      border: 2px solid var(--bg);
+    }
+
+    .tl-year {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--item-color, var(--accent2));
+      margin-bottom: 4px;
+    }
+
+    .tl-item h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .tl-item p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Kings table */
+    .dynasty-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .dynasty-header {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid transparent;
+      transition: background 0.2s;
+    }
+
+    .dynasty-header:hover { background: var(--surface2); }
+    .dynasty-header.open { border-bottom-color: var(--border); }
+
+    .dynasty-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dynasty-header h3 { font-size: 0.95rem; font-weight: 700; flex: 1; }
+
+    .dynasty-period {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .dynasty-arrow {
+      color: var(--muted);
+      font-size: 0.75rem;
+      transition: transform 0.2s;
+    }
+
+    .dynasty-header.open .dynasty-arrow { transform: rotate(180deg); }
+
+    .dynasty-body {
+      display: none;
+      padding: 16px 20px;
+    }
+
+    .dynasty-body.open { display: block; }
+
+    .king-row {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(42,42,61,0.6);
+      align-items: flex-start;
+    }
+
+    .king-row:last-child { border-bottom: none; }
+
+    .king-emoji { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+
+    .king-info h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 3px; }
+    .king-info .king-years { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+    .king-info p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* Impact cards */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .impact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .impact-card .big-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .impact-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .impact-card p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Stat chips */
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .stat-chip .stat-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent2);
+    }
+
+    .stat-chip .stat-lbl {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 28px 0 14px;
+    }
+
+    /* Quote */
+    .quote-block {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-style: italic;
+      color: #c0c0d8;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .quote-block cite {
+      display: block;
+      margin-top: 8px;
+      font-style: normal;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Info note */
+    .info-note {
+      background: rgba(124,106,255,0.08);
+      border: 1px solid rgba(124,106,255,0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      color: #c0c0d8;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* Map placeholder */
+    .uk-map {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 28px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .map-svg-wrap { flex: 0 0 auto; }
+
+    .map-info { flex: 1; min-width: 220px; }
+    .map-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+    .map-info ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .map-info li { font-size: 0.85rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+    .map-info li span:first-child { font-size: 1.1rem; flex-shrink: 0; }
+
+    footer {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .event-grid { grid-template-columns: 1fr; }
+      .impact-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>英國歷史全覽</h1>
+  <p>從石器時代到現代大英國協——帶你快速掌握塑造世界的島國故事</p>
+  <div class="badges">
+    <span class="badge">🪨 史前 ~43 BC</span>
+    <span class="badge">⚔️ 羅馬 43–410</span>
+    <span class="badge">👑 中世紀 410–1485</span>
+    <span class="badge">🌹 都鐸 1485–1603</span>
+    <span class="badge">💡 啟蒙 1603–1800</span>
+    <span class="badge">🏭 工業 1800–1914</span>
+    <span class="badge">🌍 現代 1914–今</span>
+  </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav-tabs" id="navTabs">
+  <button class="tab-btn active" data-tab="overview">📖 總覽地圖</button>
+  <button class="tab-btn" data-tab="prehistoric">🪨 史前與凱爾特</button>
+  <button class="tab-btn" data-tab="roman">⚔️ 羅馬統治</button>
+  <button class="tab-btn" data-tab="medieval">👑 中世紀</button>
+  <button class="tab-btn" data-tab="tudor">🌹 都鐸王朝</button>
+  <button class="tab-btn" data-tab="stuart">👒 斯圖亞特</button>
+  <button class="tab-btn" data-tab="empire">🌍 帝國時代</button>
+  <button class="tab-btn" data-tab="modern">🕊️ 現代英國</button>
+  <button class="tab-btn" data-tab="kings">👑 王室譜系</button>
+</nav>
+
+<main>
+
+  <!-- ═══════════════ OVERVIEW ═══════════════ -->
+  <section class="section active" id="tab-overview">
+
+    <div class="info-note">
+      💡 <strong>英國是什麼？</strong>「大不列顛及北愛爾蘭聯合王國（UK）」由英格蘭、蘇格蘭、威爾斯、北愛爾蘭四地組成。歷史上的「大英帝國」曾是史上最大的帝國，覆蓋全球約四分之一的陸地。
+    </div>
+
+    <div class="uk-map">
+      <div class="map-svg-wrap">
+        <svg width="160" height="200" viewBox="0 0 160 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- England -->
+          <path d="M75 110 L110 95 L120 120 L100 150 L70 155 L55 135 Z" fill="rgba(239,68,68,0.4)" stroke="#ef4444" stroke-width="1.5"/>
+          <!-- Scotland -->
+          <path d="M60 55 L95 40 L110 60 L105 90 L75 110 L55 100 L50 75 Z" fill="rgba(59,130,246,0.4)" stroke="#3b82f6" stroke-width="1.5"/>
+          <!-- Wales -->
+          <path d="M55 135 L70 120 L75 110 L55 110 L45 125 Z" fill="rgba(34,197,94,0.4)" stroke="#22c55e" stroke-width="1.5"/>
+          <!-- N. Ireland -->
+          <path d="M25 95 L45 88 L50 105 L30 108 Z" fill="rgba(168,85,247,0.4)" stroke="#a855f7" stroke-width="1.5"/>
+          <!-- Labels -->
+          <text x="82" y="128" fill="#ef4444" font-size="9" font-weight="700" text-anchor="middle">英格蘭</text>
+          <text x="78" y="68" fill="#3b82f6" font-size="9" font-weight="700" text-anchor="middle">蘇格蘭</text>
+          <text x="52" y="122" fill="#22c55e" font-size="8" font-weight="700" text-anchor="middle">威爾斯</text>
+          <text x="35" y="100" fill="#a855f7" font-size="7" font-weight="700" text-anchor="middle">北愛</text>
+          <!-- London dot -->
+          <circle cx="95" cy="135" r="4" fill="#f59e0b"/>
+          <text x="95" y="148" fill="#f59e0b" font-size="7.5" text-anchor="middle">倫敦</text>
+        </svg>
+      </div>
+      <div class="map-info">
+        <h3>大不列顛四地特色</h3>
+        <ul>
+          <li><span>🏰</span><span><strong>英格蘭</strong>——政治、文化核心，倫敦為首都，人口最多</span></li>
+          <li><span>🏔️</span><span><strong>蘇格蘭</strong>——高地文化、威士忌、1707 年與英格蘭合併</span></li>
+          <li><span>🐉</span><span><strong>威爾斯</strong>——凱爾特語言保存最好，有自己的議會</span></li>
+          <li><span>☘️</span><span><strong>北愛爾蘭</strong>——1921 年愛爾蘭獨立後留在英國的部分</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title">歷史時期快覽</div>
+
+    <div class="timeline">
+      <div class="tl-item" style="--item-color:#8888aa">
+        <div class="tl-year">約 8000 BC – 43 AD</div>
+        <h3>🪨 史前與凱爾特時代</h3>
+        <p>巨石陣建造、凱爾特人從歐陸遷入，形成部落文明。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#ef4444">
+        <div class="tl-year">43 – 410 AD</div>
+        <h3>⚔️ 羅馬統治</h3>
+        <p>克勞狄烏斯皇帝征服不列顛尼亞，帶入道路、城市、拉丁文化。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#f59e0b">
+        <div class="tl-year">410 – 1066</div>
+        <h3>🗡️ 盎格魯薩克遜與維京時代</h3>
+        <p>羅馬撤退後日耳曼部族入侵，維京人劫掠，阿佛烈大帝統一英格蘭雛形。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#7c6aff">
+        <div class="tl-year">1066 – 1485</div>
+        <h3>👑 中世紀封建王國</h3>
+        <p>諾曼征服、大憲章、黑死病、百年戰爭、玫瑰戰爭。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#ec4899">
+        <div class="tl-year">1485 – 1603</div>
+        <h3>🌹 都鐸王朝</h3>
+        <p>亨利八世宗教改革、伊莉莎白一世黃金時代、莎士比亞文學。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#22c55e">
+        <div class="tl-year">1603 – 1714</div>
+        <h3>👒 斯圖亞特與革命</h3>
+        <p>英國內戰、查理一世被處決、共和國實驗、光榮革命。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#14b8a6">
+        <div class="tl-year">1714 – 1837</div>
+        <h3>🎩 漢諾威與啟蒙</h3>
+        <p>工業革命萌芽、美國獨立、拿破崙戰爭、首相制確立。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#3b82f6">
+        <div class="tl-year">1837 – 1914</div>
+        <h3>🏭 維多利亞帝國</h3>
+        <p>大英帝國巔峰、工業化、殖民地遍全球、科技革命。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#f87171">
+        <div class="tl-year">1914 – 今</div>
+        <h3>🕊️ 兩次大戰到現代</h3>
+        <p>帝國瓦解、二戰丘吉爾、福利國家、冷戰、Brexit、女王辭世。</p>
+      </div>
+    </div>
+
+    <div class="section-title">英國的世界影響力</div>
+    <div class="stat-row">
+      <div class="stat-chip"><div class="stat-val">75+</div><div class="stat-lbl">曾被英國殖民的國家</div></div>
+      <div class="stat-chip"><div class="stat-val">1.5B</div><div class="stat-lbl">英語使用人口（全球最廣）</div></div>
+      <div class="stat-chip"><div class="stat-val">1215</div><div class="stat-lbl">大憲章——現代憲政起源</div></div>
+      <div class="stat-chip"><div class="stat-val">1760s</div><div class="stat-lbl">工業革命率先在英國爆發</div></div>
+      <div class="stat-chip"><div class="stat-val">54</div><div class="stat-lbl">大英國協現存成員國</div></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ PREHISTORIC ═══════════════ -->
+  <section class="section" id="tab-prehistoric">
+
+    <div class="era-intro" style="--era-color:#8888aa">
+      <h2>🪨 史前與凱爾特時代</h2>
+      <div class="era-period">約 8000 BC – 43 AD</div>
+      <p>
+        不列顛島在上一次冰河時期（約 10,000 年前）結束後，才因海平面上升而與歐洲大陸分離，成為島嶼。最早的定居者從大陸遷入，在漫長的石器時代中發展農業與巨石建築文明。約西元前 600 年起，說凱爾特語的部族陸續從中歐遷入，帶來鐵器、藝術與部落社會。
+      </p>
+    </div>
+
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#8888aa">
+        <div class="event-icon">🗿</div>
+        <div class="event-year">約 3000 BC</div>
+        <h3>巨石陣（Stonehenge）</h3>
+        <p>位於英格蘭南部索爾茲伯里平原，是歐洲最具代表性的史前遺址。巨石重達數十噸，建造目的至今仍有爭議——天文曆法？祭祀場所？</p>
+      </div>
+      <div class="event-card" style="--card-color:#a78bfa">
+        <div class="event-icon">🏘️</div>
+        <div class="event-year">約 600 BC</div>
+        <h3>凱爾特人（Celts）遷入</h3>
+        <p>帶來鐵器技術、獨特的螺旋紋藝術、德魯伊（Druid）祭司文化。語言後來演化為今日的威爾斯語、愛爾蘭語與蘇格蘭蓋爾語。</p>
+      </div>
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">⚔️</div>
+        <div class="event-year">55–54 BC</div>
+        <h3>凱撒初探不列顛</h3>
+        <p>羅馬共和國的尤利烏斯·凱撒兩次渡海，但未能征服。他的記述讓歐洲人第一次對這個神秘島嶼有了文字認識。</p>
+      </div>
+      <div class="event-card" style="--card-color:#22c55e">
+        <div class="event-icon">🌿</div>
+        <div class="event-year">文化特色</div>
+        <h3>德魯伊（Druids）文化</h3>
+        <p>凱爾特祭司階層，掌管宗教、法律與教育。在橡樹林中舉行儀式，口述傳承知識，後被羅馬人大力鎮壓並幾乎滅絕。</p>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      「整個不列顛分為許多部落，由各地的酋長分別統治。」
+      <cite>—— 尤利烏斯·凱撒，《高盧戰記》（約 54 BC）</cite>
+    </div>
+
+    <div class="info-note">
+      🧬 <strong>凱爾特遺產至今猶存：</strong>威爾斯、蘇格蘭、愛爾蘭至今仍保有凱爾特語言；萬聖節的前身「薩溫節」（Samhain）也源自凱爾特傳統。英格蘭地名中有大量凱爾特語根，例如泰晤士河（Thames）就來自凱爾特語。
+    </div>
+  </section>
+
+  <!-- ═══════════════ ROMAN ═══════════════ -->
+  <section class="section" id="tab-roman">
+
+    <div class="era-intro" style="--era-color:#ef4444">
+      <h2>⚔️ 羅馬統治時期</h2>
+      <div class="era-period">43 – 410 AD（約 370 年）</div>
+      <p>
+        西元 43 年，羅馬皇帝克勞狄烏斯率軍四萬征服不列顛尼亞（Britannia）。在接下來的三個多世紀，羅馬人建設了道路網、城市（包括倫敦前身 Londinium）、浴場與哈德良長城。羅馬文化、拉丁語與基督教隨之傳入。
+      </p>
+    </div>
+
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#ef4444">
+        <div class="event-icon">🦅</div>
+        <div class="event-year">43 AD</div>
+        <h3>克勞狄烏斯征服</h3>
+        <p>羅馬軍團登陸，在肯特郡擊敗凱爾特聯軍。倫敦（Londinium）作為交通樞紐建立，成為不列顛尼亞行省首府。</p>
+      </div>
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">🔥</div>
+        <div class="event-year">60–61 AD</div>
+        <h3>布狄卡起義</h3>
+        <p>愛西尼部落女王布狄卡（Boudicca）率軍反抗羅馬，焚燒倫敦、聖奧爾本斯，殺死數萬羅馬人。最終遭鎮壓，成為英國最著名的抵抗英雄之一。</p>
+      </div>
+      <div class="event-card" style="--card-color:#3b82f6">
+        <div class="event-icon">🧱</div>
+        <div class="event-year">122 AD</div>
+        <h3>哈德良長城</h3>
+        <p>皇帝哈德良下令建造橫跨不列顛北部的防線，全長 117 公里，用以阻擋蘇格蘭部族（Picts）入侵。部分遺跡至今保存完整。</p>
+      </div>
+      <div class="event-card" style="--card-color:#22c55e">
+        <div class="event-icon">🏛️</div>
+        <div class="event-year">2–4 世紀</div>
+        <h3>羅馬城市文明</h3>
+        <p>建設超過 8,000 公里道路、公共浴場（如巴斯 Bath）、劇場、下水道系統。城市文明在不列顛首次大規模落地。</p>
+      </div>
+      <div class="event-card" style="--card-color:#a855f7">
+        <div class="event-icon">✝️</div>
+        <div class="event-year">3–4 世紀</div>
+        <h3>基督教傳入</h3>
+        <p>基督教在羅馬帝國合法化後，逐漸在不列顛傳播。313 年米蘭詔令後，基督教成為帝國官方宗教，也進一步影響不列顛。</p>
+      </div>
+      <div class="event-card" style="--card-color:#8888aa">
+        <div class="event-icon">🚶</div>
+        <div class="event-year">410 AD</div>
+        <h3>羅馬撤退</h3>
+        <p>西羅馬帝國面臨危機，皇帝霍諾里烏斯告知不列顛城市「自我防衛」。最後一批羅馬軍團撤離，近 400 年統治結束。</p>
+      </div>
+    </div>
+
+    <div class="section-title">羅馬留下了什麼？</div>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="big-icon">🛣️</div>
+        <h3>道路系統</h3>
+        <p>許多現代英國道路仍沿著羅馬道路走向，如 Watling Street（今 A2 公路）</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">🏙️</div>
+        <h3>城市名稱</h3>
+        <p>帶有 -chester、-cester、-caster 的地名（來自拉丁 castra「軍營」），如 Manchester、Leicester</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">✝️</div>
+        <h3>基督教</h3>
+        <p>成為後來中世紀英格蘭國教的根基，影響文化、法律與教育長達千年</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">📜</div>
+        <h3>拉丁語遺產</h3>
+        <p>英語中 50% 以上詞彙最終源自拉丁語，法律、醫學、學術術語尤為顯著</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ MEDIEVAL ═══════════════ -->
+  <section class="section" id="tab-medieval">
+
+    <div class="era-intro" style="--era-color:#7c6aff">
+      <h2>👑 中世紀：從黑暗時代到封建王國</h2>
+      <div class="era-period">410 – 1485 AD</div>
+      <p>
+        羅馬撤退後，不列顛進入所謂的「黑暗時代」——日耳曼族群（盎格魯人、薩克遜人、朱特人）從德意志北部大量入侵定居，奠定英格蘭（Angle-land）的民族基礎。此後維京人來襲，最後以 1066 年諾曼征服為轉折點，中世紀封建制度正式建立。大憲章的誕生更是現代民主的源頭之一。
+      </p>
+    </div>
+
+    <div class="section-title">盎格魯薩克遜時代（410–1066）</div>
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">🗡️</div>
+        <div class="event-year">5–6 世紀</div>
+        <h3>盎格魯薩克遜入侵</h3>
+        <p>日耳曼部族填補羅馬撤退的真空，建立多個小王國（七王國時代）。英格蘭語言基礎由此奠定，「England」即來自「Angles 的土地」。</p>
+      </div>
+      <div class="event-card" style="--card-color:#3b82f6">
+        <div class="event-icon">🏹</div>
+        <div class="event-year">8–9 世紀</div>
+        <h3>維京人入侵</h3>
+        <p>北歐維京人大規模劫掠英格蘭海岸，最終佔領約克（Jorvik）等地區，形成「丹麥法區」（Danelaw）。</p>
+      </div>
+      <div class="event-card" style="--card-color:#22c55e">
+        <div class="event-icon">⚔️</div>
+        <div class="event-year">871–899</div>
+        <h3>阿佛烈大帝（Alfred the Great）</h3>
+        <p>威塞克斯王，擊退維京人後統一多個英格蘭王國，推動法律編纂、教育普及，被視為「英格蘭之父」。</p>
+      </div>
+    </div>
+
+    <div class="section-title">諾曼征服與封建制（1066 起）</div>
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#ef4444">
+        <div class="event-icon">🏰</div>
+        <div class="event-year">1066</div>
+        <h3>黑斯廷斯戰役</h3>
+        <p>諾曼第公爵威廉擊敗英王哈羅德二世，開啟諾曼王朝。英格蘭語言中大量法語詞彙由此湧入（如 beef、castle、parliament），社會架構全面重組。</p>
+      </div>
+      <div class="event-card" style="--card-color:#a855f7">
+        <div class="event-icon">📜</div>
+        <div class="event-year">1215</div>
+        <h3>大憲章（Magna Carta）</h3>
+        <p>貴族逼迫約翰王簽署，限制王權、確立「法律之前人人平等」原則。是現代憲政、人權法案與民主制度的奠基文件，美國憲法亦受其影響。</p>
+      </div>
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">⚔️</div>
+        <div class="event-year">1337–1453</div>
+        <h3>百年戰爭</h3>
+        <p>英、法兩國為法國王位繼承問題持續交戰。聖女貞德（Joan of Arc）在此期間出現，最終英國失去幾乎所有法國領土。</p>
+      </div>
+      <div class="event-card" style="--card-color:#14b8a6">
+        <div class="event-icon">☠️</div>
+        <div class="event-year">1348–1350</div>
+        <h3>黑死病</h3>
+        <p>腺鼠疫席捲英格蘭，估計殺死三分之一至一半的人口。勞動力短缺間接導致農奴制瓦解，加速中世紀社會結構的崩潰。</p>
+      </div>
+      <div class="event-card" style="--card-color:#ef4444">
+        <div class="event-icon">🌹</div>
+        <div class="event-year">1455–1485</div>
+        <h3>玫瑰戰爭</h3>
+        <p>約克家族（白玫瑰）與蘭開斯特家族（紅玫瑰）爭奪王位的內戰。亨利七世勝出，建立都鐸王朝，兩玫瑰合一為都鐸玫瑰徽章。</p>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      「任何自由人，除非經過同等身份的合法判決，或依據國家法律，否則不得被逮捕、監禁……」
+      <cite>—— 大憲章第 39 條，1215 年</cite>
+    </div>
+  </section>
+
+  <!-- ═══════════════ TUDOR ═══════════════ -->
+  <section class="section" id="tab-tudor">
+
+    <div class="era-intro" style="--era-color:#ec4899">
+      <h2>🌹 都鐸王朝（1485–1603）</h2>
+      <div class="era-period">亨利七世 → 伊莉莎白一世</div>
+      <p>
+        都鐸王朝短短 118 年，卻是英國歷史上最戲劇性的時代。亨利八世與教皇決裂，催生英國國教；他六次婚姻成為千古傳奇。女兒伊莉莎白一世帶領英格蘭進入「黃金時代」，打敗西班牙無敵艦隊，莎士比亞的戲劇也在此時盛放。
+      </p>
+    </div>
+
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#22c55e">
+        <div class="event-icon">👑</div>
+        <div class="event-year">1485–1509</div>
+        <h3>亨利七世</h3>
+        <p>都鐸王朝創建者，終結玫瑰戰爭，建立穩定財政。謹慎、精明，為後代打下繁榮基礎。</p>
+      </div>
+      <div class="event-card" style="--card-color:#ef4444">
+        <div class="event-icon">💍</div>
+        <div class="event-year">1509–1547</div>
+        <h3>亨利八世——六次婚姻</h3>
+        <p>六段婚姻結局：離婚、斬首、死亡、離婚、斬首、存活。為求與第一任王后離婚，與羅馬教廷決裂，自立為英國國教最高元首。</p>
+      </div>
+      <div class="event-card" style="--card-color:#a855f7">
+        <div class="event-icon">✝️</div>
+        <div class="event-year">1534</div>
+        <h3>英國宗教改革</h3>
+        <p>《最高地位法》宣佈英王為英國教會最高領袖，脫離天主教廷管轄。此後解散修道院、沒收教會財產。宗教改革讓英格蘭走向新教。</p>
+      </div>
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">👸</div>
+        <div class="event-year">1553–1558</div>
+        <h3>「血腥瑪麗」——瑪麗一世</h3>
+        <p>亨利八世之女，試圖恢復天主教，將近 300 名新教徒燒死在火刑柱上，因此得名。統治短暫且充滿爭議。</p>
+      </div>
+      <div class="event-card" style="--card-color:#ec4899">
+        <div class="event-icon">👑</div>
+        <div class="event-year">1558–1603</div>
+        <h3>伊莉莎白一世黃金時代</h3>
+        <p>終身未婚，自稱「嫁給英格蘭」。在位期間英格蘭藝術文化蓬勃，海洋探索擴張，擊敗西班牙無敵艦隊（1588），奠定海上霸權基礎。</p>
+      </div>
+      <div class="event-card" style="--card-color:#3b82f6">
+        <div class="event-icon">🎭</div>
+        <div class="event-year">1564–1616</div>
+        <h3>威廉·莎士比亞</h3>
+        <p>都鐸黃金時代的文化象徵。37 部劇作、154 首十四行詩，影響英語語言與世界文學長達四百年。「Globe Theatre」是他的主要舞台。</p>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      「我知道我有一個柔弱女子的身體，但我有一個國王的心腸和勇氣，英格蘭國王的心腸和勇氣。」
+      <cite>—— 伊莉莎白一世，1588 年蒂爾伯里演說（鼓舞對抗無敵艦隊的士兵）</cite>
+    </div>
+
+    <div class="info-note">
+      🎭 <strong>莎士比亞創造了英語：</strong>他發明或首次使用的詞彙超過 1,700 個，包括 bedroom（臥室）、lonely（孤獨）、generous（慷慨）、eyeball（眼球）等，至今仍是日常英語的一部分。
+    </div>
+  </section>
+
+  <!-- ═══════════════ STUART ═══════════════ -->
+  <section class="section" id="tab-stuart">
+
+    <div class="era-intro" style="--era-color:#22c55e">
+      <h2>👒 斯圖亞特時代：革命與共和（1603–1714）</h2>
+      <div class="era-period">詹姆士一世 → 安妮女王</div>
+      <p>
+        伊莉莎白一世無嗣，王位傳給蘇格蘭王詹姆士六世（英格蘭稱詹姆士一世），兩國首次由同一君主統治。這個時代充滿革命——英國發生了史上罕見的「弒君」事件，建立短暫共和國，又歷經君主制復辟，最終以「光榮革命」確立議會至上，奠定現代民主制度基礎。
+      </p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item" style="--item-color:#f59e0b">
+        <div class="tl-year">1605</div>
+        <h3>🧨 火藥陰謀（Gunpowder Plot）</h3>
+        <p>蓋伊·福克斯（Guy Fawkes）等天主教徒企圖炸毀國會大廈，謀殺詹姆士一世，事敗被捕。至今英國每年 11 月 5 日仍燃放焰火紀念此事（所謂的「篝火之夜」）。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#3b82f6">
+        <div class="tl-year">1620</div>
+        <h3>⛵ 五月花號與美洲殖民</h3>
+        <p>清教徒乘五月花號前往北美，建立普利茅斯殖民地。這是英屬北美殖民地的重要起點，奠定後來美國文化的基礎。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#ef4444">
+        <div class="tl-year">1642–1651</div>
+        <h3>⚔️ 英國內戰</h3>
+        <p>議會派（圓頭黨）對抗國王查理一世的保王黨。克倫威爾率議會軍勝出，英格蘭史上最重要的政治衝突。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#a855f7">
+        <div class="tl-year">1649</div>
+        <h3>👑 查理一世被斬首</h3>
+        <p>歐洲歷史上罕見的「人民審判並處決國王」。查理一世在白廳門廊外公開斬首，引發全歐震驚。英格蘭成為共和國（Commonwealth）。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#14b8a6">
+        <div class="tl-year">1653–1658</div>
+        <h3>🎩 克倫威爾護國公</h3>
+        <p>奧立佛·克倫威爾以「護國公」名義獨裁統治，禁止戲劇、酒館，實施清教徒嚴格道德規範。死後英格蘭人厭倦共和，迎回王室。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#22c55e">
+        <div class="tl-year">1660</div>
+        <h3>🎊 王政復辟</h3>
+        <p>查理二世從流亡中回國即位，倫敦人歡欣鼓舞。劇場重開、宮廷文化復興，英國進入相對輕鬆的年代。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#f59e0b">
+        <div class="tl-year">1665–1666</div>
+        <h3>🔥 大瘟疫與倫敦大火</h3>
+        <p>1665 年黑死病最後一次大規模爆發，殺死倫敦近十萬人。1666 年倫敦大火燒毀八成市區，但也促成現代化城市重建，克里斯多佛·雷恩設計聖保羅大教堂。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#3b82f6">
+        <div class="tl-year">1688</div>
+        <h3>✨ 光榮革命</h3>
+        <p>詹姆士二世企圖恢復天主教，議會邀請荷蘭奧蘭治親王威廉入侵。幾乎不流血地完成政權交接。翌年《權利法案》確立議會主權，成為現代憲政民主的里程碑。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#ec4899">
+        <div class="tl-year">1707</div>
+        <h3>🏴󠁧󠁢󠁳󠁣󠁴󠁿 英蘇合併法</h3>
+        <p>英格蘭與蘇格蘭正式合併為「大不列顛王國」，共用議會。蘇格蘭保留自己的法律體系與長老教會。</p>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      「我死時，你們會在我心上找到加萊（Calais）這個字。」
+      <cite>—— 瑪麗一世（此話或為後人杜撰），嘆失去法國最後領土</cite>
+    </div>
+  </section>
+
+  <!-- ═══════════════ EMPIRE ═══════════════ -->
+  <section class="section" id="tab-empire">
+
+    <div class="era-intro" style="--era-color:#3b82f6">
+      <h2>🌍 帝國時代：工業革命與維多利亞盛世（1714–1914）</h2>
+      <div class="era-period">漢諾威王朝 → 維多利亞女王</div>
+      <p>
+        18–19 世紀是英國最輝煌也最複雜的時代。工業革命在英格蘭中北部爆發，蒸汽機改變了全人類的生活方式；同時大英帝國版圖擴張至全球，「日不落帝國」在維多利亞女王時代達到頂峰——殖民地遍佈印度、非洲、澳洲、加拿大……卻也伴隨著殖民剝削與奴隸貿易的黑暗歷史。
+      </p>
+    </div>
+
+    <div class="section-title">工業革命（1760s–1850s）</div>
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">♨️</div>
+        <div class="event-year">1769</div>
+        <h3>瓦特蒸汽機</h3>
+        <p>詹姆斯·瓦特改良蒸汽機，使其效率大增。這個發明驅動了工廠、礦山、蒸汽船與鐵路，根本性地改變人類能源使用方式。</p>
+      </div>
+      <div class="event-card" style="--card-color:#3b82f6">
+        <div class="event-icon">🚂</div>
+        <div class="event-year">1825</div>
+        <h3>史蒂文生蒸汽火車</h3>
+        <p>世界第一條公共蒸汽鐵路（Stockton to Darlington）通車。此後鐵路迅速擴張，英國成為第一個建立全國鐵路網的國家。</p>
+      </div>
+      <div class="event-card" style="--card-color:#ef4444">
+        <div class="event-icon">🏭</div>
+        <div class="event-year">18–19 世紀</div>
+        <h3>工廠制度與童工</h3>
+        <p>工廠取代家庭手工業，大量農村人口湧入曼徹斯特、伯明翰等工業城市。童工、長工時、惡劣環境引發社會改革運動，工會興起。</p>
+      </div>
+      <div class="event-card" style="--card-color:#22c55e">
+        <div class="event-icon">🌱</div>
+        <div class="event-year">1807 / 1833</div>
+        <h3>廢除奴隸貿易</h3>
+        <p>1807 年廢止大英帝國境內奴隸貿易；1833 年正式廢除奴隸制。廢奴運動者如威伯福斯（Wilberforce）長期奔走遊說。</p>
+      </div>
+    </div>
+
+    <div class="section-title">維多利亞時代（1837–1901）</div>
+    <div class="event-grid">
+      <div class="event-card" style="--card-color:#a855f7">
+        <div class="event-icon">👑</div>
+        <div class="event-year">1837–1901</div>
+        <h3>維多利亞女王</h3>
+        <p>在位 64 年，帝國版圖最大，覆蓋全球 24% 陸地、4 億人口。親政之初 18 歲，長達六十年的統治成為那個時代的象徵。</p>
+      </div>
+      <div class="event-card" style="--card-color:#f59e0b">
+        <div class="event-icon">🌐</div>
+        <div class="event-year">1851</div>
+        <h3>萬國博覽會</h3>
+        <p>倫敦水晶宮舉辦世界第一屆萬國博覽會，展示工業技術，宣告英國是世界工廠。超過 600 萬人參觀。</p>
+      </div>
+      <div class="event-card" style="--card-color:#14b8a6">
+        <div class="event-icon">🔬</div>
+        <div class="event-year">1859</div>
+        <h3>達爾文《物種起源》</h3>
+        <p>查爾斯·達爾文在維多利亞時代發表演化論，徹底改變人類對生命起源的認知，引發科學與宗教的世紀對話。</p>
+      </div>
+      <div class="event-card" style="--card-color:#3b82f6">
+        <div class="event-icon">🇮🇳</div>
+        <div class="event-year">1858</div>
+        <h3>印度成為殖民地</h3>
+        <p>印度民族起義（Sepoy Mutiny）後，東印度公司解散，英國直接統治印度。維多利亞女王後來加冕為印度女皇。</p>
+      </div>
+    </div>
+
+    <div class="section-title">這段時期的黑暗面</div>
+    <div class="info-note">
+      ⚠️ 大英帝國的擴張伴隨著殖民剝削、奴隸貿易（1807年前）、強迫種植鴉片並輸往中國（鴉片戰爭）、愛爾蘭大飢荒（1845–1852，近百萬人餓死而英國未積極援助）、以及對原住民文化的壓制。帝國的財富有相當部分建立在殖民地人民的痛苦之上。這段歷史在今日英國仍有廣泛的反思與討論。
+    </div>
+  </section>
+
+  <!-- ═══════════════ MODERN ═══════════════ -->
+  <section class="section" id="tab-modern">
+
+    <div class="era-intro" style="--era-color:#f87171">
+      <h2>🕊️ 現代英國（1914–今）</h2>
+      <div class="era-period">兩次世界大戰、帝國瓦解、現代民主</div>
+      <p>
+        20 世紀的英國經歷了前所未有的震盪：兩次世界大戰讓帝國元氣大傷；戰後去殖民化浪潮中，大英帝國逐漸瓦解為英聯邦；福利國家制度建立；伊莉莎白二世長達 70 年的統治成為現代英國的情感核心；2016 年 Brexit 公投再次引發關於英國身份認同的深刻爭辯。
+      </p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item" style="--item-color:#ef4444">
+        <div class="tl-year">1914–1918</div>
+        <h3>🌍 第一次世界大戰</h3>
+        <p>英國損失近 100 萬士兵，加上殖民地部隊共約 140 萬人。索姆河戰役單日陣亡 57,000 人。戰後帝國版圖反而達到最大，但國力已嚴重受損。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#f59e0b">
+        <div class="tl-year">1921</div>
+        <h3>☘️ 愛爾蘭獨立</h3>
+        <p>英愛戰爭後，愛爾蘭大部分地區成立愛爾蘭自由邦，後來成為愛爾蘭共和國。北愛爾蘭六郡留在英國，至今仍有分裂主義緊張局勢。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#a855f7">
+        <div class="tl-year">1939–1945</div>
+        <h3>🌍 第二次世界大戰</h3>
+        <p>邱吉爾（Churchill）帶領英國孤軍對抗納粹德國。敦克爾克大撤退、倫敦大轟炸、諾曼第登陸……英國付出巨大犧牲，但也被視為自由世界的堡壘。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#3b82f6">
+        <div class="tl-year">1945</div>
+        <h3>🏥 福利國家誕生</h3>
+        <p>工黨政府建立國民健保署（NHS）等社會福利制度，實現「從搖籃到墳墓」的全民保障。NHS 至今是英國人最引以為傲的制度。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#22c55e">
+        <div class="tl-year">1947–1970s</div>
+        <h3>🌍 去殖民化</h3>
+        <p>印度（1947）、非洲諸國（1960s）、加勒比海島嶼陸續獨立。大英帝國在不到三十年間基本瓦解，轉型為英聯邦（Commonwealth）組織。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#ec4899">
+        <div class="tl-year">1952–2022</div>
+        <h3>👑 伊莉莎白二世</h3>
+        <p>在位 70 年，是英國歷史上在位最久的君主。見證了帝國瓦解、冷戰、社會劇變，成為現代英國穩定的象徵。2022 年 9 月 8 日辭世，享壽 96 歲。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#14b8a6">
+        <div class="tl-year">1973 / 2016</div>
+        <h3>🇪🇺 歐盟加入與脫歐（Brexit）</h3>
+        <p>1973 年英國加入歐洲共同體；2016 年公投 52% 支持脫歐，舉世震驚。2020 年正式脫歐，引發深刻的社會分裂與政治動盪，至今影響未消。</p>
+      </div>
+      <div class="tl-item" style="--item-color:#f59e0b">
+        <div class="tl-year">2022–今</div>
+        <h3>👑 查爾斯三世</h3>
+        <p>伊莉莎白二世之子，73 歲即位，成為英國史上最年長的新王。英國持續面對 Brexit 後遺症、蘇格蘭獨立運動、氣候變遷與生活成本危機等挑戰。</p>
+      </div>
+    </div>
+
+    <div class="section-title">邱吉爾——20 世紀最重要的英國人</div>
+    <div class="quote-block">
+      「我們將在海灘上戰鬥，在陸地上戰鬥，在田野和街道上戰鬥，在山丘上戰鬥；我們永不投降。」
+      <cite>—— 溫斯頓·邱吉爾，1940 年 6 月 4 日，英國議會演說（敦克爾克大撤退後）</cite>
+    </div>
+
+    <div class="section-title">現代英國對世界的貢獻</div>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="big-icon">💻</div>
+        <h3>電腦科學</h3>
+        <p>艾倫·圖靈（Alan Turing）創立現代電腦理論，被視為「電腦科學之父」</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">🌐</div>
+        <h3>全球資訊網</h3>
+        <p>提姆·柏內茲-李（Tim Berners-Lee）1989 年在 CERN 發明 WWW，改變全人類溝通方式</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">⚽</div>
+        <h3>現代運動</h3>
+        <p>足球、板球、橄欖球、網球規則皆由英國人制定，並傳播至全球</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">🎵</div>
+        <h3>流行音樂</h3>
+        <p>披頭四、滾石樂隊、大衛·鮑伊、酷玩樂隊……「英倫入侵」改變了全球流行文化</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">🏥</div>
+        <h3>現代醫學</h3>
+        <p>佛萊明（Fleming）發現青黴素、詹納發明天花疫苗，每年拯救數千萬條生命</p>
+      </div>
+      <div class="impact-card">
+        <div class="big-icon">📚</div>
+        <h3>文學遺產</h3>
+        <p>莎士比亞、狄更斯、奧斯汀、托爾金、J.K.羅琳——英語文學塑造了世界想像力</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ KINGS ═══════════════ -->
+  <section class="section" id="tab-kings">
+
+    <div class="era-intro" style="--era-color:#f59e0b">
+      <h2>👑 英國王室與王朝譜系</h2>
+      <div class="era-period">從征服者威廉到查爾斯三世</div>
+      <p>
+        1066 年諾曼征服後，英格蘭（後來的英國）歷經多個王朝更迭。點擊各王朝展開詳情。
+      </p>
+    </div>
+
+    <div class="dynasty-block">
+      <div class="dynasty-header" onclick="toggleDynasty(this)">
+        <div class="dynasty-dot" style="background:#ef4444"></div>
+        <h3>諾曼王朝（Norman）</h3>
+        <span class="dynasty-period">1066–1154</span>
+        <span class="dynasty-arrow">▼</span>
+      </div>
+      <div class="dynasty-body">
+        <div class="king-row"><div class="king-emoji">⚔️</div><div class="king-info"><h4>威廉一世（征服者）</h4><div class="king-years">1066–1087</div><p>征服英格蘭，推行封建制度，命令編制《末日審判書》土地調查。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👑</div><div class="king-info"><h4>威廉二世（紅臉）</h4><div class="king-years">1087–1100</div><p>威廉一世次子，在打獵時神秘死亡（可能遭暗殺）。</p></div></div>
+        <div class="king-row"><div class="king-emoji">📜</div><div class="king-info"><h4>亨利一世</h4><div class="king-years">1100–1135</div><p>推行行政改革，建立有效率的王室法庭制度。</p></div></div>
+        <div class="king-row"><div class="king-emoji">🌀</div><div class="king-info"><h4>史蒂芬（內戰時期）</h4><div class="king-years">1135–1154</div><p>與表妹瑪蒂爾達爭奪王位，引發「無政府時代」內戰。</p></div></div>
+      </div>
+    </div>
+
+    <div class="dynasty-block">
+      <div class="dynasty-header" onclick="toggleDynasty(this)">
+        <div class="dynasty-dot" style="background:#f59e0b"></div>
+        <h3>金雀花王朝（Plantagenet）</h3>
+        <span class="dynasty-period">1154–1399</span>
+        <span class="dynasty-arrow">▼</span>
+      </div>
+      <div class="dynasty-body">
+        <div class="king-row"><div class="king-emoji">⚖️</div><div class="king-info"><h4>亨利二世</h4><div class="king-years">1154–1189</div><p>建立普通法體系，下令殺死坎特伯里大主教貝克特，引發教皇與英王的長期爭端。</p></div></div>
+        <div class="king-row"><div class="king-emoji">🦁</div><div class="king-info"><h4>理查一世（獅心王）</h4><div class="king-years">1189–1199</div><p>十字軍傳奇英雄，但在位 10 年大部分時間都在外征戰，幾乎不在英格蘭。</p></div></div>
+        <div class="king-row"><div class="king-emoji">📜</div><div class="king-info"><h4>約翰王</h4><div class="king-years">1199–1216</div><p>被迫簽署大憲章（1215），是民主歷史的轉折點。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👑</div><div class="king-info"><h4>愛德華一世（錘打蘇格蘭人）</h4><div class="king-years">1272–1307</div><p>征服威爾斯，多次入侵蘇格蘭，電影《梅爾·吉勃遜：英雄本色》中的反派即為他。</p></div></div>
+        <div class="king-row"><div class="king-emoji">⚔️</div><div class="king-info"><h4>愛德華三世</h4><div class="king-years">1327–1377</div><p>啟動百年戰爭，建立嘉德騎士團。英格蘭軍事力量鼎盛時期。</p></div></div>
+      </div>
+    </div>
+
+    <div class="dynasty-block">
+      <div class="dynasty-header" onclick="toggleDynasty(this)">
+        <div class="dynasty-dot" style="background:#ec4899"></div>
+        <h3>都鐸王朝（Tudor）</h3>
+        <span class="dynasty-period">1485–1603</span>
+        <span class="dynasty-arrow">▼</span>
+      </div>
+      <div class="dynasty-body">
+        <div class="king-row"><div class="king-emoji">🌹</div><div class="king-info"><h4>亨利七世</h4><div class="king-years">1485–1509</div><p>終結玫瑰戰爭，開創都鐸時代，以謹慎外交和財政手腕著稱。</p></div></div>
+        <div class="king-row"><div class="king-emoji">💍</div><div class="king-info"><h4>亨利八世</h4><div class="king-years">1509–1547</div><p>六次婚姻、英國宗教改革、解散修道院。英國史上最具戲劇性的君主。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👦</div><div class="king-info"><h4>愛德華六世</h4><div class="king-years">1547–1553</div><p>亨利之子，9 歲即位，15 歲病逝。推進新教改革，但未能親政。</p></div></div>
+        <div class="king-row"><div class="king-emoji">🔥</div><div class="king-info"><h4>瑪麗一世（血腥瑪麗）</h4><div class="king-years">1553–1558</div><p>試圖恢復天主教，燒死近 300 名新教徒。結婚西班牙腓力二世，遭英格蘭人普遍反感。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👑</div><div class="king-info"><h4>伊莉莎白一世</h4><div class="king-years">1558–1603</div><p>黃金時代女王，終身未婚，擊敗西班牙無敵艦隊，莎士比亞在其時代創作。</p></div></div>
+      </div>
+    </div>
+
+    <div class="dynasty-block">
+      <div class="dynasty-header" onclick="toggleDynasty(this)">
+        <div class="dynasty-dot" style="background:#22c55e"></div>
+        <h3>斯圖亞特王朝（Stuart）</h3>
+        <span class="dynasty-period">1603–1714</span>
+        <span class="dynasty-arrow">▼</span>
+      </div>
+      <div class="dynasty-body">
+        <div class="king-row"><div class="king-emoji">📖</div><div class="king-info"><h4>詹姆士一世</h4><div class="king-years">1603–1625</div><p>首位同時統治英格蘭和蘇格蘭的君主，委托翻譯《欽定版聖經》（KJV Bible）。</p></div></div>
+        <div class="king-row"><div class="king-emoji">⚔️</div><div class="king-info"><h4>查理一世</h4><div class="king-years">1625–1649</div><p>與議會衝突引發內戰，最終被公開處決，英國短暫成為共和國。</p></div></div>
+        <div class="king-row"><div class="king-emoji">🎊</div><div class="king-info"><h4>查理二世（復辟王）</h4><div class="king-years">1660–1685</div><p>從流亡中回國即位，倡導科學（皇家學會成立），生活奢華，私生子眾多。</p></div></div>
+        <div class="king-row"><div class="king-emoji">✨</div><div class="king-info"><h4>威廉三世 & 瑪麗二世</h4><div class="king-years">1689–1702</div><p>光榮革命後共同執政，簽署《權利法案》，確立議會主權。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👩</div><div class="king-info"><h4>安妮女王</h4><div class="king-years">1702–1714</div><p>英格蘭與蘇格蘭正式合併，成為大不列顛王國。斯圖亞特王朝末代君主。</p></div></div>
+      </div>
+    </div>
+
+    <div class="dynasty-block">
+      <div class="dynasty-header" onclick="toggleDynasty(this)">
+        <div class="dynasty-dot" style="background:#3b82f6"></div>
+        <h3>漢諾威王朝 → 溫莎王朝（Windsor）</h3>
+        <span class="dynasty-period">1714–今</span>
+        <span class="dynasty-arrow">▼</span>
+      </div>
+      <div class="dynasty-body">
+        <div class="king-row"><div class="king-emoji">🇩🇪</div><div class="king-info"><h4>喬治一世</h4><div class="king-years">1714–1727</div><p>德國漢諾威選帝侯，英語很差，開啟首相制度（因此沃波爾成為首位實質首相）。</p></div></div>
+        <div class="king-row"><div class="king-emoji">🗽</div><div class="king-info"><h4>喬治三世</h4><div class="king-years">1760–1820</div><p>美國獨立戰爭時期的英王，晚年因精神疾病無法理政。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👑</div><div class="king-info"><h4>維多利亞女王</h4><div class="king-years">1837–1901</div><p>在位 64 年，帝國版圖最大，成為「歐洲的祖母」（許多歐洲王室的祖先）。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👑</div><div class="king-info"><h4>伊莉莎白二世</h4><div class="king-years">1952–2022</div><p>在位 70 年，英國史上最久。見證帝國瓦解到 Brexit，成為穩定的國家象徵。</p></div></div>
+        <div class="king-row"><div class="king-emoji">👑</div><div class="king-info"><h4>查爾斯三世</h4><div class="king-years">2022–今</div><p>73 歲即位，關注環境議題與建築美學，英國現任國王。</p></div></div>
+      </div>
+    </div>
+
+    <div class="info-note">
+      💡 <strong>為何叫「溫莎」？</strong>原來的家族姓氏是德語的「薩克森-科堡-哥達」（Saxe-Coburg and Gotha）。第一次世界大戰期間反德情緒高漲，喬治五世於 1917 年將王室姓氏改為英語的「溫莎」（Windsor，取自溫莎堡）。
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  英國歷史全覽 · 資料整理基於通識歷史研究 · CC BY 4.0
+</footer>
+
+<script>
+  // Tab switching
+  document.getElementById('navTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+
+  // Dynasty accordion
+  function toggleDynasty(header) {
+    header.classList.toggle('open');
+    header.nextElementSibling.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
