@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAC 晶片 × SerDes 完整導覽</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --c-mac:    #10b981;
+      --c-phy:    #3b82f6;
+      --c-serdes: #a855f7;
+      --c-iface:  #f59e0b;
+      --c-wire:   #ef4444;
+      --c-proto:  #06b6d4;
+      --c-power:  #f97316;
+      --c-vendor: #ec4899;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', monospace, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(16,185,129,.20) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(168,85,247,.12) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent, transparent 39px,
+        rgba(16,185,129,.04) 39px, rgba(16,185,129,.04) 40px
+      );
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #6ee7b7 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    header .sub {
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 720px;
+      margin: 0 auto 16px;
+      line-height: 1.6;
+    }
+    .badge-row {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;
+    }
+    .badge {
+      padding: 4px 12px; border-radius: 20px;
+      font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+    }
+
+    nav.toc {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    }
+    nav.toc a {
+      color: var(--muted); text-decoration: none;
+      font-size: .82rem; padding: 4px 10px;
+      border-radius: 8px; transition: all .2s;
+    }
+    nav.toc a:hover { background: var(--surface2); color: var(--text); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 100px; }
+
+    section { margin-bottom: 64px; }
+
+    .section-title {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 12px;
+    }
+    .section-title .icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .section-title h2 {
+      font-size: 1.45rem; font-weight: 700; letter-spacing: -.02em;
+    }
+    .section-desc {
+      color: var(--muted); margin-bottom: 24px; max-width: 780px; line-height: 1.7;
+    }
+
+    /* Card grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .card-title {
+      font-weight: 700; font-size: .95rem;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .card p, .card li { color: var(--muted); font-size: .88rem; line-height: 1.7; }
+    .card ul { padding-left: 16px; }
+    .card li { margin-bottom: 4px; }
+    .card strong { color: var(--text); }
+
+    /* Signal chain diagram */
+    .chain-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 24px;
+      overflow-x: auto;
+    }
+    .chain {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      min-width: 700px;
+    }
+    .chain-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+    .chain-block:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: var(--muted);
+      z-index: 1;
+    }
+    .chain-box {
+      width: 100%;
+      padding: 14px 8px;
+      border-radius: 12px;
+      border: 2px solid;
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+    .chain-sub {
+      font-size: .75rem;
+      color: var(--muted);
+      line-height: 1.5;
+      padding: 0 4px;
+    }
+
+    /* Interface table */
+    .iface-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--surface);
+      border-radius: 14px;
+      overflow: hidden;
+      font-size: .88rem;
+    }
+    .iface-table th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      letter-spacing: .03em;
+    }
+    .iface-table td {
+      padding: 11px 16px;
+      border-top: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .iface-table tr:hover td { background: var(--surface2); }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: .76rem;
+      font-weight: 600;
+      background: rgba(124,106,255,.15);
+      color: var(--accent2);
+      border: 1px solid rgba(124,106,255,.25);
+    }
+    .tag.green { background: rgba(16,185,129,.15); color: #6ee7b7; border-color: rgba(16,185,129,.25); }
+    .tag.blue  { background: rgba(59,130,246,.15);  color: #93c5fd; border-color: rgba(59,130,246,.25); }
+    .tag.amber { background: rgba(245,158,11,.15);  color: #fcd34d; border-color: rgba(245,158,11,.25); }
+    .tag.red   { background: rgba(239,68,68,.15);   color: #fca5a5; border-color: rgba(239,68,68,.25); }
+    .tag.purple{ background: rgba(168,85,247,.15);  color: #d8b4fe; border-color: rgba(168,85,247,.25); }
+
+    /* Layer stack */
+    .layer-stack {
+      display: flex; flex-direction: column; gap: 4px; max-width: 560px;
+    }
+    .layer-row {
+      display: flex; align-items: center;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .layer-num {
+      width: 48px; padding: 12px;
+      text-align: center;
+      font-weight: 800; font-size: .85rem;
+      background: var(--surface2); color: var(--muted);
+      flex-shrink: 0;
+    }
+    .layer-name {
+      flex: 1; padding: 12px 16px;
+      font-weight: 700; font-size: .92rem;
+    }
+    .layer-chip {
+      padding: 12px 16px;
+      font-size: .8rem; color: var(--muted);
+    }
+    .layer-highlight .layer-name { color: var(--c-mac); }
+    .layer-highlight { border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.05); }
+    .layer-phy .layer-name { color: var(--c-phy); }
+    .layer-phy { border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.05); }
+    .layer-serdes .layer-name { color: var(--c-serdes); }
+    .layer-serdes { border-color: rgba(168,85,247,.4); background: rgba(168,85,247,.05); }
+
+    /* Comparison boxes */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .compare-box {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      background: var(--surface);
+    }
+    .compare-box .cb-title {
+      font-weight: 700; font-size: .9rem;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-box li { color: var(--muted); font-size: .85rem; list-style: none; padding: 3px 0; }
+    .compare-box li::before { content: '• '; color: var(--accent); }
+
+    /* Speed examples */
+    .speed-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .speed-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .speed-card .sc-head {
+      font-weight: 700; font-size: 1rem; margin-bottom: 14px;
+    }
+    .sc-row {
+      display: flex; justify-content: space-between;
+      font-size: .83rem; padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sc-row:last-child { border: none; }
+    .sc-label { color: var(--muted); }
+    .sc-val { font-weight: 600; }
+
+    a.back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--muted); text-decoration: none;
+      font-size: .88rem; margin-bottom: 32px;
+      padding: 8px 14px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: all .2s;
+    }
+    a.back-link:hover { color: var(--text); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>MAC 晶片 × PHY × SerDes</h1>
+  <p class="sub">從 Media Access Controller 到實體電路，理解以太網路三層晶片如何串接，以及 SerDes 扮演的最底層角色。</p>
+  <div class="badge-row">
+    <span class="badge" style="background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)">MAC Layer</span>
+    <span class="badge" style="background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3)">PHY Chip</span>
+    <span class="badge" style="background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.3)">SerDes</span>
+    <span class="badge" style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)">介面標準</span>
+    <span class="badge" style="background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)">高速以太網路</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#chain">訊號鏈總覽</a>
+  <a href="#mac">MAC 晶片</a>
+  <a href="#phy">PHY 晶片</a>
+  <a href="#serdes-link">SerDes 在哪裡</a>
+  <a href="#iface">介面標準</a>
+  <a href="#speeds">各速率實例</a>
+  <a href="#vendors">廠商生態</a>
+</nav>
+
+<main>
+  <a href="index.html" class="back-link">← 返回首頁</a>
+
+  <!-- ① 訊號鏈總覽 -->
+  <section id="chain">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(16,185,129,.15);color:var(--c-mac)">🔗</div>
+      <h2 style="color:var(--c-mac)">訊號鏈總覽：從軟體到銅線</h2>
+    </div>
+    <p class="section-desc">
+      一個封包從 CPU 送出到離開網路介面卡（NIC），中間歷經三個硬體層次。理解這三層的分工，是掌握 MAC / PHY / SerDes 關係的關鍵。
+    </p>
+    <div class="chain-wrap">
+      <div class="chain">
+        <div class="chain-block">
+          <div class="chain-box" style="border-color:rgba(6,182,212,.5);color:#67e8f9;background:rgba(6,182,212,.08)">
+            CPU / SoC<br>應用層
+          </div>
+          <div class="chain-sub">軟體封包<br>DMA 傳輸</div>
+        </div>
+        <div class="chain-block">
+          <div class="chain-box" style="border-color:rgba(16,185,129,.5);color:#6ee7b7;background:rgba(16,185,129,.08)">
+            MAC 晶片<br>Layer 2
+          </div>
+          <div class="chain-sub">幀封裝 / CRC<br>流量控制</div>
+        </div>
+        <div class="chain-block">
+          <div class="chain-box" style="border-color:rgba(59,130,246,.5);color:#93c5fd;background:rgba(59,130,246,.08)">
+            PHY 晶片<br>Layer 1
+          </div>
+          <div class="chain-sub">PCS 編碼<br>PMA 對齊</div>
+        </div>
+        <div class="chain-block">
+          <div class="chain-box" style="border-color:rgba(168,85,247,.5);color:#d8b4fe;background:rgba(168,85,247,.08)">
+            SerDes<br>電氣電路
+          </div>
+          <div class="chain-sub">並串轉換<br>PLL / CDR</div>
+        </div>
+        <div class="chain-block">
+          <div class="chain-box" style="border-color:rgba(239,68,68,.5);color:#fca5a5;background:rgba(239,68,68,.08)">
+            銅線 / 光纖<br>物理介質
+          </div>
+          <div class="chain-sub">差動電壓<br>光訊號</div>
+        </div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:12px;text-align:center">
+      ← 並列寬資料（多 bit 同時傳輸）&nbsp;&nbsp;&nbsp;&nbsp;串列窄資料（單條高速差動對）→
+    </p>
+  </section>
+
+  <!-- ② MAC 晶片 -->
+  <section id="mac">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(16,185,129,.15);color:var(--c-mac)">🖧</div>
+      <h2 style="color:var(--c-mac)">MAC 晶片是什麼？</h2>
+    </div>
+    <p class="section-desc">
+      MAC（Media Access Controller，媒體存取控制器）是 OSI 第二層（資料鏈結層）的硬體實作，負責在 CPU/DMA 與 PHY 晶片之間處理以太網路幀。它是「封包的門衛」——確保格式正確、位址對齊、錯誤可偵測。
+    </p>
+
+    <!-- OSI layer stack -->
+    <div style="margin-bottom:28px">
+      <div class="layer-stack">
+        <div class="layer-row" style="background:var(--surface2)">
+          <div class="layer-num">L7</div>
+          <div class="layer-name" style="color:var(--muted)">應用層</div>
+          <div class="layer-chip">Socket / OS</div>
+        </div>
+        <div class="layer-row" style="background:var(--surface2)">
+          <div class="layer-num">L3</div>
+          <div class="layer-name" style="color:var(--muted)">網路層（IP）</div>
+          <div class="layer-chip">CPU / 路由器 ASIC</div>
+        </div>
+        <div class="layer-row layer-highlight">
+          <div class="layer-num" style="color:var(--c-mac)">L2</div>
+          <div class="layer-name">資料鏈結層（MAC）</div>
+          <div class="layer-chip">★ MAC 晶片</div>
+        </div>
+        <div class="layer-row layer-phy">
+          <div class="layer-num" style="color:var(--c-phy)">L1</div>
+          <div class="layer-name">實體層（PHY）</div>
+          <div class="layer-chip">PHY 晶片</div>
+        </div>
+        <div class="layer-row layer-serdes">
+          <div class="layer-num" style="color:var(--c-serdes)">L1a</div>
+          <div class="layer-name">電氣子層（SerDes）</div>
+          <div class="layer-chip">SerDes 電路</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-mac)"></div>幀封裝與解封
+        </div>
+        <p>MAC 負責在發送時加上目的 MAC 位址、來源 MAC 位址、EtherType/長度欄位，以及尾端的 FCS（CRC-32）。接收時則做相反動作，並驗證 CRC 是否正確。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-mac)"></div>流量控制（Flow Control）
+        </div>
+        <p>全雙工模式下，MAC 支援 IEEE 802.3x PAUSE 幀，以及更精細的 PFC（Priority Flow Control）來避免接收緩衝區溢位。對資料中心交換機至關重要。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-mac)"></div>半雙工 CSMA/CD（歷史）
+        </div>
+        <p>早期乙太網路 MAC 需要偵聽載波（Carrier Sense）並處理碰撞（Collision Detection）。現代交換式全雙工網路已不再需要，但 MAC 名稱沿用至今。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-mac)"></div>與 CPU 的介面：DMA
+        </div>
+        <p>MAC 透過 DMA（Direct Memory Access）將封包直接在記憶體與 MAC 之間搬運，不需 CPU 介入每個位元組。驅動程式管理 TX/RX 描述符環（Descriptor Ring）。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-mac)"></div>MAC 的存在形式
+        </div>
+        <ul>
+          <li><strong>獨立 MAC 晶片</strong>：如 Microchip LAN9303，常見於嵌入式系統搭配外部 PHY</li>
+          <li><strong>整合於 SoC</strong>：手機、路由器、嵌入式 CPU 通常內建 MAC</li>
+          <li><strong>整合於交換機 ASIC</strong>：Broadcom Tomahawk/Tofino 等含數百個 MAC port</li>
+          <li><strong>整合於 NIC</strong>：Intel、Mellanox 等網卡晶片 MAC＋PHY 合一</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-mac)"></div>MAC 不做什麼
+        </div>
+        <ul>
+          <li>不處理 IP 位址（那是 L3 路由器的工作）</li>
+          <li>不做電氣訊號轉換（那是 PHY 和 SerDes 的工作）</li>
+          <li>不了解 TCP/UDP（那是 L4 以上）</li>
+          <li>現代 NIC 可卸載 TCP checksum、TSO 等，但 MAC 核心仍只管 L2</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ PHY 晶片 -->
+  <section id="phy">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(59,130,246,.15);color:var(--c-phy)">⚡</div>
+      <h2 style="color:var(--c-phy)">PHY 晶片是什麼？</h2>
+    </div>
+    <p class="section-desc">
+      PHY（Physical Layer Transceiver，實體層收發器）是介於 MAC 和傳輸介質之間的橋樑晶片。它的內部包含了 PCS、PMA，以及最底層的 SerDes 電路，是「把數位幀翻譯成電氣/光訊號」的翻譯官。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-phy)"></div>PCS（Physical Coding Sublayer）
+        </div>
+        <p>負責對數位資料進行編碼，常見有 8B/10B（GbE）、64B/66B（10GbE 以上）等。編碼確保足夠的位元轉換頻率，方便接收端的 CDR 鎖相，並提供 DC 平衡。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-phy)"></div>PMA（Physical Medium Attachment）
+        </div>
+        <p>PMA 管理 SerDes lane 的對齊（Alignment）、通道綁定（Lane Bonding）、極性翻轉等。對於多 lane 高速介面（如 CAUI-4），確保 4 條 lane 到達時對齊。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-phy)"></div>PMD（Physical Medium Dependent）
+        </div>
+        <p>PMD 是與傳輸介質直接接觸的部分：銅線 PHY 處理 PAM5/PAM4 基帶訊號；光纖 PHY（或光模組）驅動雷射二極體。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-phy)"></div>SerDes 在 PHY 裡的位置
+        </div>
+        <p>SerDes（Serializer / Deserializer）就嵌在 PHY 的 PMA 子層內部。它做最原始的並串轉換，並產生高速差動電流驅動訊號。<strong>PHY = PCS + PMA + SerDes + PMD</strong>。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-phy)"></div>Auto-Negotiation（自動協商）
+        </div>
+        <p>PHY 負責執行 IEEE 802.3 Auto-Negotiation，自動偵測對端速率（10M/100M/1G/10G）與雙工模式，並告知 MAC 以便調整。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-phy)"></div>MDIO 管理介面
+        </div>
+        <p>MAC 透過 MDIO（Management Data Input/Output，IEEE 802.3 Clause 22/45）這條雙線匯流排設定並讀取 PHY 暫存器：連線狀態、速率、錯誤計數、均衡器調整等。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ SerDes 在哪裡 -->
+  <section id="serdes-link">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(168,85,247,.15);color:var(--c-serdes)">🔌</div>
+      <h2 style="color:var(--c-serdes)">SerDes 在訊號鏈中的確切位置</h2>
+    </div>
+    <p class="section-desc">
+      SerDes 是最靠近「銅線/光纖」的類比混合訊號電路。它既不理解以太網路幀，也不知道 IP 位址——它只管把 N-bit 並列資料轉成一條超高速串列差動訊號，以及反向還原。
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-serdes)"></div>SerDes 的輸入：來自 MAC
+        </div>
+        <p>MAC 透過寬並列匯流排（如 XGMII = 32-bit @ 312.5 MHz × 2 DDR = 10 Gbps）把資料傳給 PHY，PHY 的 PCS 做完編碼後，餵給 SerDes 的 TX FIFO（通常 20~40 bit 寬）。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-serdes)"></div>SerDes TX：並串轉換
+        </div>
+        <p>PLL 將參考時脈倍頻，Serializer 以極高速（10G / 25G / 56G / 112G bps）逐 bit 輸出到差動 TX 對（差動電壓 ±200~800 mV）。TX FIR 均衡器修正預加重。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-serdes)"></div>SerDes RX：串並轉換
+        </div>
+        <p>CTLE 補償通道損耗，DFE 消除符號間干擾，CDR 從訊號中恢復時脈並對齊取樣點，Deserializer 把串列位元還原為並列資料輸出給 PCS。</p>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="card-dot" style="background:var(--c-serdes)"></div>SerDes 的輸出：到傳輸介質
+        </div>
+        <p>差動對直接驅動：銅纜（SFP+ Direct Attach、CAT-8 網路線）、或光模組內的 EML/VCSEL 雷射二極體（光纖）。100G 以上通常為多 lane，每 lane 一個 SerDes。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;background:var(--surface);border:1px solid rgba(168,85,247,.3);border-radius:14px;padding:24px;">
+      <div style="font-weight:700;color:var(--c-serdes);margin-bottom:16px;font-size:1rem">MAC ↔ PHY 之間的並列介面（XGMII 範例：10G）</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:.88rem;line-height:2">
+        <span style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:6px 14px;color:#6ee7b7;font-weight:600">MAC XGMII TX</span>
+        <span>32-bit 資料 + 4-bit 控制 × 312.5 MHz DDR = <strong style="color:var(--text)">10 Gbps</strong></span>
+        <span style="margin:0 8px">→</span>
+        <span style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:8px;padding:6px 14px;color:#93c5fd;font-weight:600">PHY PCS</span>
+        <span>64B/66B 編碼</span>
+        <span style="margin:0 8px">→</span>
+        <span style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:8px;padding:6px 14px;color:#d8b4fe;font-weight:600">SerDes TX</span>
+        <span>串列 10.3125 Gbps NRZ</span>
+        <span style="margin:0 8px">→</span>
+        <span style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:6px 14px;color:#fca5a5;font-weight:600">差動對</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ 介面標準 -->
+  <section id="iface">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(245,158,11,.15);color:var(--c-iface)">📐</div>
+      <h2 style="color:var(--c-iface)">MAC ↔ PHY 介面標準</h2>
+    </div>
+    <p class="section-desc">
+      MAC 與 PHY 之間有一條標準化的並列匯流排，隨速率提升而演進。這條匯流排的頻寬永遠等於目標線速，只是寬度（位元數）vs. 頻率（MHz）的取捨不同。
+    </p>
+    <table class="iface-table">
+      <thead>
+        <tr>
+          <th>介面名稱</th>
+          <th>速率</th>
+          <th>資料寬度</th>
+          <th>時脈</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MII</strong></td>
+          <td><span class="tag green">10/100M</span></td>
+          <td>4-bit × 2（半雙工）</td>
+          <td>2.5 / 25 MHz</td>
+          <td>最早的以太網路 MAC-PHY 介面，IEEE 802.3u 定義</td>
+        </tr>
+        <tr>
+          <td><strong>RMII</strong></td>
+          <td><span class="tag green">10/100M</span></td>
+          <td>2-bit</td>
+          <td>50 MHz</td>
+          <td>Reduced MII，減少 PIN 腳，常見於嵌入式</td>
+        </tr>
+        <tr>
+          <td><strong>GMII</strong></td>
+          <td><span class="tag blue">1G</span></td>
+          <td>8-bit</td>
+          <td>125 MHz</td>
+          <td>Gigabit MII，走線較多，現多被 RGMII 取代</td>
+        </tr>
+        <tr>
+          <td><strong>RGMII</strong></td>
+          <td><span class="tag blue">1G</span></td>
+          <td>4-bit DDR</td>
+          <td>125 MHz</td>
+          <td>Reduced GMII，雙邊沿採樣，PIN 腳減半，嵌入式最常用</td>
+        </tr>
+        <tr>
+          <td><strong>SGMII</strong></td>
+          <td><span class="tag blue">1G</span></td>
+          <td>串列差動對</td>
+          <td>1.25 Gbps</td>
+          <td>Serial GMII，MAC↔PHY 間使用 SerDes 互連，走線簡單</td>
+        </tr>
+        <tr>
+          <td><strong>XGMII</strong></td>
+          <td><span class="tag amber">10G</span></td>
+          <td>32-bit DDR + 4-bit ctrl</td>
+          <td>312.5 MHz</td>
+          <td>10G 標準介面，走線長達 3 cm，板上用</td>
+        </tr>
+        <tr>
+          <td><strong>XLAUI / XLGMII</strong></td>
+          <td><span class="tag amber">40G</span></td>
+          <td>4 lane SerDes @ 10G</td>
+          <td>10.3125 Gbps/lane</td>
+          <td>40G 以太網路，4 個 SerDes lane 並行</td>
+        </tr>
+        <tr>
+          <td><strong>CAUI-4</strong></td>
+          <td><span class="tag red">100G</span></td>
+          <td>4 lane SerDes @ 25G</td>
+          <td>25.78125 Gbps/lane</td>
+          <td>100G 主流介面，MAC→PHY 間 4 條差動 SerDes lane</td>
+        </tr>
+        <tr>
+          <td><strong>USXGMII</strong></td>
+          <td><span class="tag amber">1G–10G</span></td>
+          <td>串列 10G</td>
+          <td>10.3125 Gbps</td>
+          <td>單 SerDes lane 多工多個 GbE port，交換機背板常用</td>
+        </tr>
+        <tr>
+          <td><strong>CAUI-8 / 200GAUI-8</strong></td>
+          <td><span class="tag purple">200G/400G</span></td>
+          <td>8 lane SerDes @ 25G/56G</td>
+          <td>25G 或 56G PAM4/lane</td>
+          <td>高速資料中心，PAM4 調變每 lane 56 Gbps</td>
+        </tr>
+        <tr>
+          <td><strong>400GAUI-8 / 800GAUI-8</strong></td>
+          <td><span class="tag purple">400G/800G</span></td>
+          <td>8 lane @ 56G/112G PAM4</td>
+          <td>112 Gbps/lane</td>
+          <td>次世代 AI 叢集骨幹，SerDes 速率已達 112G</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="color:var(--muted);font-size:.82rem;margin-top:10px">
+      ★ SGMII 以上的介面，MAC 與 PHY 間本身就跑 SerDes 訊號，代表在 PCB 上 MAC→PHY 這段也是高速差動對。
+    </p>
+  </section>
+
+  <!-- ⑥ 各速率實例 -->
+  <section id="speeds">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(6,182,212,.15);color:var(--c-proto)">📊</div>
+      <h2 style="color:var(--c-proto)">各速率等級的訊號鏈拆解</h2>
+    </div>
+    <p class="section-desc">
+      相同的三層架構（MAC → PHY → SerDes），在不同速率下採用不同的 lane 數、調變方式和介面標準。
+    </p>
+    <div class="speed-row">
+      <div class="speed-card">
+        <div class="sc-head" style="color:#6ee7b7">🔹 1GbE（千兆以太網路）</div>
+        <div class="sc-row"><span class="sc-label">MAC↔PHY 介面</span><span class="sc-val">RGMII / SGMII</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes lane 數</span><span class="sc-val">1 lane</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes 速率</span><span class="sc-val">1.25 Gbps（8B/10B）</span></div>
+        <div class="sc-row"><span class="sc-label">調變</span><span class="sc-val">NRZ（PAM2）</span></div>
+        <div class="sc-row"><span class="sc-label">PCS 編碼</span><span class="sc-val">8B/10B</span></div>
+        <div class="sc-row"><span class="sc-label">常見 PHY 晶片</span><span class="sc-val">Marvell 88E1111、Realtek RTL8211</span></div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-head" style="color:#93c5fd">🔷 10GbE</div>
+        <div class="sc-row"><span class="sc-label">MAC↔PHY 介面</span><span class="sc-val">XGMII / SFI</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes lane 數</span><span class="sc-val">1 lane</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes 速率</span><span class="sc-val">10.3125 Gbps</span></div>
+        <div class="sc-row"><span class="sc-label">調變</span><span class="sc-val">NRZ（PAM2）</span></div>
+        <div class="sc-row"><span class="sc-label">PCS 編碼</span><span class="sc-val">64B/66B</span></div>
+        <div class="sc-row"><span class="sc-label">常見 PHY 晶片</span><span class="sc-val">Marvell 88X3310、Aquantia AQR107</span></div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-head" style="color:#fcd34d">🔶 100GbE</div>
+        <div class="sc-row"><span class="sc-label">MAC↔PHY 介面</span><span class="sc-val">CAUI-4（4 lane）</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes lane 數</span><span class="sc-val">4 lane × 25G</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes 速率</span><span class="sc-val">25.78125 Gbps/lane</span></div>
+        <div class="sc-row"><span class="sc-label">調變</span><span class="sc-val">NRZ（PAM2）</span></div>
+        <div class="sc-row"><span class="sc-label">PCS 編碼</span><span class="sc-val">64B/66B + 256B/257B</span></div>
+        <div class="sc-row"><span class="sc-label">常見應用</span><span class="sc-val">交換機上行鏈路、伺服器 QSFP28</span></div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-head" style="color:#d8b4fe">🟣 400GbE / 800GbE</div>
+        <div class="sc-row"><span class="sc-label">MAC↔PHY 介面</span><span class="sc-val">400GAUI-8 / 800GAUI-8</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes lane 數</span><span class="sc-val">8 lane × 56G 或 112G</span></div>
+        <div class="sc-row"><span class="sc-label">SerDes 速率</span><span class="sc-val">56 / 112 Gbps/lane PAM4</span></div>
+        <div class="sc-row"><span class="sc-label">調變</span><span class="sc-val">PAM4（4 電位）</span></div>
+        <div class="sc-row"><span class="sc-label">PCS 編碼</span><span class="sc-val">RS-FEC + 256B/257B</span></div>
+        <div class="sc-row"><span class="sc-label">常見應用</span><span class="sc-val">AI 伺服器 NVLink、QSFP-DD、OSFP</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑦ 廠商生態 -->
+  <section id="vendors">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(236,72,153,.15);color:var(--c-vendor)">🏭</div>
+      <h2 style="color:var(--c-vendor)">MAC / PHY / SerDes 晶片廠商</h2>
+    </div>
+    <p class="section-desc">
+      三個層次的晶片有時由同一家公司整合，有時分開供應。以下是常見廠商分布。
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="cb-title" style="color:var(--c-mac)">MAC（含交換機 ASIC）</div>
+        <ul>
+          <li>Broadcom（Tomahawk、Trident）</li>
+          <li>Marvell（Prestera、Teralynx）</li>
+          <li>Intel（Ethernet Controller i210、E810）</li>
+          <li>Mellanox / NVIDIA（ConnectX NIC）</li>
+          <li>Cisco 自研（Silicon One）</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <div class="cb-title" style="color:var(--c-phy)">PHY 晶片（含 SerDes）</div>
+        <ul>
+          <li>Marvell（88E 系列 GbE PHY）</li>
+          <li>Broadcom（BCM54 系列）</li>
+          <li>Aquantia / Marvell（多速率 PHY）</li>
+          <li>Inphi / Marvell（高速 PHY/DSP）</li>
+          <li>Credo（800G Retimer/Gearbox）</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <div class="cb-title" style="color:var(--c-serdes)">SerDes IP / Retimer</div>
+        <ul>
+          <li>Synopsys（DesignWare SerDes IP）</li>
+          <li>Cadence（SerDes PHY IP）</li>
+          <li>Texas Instruments（DS280DF810）</li>
+          <li>Microchip（VSC8541 GbE PHY）</li>
+          <li>Semtech（高速 SerDes IC）</li>
+        </ul>
+      </div>
+      <div class="compare-box">
+        <div class="cb-title" style="color:var(--c-iface)">整合型（MAC+PHY+SerDes）</div>
+        <ul>
+          <li>Intel NIC SoC（i225、E810）</li>
+          <li>NVIDIA ConnectX-7（含 RoCE）</li>
+          <li>Apple Silicon（M 系列內建 Ethernet MAC+PHY）</li>
+          <li>Broadcom NIC（BCM5720）</li>
+          <li>Realtek（RTL8125、消費級整合）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;">
+      <div style="font-weight:700;font-size:.95rem;margin-bottom:14px;color:var(--accent2)">常見問題：「SerDes 和 PHY 是同一個嗎？」</div>
+      <p style="color:var(--muted);font-size:.9rem;line-height:1.8">
+        <strong style="color:var(--text)">不完全是</strong>。SerDes 是一個<em>電路元素</em>（並串轉換器＋PLL/CDR），PHY 晶片是一個<em>完整晶片產品</em>，內部<em>包含</em> SerDes 作為其中一個子電路。
+        就像「引擎」和「汽車」的關係：SerDes 是引擎，PHY 是整台車（還有變速箱 PCS、油門 MDIO、車燈 Auto-Negotiation）。
+        有些 SoC 把 SerDes 從 PHY 中獨立出來當作通用 I/O，例如 FPGA 的 GTX/GTH transceiver，也可以直接用作 PCIe、SATA、HDMI 等。
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer style="text-align:center;padding:32px 24px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border)">
+  <a href="serdes_guide.html" style="color:var(--accent2);text-decoration:none">→ 深入閱讀：SerDes 完整實作指南（PLL、CDR、眼圖）</a>
+  &nbsp;|&nbsp;
+  <a href="index.html" style="color:var(--muted);text-decoration:none">← 返回首頁</a>
+</footer>
+
+</body>
+</html>
