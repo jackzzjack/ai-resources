@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日本歷史全覽：從繩文時代到現代</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --jp-red: #e63946;
+      --jp-gold: #f4a261;
+      --jp-sakura: #f8a4c8;
+      --jp-indigo: #457b9d;
+      --jp-green: #52b788;
+      --jp-white: #f1faee;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 56px 24px 40px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(230,57,70,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 40%, rgba(244,162,97,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(248,164,200,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '🎌';
+      position: absolute;
+      font-size: 200px;
+      right: -40px;
+      top: -30px;
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--jp-sakura) 40%, var(--jp-red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+      max-width: 600px;
+      margin-inline: auto;
+      line-height: 1.6;
+    }
+
+    /* ── TIMELINE NAV ── */
+    .timeline-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 28px 24px 12px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .era-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .era-btn:hover, .era-btn.active {
+      border-color: var(--jp-red);
+      background: rgba(230,57,70,0.12);
+      color: #fff;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 24px 80px;
+    }
+
+    /* ── OVERVIEW BAND ── */
+    .overview-band {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .ov-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+
+    .ov-card .era-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .ov-card .era-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .ov-card .era-year { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── ERA SECTION ── */
+    .era-section {
+      margin-bottom: 56px;
+      scroll-margin-top: 20px;
+    }
+
+    .era-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .era-icon-lg {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .era-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .era-period {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .era-tag {
+      margin-left: auto;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ── CONTENT BLOCKS ── */
+    .era-body {
+      display: grid;
+      gap: 16px;
+    }
+
+    .era-desc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      line-height: 1.8;
+      font-size: 0.93rem;
+    }
+
+    .era-desc p + p { margin-top: 12px; }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .hl-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .hl-card .hl-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .hl-card .hl-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .hl-card .hl-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── KEY FIGURES ── */
+    .figures-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .figure-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+    }
+
+    .figure-chip .fig-icon { font-size: 1.2rem; }
+    .figure-chip .fig-info .fig-name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .figure-chip .fig-info .fig-role { font-size: 0.75rem; color: var(--muted); }
+
+    /* ── EVENT TIMELINE ── */
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .event-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .event-item:last-child { border-bottom: none; }
+
+    .event-year {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--jp-gold);
+      min-width: 80px;
+      padding-top: 2px;
+    }
+
+    .event-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--jp-red);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .event-content .event-title { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .event-content .event-detail { font-size: 0.8rem; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* ── COLOR ACCENTS PER ERA ── */
+    .color-ancient  { background: rgba(82,183,136,0.15); border-color: rgba(82,183,136,0.4); }
+    .color-ancient .era-icon-lg { background: rgba(82,183,136,0.18); }
+    .color-ancient .era-tag { background: rgba(82,183,136,0.15); border: 1px solid rgba(82,183,136,0.4); color: var(--jp-green); }
+
+    .color-classical { background: rgba(248,164,200,0.12); border-color: rgba(248,164,200,0.35); }
+    .color-classical .era-icon-lg { background: rgba(248,164,200,0.15); }
+    .color-classical .era-tag { background: rgba(248,164,200,0.12); border: 1px solid rgba(248,164,200,0.35); color: var(--jp-sakura); }
+
+    .color-medieval { background: rgba(69,123,157,0.15); border-color: rgba(69,123,157,0.4); }
+    .color-medieval .era-icon-lg { background: rgba(69,123,157,0.18); }
+    .color-medieval .era-tag { background: rgba(69,123,157,0.15); border: 1px solid rgba(69,123,157,0.4); color: var(--jp-indigo); }
+
+    .color-edo { background: rgba(244,162,97,0.12); border-color: rgba(244,162,97,0.35); }
+    .color-edo .era-icon-lg { background: rgba(244,162,97,0.15); }
+    .color-edo .era-tag { background: rgba(244,162,97,0.12); border: 1px solid rgba(244,162,97,0.35); color: var(--jp-gold); }
+
+    .color-modern { background: rgba(230,57,70,0.12); border-color: rgba(230,57,70,0.35); }
+    .color-modern .era-icon-lg { background: rgba(230,57,70,0.15); }
+    .color-modern .era-tag { background: rgba(230,57,70,0.12); border: 1px solid rgba(230,57,70,0.35); color: var(--jp-red); }
+
+    .color-postwar { background: rgba(124,106,255,0.12); border-color: rgba(124,106,255,0.35); }
+    .color-postwar .era-icon-lg { background: rgba(124,106,255,0.15); }
+    .color-postwar .era-tag { background: rgba(124,106,255,0.12); border: 1px solid rgba(124,106,255,0.35); color: var(--accent2); }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+    .callout-tip { background: rgba(82,183,136,0.1); border: 1px solid rgba(82,183,136,0.3); color: #a8d5be; }
+    .callout-warn { background: rgba(244,162,97,0.1); border: 1px solid rgba(244,162,97,0.3); color: #f4c78f; }
+    .callout-info { background: rgba(124,106,255,0.1); border: 1px solid rgba(124,106,255,0.3); color: var(--accent2); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .highlights-grid { grid-template-columns: 1fr; }
+      .era-header { flex-wrap: wrap; }
+      .era-tag { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <h1>日本歷史全覽</h1>
+  <p class="subtitle">從石器時代到現代強國——帶你用最簡單的方式，認識日本兩萬年的故事</p>
+</header>
+
+<!-- ===== NAV ===== -->
+<nav class="timeline-nav">
+  <button class="era-btn" onclick="scrollTo('ancient')">🌿 史前・古代</button>
+  <button class="era-btn" onclick="scrollTo('classical')">🌸 飛鳥・奈良・平安</button>
+  <button class="era-btn" onclick="scrollTo('medieval')">⚔️ 鎌倉・室町・戰國</button>
+  <button class="era-btn" onclick="scrollTo('edo')">🏯 江戶時代</button>
+  <button class="era-btn" onclick="scrollTo('modern')">🚂 明治・大正・昭和前期</button>
+  <button class="era-btn" onclick="scrollTo('postwar')">🏙️ 戰後・現代</button>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- 時代總覽 -->
+  <div class="overview-band">
+    <div class="ov-card">
+      <div class="era-icon">🌿</div>
+      <div class="era-name">繩文・彌生</div>
+      <div class="era-year">約 14000 BCE – 300 CE</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">🏛️</div>
+      <div class="era-name">古墳・飛鳥・奈良</div>
+      <div class="era-year">300 – 794</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">🌸</div>
+      <div class="era-name">平安</div>
+      <div class="era-year">794 – 1185</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">⚔️</div>
+      <div class="era-name">鎌倉・室町</div>
+      <div class="era-year">1185 – 1573</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">🔥</div>
+      <div class="era-name">戰國・安土桃山</div>
+      <div class="era-year">1467 – 1603</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">🏯</div>
+      <div class="era-name">江戶</div>
+      <div class="era-year">1603 – 1868</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">🚂</div>
+      <div class="era-name">明治・大正</div>
+      <div class="era-year">1868 – 1926</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">💣</div>
+      <div class="era-name">昭和（戰時）</div>
+      <div class="era-year">1926 – 1945</div>
+    </div>
+    <div class="ov-card">
+      <div class="era-icon">🏙️</div>
+      <div class="era-name">戰後・平成・令和</div>
+      <div class="era-year">1945 – 今</div>
+    </div>
+  </div>
+
+  <!-- ===== 1. 史前・古代 ===== -->
+  <section class="era-section" id="ancient">
+    <div class="era-header color-ancient" style="background:none; border-bottom: 1px solid rgba(82,183,136,0.3);">
+      <div class="era-icon-lg color-ancient">🌿</div>
+      <div>
+        <h2>史前・古代時期</h2>
+        <div class="era-period">約 14000 BCE ～ 710 CE</div>
+      </div>
+      <span class="era-tag color-ancient">文明的起點</span>
+    </div>
+
+    <div class="era-body">
+      <div class="era-desc">
+        <p><strong>繩文時代（約 14000–300 BCE）</strong>是日本最古老的文化，以製作繩紋陶器著稱，也是世界上最早的陶器文化之一。人們以狩獵、採集和捕魚維生，並非農耕民族。他們建造半地穴式的住所，過著村落定居生活。</p>
+        <p><strong>彌生時代（約 300 BCE–300 CE）</strong>帶來了稻米農耕——很可能是從朝鮮半島或中國大陸傳入的技術。鐵器、銅器開始出現，社會逐漸出現貧富分化，小型政治聯盟興起。中國史書《三國志》中提到的「邪馬台國」女王<strong>卑彌呼</strong>，正是這個時期的傳說人物。</p>
+        <p><strong>古墳時代（約 300–600 CE）</strong>以建造巨大前方後圓形的「古墳」墳丘墓為特徵，代表統治者階層的崛起。大和王權在此時期逐步統一日本列島，天皇制度的雛形開始成形。</p>
+      </div>
+
+      <div class="highlights-grid">
+        <div class="hl-card">
+          <div class="hl-label">繩文陶器</div>
+          <div class="hl-title">世界最古老陶器之一</div>
+          <div class="hl-desc">日本繩文陶器距今約 16,000 年，比中東農業革命還早，改寫了人類文明史觀。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">彌生革命</div>
+          <div class="hl-title">稻米農耕傳入</div>
+          <div class="hl-desc">稻作帶來食物剩餘與人口增長，催生了社會階層與領地概念，改變了日本社會結構。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">仁德天皇陵</div>
+          <div class="hl-title">世界最大墳丘墓</div>
+          <div class="hl-desc">位於大阪府堺市，前方後圓形古墳全長約 486 公尺，體積甚至超過埃及大金字塔。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">邪馬台國</div>
+          <div class="hl-title">女王卑彌呼</div>
+          <div class="hl-desc">中國史書記載的日本女王，以巫術治國，派遣使節朝貢曹魏，是日本最早有文字記錄的政治人物。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. 飛鳥・奈良・平安 ===== -->
+  <section class="era-section" id="classical">
+    <div class="era-header" style="border-bottom: 1px solid rgba(248,164,200,0.3);">
+      <div class="era-icon-lg color-classical">🌸</div>
+      <div>
+        <h2>飛鳥・奈良・平安時代</h2>
+        <div class="era-period">593 ～ 1185</div>
+      </div>
+      <span class="era-tag color-classical">貴族文化的黃金時代</span>
+    </div>
+
+    <div class="era-body">
+      <div class="era-desc">
+        <p><strong>飛鳥時代（593–710）</strong>是日本大規模向中國學習的起點。聖德太子（厩戶皇子）推動改革，制定十七條憲法，引進佛教，並向隋朝派遣遣隋使。646 年的「大化改新」仿照唐朝制度，確立了中央集權的律令國家體制。</p>
+        <p><strong>奈良時代（710–794）</strong>遷都至奈良（平城京），全面模仿唐朝長安的棋盤式都市規劃。天皇詔令編撰《古事記》《日本書紀》，確立日本神話與皇室正統。東大寺的大佛（奈良大佛）於752年完工，展現國家的佛教信仰與財富。</p>
+        <p><strong>平安時代（794–1185）</strong>遷都平安京（今京都）。藤原氏透過外戚政治把持朝政長達兩百年，史稱「攝關政治」。此時期是日本貴族文化的頂峰——假名文字誕生，女性文學大放異彩。紫式部寫下的《源氏物語》被譽為世界最早的長篇小說；清少納言的《枕草子》也傳世至今。</p>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📖</div>
+        <div>《源氏物語》完成於約 1000 年，描述貴族光源氏的愛情與政治生涯，被許多學者視為世界上最早的長篇小說，比西方最早的小說早了數百年。</div>
+      </div>
+
+      <div>
+        <div class="section-divider">關鍵人物</div>
+        <div class="figures-row">
+          <div class="figure-chip">
+            <div class="fig-icon">👑</div>
+            <div class="fig-info">
+              <div class="fig-name">聖德太子</div>
+              <div class="fig-role">推古天皇攝政，推動佛教與律令制</div>
+            </div>
+          </div>
+          <div class="figure-chip">
+            <div class="fig-icon">🏛️</div>
+            <div class="fig-info">
+              <div class="fig-name">藤原道長</div>
+              <div class="fig-role">平安攝關政治的最高峰，把持朝廷</div>
+            </div>
+          </div>
+          <div class="figure-chip">
+            <div class="fig-icon">✍️</div>
+            <div class="fig-info">
+              <div class="fig-name">紫式部</div>
+              <div class="fig-role">《源氏物語》作者，女官</div>
+            </div>
+          </div>
+          <div class="figure-chip">
+            <div class="fig-icon">✍️</div>
+            <div class="fig-info">
+              <div class="fig-name">清少納言</div>
+              <div class="fig-role">《枕草子》作者，女官</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. 中世（鎌倉・室町・戰國） ===== -->
+  <section class="era-section" id="medieval">
+    <div class="era-header" style="border-bottom: 1px solid rgba(69,123,157,0.3);">
+      <div class="era-icon-lg color-medieval">⚔️</div>
+      <div>
+        <h2>鎌倉・室町・戰國時代</h2>
+        <div class="era-period">1185 ～ 1603</div>
+      </div>
+      <span class="era-tag color-medieval">武士崛起的時代</span>
+    </div>
+
+    <div class="era-body">
+      <div class="era-desc">
+        <p><strong>鎌倉時代（1185–1333）</strong>是武士（samurai）首次掌握政治實權。源賴朝擊敗平家後，在鎌倉設立幕府，開創了「征夷大將軍」主政的武家政治體制。天皇在形式上仍存在，但實權轉移至武士手中，此後維持了近七百年。蒙古軍兩度入侵（1274、1281），均因颱風（日本人稱為「神風」）而失敗，強化了日本的神國意識。</p>
+        <p><strong>室町時代（1336–1573）</strong>足利尊氏建立室町幕府，但統治力逐漸衰弱。各地諸侯（守護大名）的勢力擴張，最終引發史上最混亂的「應仁之亂」（1467–1477），日本進入長達百年的<strong>戰國時代</strong>。禪宗文化大放異彩，茶道、能劇、枯山水庭園都在此時定型。</p>
+        <p><strong>戰國時代（1467–1615）</strong>群雄並起，各地大名互相征伐，爭奪天下。織田信長以槍砲打破傳統戰術，統一了大半日本；其部將豐臣秀吉完成統一，並兩度出兵朝鮮（壬辰倭亂）。秀吉死後，德川家康在關原之戰（1600）擊敗反對勢力，最終建立德川幕府，開創江戶時代。</p>
+      </div>
+
+      <div class="highlights-grid">
+        <div class="hl-card">
+          <div class="hl-label">武士道</div>
+          <div class="hl-title">Bushido：武士精神</div>
+          <div class="hl-desc">忠義、名譽、勇氣、切腹等概念在此時期發展成形，深刻影響日本文化至今。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">神風</div>
+          <div class="hl-title">擊退蒙古的颱風</div>
+          <div class="hl-desc">1281年蒙古十四萬大軍入侵，颱風摧毀艦隊，日本人視為神明保佑，「神風」之名由此而來。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">槍砲傳入</div>
+          <div class="hl-title">1543年種子島</div>
+          <div class="hl-desc">葡萄牙人將火繩槍帶入日本，織田信長率先大規模運用，改變了戰爭形態。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">關原之戰</div>
+          <div class="hl-title">天下分裂的決戰</div>
+          <div class="hl-desc">1600年，德川家康對決石田三成，約十六萬人激戰半天，勝負決定了日本此後260年的命運。</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-divider">戰國三英雄</div>
+        <div class="figures-row">
+          <div class="figure-chip">
+            <div class="fig-icon">🔥</div>
+            <div class="fig-info">
+              <div class="fig-name">織田信長</div>
+              <div class="fig-role">破舊立新，槍砲統一戰場，本能寺之變遭暗殺</div>
+            </div>
+          </div>
+          <div class="figure-chip">
+            <div class="fig-icon">🌺</div>
+            <div class="fig-info">
+              <div class="fig-name">豐臣秀吉</div>
+              <div class="fig-role">出身農民，完成全國統一，侵略朝鮮</div>
+            </div>
+          </div>
+          <div class="figure-chip">
+            <div class="fig-icon">🏯</div>
+            <div class="fig-info">
+              <div class="fig-name">德川家康</div>
+              <div class="fig-role">耐心等待，最終奪得天下，建立260年和平</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-icon">💡</div>
+        <div>日本有句諺語形容三人個性：「信長揉麻糬，秀吉烤麻糬，家康吃麻糬。」意指信長用強硬手段打天下，秀吉建設成果，而家康最後安穩享用成果。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. 江戶時代 ===== -->
+  <section class="era-section" id="edo">
+    <div class="era-header" style="border-bottom: 1px solid rgba(244,162,97,0.3);">
+      <div class="era-icon-lg color-edo">🏯</div>
+      <div>
+        <h2>江戶時代</h2>
+        <div class="era-period">1603 ～ 1868</div>
+      </div>
+      <span class="era-tag color-edo">鎖國與太平盛世</span>
+    </div>
+
+    <div class="era-body">
+      <div class="era-desc">
+        <p>德川家康在江戶（今東京）建立幕府，開創長達260年的和平時期。幕府實施<strong>參勤交代</strong>制度，強制各地大名輪流住在江戶，以此削弱其經濟實力與造反可能。日本社會被嚴格分成士農工商四個階級，武士階級高居首位。</p>
+        <p><strong>鎖國政策（1635年起）</strong>幕府禁止日本人出海、禁止外國人入境，僅允許荷蘭與中國商人在長崎的人工島「出島」進行有限度的貿易。這個政策讓日本得以維持穩定，卻也錯過了工業革命的浪潮。</p>
+        <p>江戶時代的文化在相對封閉中蓬勃發展。都市町人（商人階層）成為文化主力：<strong>歌舞伎、浮世繪、俳句、相撲</strong>在這個時代大放異彩。葛飾北齋的《富嶽三十六景》、松尾芭蕉的俳句，都是這個時代的代表作。到江戶末期，江戶已是人口逾百萬的超大城市，與同期的倫敦並列世界最大都市。</p>
+      </div>
+
+      <div class="highlights-grid">
+        <div class="hl-card">
+          <div class="hl-label">鎖國</div>
+          <div class="hl-title">自我封閉的選擇</div>
+          <div class="hl-desc">幕府擔憂西方宗教（天主教）破壞社會秩序，以鎖國維持政治穩定，代價是技術與軍力的停滯。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">浮世繪</div>
+          <div class="hl-title">影響印象派的藝術</div>
+          <div class="hl-desc">北齋、廣重的浮世繪傳入歐洲後，深深影響了莫內、梵谷等印象派畫家，形成「日本主義」熱潮。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">黑船來航</div>
+          <div class="hl-title">1853年，美國叩關</div>
+          <div class="hl-desc">美國培里將軍率黑色蒸汽軍艦駛入浦賀港，要求日本開國通商，260年鎖國宣告終結。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">蘭學</div>
+          <div class="hl-title">透過荷蘭接觸西方科學</div>
+          <div class="hl-desc">即使在鎖國時期，日本學者仍透過荷蘭語書籍學習西方醫學、天文、物理等知識，為明治維新奠定基礎。</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-divider">江戶末期大事紀</div>
+        <div class="event-list">
+          <div class="event-item">
+            <div class="event-year">1853</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">黑船來航</div>
+              <div class="event-detail">培里將軍率4艘蒸汽戰艦抵達浦賀，要求開國，幕府無力應對，陷入動盪。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1854</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">日美和親條約</div>
+              <div class="event-detail">日本被迫開放下田、函館兩港，正式打破鎖國體制。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1860</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">尊王攘夷運動</div>
+              <div class="event-detail">倒幕志士與幕府支持者爆發衝突，日本陷入內戰邊緣，「尊王攘夷」口號響遍全國。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1868</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">明治維新・大政奉還</div>
+              <div class="event-detail">末代將軍德川慶喜將統治權歸還天皇，江戶時代結束，日本進入現代化的全新篇章。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. 明治・大正・昭和前期 ===== -->
+  <section class="era-section" id="modern">
+    <div class="era-header" style="border-bottom: 1px solid rgba(230,57,70,0.3);">
+      <div class="era-icon-lg color-modern">🚂</div>
+      <div>
+        <h2>明治・大正・昭和（戰前）</h2>
+        <div class="era-period">1868 ～ 1945</div>
+      </div>
+      <span class="era-tag color-modern">現代化與戰爭</span>
+    </div>
+
+    <div class="era-body">
+      <div class="era-desc">
+        <p><strong>明治時代（1868–1912）</strong>是日本史上最劇烈的轉型時期。新政府以「富國強兵、殖產興業」為國策，全面向西方學習：廢除封建制度、設立議會、興建鐵路、推行義務教育、建立現代軍隊。短短幾十年，日本從封建農業社會躍升為現代工業強國。1894年甲午戰爭擊敗清朝，取得台灣；1905年日俄戰爭擊敗俄國，震驚世界，成為亞洲第一個打敗歐洲強國的國家。</p>
+        <p><strong>大正時代（1912–1926）</strong>相對短暫卻充滿自由氣息。民主思潮（大正民主）興起，勞工運動、婦女運動蓬勃發展；爵士樂、電影、咖啡廳等西洋文化流行，「摩登女郎」成為時代象徵。但1923年的關東大地震奪走十餘萬生命，造成嚴重社會動盪。</p>
+        <p><strong>昭和時代前期（1926–1945）</strong>是日本最黑暗的時代。1929年世界經濟大蕭條重創日本，軍部勢力趁機抬頭，逐步掌控政治。1931年侵占中國東北（九一八事變），1937年全面侵華（七七事變），1941年偷襲珍珠港，將美國拖入戰爭。日本在太平洋戰場從初期勝利逐漸走向敗退，廣島（8/6）、長崎（8/9）遭原子彈轟炸，1945年8月15日，天皇宣布無條件投降。</p>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠️</div>
+        <div>二戰期間，日本軍隊在中國、東南亞犯下嚴重戰爭罪行，包括南京大屠殺（1937）、731部隊生化實驗等，造成數百萬平民死亡。這段歷史至今仍是日本與鄰國外交關係的敏感核心。</div>
+      </div>
+
+      <div>
+        <div class="section-divider">重要事件時間軸</div>
+        <div class="event-list">
+          <div class="event-item">
+            <div class="event-year">1868</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">明治維新</div>
+              <div class="event-detail">明治天皇即位，廢藩置縣，開始全面西化改革。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1889</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">大日本帝國憲法頒布</div>
+              <div class="event-detail">亞洲第一部近代憲法，設立帝國議會，但天皇擁有最高統治權。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1894–95</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">甲午戰爭</div>
+              <div class="event-detail">日本擊敗清朝，取得台灣、澎湖，賠款兩億兩白銀，確立東亞強國地位。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1904–05</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">日俄戰爭</div>
+              <div class="event-detail">日本擊沉俄國太平洋艦隊，成為第一個打敗歐洲列強的亞洲國家，舉世震驚。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1941</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">偷襲珍珠港</div>
+              <div class="event-detail">日本突襲美國夏威夷海軍基地，美國宣戰，太平洋戰爭全面爆發。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1945</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">終戰投降</div>
+              <div class="event-detail">廣島、長崎遭原子彈轟炸；8月15日，昭和天皇透過廣播宣布無條件投降。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6. 戰後・現代 ===== -->
+  <section class="era-section" id="postwar">
+    <div class="era-header" style="border-bottom: 1px solid rgba(124,106,255,0.3);">
+      <div class="era-icon-lg color-postwar">🏙️</div>
+      <div>
+        <h2>戰後・平成・令和</h2>
+        <div class="era-period">1945 ～ 現在</div>
+      </div>
+      <span class="era-tag color-postwar">廢墟中的奇蹟</span>
+    </div>
+
+    <div class="era-body">
+      <div class="era-desc">
+        <p><strong>佔領時期（1945–1952）</strong>美軍以盟軍最高司令麥克阿瑟為首，對日本進行全面民主化改革。1947年頒布新憲法，第九條明定「永久放棄戰爭」，天皇地位從神聖統治者降為「象徵性國家元首」，確立了和平主義路線。</p>
+        <p><strong>戰後經濟奇蹟（1950–1990）</strong>韓戰帶來的軍事訂單成為日本經濟起飛的引擎。1950–70年代，日本 GDP 年均成長超過 10%，索尼、豐田、松下等企業崛起，家電、汽車風靡全球。1964年東京奧運向世界展示了「新日本」的形象。1980年代，日本成為全球第二大經濟體，東京地價高漲到荒謬的程度。</p>
+        <p><strong>泡沫與失落（1990–今）</strong>1991年資產泡沫破裂，股市與地產崩跌，日本陷入「失落的十年」（後延伸為失落的三十年）。2011年東日本大地震與福島核電廠事故是另一次重大打擊。儘管如此，日本仍是全球第四大經濟體，在科技、文化（動漫、遊戲、料理）方面的全球影響力依然深遠。2019年令和天皇即位，日本進入新的時代。</p>
+      </div>
+
+      <div class="highlights-grid">
+        <div class="hl-card">
+          <div class="hl-label">和平憲法</div>
+          <div class="hl-title">第九條：放棄戰爭</div>
+          <div class="hl-desc">日本憲法第九條規定永遠放棄戰爭與武力，使日本成為全球最獨特的「非武裝民主國家」之一。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">經濟奇蹟</div>
+          <div class="hl-title">廢墟到第二大經濟體</div>
+          <div class="hl-desc">短短40年，日本從戰敗廢墟重建為全球第二大經濟體，被稱為20世紀最偉大的經濟成就之一。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">軟實力</div>
+          <div class="hl-title">動漫・遊戲・料理</div>
+          <div class="hl-desc">《七龍珠》《哆啦A夢》《任天堂》《壽司》…日本文化在全球的影響力遠超其軍事或政治力量。</div>
+        </div>
+        <div class="hl-card">
+          <div class="hl-label">311大地震</div>
+          <div class="hl-title">2011年東日本大震災</div>
+          <div class="hl-desc">規模9.0強震引發巨大海嘯，造成近2萬人死亡，福島核電廠熔毀，是戰後日本最慘重的天災。</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-divider">戰後大事紀</div>
+        <div class="event-list">
+          <div class="event-item">
+            <div class="event-year">1947</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">日本國憲法施行</div>
+              <div class="event-detail">以民主、和平為核心，確立天皇為象徵，沿用至今。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1964</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">東京奧運 & 新幹線開通</div>
+              <div class="event-detail">日本向世界宣告完全復興，東海道新幹線是當時全球最快的鐵路，時速達到 210 公里。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1968</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">超越西德，成為全球第二大經濟體</div>
+              <div class="event-detail">僅次於美國，日本躍升全球經濟第二強，持續維持此地位直到2010年被中國超越。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">1991</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">泡沫經濟崩潰</div>
+              <div class="event-detail">股市與房地產價格急速崩跌，日本進入長期通縮與停滯，史稱「失落的年代」。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">2011</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">東日本大地震</div>
+              <div class="event-detail">規模9.0強震與海嘯奪走近2萬條生命，福島核電廠爐心熔毀，戰後最大災難。</div>
+            </div>
+          </div>
+          <div class="event-item">
+            <div class="event-year">2019</div>
+            <div class="event-dot"></div>
+            <div class="event-content">
+              <div class="event-title">令和元年，新天皇即位</div>
+              <div class="event-detail">德仁天皇即位，日本進入「令和」年號新時代，平成天皇明仁成為日本史上首位生前退位的天皇。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🌏</div>
+        <div>今日的日本是全球第四大經濟體（2024年被德國超越），擁有 1.2 億人口、全球密度最高的米其林星級餐廳、最長壽的國民平均壽命，以及在全球年輕人心中最受歡迎的文化軟實力之一。</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>資料來源：歷史學術資料整理 · 本頁為教育用途概覽</p>
+  <p style="margin-top:8px;"><a href="index.html">← 返回首頁</a></p>
+</footer>
+
+<script>
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.era-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  // highlight nav on scroll
+  const sections = ['ancient','classical','medieval','edo','modern','postwar'];
+  const btns = document.querySelectorAll('.era-btn');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = sections.indexOf(e.target.id);
+        if (idx >= 0) {
+          btns.forEach(b => b.classList.remove('active'));
+          btns[idx].classList.add('active');
+        }
+      }
+    });
+  }, { threshold: 0.25 });
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>火車百科：歷史、種類、規格與產業</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --train-blue: #60a5fa;
+      --train-green: #4ade80;
+      --train-amber: #fbbf24;
+      --train-red: #f87171;
+      --train-purple: #c084fc;
+      --train-sky: #38bdf8;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(96,165,250,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(124,106,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(56,189,248,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='20' viewBox='0 0 80 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 H80' stroke='%232a2a3d' stroke-width='1' stroke-dasharray='4,8'/%3E%3C/svg%3E");
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--train-blue) 45%, var(--train-sky) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(96,165,250,0.12);
+      border: 1px solid rgba(96,165,250,0.35);
+      color: var(--train-blue);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      flex: 1;
+    }
+
+    .section {
+      margin-bottom: 64px;
+      scroll-margin-top: 70px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--train-blue);
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title .icon {
+      font-size: 1.3rem;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--train-blue), var(--train-purple), var(--train-green));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 8px rgba(124,106,255,0.6);
+    }
+
+    .timeline-year {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--train-amber);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .era-divider {
+      margin: 32px 0 24px -32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .era-label {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .era-steam { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); color: #fb923c; }
+    .era-electric { background: rgba(96,165,250,0.15); border: 1px solid rgba(96,165,250,0.4); color: var(--train-blue); }
+    .era-hsr { background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.4); color: var(--train-green); }
+
+    .era-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Type cards */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .type-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .type-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .type-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .type-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .type-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .type-card-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .type-card-body {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .speed-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Spec table */
+    .spec-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: var(--surface2);
+      color: var(--train-blue);
+      font-weight: 700;
+      padding: 12px 16px;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--border);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    tbody td {
+      padding: 11px 16px;
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    tbody td:first-child {
+      font-weight: 600;
+      color: var(--accent2);
+      white-space: nowrap;
+    }
+
+    .highlight-cell {
+      color: var(--train-amber) !important;
+      font-weight: 700 !important;
+    }
+
+    /* Record cards */
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .record-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .record-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .record-card.blue::before { background: linear-gradient(90deg, var(--train-blue), var(--train-sky)); }
+    .record-card.purple::before { background: linear-gradient(90deg, var(--accent), var(--train-purple)); }
+    .record-card.green::before { background: linear-gradient(90deg, var(--train-green), var(--train-sky)); }
+    .record-card.amber::before { background: linear-gradient(90deg, var(--train-amber), #fb923c); }
+
+    .record-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 8px 0 4px;
+    }
+
+    .record-card.blue .record-value { color: var(--train-blue); }
+    .record-card.purple .record-value { color: var(--train-purple); }
+    .record-card.green .record-value { color: var(--train-green); }
+    .record-card.amber .record-value { color: var(--train-amber); }
+
+    .record-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .record-model {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* Spec detail cards */
+    .spec-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .spec-detail-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .spec-detail-header {
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spec-detail-body {
+      padding: 0 20px 16px;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.87rem;
+      gap: 12px;
+    }
+
+    .spec-row:last-child { border-bottom: none; }
+
+    .spec-key {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .spec-val {
+      font-weight: 600;
+      color: var(--text);
+      text-align: right;
+    }
+
+    /* Export section */
+    .exporter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .exporter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .exporter-card.tier1 { border-left: 3px solid var(--train-blue); }
+    .exporter-card.tier2 { border-left: 3px solid var(--train-green); }
+
+    .exporter-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .exporter-maker {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .exporter-products {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+
+    .market-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .market-tag {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* Market share bar */
+    .market-share-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .market-share-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .share-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .share-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      min-width: 140px;
+    }
+
+    .share-bar-wrap {
+      flex: 1;
+      background: var(--surface2);
+      border-radius: 6px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .share-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1s ease;
+    }
+
+    .share-pct {
+      font-size: 0.82rem;
+      font-weight: 700;
+      min-width: 38px;
+      text-align: right;
+    }
+
+    /* Future section */
+    .future-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .future-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .future-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .future-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .future-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .future-stat {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 32px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--accent2); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      .type-grid, .record-grid, .spec-detail-grid, .exporter-grid, .future-grid {
+        grid-template-columns: 1fr;
+      }
+      .share-name { min-width: 100px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="font-size:2.8rem;margin-bottom:12px;">🚄</div>
+  <h1>火車百科</h1>
+  <p class="subtitle">歷史演進・種類解析・技術規格・全球產業</p>
+  <span class="header-badge">Railway Knowledge Hub</span>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link" href="#history">歷史</a>
+  <a class="nav-link" href="#types">種類</a>
+  <a class="nav-link" href="#records">速度紀錄</a>
+  <a class="nav-link" href="#specs">規格數據</a>
+  <a class="nav-link" href="#export">出口國</a>
+  <a class="nav-link" href="#future">未來趨勢</a>
+</nav>
+
+<main>
+  <a class="back-link" href="index.html">← 返回首頁</a>
+
+  <!-- ===== HISTORY ===== -->
+  <section class="section" id="history">
+    <h2 class="section-title"><span class="icon">📜</span>歷史發展</h2>
+
+    <div class="timeline">
+
+      <div class="era-divider">
+        <span class="era-label era-steam">蒸汽時代 1804–1900s</span>
+        <div class="era-line"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1804</div>
+        <div class="timeline-title">世界第一台蒸汽機車</div>
+        <div class="timeline-desc">英國工程師 Richard Trevithick 在威爾斯礦場製造史上第一台以蒸汽驅動的機車，拖曳 10 噸鐵和 70 名乘客行駛 15.7 公里。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1825</div>
+        <div class="timeline-title">斯托克頓–達靈頓鐵路開通</div>
+        <div class="timeline-desc">George Stephenson 設計的鐵路正式通車，成為世界第一條以蒸汽機車牽引的公共客貨運鐵路，全長 40 公里。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1829</div>
+        <div class="timeline-title">雨山試驗：「火箭號」奪冠</div>
+        <div class="timeline-desc">Stephenson 的「火箭號」（Rocket）在利物浦舉辦的機車競賽中以平均 46 km/h 奪冠，確立蒸汽機車的技術標準，開啟鐵路建設熱潮。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1830s–1900s</div>
+        <div class="timeline-title">鐵路網席捲歐美</div>
+        <div class="timeline-desc">英國、美國、法國、德國迅速鋪設鐵路，大幅壓縮洲際旅行時間，加速工業革命與殖民擴張。1869 年美國完成橫貫大陸鐵路，象徵鐵路黃金時代。</div>
+      </div>
+
+      <div class="era-divider">
+        <span class="era-label era-electric">電氣化與柴油時代 1879–1960s</span>
+        <div class="era-line"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1879</div>
+        <div class="timeline-title">電力機車誕生</div>
+        <div class="timeline-desc">德國西門子在柏林博覽會展示世界第一台電力機車，以 150 公尺的環形鐵路展示電力牽引的可行性，奠定城市捷運基礎。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1890</div>
+        <div class="timeline-title">倫敦地鐵電氣化</div>
+        <div class="timeline-desc">倫敦市中心暨南倫敦鐵路成為全球首條完全電氣化的地下鐵路，告別蒸汽時代隧道中令人窒息的煙塵問題。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1920s–1940s</div>
+        <div class="timeline-title">柴油機車崛起</div>
+        <div class="timeline-desc">柴油動力效率高、免架線，迅速在美國長途幹線普及，並逐漸取代蒸汽機車。二戰後美國 EMD F 系列柴電機車主導全球市場。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1954</div>
+        <div class="timeline-title">法國電力機車破紀錄</div>
+        <div class="timeline-desc">法國國鐵 CC 7107 電力機車達到 243 km/h，刷新有輪列車世界紀錄，預示未來高速鐵路時代的到來。</div>
+      </div>
+
+      <div class="era-divider">
+        <span class="era-label era-hsr">高速鐵路時代 1964–今</span>
+        <div class="era-line"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1964</div>
+        <div class="timeline-title">新幹線開通：高鐵元年</div>
+        <div class="timeline-desc">日本東海道新幹線（東京–大阪）正式通車，最高速度 210 km/h，配合 1964 年東京奧運揭幕，震撼全球，開創高速鐵路新紀元。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1981</div>
+        <div class="timeline-title">法國 TGV 登場</div>
+        <div class="timeline-desc">法國高速列車 TGV（Train à Grande Vitesse）在巴黎–里昂線開通，最高速度 260 km/h，後來持續刷新世界紀錄，成為高鐵代名詞。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2004</div>
+        <div class="timeline-title">上海磁浮商業運營</div>
+        <div class="timeline-desc">世界第一條商業營運磁浮鐵路在上海開通，最高速度 431 km/h，連接浦東機場與龍陽路地鐵站，全程僅需 7 分鐘。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2007</div>
+        <div class="timeline-title">TGV V150 創下 574.8 km/h</div>
+        <div class="timeline-desc">法國 TGV V150 試驗列車在東歐線上以 574.8 km/h 刷新有輪列車世界速度紀錄，至今仍未被超越。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2015</div>
+        <div class="timeline-title">日本磁浮 603 km/h</div>
+        <div class="timeline-desc">日本 L0 系超導磁浮列車在山梨試驗線以 603 km/h 創下新的磁浮速度世界紀錄，預計 2027 年名古屋–東京間商業化。</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2017–今</div>
+        <div class="timeline-title">中國高鐵稱霸全球</div>
+        <div class="timeline-desc">中國「復興號」CR400AF 以 350 km/h 商業速度運營，路網超過 45,000 公里（全球第一），持續向一帶一路沿線國家輸出技術與基礎建設。</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== TYPES ===== -->
+  <section class="section" id="types">
+    <h2 class="section-title"><span class="icon">🚆</span>主要種類</h2>
+    <div class="type-grid">
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(96,165,250,0.15);">🚄</div>
+          <div>
+            <div class="type-card-title">高速鐵路 HSR</div>
+            <div class="type-card-sub">High Speed Rail</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          專為高速長距離設計的獨立路線，採用動力分散（EMU）或集中式設計。軌道曲率、坡度均有嚴格規範。代表：新幹線、TGV、復興號。
+        </div>
+        <span class="speed-badge" style="background:rgba(96,165,250,0.15);color:var(--train-blue);">250–350 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(124,106,255,0.15);">🚈</div>
+          <div>
+            <div class="type-card-title">城際快車 Intercity</div>
+            <div class="type-card-sub">Intercity Express</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          連接主要城市的快速客運列車，速度低於高鐵但停靠站更多。代表：德國 ICE（城際段）、Eurostar、台灣自強號（部分）。
+        </div>
+        <span class="speed-badge" style="background:rgba(124,106,255,0.15);color:var(--train-purple);">160–250 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(74,222,128,0.15);">🚇</div>
+          <div>
+            <div class="type-card-title">地鐵／捷運 Metro</div>
+            <div class="type-card-sub">Rapid Transit</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          城市內部大容量軌道運輸，完全隔離路權（地下或高架），高班次低間距。代表：台北 MRT、東京地鐵、倫敦地鐵、上海地鐵。
+        </div>
+        <span class="speed-badge" style="background:rgba(74,222,128,0.15);color:var(--train-green);">30–90 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(56,189,248,0.15);">🚊</div>
+          <div>
+            <div class="type-card-title">輕軌 LRT</div>
+            <div class="type-card-sub">Light Rail Transit</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          市區低地板電車，可與道路共線，建設成本遠低於地鐵。代表：高雄輕軌、斯特拉斯堡電車、波特蘭輕軌。
+        </div>
+        <span class="speed-badge" style="background:rgba(56,189,248,0.15);color:var(--train-sky);">20–70 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(192,132,252,0.15);">🔮</div>
+          <div>
+            <div class="type-card-title">磁浮列車 Maglev</div>
+            <div class="type-card-sub">Magnetic Levitation</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          利用電磁力使車體懸浮，無輪軌摩擦，噪音低、加速快。分超導磁浮（日本 SCMaglev）與常導磁浮（上海磁浮）兩大技術路線。
+        </div>
+        <span class="speed-badge" style="background:rgba(192,132,252,0.15);color:var(--train-purple);">430–603 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(251,191,36,0.15);">🚂</div>
+          <div>
+            <div class="type-card-title">重載貨運列車</div>
+            <div class="type-card-sub">Heavy Freight</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          大噸位長編組，專為礦石、煤炭、散貨設計。澳洲礦石列車可達 3–4 公里長、重量逾 10 萬噸，是陸上最大的移動物體之一。
+        </div>
+        <span class="speed-badge" style="background:rgba(251,191,36,0.15);color:var(--train-amber);">60–120 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(248,113,113,0.15);">⛰️</div>
+          <div>
+            <div class="type-card-title">登山齒軌鐵路</div>
+            <div class="type-card-sub">Rack Railway</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          利用車底齒輪咬合鐵軌中央齒條，攀爬一般鐵路無法應付的陡坡（坡度可達 48%）。代表：瑞士少女峰、台灣阿里山鐵路。
+        </div>
+        <span class="speed-badge" style="background:rgba(248,113,113,0.15);color:var(--train-red);">10–30 km/h</span>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon" style="background:rgba(74,222,128,0.15);">🚆</div>
+          <div>
+            <div class="type-card-title">通勤鐵路 Commuter Rail</div>
+            <div class="type-card-sub">Suburban Rail</div>
+          </div>
+        </div>
+        <div class="type-card-body">
+          連接郊區與市中心的通勤服務，與幹線共軌或獨立路線，班次密集但較地鐵站距更長。代表：台灣區間車、東京 JR 山手線、紐約 Metro-North。
+        </div>
+        <span class="speed-badge" style="background:rgba(74,222,128,0.15);color:var(--train-green);">80–160 km/h</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== RECORDS ===== -->
+  <section class="section" id="records">
+    <h2 class="section-title"><span class="icon">⚡</span>速度紀錄</h2>
+    <div class="record-grid">
+      <div class="record-card purple">
+        <div class="record-label">磁浮列車世界紀錄</div>
+        <div class="record-value">603</div>
+        <div class="record-label">km/h</div>
+        <div class="record-model">日本 L0 系 SCMaglev｜2015</div>
+      </div>
+      <div class="record-card blue">
+        <div class="record-label">有輪列車世界紀錄</div>
+        <div class="record-value">574.8</div>
+        <div class="record-label">km/h</div>
+        <div class="record-model">法國 TGV V150｜2007</div>
+      </div>
+      <div class="record-card amber">
+        <div class="record-label">磁浮最高商業速度</div>
+        <div class="record-value">431</div>
+        <div class="record-label">km/h</div>
+        <div class="record-model">上海磁浮（Transrapid）｜2004</div>
+      </div>
+      <div class="record-card green">
+        <div class="record-label">輪軌最高商業速度</div>
+        <div class="record-value">350</div>
+        <div class="record-label">km/h</div>
+        <div class="record-model">中國 CR400AF 復興號｜2017</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SPECS ===== -->
+  <section class="section" id="specs">
+    <h2 class="section-title"><span class="icon">📊</span>重要車型規格數據</h2>
+
+    <div class="spec-table-wrap" style="margin-bottom:28px;">
+      <table>
+        <thead>
+          <tr>
+            <th>車型</th>
+            <th>國家</th>
+            <th>最高速度</th>
+            <th>牽引功率</th>
+            <th>定員</th>
+            <th>編組</th>
+            <th>特色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CR400AF 復興號</td>
+            <td>🇨🇳 中國</td>
+            <td class="highlight-cell">350 km/h</td>
+            <td>21,120 kW</td>
+            <td>1,283 人</td>
+            <td>16 節</td>
+            <td>動力分散，WiFi 全覆蓋</td>
+          </tr>
+          <tr>
+            <td>N700S 新幹線</td>
+            <td>🇯🇵 日本</td>
+            <td>285–320 km/h</td>
+            <td>17,080 kW</td>
+            <td>1,323 人</td>
+            <td>16 節</td>
+            <td>車載蓄電池，地震自動停車</td>
+          </tr>
+          <tr>
+            <td>TGV Duplex</td>
+            <td>🇫🇷 法國</td>
+            <td>320 km/h</td>
+            <td>9,280 kW</td>
+            <td>512 人</td>
+            <td>10 節（雙層）</td>
+            <td>雙層設計，兼顧容量與速度</td>
+          </tr>
+          <tr>
+            <td>ICE 3（Velaro D）</td>
+            <td>🇩🇪 德國</td>
+            <td>320 km/h</td>
+            <td>8,000 kW</td>
+            <td>460 人</td>
+            <td>8 節</td>
+            <td>全動力軸，低地板設計</td>
+          </tr>
+          <tr>
+            <td>AVE S-103（Velaro E）</td>
+            <td>🇪🇸 西班牙</td>
+            <td>350 km/h</td>
+            <td>8,800 kW</td>
+            <td>404 人</td>
+            <td>8 節</td>
+            <td>西門子出口，歐洲最快商業線速</td>
+          </tr>
+          <tr>
+            <td>KTX-山川</td>
+            <td>🇰🇷 韓國</td>
+            <td>330 km/h</td>
+            <td>12,000 kW</td>
+            <td>363 人</td>
+            <td>10 節</td>
+            <td>韓國自研，出口澳洲等地</td>
+          </tr>
+          <tr>
+            <td>L0 系（磁浮）</td>
+            <td>🇯🇵 日本</td>
+            <td class="highlight-cell">603 km/h（試驗）</td>
+            <td>超導線圈</td>
+            <td>～68 人/節</td>
+            <td>14 節</td>
+            <td>超導磁浮，2027 年商業化</td>
+          </tr>
+          <tr>
+            <td>上海磁浮 SMT</td>
+            <td>🇨🇳 中國</td>
+            <td>431 km/h</td>
+            <td>常導磁浮</td>
+            <td>453 人</td>
+            <td>5 節</td>
+            <td>機場快線，全球首條商業磁浮</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="spec-detail-grid">
+
+      <div class="spec-detail-card">
+        <div class="spec-detail-header" style="background:rgba(96,165,250,0.1);border-bottom:1px solid var(--border);">
+          🇨🇳 CR400AF 復興號
+        </div>
+        <div class="spec-detail-body">
+          <div class="spec-row"><span class="spec-key">最高營運速度</span><span class="spec-val" style="color:var(--train-amber)">350 km/h</span></div>
+          <div class="spec-row"><span class="spec-key">設計最高速度</span><span class="spec-val">400 km/h</span></div>
+          <div class="spec-row"><span class="spec-key">牽引功率</span><span class="spec-val">21,120 kW</span></div>
+          <div class="spec-row"><span class="spec-key">編組形式</span><span class="spec-val">16M（全動力）</span></div>
+          <div class="spec-row"><span class="spec-key">定員</span><span class="spec-val">1,283 人</span></div>
+          <div class="spec-row"><span class="spec-key">列車長度</span><span class="spec-val">440 m</span></div>
+          <div class="spec-row"><span class="spec-key">0→350 加速</span><span class="spec-val">約 11 分鐘</span></div>
+          <div class="spec-row"><span class="spec-key">製造商</span><span class="spec-val">中車青島四方</span></div>
+        </div>
+      </div>
+
+      <div class="spec-detail-card">
+        <div class="spec-detail-header" style="background:rgba(74,222,128,0.1);border-bottom:1px solid var(--border);">
+          🇯🇵 N700S 新幹線
+        </div>
+        <div class="spec-detail-body">
+          <div class="spec-row"><span class="spec-key">最高營運速度</span><span class="spec-val" style="color:var(--train-amber)">320 km/h</span></div>
+          <div class="spec-row"><span class="spec-key">牽引功率</span><span class="spec-val">17,080 kW</span></div>
+          <div class="spec-row"><span class="spec-key">編組形式</span><span class="spec-val">16M（全動力）</span></div>
+          <div class="spec-row"><span class="spec-key">定員</span><span class="spec-val">1,323 人</span></div>
+          <div class="spec-row"><span class="spec-key">列車長度</span><span class="spec-val">404.7 m</span></div>
+          <div class="spec-row"><span class="spec-key">車載蓄電池</span><span class="spec-val">可自力行駛至站</span></div>
+          <div class="spec-row"><span class="spec-key">噪音控制</span><span class="spec-val">鴨嘴形車頭降音</span></div>
+          <div class="spec-row"><span class="spec-key">製造商</span><span class="spec-val">日立・川崎</span></div>
+        </div>
+      </div>
+
+      <div class="spec-detail-card">
+        <div class="spec-detail-header" style="background:rgba(251,191,36,0.1);border-bottom:1px solid var(--border);">
+          🇫🇷 TGV Duplex
+        </div>
+        <div class="spec-detail-body">
+          <div class="spec-row"><span class="spec-key">最高營運速度</span><span class="spec-val" style="color:var(--train-amber)">320 km/h</span></div>
+          <div class="spec-row"><span class="spec-key">牽引功率</span><span class="spec-val">9,280 kW</span></div>
+          <div class="spec-row"><span class="spec-key">編組形式</span><span class="spec-val">8M2T（機車式）</span></div>
+          <div class="spec-row"><span class="spec-key">定員</span><span class="spec-val">512 人（雙層）</span></div>
+          <div class="spec-row"><span class="spec-key">列車長度</span><span class="spec-val">200.19 m</span></div>
+          <div class="spec-row"><span class="spec-key">車寬</span><span class="spec-val">2.904 m</span></div>
+          <div class="spec-row"><span class="spec-key">供電方式</span><span class="spec-val">25 kV AC</span></div>
+          <div class="spec-row"><span class="spec-key">製造商</span><span class="spec-val">Alstom</span></div>
+        </div>
+      </div>
+
+      <div class="spec-detail-card">
+        <div class="spec-detail-header" style="background:rgba(192,132,252,0.1);border-bottom:1px solid var(--border);">
+          🇯🇵 L0 系超導磁浮
+        </div>
+        <div class="spec-detail-body">
+          <div class="spec-row"><span class="spec-key">試驗最高速度</span><span class="spec-val" style="color:var(--train-amber)">603 km/h</span></div>
+          <div class="spec-row"><span class="spec-key">商業目標速度</span><span class="spec-val">505 km/h</span></div>
+          <div class="spec-row"><span class="spec-key">懸浮技術</span><span class="spec-val">超導電磁（EDS）</span></div>
+          <div class="spec-row"><span class="spec-key">懸浮高度</span><span class="spec-val">約 10 cm</span></div>
+          <div class="spec-row"><span class="spec-key">推進方式</span><span class="spec-val">線性感應馬達</span></div>
+          <div class="spec-row"><span class="spec-key">東京→名古屋</span><span class="spec-val">40 分鐘（現 90 分）</span></div>
+          <div class="spec-row"><span class="spec-key">預計通車</span><span class="spec-val">2027 年</span></div>
+          <div class="spec-row"><span class="spec-key">開發商</span><span class="spec-val">JR 東海・鐵道總研</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== EXPORT ===== -->
+  <section class="section" id="export">
+    <h2 class="section-title"><span class="icon">🌍</span>重要出口國與廠商</h2>
+
+    <p style="color:var(--muted);font-size:0.88rem;margin-bottom:20px;">全球軌道車輛市場規模約 USD 200 億/年，以下為主要出口國及其代表廠商。</p>
+
+    <div class="exporter-grid">
+
+      <div class="exporter-card tier1">
+        <div class="exporter-name">🇨🇳 中國</div>
+        <div class="exporter-maker">中車集團 CRRC</div>
+        <div class="exporter-products">全球最大軌道車輛製造商，產品涵蓋高鐵、地鐵、城際列車。透過一帶一路整合車輛、軌道、訊號與融資一站式輸出。</div>
+        <div class="market-tags">
+          <span class="market-tag">東南亞</span>
+          <span class="market-tag">非洲</span>
+          <span class="market-tag">中東</span>
+          <span class="market-tag">歐洲</span>
+          <span class="market-tag">美洲</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier1">
+        <div class="exporter-name">🇩🇪 德國</div>
+        <div class="exporter-maker">Siemens Mobility</div>
+        <div class="exporter-products">ICE Velaro 平台出口至西班牙、俄羅斯、英國、美國。訊號與自動化系統（ETCS）遍佈全球，是軌道技術標準制定者。</div>
+        <div class="market-tags">
+          <span class="market-tag">美國</span>
+          <span class="market-tag">中東</span>
+          <span class="market-tag">澳洲</span>
+          <span class="market-tag">亞洲</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier1">
+        <div class="exporter-name">🇫🇷 法國</div>
+        <div class="exporter-maker">Alstom（含前龐巴迪）</div>
+        <div class="exporter-products">TGV／AGV 高鐵技術、Citadis 輕軌、Coradia 區域列車。收購加拿大龐巴迪後成為歐洲最大軌道車輛集團。</div>
+        <div class="market-tags">
+          <span class="market-tag">歐洲</span>
+          <span class="market-tag">北美</span>
+          <span class="market-tag">印度</span>
+          <span class="market-tag">中東</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier1">
+        <div class="exporter-name">🇯🇵 日本</div>
+        <div class="exporter-maker">川崎重工・日立・近畿車輛</div>
+        <div class="exporter-products">新幹線技術輸出台灣（台灣高鐵）、英國（日立 AT300）、美國。地鐵出口至東南亞、中東。以高可靠性與低故障率著稱。</div>
+        <div class="market-tags">
+          <span class="market-tag">台灣</span>
+          <span class="market-tag">英國</span>
+          <span class="market-tag">美國</span>
+          <span class="market-tag">印度</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier2">
+        <div class="exporter-name">🇰🇷 韓國</div>
+        <div class="exporter-maker">現代 Rotem</div>
+        <div class="exporter-products">KTX 高鐵技術出口澳洲、沙烏地阿拉伯。地鐵出口至中東、東南亞。</div>
+        <div class="market-tags">
+          <span class="market-tag">澳洲</span>
+          <span class="market-tag">中東</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier2">
+        <div class="exporter-name">🇨🇿 捷克</div>
+        <div class="exporter-maker">Škoda Transportation</div>
+        <div class="exporter-products">電力機車、區域列車、路面電車出口至歐洲各國，以高性價比著稱。</div>
+        <div class="market-tags">
+          <span class="market-tag">歐洲</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier2">
+        <div class="exporter-name">🇨🇭 瑞士</div>
+        <div class="exporter-maker">Stadler Rail</div>
+        <div class="exporter-products">專注區域列車、輕軌、登山鐵路，以客製化彈性見長，出口至美國、北歐等市場。</div>
+        <div class="market-tags">
+          <span class="market-tag">美國</span>
+          <span class="market-tag">北歐</span>
+          <span class="market-tag">中東</span>
+        </div>
+      </div>
+
+      <div class="exporter-card tier2">
+        <div class="exporter-name">🇪🇸 西班牙</div>
+        <div class="exporter-maker">CAF（Construcciones）</div>
+        <div class="exporter-products">輕軌、通勤列車、雙層列車出口至拉丁美洲、英國、澳洲，市場份額持續擴大。</div>
+        <div class="market-tags">
+          <span class="market-tag">拉美</span>
+          <span class="market-tag">英國</span>
+          <span class="market-tag">澳洲</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="market-share-section">
+      <div class="market-share-title">全球軌道車輛市場份額（估計）</div>
+      <div class="share-row">
+        <span class="share-name">CRRC（中國）</span>
+        <div class="share-bar-wrap"><div class="share-bar" style="width:35%;background:linear-gradient(90deg,var(--train-red),#fb923c);"></div></div>
+        <span class="share-pct" style="color:var(--train-red);">~35%</span>
+      </div>
+      <div class="share-row">
+        <span class="share-name">Alstom（法/加）</span>
+        <div class="share-bar-wrap"><div class="share-bar" style="width:18%;background:linear-gradient(90deg,#2563eb,var(--train-sky));"></div></div>
+        <span class="share-pct" style="color:var(--train-blue);">~18%</span>
+      </div>
+      <div class="share-row">
+        <span class="share-name">Siemens（德）</span>
+        <div class="share-bar-wrap"><div class="share-bar" style="width:15%;background:linear-gradient(90deg,var(--accent),var(--train-purple));"></div></div>
+        <span class="share-pct" style="color:var(--train-purple);">~15%</span>
+      </div>
+      <div class="share-row">
+        <span class="share-name">Hitachi / JR（日）</span>
+        <div class="share-bar-wrap"><div class="share-bar" style="width:10%;background:linear-gradient(90deg,var(--train-green),var(--train-sky));"></div></div>
+        <span class="share-pct" style="color:var(--train-green);">~10%</span>
+      </div>
+      <div class="share-row">
+        <span class="share-name">CAF / Stadler / 其他</span>
+        <div class="share-bar-wrap"><div class="share-bar" style="width:22%;background:linear-gradient(90deg,var(--muted),var(--border));"></div></div>
+        <span class="share-pct" style="color:var(--muted);">~22%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FUTURE ===== -->
+  <section class="section" id="future">
+    <h2 class="section-title"><span class="icon">🔭</span>未來趨勢</h2>
+    <div class="future-grid">
+
+      <div class="future-card">
+        <div class="future-icon">💨</div>
+        <div class="future-title">氫燃料列車</div>
+        <div class="future-desc">以燃料電池取代柴油引擎，排放物只有水蒸氣，適合無電氣化支線。德國 Alstom Coradia iLint 已在下薩克森州商業運營。</div>
+        <span class="future-stat" style="background:rgba(74,222,128,0.15);color:var(--train-green);">已商業化（德國 2022）</span>
+      </div>
+
+      <div class="future-card">
+        <div class="future-icon">🌀</div>
+        <div class="future-title">超迴路 Hyperloop</div>
+        <div class="future-desc">在低壓真空管道中以磁浮推進，理論速度可達 1,000 km/h 以上。多家公司積極開發，但商業化挑戰仍大（密封管道成本、安全規範）。</div>
+        <span class="future-stat" style="background:rgba(251,191,36,0.15);color:var(--train-amber);">開發中，尚未商業化</span>
+      </div>
+
+      <div class="future-card">
+        <div class="future-icon">🤖</div>
+        <div class="future-title">全自動駕駛地鐵 GoA4</div>
+        <div class="future-desc">無司機、全自動運行（GoA4 等級），由 ATO 系統控制。杜拜地鐵、巴黎 14 號線、新加坡地鐵多條線已全面無人化，效率與準點率均提升。</div>
+        <span class="future-stat" style="background:rgba(96,165,250,0.15);color:var(--train-blue);">多城市已落地</span>
+      </div>
+
+      <div class="future-card">
+        <div class="future-icon">⚡</div>
+        <div class="future-title">全面電氣化與碳中和</div>
+        <div class="future-desc">歐盟目標 2050 年前鐵路全面脫碳，包括電氣化延伸至偏遠支線或改用氫動力。鐵路本身能耗已是航空的 1/10，碳排競爭力顯著。</div>
+        <span class="future-stat" style="background:rgba(74,222,128,0.15);color:var(--train-green);">目標 2050</span>
+      </div>
+
+      <div class="future-card">
+        <div class="future-icon">🔋</div>
+        <div class="future-title">電池電力列車 BEMU</div>
+        <div class="future-desc">在電氣化路段充電、非電氣化路段以蓄電池行駛，彌補架設架空線的高建設成本。日本、英國等地已有商業運營案例。</div>
+        <span class="future-stat" style="background:rgba(96,165,250,0.15);color:var(--train-blue);">商業化進行中</span>
+      </div>
+
+      <div class="future-card">
+        <div class="future-icon">🛰️</div>
+        <div class="future-title">數位鐵路與 AI 排班</div>
+        <div class="future-desc">數位號誌（ERTMS/ETCS）取代傳統號誌，配合 AI 動態排班，可大幅提升路線容量（估計提升 40%），減少事故與延誤。</div>
+        <span class="future-stat" style="background:rgba(192,132,252,0.15);color:var(--train-purple);">歐洲全面推進中</span>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>火車百科 · 資料截至 2026 年 · 部分規格數據來源：各鐵道廠商官方資料及國際鐵道協會（UIC）</p>
+</footer>
+
+<script>
+  // Smooth scroll + active nav
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const sections = document.querySelectorAll('.section[id]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

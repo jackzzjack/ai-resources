@@ -163,9 +163,60 @@
 
     footer a { color: var(--accent2); text-decoration: none; }
 
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .filter-btn {
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.875rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .portal-card.card-hidden {
+      display: none;
+    }
+
+    .no-results {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 0;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .no-results.visible {
+      display: block;
+    }
+
     @media (max-width: 640px) {
       header { padding: 60px 20px 30px; }
       .portal-grid { grid-template-columns: 1fr; }
+      .filter-bar { gap: 8px; }
+      .filter-btn { font-size: 0.8rem; padding: 6px 14px; }
     }
   </style>
 </head>
@@ -177,10 +228,22 @@
 </header>
 
 <main>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-cat="all">全部</button>
+    <button class="filter-btn" data-cat="ai">🤖 AI 工具</button>
+    <button class="filter-btn" data-cat="space">🚀 宇宙探索</button>
+    <button class="filter-btn" data-cat="industry">🏭 產業生態系</button>
+    <button class="filter-btn" data-cat="dev">💻 開發工具</button>
+    <button class="filter-btn" data-cat="science">🔬 科學知識</button>
+    <button class="filter-btn" data-cat="nature">🐾 自然動物</button>
+    <button class="filter-btn" data-cat="life">🏙️ 生活財經</button>
+    <button class="filter-btn" data-cat="history">🏛️ 歷史文化</button>
+  </div>
+
   <div class="portal-grid">
 
     <!-- AI 服務入口 -->
-    <a class="portal-card" href="ai-services.html" data-accent
+    <a class="portal-card" href="ai-services.html" data-category="ai"
        style="--strip-color: #ef4444;">
       <div class="card-icon-wrap">🚀</div>
       <div class="card-body">
@@ -202,7 +265,7 @@
     </a>
 
     <!-- 互動式元素週期表 -->
-    <a class="portal-card" href="periodic_table.html" data-accent
+    <a class="portal-card" href="periodic_table.html" data-category="science"
        style="--strip-color: #10b981;">
       <div class="card-icon-wrap">🧪</div>
       <div class="card-body">
@@ -223,7 +286,7 @@
     </a>
 
     <!-- Vim Cheat Sheet -->
-    <a class="portal-card" href="vim_cheat_sheet.html" data-accent
+    <a class="portal-card" href="vim_cheat_sheet.html" data-category="dev"
        style="--strip-color: #4ade80;">
       <div class="card-icon-wrap">⌨️</div>
       <div class="card-body">
@@ -244,7 +307,7 @@
     </a>
 
     <!-- 5G 網路架構互動圖 -->
-    <a class="portal-card" href="5g_architecture.html" data-accent
+    <a class="portal-card" href="5g_architecture.html" data-category="science"
        style="--strip-color: #3b82f6;">
       <div class="card-icon-wrap">📡</div>
       <div class="card-body">
@@ -266,7 +329,7 @@
     </a>
 
     <!-- F1 2026 引擎結構 -->
-    <a class="portal-card" href="f1_engine_2026.html" data-accent
+    <a class="portal-card" href="f1_engine_2026.html" data-category="science"
        style="--strip-color: #ff3e3e;">
       <div class="card-icon-wrap">🏎️</div>
       <div class="card-body">
@@ -288,7 +351,7 @@
     </a>
 
     <!-- 太陽系互動圖 -->
-    <a class="portal-card" href="space/solar_system.html" data-accent
+    <a class="portal-card" href="space/solar_system.html" data-category="space"
        style="--strip-color: #fbbf24;">
       <div class="card-icon-wrap">🪐</div>
       <div class="card-body">
@@ -310,7 +373,7 @@
     </a>
 
     <!-- 銀河系互動圖 -->
-    <a class="portal-card" href="space/galaxy.html" data-accent
+    <a class="portal-card" href="space/galaxy.html" data-category="space"
        style="--strip-color: #818cf8;">
       <div class="card-icon-wrap">🌌</div>
       <div class="card-body">
@@ -332,7 +395,7 @@
     </a>
 
     <!-- 火箭與軌道物理 -->
-    <a class="portal-card" href="space/rocket_physics.html" data-accent
+    <a class="portal-card" href="space/rocket_physics.html" data-category="space"
        style="--strip-color: #fb923c;">
       <div class="card-icon-wrap">🚀</div>
       <div class="card-body">
@@ -354,7 +417,7 @@
     </a>
 
     <!-- 黑洞互動導覽 -->
-    <a class="portal-card" href="space/black_hole.html" data-accent
+    <a class="portal-card" href="space/black_hole.html" data-category="space"
        style="--strip-color: #7c6aff;">
       <div class="card-icon-wrap">⚫</div>
       <div class="card-body">
@@ -376,7 +439,7 @@
     </a>
 
     <!-- 太空梭構造導覽 -->
-    <a class="portal-card" href="space/space_shuttle.html" data-accent
+    <a class="portal-card" href="space/space_shuttle.html" data-category="space"
        style="--strip-color: #ffffff;">
       <div class="card-icon-wrap">🛰️</div>
       <div class="card-body">
@@ -398,7 +461,7 @@
     </a>
 
     <!-- AI 基礎設施生態系 -->
-    <a class="portal-card" href="ai-infrastructure.html" data-accent
+    <a class="portal-card" href="ai-infrastructure.html" data-category="ai"
        style="--strip-color: #7c6aff;">
       <div class="card-icon-wrap">🖧</div>
       <div class="card-body">
@@ -420,7 +483,7 @@
     </a>
 
     <!-- 現代火箭構造與回收 -->
-    <a class="portal-card" href="space/modern_rockets.html" data-accent
+    <a class="portal-card" href="space/modern_rockets.html" data-category="space"
        style="--strip-color: #fb923c;">
       <div class="card-icon-wrap">🚀</div>
       <div class="card-body">
@@ -442,7 +505,7 @@
     </a>
 
     <!-- 航運產業生態系 -->
-    <a class="portal-card" href="shipping-industry.html" data-accent
+    <a class="portal-card" href="shipping-industry.html" data-category="industry"
        style="--strip-color: #3b82f6;">
       <div class="card-icon-wrap">🚢</div>
       <div class="card-body">
@@ -464,7 +527,7 @@
     </a>
 
     <!-- 電源與能源產業分析 -->
-    <a class="portal-card" href="power-industry.html" data-accent
+    <a class="portal-card" href="power-industry.html" data-category="industry"
        style="--strip-color: #fb923c;">
       <div class="card-icon-wrap">⚡</div>
       <div class="card-body">
@@ -486,7 +549,7 @@
     </a>
 
     <!-- EMS 電子代工產業生態系 -->
-    <a class="portal-card" href="ems-industry.html" data-accent
+    <a class="portal-card" href="ems-industry.html" data-category="industry"
        style="--strip-color: #10b981;">
       <div class="card-icon-wrap">🏭</div>
       <div class="card-body">
@@ -508,7 +571,7 @@
     </a>
 
     <!-- 台北捷運路網互動圖 -->
-    <a class="portal-card" href="taipei_mrt_map.html" data-accent
+    <a class="portal-card" href="taipei_mrt_map.html" data-category="life"
        style="--strip-color: #0070bd;">
       <div class="card-icon-wrap">🚇</div>
       <div class="card-body">
@@ -530,7 +593,7 @@
     </a>
 
     <!-- 半導體產業生態系 -->
-    <a class="portal-card" href="semiconductor-industry.html" data-accent
+    <a class="portal-card" href="semiconductor-industry.html" data-category="industry"
        style="--strip-color: #fbbf24;">
       <div class="card-icon-wrap">💎</div>
       <div class="card-body">
@@ -552,7 +615,7 @@
     </a>
 
     <!-- 散熱產業生態系 -->
-    <a class="portal-card" href="thermal-industry.html" data-accent
+    <a class="portal-card" href="thermal-industry.html" data-category="industry"
        style="--strip-color: #60c8ff;">
       <div class="card-icon-wrap">❄️</div>
       <div class="card-body">
@@ -574,7 +637,7 @@
     </a>
 
     <!-- 恆星生命週期與分類 -->
-    <a class="portal-card" href="space/star_lifecycle.html" data-accent
+    <a class="portal-card" href="space/star_lifecycle.html" data-category="space"
        style="--strip-color: #a78bfa;">
       <div class="card-icon-wrap">⭐</div>
       <div class="card-body">
@@ -596,7 +659,7 @@
     </a>
 
     <!-- tmux Cheat Sheet -->
-    <a class="portal-card" href="tmux_cheat_sheet.html" data-accent
+    <a class="portal-card" href="tmux_cheat_sheet.html" data-category="dev"
        style="--strip-color: #60b0ff;">
       <div class="card-icon-wrap">🐚</div>
       <div class="card-body">
@@ -616,8 +679,30 @@
       </div>
     </a>
 
+    <!-- USB HUB 架構解析 -->
+    <a class="portal-card" href="usb_hub_architecture.html" data-category="dev"
+       style="--strip-color: #22d3ee;">
+      <div class="card-icon-wrap">🔌</div>
+      <div class="card-body">
+        <div class="card-title">USB HUB 架構完整解析</div>
+        <div class="card-desc">
+          從電路架構、常用 IC（GL850G、VL812、FE1.1s）到頻寬機制與 Transaction Translator（TT）原理，再到 ODM 硬體開發流程與 Linux kernel hub.c 驅動解析。
+        </div>
+        <div class="card-chips">
+          <span class="chip">Hub Controller IC</span>
+          <span class="chip">Transaction Translator</span>
+          <span class="chip">SuperSpeed</span>
+          <span class="chip">硬體開發</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">6 分類 · 互動圖解</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
     <!-- minicom Cheat Sheet -->
-    <a class="portal-card" href="minicom_cheat_sheet.html" data-accent
+    <a class="portal-card" href="minicom_cheat_sheet.html" data-category="dev"
        style="--strip-color: #c080ff;">
       <div class="card-icon-wrap">🔌</div>
       <div class="card-body">
@@ -638,7 +723,7 @@
     </a>
 
     <!-- 遺忘的科學 -->
-    <a class="portal-card" href="brain_forgetting.html" data-accent
+    <a class="portal-card" href="brain_forgetting.html" data-category="science"
        style="--strip-color: #ef4444;">
       <div class="card-icon-wrap">🧠</div>
       <div class="card-body">
@@ -660,7 +745,7 @@
     </a>
 
     <!-- Linux Kernel 架構全覽 -->
-    <a class="portal-card" href="linux_kernel_overview.html" data-accent
+    <a class="portal-card" href="linux_kernel_overview.html" data-category="dev"
        style="--strip-color: #10b981;">
       <div class="card-icon-wrap">🐧</div>
       <div class="card-body">
@@ -682,7 +767,7 @@
     </a>
 
     <!-- 海豚 -->
-    <a class="portal-card" href="dolphin.html" data-accent
+    <a class="portal-card" href="dolphin.html" data-category="nature"
        style="--strip-color: #22d3ee;">
       <div class="card-icon-wrap">🐬</div>
       <div class="card-body">
@@ -704,7 +789,7 @@
     </a>
 
     <!-- 菲律賓鷹 -->
-    <a class="portal-card" href="philippine_eagle.html" data-accent
+    <a class="portal-card" href="philippine_eagle.html" data-category="nature"
        style="--strip-color: #34d399;">
       <div class="card-icon-wrap">🦅</div>
       <div class="card-body">
@@ -726,7 +811,7 @@
     </a>
 
     <!-- 鯨魚知識庫 -->
-    <a class="portal-card" href="whale_knowledge.html" data-accent
+    <a class="portal-card" href="whale_knowledge.html" data-category="nature"
        style="--strip-color: #0ea5e9;">
       <div class="card-icon-wrap">🐋</div>
       <div class="card-body">
@@ -748,7 +833,7 @@
     </a>
 
     <!-- 恐龍百科 -->
-    <a class="portal-card" href="dinosaurs.html" data-accent
+    <a class="portal-card" href="dinosaurs.html" data-category="nature"
        style="--strip-color: #4ade80;">
       <div class="card-icon-wrap">🦕</div>
       <div class="card-body">
@@ -770,7 +855,7 @@
     </a>
 
     <!-- 動物眼睛與虹膜 -->
-    <a class="portal-card" href="animal_eyes_iris.html" data-accent
+    <a class="portal-card" href="animal_eyes_iris.html" data-category="nature"
        style="--strip-color: #4a9eff;">
       <div class="card-icon-wrap">👁️</div>
       <div class="card-body">
@@ -792,7 +877,7 @@
     </a>
 
     <!-- 投資評價工具 -->
-    <a class="portal-card" href="stock-valuation.html" data-accent
+    <a class="portal-card" href="stock-valuation.html" data-category="life"
        style="--strip-color: #7c6aff;">
       <div class="card-icon-wrap">📈</div>
       <div class="card-body">
@@ -814,7 +899,7 @@
     </a>
 
     <!-- 胃食道逆流完整指南 -->
-    <a class="portal-card" href="gerd_guide.html" data-accent
+    <a class="portal-card" href="gerd_guide.html" data-category="life"
        style="--strip-color: #ef4444;">
       <div class="card-icon-wrap">🤢</div>
       <div class="card-body">
@@ -835,6 +920,29 @@
       </div>
     </a>
 
+    <!-- 英國歷史全覽 -->
+    <a class="portal-card" href="british_history.html" data-category="history"
+       style="--strip-color: #ef4444;">
+      <div class="card-icon-wrap">🏰</div>
+      <div class="card-body">
+        <div class="card-title">英國歷史全覽</div>
+        <div class="card-desc">
+          從史前巨石陣到現代 Brexit，帶你快速掌握塑造世界的島國故事：羅馬統治、中世紀封建、都鐸王朝、工業革命、大英帝國，完整王室譜系。
+        </div>
+        <div class="card-chips">
+          <span class="chip">世界史</span>
+          <span class="chip">王室譜系</span>
+          <span class="chip">互動時間軸</span>
+          <span class="chip">文化影響</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">8 大時代 · 完整王朝一覽</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <div class="no-results" id="noResults">此分類目前沒有項目</div>
   </div>
 </main>
 
@@ -842,5 +950,28 @@
   <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 持續更新中</p>
 </footer>
 
+<script>
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.portal-card');
+  const noResults = document.getElementById('noResults');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cat = btn.dataset.cat;
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const match = cat === 'all' || card.dataset.category === cat;
+        card.classList.toggle('card-hidden', !match);
+        if (match) visibleCount++;
+      });
+
+      noResults.classList.toggle('visible', visibleCount === 0);
+    });
+  });
+</script>
 </body>
 </html>

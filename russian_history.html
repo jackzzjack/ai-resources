@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>俄羅斯歷史：從基輔羅斯到現代俄羅斯</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --rus-gold: #f59e0b;
+      --rus-red: #ef4444;
+      --rus-blue: #3b82f6;
+      --rus-green: #22c55e;
+      --rus-purple: #a855f7;
+      --rus-sky: #38bdf8;
+      --rus-orange: #f97316;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(239,68,68,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(245,158,11,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(59,130,246,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232a2a3d' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--rus-gold) 50%, var(--rus-red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-gold  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: var(--rus-gold); }
+    .badge-red   { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.4);  color: var(--rus-red); }
+    .badge-blue  { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.4); color: var(--rus-blue); }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      overflow-x: auto;
+    }
+
+    .nav-inner {
+      display: flex;
+      gap: 4px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 8px 0;
+      white-space: nowrap;
+    }
+
+    .nav-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: all .2s;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .nav-btn.active { color: var(--accent2); border-color: var(--accent); }
+
+    /* ── Layout ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+      width: 100%;
+    }
+
+    /* ── Timeline ── */
+    .timeline-section { display: none; }
+    .timeline-section.active { display: block; }
+
+    .section-intro {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-intro::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .era-medieval .section-intro::before { background: var(--rus-gold); }
+    .era-tsardom  .section-intro::before { background: var(--rus-red); }
+    .era-empire   .section-intro::before { background: var(--rus-blue); }
+    .era-soviet   .section-intro::before { background: var(--rus-purple); }
+    .era-modern   .section-intro::before { background: var(--rus-green); }
+    .era-overview .section-intro::before { background: var(--accent); }
+
+    .section-intro h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .section-intro p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    /* ── Timeline items ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--border), transparent);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -27px;
+      top: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      flex-shrink: 0;
+    }
+
+    .tl-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      transition: border-color .2s, transform .2s;
+      cursor: pointer;
+    }
+
+    .tl-card:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .tl-year {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      margin-bottom: 4px;
+    }
+
+    .tl-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .tl-desc {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .tl-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .tl-card.expanded .tl-detail { display: block; }
+
+    /* ── Key figures ── */
+    .figures-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .figure-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color .2s;
+    }
+
+    .figure-card:hover { border-color: var(--accent); }
+
+    .figure-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .figure-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .figure-years {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .figure-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .figure-tag {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* ── Overview cards ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .ov-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+    }
+
+    .ov-card:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+      transform: translateY(-2px);
+    }
+
+    .ov-card .ov-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .ov-card .ov-era  { font-size: 0.8rem; font-weight: 700; letter-spacing: .05em; margin-bottom: 4px; }
+    .ov-card .ov-title{ font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .ov-card .ov-range{ font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
+    .ov-card .ov-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── Map context ── */
+    .map-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .map-section h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--accent2);
+    }
+
+    .territory-bars { display: flex; flex-direction: column; gap: 12px; }
+
+    .ter-item { display: flex; align-items: center; gap: 12px; }
+    .ter-label { font-size: 0.82rem; color: var(--muted); min-width: 160px; }
+    .ter-bar-wrap { flex: 1; background: var(--surface2); border-radius: 6px; height: 10px; }
+    .ter-bar { height: 100%; border-radius: 6px; transition: width .8s ease; }
+    .ter-val { font-size: 0.8rem; font-weight: 700; min-width: 70px; text-align: right; }
+
+    /* ── Glossary ── */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .gloss-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .gloss-term {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 4px;
+    }
+
+    .gloss-def {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tip block ── */
+    .tip {
+      background: rgba(124,106,255,0.08);
+      border: 1px solid rgba(124,106,255,0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .tip strong { color: var(--accent2); }
+
+    /* ── Dot colours per era ── */
+    .dot-medieval { background: var(--rus-gold); }
+    .dot-tsardom  { background: var(--rus-red); }
+    .dot-empire   { background: var(--rus-blue); }
+    .dot-soviet   { background: var(--rus-purple); }
+    .dot-modern   { background: var(--rus-green); }
+
+    .year-medieval { color: var(--rus-gold); }
+    .year-tsardom  { color: var(--rus-red); }
+    .year-empire   { color: var(--rus-blue); }
+    .year-soviet   { color: var(--rus-purple); }
+    .year-modern   { color: var(--rus-green); }
+
+    .tag-medieval { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.35); color: var(--rus-gold); }
+    .tag-tsardom  { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.35);  color: var(--rus-red); }
+    .tag-empire   { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.35); color: var(--rus-blue); }
+    .tag-soviet   { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.35); color: var(--rus-purple); }
+    .tag-modern   { background: rgba(34,197,94,0.15);  border: 1px solid rgba(34,197,94,0.35);  color: var(--rus-green); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      .figures-grid, .overview-grid, .glossary-grid { grid-template-columns: 1fr; }
+      .ter-label { min-width: 120px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🇷🇺 俄羅斯歷史全覽</h1>
+  <p class="subtitle">從基輔羅斯到現代聯邦——千年大國的興衰脈絡</p>
+  <div class="header-badges">
+    <span class="badge badge-gold">約 1,200 年歷史</span>
+    <span class="badge badge-red">7 大歷史時期</span>
+    <span class="badge badge-blue">世界最大國土</span>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showSection('overview')">📖 總覽</button>
+    <button class="nav-btn" onclick="showSection('medieval')">🏰 早期（862–1547）</button>
+    <button class="nav-btn" onclick="showSection('tsardom')">👑 沙皇國（1547–1721）</button>
+    <button class="nav-btn" onclick="showSection('empire')">⚔️ 帝俄（1721–1917）</button>
+    <button class="nav-btn" onclick="showSection('soviet')">☭ 蘇聯（1917–1991）</button>
+    <button class="nav-btn" onclick="showSection('modern')">🌐 現代俄羅斯</button>
+    <button class="nav-btn" onclick="showSection('figures')">👤 重要人物</button>
+    <button class="nav-btn" onclick="showSection('glossary')">📚 名詞解釋</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══════════ 總覽 ══════════ -->
+  <section id="overview" class="timeline-section era-overview active">
+    <div class="section-intro">
+      <h2>📖 俄羅斯歷史：一分鐘速覽</h2>
+      <p>俄羅斯的故事從東歐平原上的斯拉夫部落開始，歷經蒙古征服、沙皇專制、帝國擴張、共產革命，到冷戰結束後的現代聯邦。
+      點擊下方各時期卡片，可跳至詳細介紹。</p>
+    </div>
+
+    <div class="overview-grid">
+      <div class="ov-card" onclick="showSection('medieval')">
+        <div class="ov-icon">🏰</div>
+        <div class="ov-era" style="color:var(--rus-gold)">早期斯拉夫與基輔羅斯</div>
+        <div class="ov-range">862 – 1547 年</div>
+        <div class="ov-desc">留里克王朝建國、蒙古入侵、莫斯科公國崛起，奠定俄羅斯民族的根基。</div>
+      </div>
+      <div class="ov-card" onclick="showSection('tsardom')">
+        <div class="ov-icon">👑</div>
+        <div class="ov-era" style="color:var(--rus-red)">俄羅斯沙皇國</div>
+        <div class="ov-range">1547 – 1721 年</div>
+        <div class="ov-desc">伊凡四世（恐怖伊凡）稱沙皇，羅曼諾夫王朝建立，向西伯利亞大規模擴張。</div>
+      </div>
+      <div class="ov-card" onclick="showSection('empire')">
+        <div class="ov-icon">⚔️</div>
+        <div class="ov-era" style="color:var(--rus-blue)">俄羅斯帝國</div>
+        <div class="ov-range">1721 – 1917 年</div>
+        <div class="ov-desc">彼得大帝建立帝國，向歐洲現代化，葉卡捷琳娜大帝擴張版圖，拿破崙戰爭彰顯大國地位。</div>
+      </div>
+      <div class="ov-card" onclick="showSection('soviet')">
+        <div class="ov-icon">☭</div>
+        <div class="ov-era" style="color:var(--rus-purple)">蘇維埃聯盟</div>
+        <div class="ov-range">1917 – 1991 年</div>
+        <div class="ov-desc">列寧革命、史達林恐怖、二戰衛國戰爭、冷戰太空競賽，最後蘇聯解體。</div>
+      </div>
+      <div class="ov-card" onclick="showSection('modern')">
+        <div class="ov-icon">🌐</div>
+        <div class="ov-era" style="color:var(--rus-green)">現代俄羅斯聯邦</div>
+        <div class="ov-range">1991 年至今</div>
+        <div class="ov-desc">葉爾欽時代震盪、普丁執政強化集權、克里米亞危機、烏克蘭戰爭。</div>
+      </div>
+      <div class="ov-card" onclick="showSection('figures')">
+        <div class="ov-icon">👤</div>
+        <div class="ov-era" style="color:var(--accent2)">重要人物</div>
+        <div class="ov-range">各時代關鍵領袖</div>
+        <div class="ov-desc">彼得大帝、葉卡捷琳娜、列寧、史達林、普丁……塑造俄羅斯的人們。</div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <h3>📐 俄羅斯領土擴張示意</h3>
+      <div class="territory-bars">
+        <div class="ter-item">
+          <span class="ter-label">基輔羅斯（~1000年）</span>
+          <div class="ter-bar-wrap"><div class="ter-bar" style="width:8%;background:var(--rus-gold)"></div></div>
+          <span class="ter-val" style="color:var(--rus-gold)">約80萬km²</span>
+        </div>
+        <div class="ter-item">
+          <span class="ter-label">莫斯科公國（1500年）</span>
+          <div class="ter-bar-wrap"><div class="ter-bar" style="width:20%;background:var(--rus-orange)"></div></div>
+          <span class="ter-val" style="color:var(--rus-orange)">約280萬km²</span>
+        </div>
+        <div class="ter-item">
+          <span class="ter-label">俄羅斯帝國（1895年）</span>
+          <div class="ter-bar-wrap"><div class="ter-bar" style="width:95%;background:var(--rus-blue)"></div></div>
+          <span class="ter-val" style="color:var(--rus-blue)">約2,280萬km²</span>
+        </div>
+        <div class="ter-item">
+          <span class="ter-label">蘇聯（1945年）</span>
+          <div class="ter-bar-wrap"><div class="ter-bar" style="width:88%;background:var(--rus-purple)"></div></div>
+          <span class="ter-val" style="color:var(--rus-purple)">約2,240萬km²</span>
+        </div>
+        <div class="ter-item">
+          <span class="ter-label">現代俄羅斯（2023年）</span>
+          <div class="ter-bar-wrap"><div class="ter-bar" style="width:72%;background:var(--rus-green)"></div></div>
+          <span class="ter-val" style="color:var(--rus-green)">約1,710萬km²</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>入門提示：</strong>俄羅斯歷史最核心的主軸是「集權 vs. 改革」的拉鋸——每一個時代幾乎都在問：要更像歐洲，還是要走俄羅斯自己的路？這個問題直到今天仍未結束。
+    </div>
+  </section>
+
+  <!-- ══════════ 早期 ══════════ -->
+  <section id="medieval" class="timeline-section era-medieval">
+    <div class="section-intro">
+      <h2>🏰 早期斯拉夫與基輔羅斯（862–1547）</h2>
+      <p>從諾曼人（維京人）建立基輔羅斯，到蒙古大軍摧毀一切，再到莫斯科公國從廢墟中重建——這是俄羅斯民族認同形成的奠基期。點擊各事件可展開詳細說明。</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot dot-medieval"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-medieval">862 年</div>
+          <div class="tl-title">留里克建立諾夫哥羅德</div>
+          <div class="tl-desc">北歐維京人（羅斯人）首領留里克受邀統治斯拉夫部落，成為俄羅斯國家的傳說起源。</div>
+          <div class="tl-detail">留里克（Rurik）是瓦良格人（維京人的斯拉夫稱呼），受當地斯拉夫和芬蘭部落邀請來統治以解決內部衝突。雖然「邀請外人來統治」的故事可能是後代史家美化，但留里克王朝確實統治俄羅斯長達七百多年。留里克王朝的後代後來南下控制基輔，形成「基輔羅斯」這個東歐最早的大型國家。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-medieval"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-medieval">882 年</div>
+          <div class="tl-title">基輔羅斯建立</div>
+          <div class="tl-desc">留里克的繼任者奧列格南征，將諾夫哥羅德與基輔（今烏克蘭首都）統一，建立橫跨東歐的大國。</div>
+          <div class="tl-detail">基輔羅斯是俄羅斯、烏克蘭、白俄羅斯三個民族共同的文化根源，因此這段歷史至今仍是政治爭議焦點。基輔羅斯地處歐洲與中亞之間，控制「從維京人到希臘人」的貿易路線（北海 → 波羅的海 → 第聶伯河 → 黑海 → 拜占庭），因此富裕強盛。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-medieval"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-medieval">988 年</div>
+          <div class="tl-title">基督教化：受洗之年</div>
+          <div class="tl-desc">弗拉基米爾大公讓基輔羅斯全民改信東正教，這是俄羅斯文化史上最重要的決定之一。</div>
+          <div class="tl-detail">弗拉基米爾大公據說曾比較伊斯蘭教、天主教、猶太教與東正教，最終選擇了拜占庭的東正教。重要原因之一是拜占庭帝國的財富與文明令使節震驚，另外東正教沒有「禁止飲酒」的規定——傳說他說「俄羅斯人的快樂就是飲酒，沒有酒我們活不了」。東正教從此成為俄羅斯文化的核心支柱，塑造了俄羅斯建築（洋蔥頭教堂）、藝術、節日與世界觀。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-medieval"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-medieval">1237–1242 年</div>
+          <div class="tl-title">蒙古入侵：黑暗的「韃靼之軛」</div>
+          <div class="tl-desc">成吉思汗之孫拔都率蒙古大軍橫掃俄羅斯，摧毀基輔等主要城市，建立「金帳汗國」，統治俄羅斯長達250年。</div>
+          <div class="tl-detail">蒙古入侵（史稱「韃靼之軛」，約1237-1480年）對俄羅斯影響深遠：大量人口死亡與城市被毀、俄羅斯與西歐的文藝復興發展脫節、各公國需向蒙古納貢，中央集權思想因此加強。歷史學家至今爭論：蒙古統治是讓俄羅斯「亞洲化」了嗎？還是俄羅斯人只是巧妙地從蒙古人身上學到了統治技術？</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-medieval"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-medieval">14–15 世紀</div>
+          <div class="tl-title">莫斯科公國崛起</div>
+          <div class="tl-desc">莫斯科的小公國藉著替蒙古收稅、聯姻、吞併鄰國，逐漸成為俄羅斯最強大的政治中心。</div>
+          <div class="tl-detail">莫斯科公爵們的崛起策略相當務實：他們忠心替蒙古服務，以換取特權；同時慢慢兼併周邊公國。伊凡三世（Ivan III，在位1462-1505年）是真正的奠基者——他娶了拜占庭末代公主索菲亞，宣稱莫斯科是「第三羅馬」（第一羅馬滅亡，第二羅馬即拜占庭也在1453年滅亡，莫斯科繼承了這個神聖使命）。1480年他成功擺脫蒙古統治，統一多數俄羅斯土地。</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 沙皇國 ══════════ -->
+  <section id="tsardom" class="timeline-section era-tsardom">
+    <div class="section-intro">
+      <h2>👑 俄羅斯沙皇國（1547–1721）</h2>
+      <p>伊凡四世正式稱「沙皇」（來自「凱撒」），建立了俄羅斯獨特的專制統治傳統；羅曼諾夫王朝延續三百年；帝國開始以驚人速度向東吞併西伯利亞。</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot dot-tsardom"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-tsardom">1547 年</div>
+          <div class="tl-title">伊凡四世（恐怖伊凡）稱沙皇</div>
+          <div class="tl-desc">伊凡四世自加冕為首位「全俄沙皇」，建立「特轄軍」（祕密警察前身），對貴族（波雅爾）展開殘酷清洗。</div>
+          <div class="tl-detail">伊凡四世（Ivan the Terrible）的「恐怖」名號，在俄語原文是「令人敬畏的」而非「恐怖的」，但他後期確實極度殘暴。他建立了「特轄區制度」（Oprichnina）——一支直屬沙皇的黑衣騎士部隊，可任意搜捕屠殺貴族，製造恐怖統治。1570年他親自帶兵屠殺了諾夫哥羅德城，據說死亡一萬五千到六萬人。他晚年還在盛怒中殺死了自己的長子。但另一方面，他大幅擴張俄羅斯版圖，征服韃靼汗國，並開始向西伯利亞進軍。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-tsardom"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-tsardom">1581–1639 年</div>
+          <div class="tl-title">征服西伯利亞</div>
+          <div class="tl-desc">哥薩克探險家葉爾馬克等人越過烏拉山，在不到六十年間征服了比歐洲還大的西伯利亞，俄羅斯版圖驟增。</div>
+          <div class="tl-detail">西伯利亞的征服速度快得驚人，原因是當地原住民人口稀少、武裝落後，而俄羅斯人有火槍。更重要的動力是「皮草」——貂皮、狐皮等毛皮是當時歐洲最昂貴的奢侈品，相當於今日的石油。俄羅斯國家從這場「皮草熱」中獲得巨大財富，探險家們則在極端寒冷中快速建立要塞、向東推進。1639年，俄羅斯探險隊抵達太平洋，短短58年就橫跨了整個亞洲大陸。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-tsardom"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-tsardom">1598–1613 年</div>
+          <div class="tl-title">混亂時期（斯穆塔時代）</div>
+          <div class="tl-desc">沙皇絕嗣引發繼承危機，波蘭入侵、農民叛亂、多位假「德米特里」偽沙皇出現，俄羅斯陷入十五年的混亂。</div>
+          <div class="tl-detail">「混亂時期」是俄羅斯歷史上最黑暗的時期之一。伊凡四世的繼承人費奧多爾去世後沒有子嗣，波蘭趁機入侵，甚至一度佔領莫斯科克里姆林宮。至少出現了三個聲稱是「奇蹟倖存的德米特里王子」的冒充者（伊凡四世的幼子德米特里神祕死亡，各人趁機聲稱就是那個孩子）。最終民兵領袖米寧和波扎爾斯基率領人民軍隊驅逐波蘭人，1613年推選米哈伊爾·羅曼諾夫為新沙皇，建立羅曼諾夫王朝。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-tsardom"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-tsardom">1613 年</div>
+          <div class="tl-title">羅曼諾夫王朝建立</div>
+          <div class="tl-desc">年僅十六歲的米哈伊爾·羅曼諾夫被貴族推舉為沙皇，開創了統治俄羅斯長達304年（至1917年）的羅曼諾夫王朝。</div>
+          <div class="tl-detail">羅曼諾夫王朝是世界史上持續時間最長的王朝之一。他們成功穩定了局勢，但也強化了農奴制度——俄羅斯農民幾乎成為奴隸，可以被貴族買賣。1649年的《法典》正式把農奴綁在土地上，他們不能隨意離開，也不能告地主。農奴制問題像一顆定時炸彈，一直到1861年才由亞歷山大二世廢除，但遺留問題仍引發了後來的革命。</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 帝國 ══════════ -->
+  <section id="empire" class="timeline-section era-empire">
+    <div class="section-intro">
+      <h2>⚔️ 俄羅斯帝國（1721–1917）</h2>
+      <p>彼得大帝打開通往歐洲的窗口，讓俄羅斯從邊陲蠻族變成歐洲大國。葉卡捷琳娜大帝的黃金時代、拿破崙戰爭的榮光、農奴解放與工業革命，最後走向一戰的崩潰。</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot dot-empire"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-empire">1682–1725 年</div>
+          <div class="tl-title">彼得大帝：強制西化</div>
+          <div class="tl-desc">彼得一世以鐵腕推動現代化：親赴西歐學習造船，強制貴族剃鬍鬚穿西服，建立新首都聖彼得堡，奠定歐洲強國地位。</div>
+          <div class="tl-detail">彼得大帝（Peter the Great）是俄羅斯史上最具爭議的改革者。他的西化改革極為強烈：下令貴族剃掉傳統的鬍鬚（違者徵「鬍鬚稅」）、強制穿著西歐服飾、推行西歐曆法、建立世俗學校。他在芬蘭灣沼澤地上親自監督建設新首都聖彼得堡，數萬工人因此死亡，但這座「歐洲之窗」成了俄羅斯現代化的象徵。1721年大北方戰爭擊敗瑞典後，彼得自稱「全俄皇帝」，俄羅斯正式成為帝國。他的改革強化了國家，但也加深了貴族精英與農民大眾之間的文化鴻溝。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-empire"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-empire">1762–1796 年</div>
+          <div class="tl-title">葉卡捷琳娜大帝：黃金時代</div>
+          <div class="tl-desc">來自德國的公主嫁給俄羅斯皇儲，後來政變奪權，成為俄羅斯最偉大的女皇，讓帝國版圖達到頂峰。</div>
+          <div class="tl-detail">葉卡捷琳娜二世（Catherine the Great）出生時是德國安哈爾特-澤爾布斯特公國的小公主，嫁給俄羅斯皇儲后迅速學習俄語和文化，丈夫彼得三世即位後僅六個月，她便聯合禁衛軍發動政變，自己登上皇位。她推動「啟蒙專制」——受伏爾泰、盧梭等啟蒙思想影響，鼓勵藝術、科學、教育，擴充冬宮藝術收藏（今日埃爾米塔日博物館的核心），同時大幅擴張俄羅斯南方和西方版圖（從波蘭和土耳其搶來大量土地）。但1773年普加喬夫農民大起義讓她收緊了對農奴制的控制，改革熱情大減。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-empire"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-empire">1812 年</div>
+          <div class="tl-title">拿破崙入侵與大潰敗</div>
+          <div class="tl-desc">拿破崙率60萬大軍入侵俄羅斯，攻入莫斯科，卻遭到俄軍焦土戰術和嚴冬消耗，最終幾乎全軍覆沒，是拿破崙帝國的轉折點。</div>
+          <div class="tl-detail">1812年是俄羅斯「民族靈魂」最重要的年份之一。拿破崙的大軍佔領莫斯科後，俄羅斯人竟然自己燒掉城市，不讓敵人得到補給。拿破崙在空城裡等待俄皇投降，等了五週什麼都沒發生，最後被迫撤退。俄羅斯嚴冬加上哥薩克騎兵的游擊騷擾，讓60萬大軍變成不到10萬人回到法國。庫圖佐夫將軍的策略和「普通俄羅斯人的犧牲」成為民族神話，托爾斯泰的《戰爭與和平》就是以此為背景。此後俄羅斯成為歐洲最重要的大國之一，但也讓貴族菁英接觸到法國自由民主思想，埋下後來革命的種子。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-empire"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-empire">1861 年</div>
+          <div class="tl-title">農奴解放令</div>
+          <div class="tl-desc">亞歷山大二世廢除農奴制，約2,300萬農奴獲得法律自由，但需向地主高價「贖回」土地，導致多數農民依然貧窮。</div>
+          <div class="tl-detail">農奴解放是俄羅斯19世紀最大的改革，但結果令農民大失所望。農奴雖然自由了，卻需要用49年分期付款贖回土地（「贖金付款」），金額還高於土地實際價值。很多農民最終依然一貧如洗，對社會的憤怒並未消散。亞歷山大二世推動了俄羅斯史上最重要的改革，但最終於1881年被革命黨人暗殺。這場暗殺讓繼任者亞歷山大三世走向極端保守，鎮壓一切改革聲音，最終把國家帶向革命的邊緣。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-empire"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-empire">1905 年</div>
+          <div class="tl-title">1905年革命：「血腥星期日」</div>
+          <div class="tl-desc">日俄戰爭失敗後，工人向沙皇宮殿和平請願，卻遭士兵開槍屠殺，引發全國大罷工，沙皇被迫設立國家杜馬（議會）。</div>
+          <div class="tl-detail">1905年1月22日，工人神父加邦帶領數萬名和平請願的工人，前往冬宮向「小父親沙皇」呈遞請願書，要求改善工人待遇、設立議會。士兵突然開槍，至少130人死亡（一說超過千人），史稱「血腥星期日」。這個事件徹底打破了俄羅斯農工對沙皇的信任。全國爆發罷工、農民起義、海軍叛亂（波將金號軍艦兵變）。沙皇尼古拉二世被迫簽署《十月宣言》，設立杜馬議會。但這不過是緩兵之計——真正的革命在十二年後到來。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-empire"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-empire">1914–1917 年</div>
+          <div class="tl-title">一次世界大戰與帝國崩潰</div>
+          <div class="tl-desc">俄羅斯捲入一戰，前線慘敗、飢荒蔓延，1917年2月革命爆發，沙皇尼古拉二世退位，羅曼諾夫王朝結束。</div>
+          <div class="tl-detail">俄羅斯在一戰中死亡約160萬軍人，受傷500萬，是所有參戰國中傷亡最慘的之一。後方糧食短缺、通貨膨脹，人民怒火沸騰。1916年拉斯普丁（一個神祕農民出身的「聖人」，深得皇后信任）被貴族刺殺，更暴露了皇室的腐朽。1917年3月（俄曆2月），彼得格勒的工人和士兵起義，沙皇的軍隊拒絕鎮壓，尼古拉二世在無奈中退位。三百年的羅曼諾夫王朝就此終結。一年後，退位的尼古拉二世一家被布爾什維克黨人全部槍決。</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 蘇聯 ══════════ -->
+  <section id="soviet" class="timeline-section era-soviet">
+    <div class="section-intro">
+      <h2>☭ 蘇維埃聯盟（1917–1991）</h2>
+      <p>共產革命、內戰、史達林恐怖、二戰衛國戰爭、冷戰與太空競賽——蘇聯74年的歷史影響了整個20世紀的世界格局，最終在1991年突然解體。</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot dot-soviet"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-soviet">1917 年 10 月</div>
+          <div class="tl-title">布爾什維克革命（十月革命）</div>
+          <div class="tl-desc">列寧領導的布爾什維克黨發動武裝政變，推翻臨時政府，建立世界第一個共產主義政權。</div>
+          <div class="tl-detail">十月革命其實並非「人民大起義」，而是布爾什維克黨的精心政變。關鍵在於他們控制了首都彼得格勒的工廠工人武裝（紅衛隊）和部分海軍水兵。臨時政府在冬宮的防衛形同虛設，政變幾乎兵不血刃。列寧隨即公佈《土地法令》（沒收地主土地）和《和平法令》（退出一戰），用最直接的訴求贏得了農民和士兵的支持。但隨後爆發的內戰（1918-1922年）才是真正血腥的——紅軍（布爾什維克）對白軍（保皇派、民主派、外國干涉軍），死亡人數可能高達700-1,200萬。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-soviet"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-soviet">1924–1953 年</div>
+          <div class="tl-title">史達林時代：恐怖與現代化</div>
+          <div class="tl-desc">列寧死後史達林奪得大權，以「大清洗」消滅政敵和數百萬「人民公敵」，同時強制工業化讓蘇聯成為工業強國。</div>
+          <div class="tl-detail">史達林時代是蘇聯史上最矛盾的時期。<br><br>
+          <strong>恐怖面：</strong>1937-38年的「大清洗」中，約75萬人被槍決，數百萬人被送進西伯利亞古拉格勞改營。軍隊高層幾乎被清洗殆盡（這也是後來二戰初期蘇軍潰敗的原因之一）。1932-33年的人工大饑荒（烏克蘭稱「大饑荒」/Holodomor）死亡500萬到1,000萬人，至今是烏克蘭的民族創傷。<br><br>
+          <strong>建設面：</strong>五年計畫強制推動工業化，蘇聯從農業國快速變成鋼鐵、機械大國。識字率從20%提升到80%以上。蘇聯成為繼美國之後第二個工業超級大國。這種「以無數人命換取工業化」的模式，成為20世紀最大的歷史爭議之一。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-soviet"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-soviet">1941–1945 年</div>
+          <div class="tl-title">衛國戰爭：人類史上最慘烈的戰場</div>
+          <div class="tl-desc">納粹德國入侵蘇聯，蘇聯死亡約2,700萬人（軍民合計），但最終在史達林格勒反轉戰局，攻克柏林，成為二戰最大功臣之一。</div>
+          <div class="tl-detail">蘇聯在二戰中的犧牲是難以想像的規模。開戰初期因為大清洗清空了軍事領導層，加上史達林拒絕相信入侵情報，德軍在幾個月內深入蘇聯境內500公里，包圍列寧格勒（900天圍城，餓死約100萬平民）、逼近莫斯科。<br><br>
+          轉折點是1942-43年的史達林格勒保衛戰——人類歷史上傷亡最高的單場戰役（雙方合計死亡約200萬人）。蘇軍最終包圍殲滅德國第6集團軍33萬人，從此戰局逆轉。1945年5月蘇軍攻克柏林，戰爭結束。這段歷史在俄羅斯被稱為「偉大衛國戰爭」，是俄羅斯民族認同最核心的元素之一，每年5月9日勝利日至今是最重要的國家節日。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-soviet"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-soviet">1953–1964 年</div>
+          <div class="tl-title">赫魯雪夫：解凍與太空競賽</div>
+          <div class="tl-desc">史達林死後，赫魯雪夫批判史達林主義（「去史達林化」），推動社會「解凍」，同時蘇聯在太空競賽中大勝美國，發射第一顆人造衛星、第一位太空人。</div>
+          <div class="tl-detail">赫魯雪夫在1956年的黨代表大會上發表「祕密報告」，揭露史達林的罪行，震撼整個共產世界（連中國的毛澤東都大為不滿）。社會氛圍逐漸鬆動，文學、藝術開始出現更多自由（「解凍文學」）。<br><br>
+          太空競賽方面：1957年蘇聯發射第一顆人造衛星「史普尼克號」，震驚美國；1961年尤里·加加林成為第一個進入太空的人類，更是震撼世界。這段時期蘇聯在科技和工業上確實與美國並駕齊驅。1962年古巴導彈危機讓世界幾乎走向核戰——最終通過談判化解，是冷戰最危險的時刻。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-soviet"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-soviet">1985–1991 年</div>
+          <div class="tl-title">戈巴契夫：改革與解體</div>
+          <div class="tl-desc">戈巴契夫推動「公開化」（Glasnost）與「改革重建」（Perestroika），試圖拯救蘇聯，卻引發一連串連鎖反應，最終導致1991年蘇聯解體。</div>
+          <div class="tl-detail">戈巴契夫（Gorbachev）接掌蘇聯時，帝國已千瘡百孔：阿富汗戰爭泥沼（1979-89年）、石油價格暴跌讓財政枯竭、1986年車諾比核電廠爆炸暴露了體制腐敗。他的改革很真誠，但速度和範圍失控：「公開化」讓媒體開始批評黨和政府，積累幾十年的民怨一湧而出；東歐衛星國一個個宣布脫離蘇聯控制（1989年柏林圍牆倒塌）；各加盟共和國也紛紛宣布獨立。1991年8月，強硬派試圖政變推翻戈巴契夫，但被葉爾欽和民眾擋住；政變失敗後，蘇聯加速崩潰。1991年12月25日，戈巴契夫宣布辭職，蘇聯正式解體成15個獨立國家。</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 現代 ══════════ -->
+  <section id="modern" class="timeline-section era-modern">
+    <div class="section-intro">
+      <h2>🌐 現代俄羅斯聯邦（1991 年至今）</h2>
+      <p>從蘇聯廢墟中重生的俄羅斯，經歷了震盪的民主化嘗試、車臣戰爭、普丁的強人政治，到2014年克里米亞危機與2022年烏克蘭戰爭，再度站到了歷史的十字路口。</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot dot-modern"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-modern">1991–1999 年</div>
+          <div class="tl-title">葉爾欽時代：震盪轉型</div>
+          <div class="tl-desc">葉爾欽推動市場化改革，「休克療法」讓GDP暴跌50%、通貨膨脹失控；國有資產私有化製造了一批「寡頭」；政治動盪讓民主化嘗試陷入混亂。</div>
+          <div class="tl-detail">1990年代的俄羅斯對大多數人來說是災難性的：平均壽命縮短、工廠停擺、犯罪率飆升、通膨讓積蓄化為烏有。「私有化」的過程中，有政商關係的人用極低價格收購龐大的國有企業，造就了一批「寡頭」——短短幾年就控制了俄羅斯大量媒體、石油、金屬等資源。1993年葉爾欽用坦克砲轟議會大廈來解決政治僵局，讓世界瞠目結舌。1994-96年第一次車臣戰爭讓俄軍顏面盡失，傷亡慘重卻打不贏民兵。1999年葉爾欽在電視上向全國人民道歉，宣布辭職，並指定一個幾乎沒人認識的前KGB官員作繼承人——弗拉基米爾·普丁。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-modern"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-modern">2000–2012 年</div>
+          <div class="tl-title">普丁崛起：秩序的代價</div>
+          <div class="tl-desc">普丁以強人形象恢復國家秩序，適逢石油價格上漲讓俄羅斯富裕起來，但同時打壓媒體自由、收攏寡頭、削弱反對派。</div>
+          <div class="tl-detail">普丁在執政初期確實讓俄羅斯恢復了穩定：車臣戰爭最終鎮壓（以極大代價），貪腐的寡頭受到約束（或流亡），GDP持續增長（主要靠石油和天然氣），普通人生活明顯改善。因此他的支持率一直維持在60-80%。但代價是：獨立媒體一個個消失，批評政府的記者遭遇神祕暗殺，反對派被邊緣化，地方自治被削弱。2008年他讓名義上的繼任梅德韋傑夫擔任總統（因憲法不能三連任），自己擔任總理，但實際上仍掌握大權。2012年修改憲法後重返總統職位，並大幅延長任期限制。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-modern"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-modern">2014 年</div>
+          <div class="tl-title">克里米亞吞併與東烏克蘭衝突</div>
+          <div class="tl-desc">烏克蘭親歐廣場革命推翻親俄總統後，俄羅斯吞併克里米亞半島，並支持東部烏克蘭親俄武裝，引發西方大規模制裁。</div>
+          <div class="tl-detail">2014年是烏俄關係的決定性轉折點。烏克蘭的「廣場革命」（Maidan）推翻了親俄總統亞努科維奇，俄羅斯視此為西方策動的政變、威脅到自己的戰略後院。俄羅斯隨後在幾乎沒有抵抗的情況下控制了克里米亞（克里米亞有大量俄羅斯族居民，且有俄羅斯重要海軍基地塞瓦斯托波爾），舉行倉促的公投後宣布併入俄羅斯。這是二戰後歐洲首次以軍事手段吞併他國領土，震驚國際社會。同時，烏克蘭東部頓巴斯地區爆發親俄武裝衝突，此後八年間成為「凍結衝突」，雙方持續低強度作戰。</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot dot-modern"></div>
+        <div class="tl-card" onclick="toggleCard(this)">
+          <div class="tl-year year-modern">2022 年至今</div>
+          <div class="tl-title">烏克蘭全面戰爭</div>
+          <div class="tl-desc">2022年2月24日，俄羅斯以「特別軍事行動」為名全面入侵烏克蘭，引發二戰後歐洲最大規模武裝衝突，西方展開史上最大規模制裁。</div>
+          <div class="tl-detail">俄羅斯以「去軍事化」和「去納粹化」烏克蘭為名發動全面入侵，原本預期數日可解決，卻遭到烏克蘭軍民的激烈抵抗，基輔攻勢失敗後退守東部和南部戰線。這場戰爭讓俄羅斯付出了沉重代價：西方制裁、外國企業撤離、與西歐能源關係徹底切斷（Nord Stream北溪管線遭破壞）、國際孤立加深。烏克蘭方面在西方大規模軍事援助下持續抵抗。這場衝突至今仍在進行，深刻重塑了歐洲安全格局和俄羅斯與西方世界的關係。</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 人物 ══════════ -->
+  <section id="figures" class="timeline-section">
+    <div class="section-intro">
+      <h2>👤 俄羅斯歷史上的重要人物</h2>
+      <p>這些人或推動改革、或製造恐怖、或拯救國家——每一位都在歷史上留下了不可磨滅的印記。</p>
+    </div>
+
+    <div class="figures-grid">
+
+      <div class="figure-card">
+        <div class="figure-icon">🪓</div>
+        <div class="figure-name">伊凡四世（恐怖伊凡）</div>
+        <div class="figure-years">1530–1584 年</div>
+        <div class="figure-desc">首位正式稱「沙皇」的俄羅斯君主。早期是能幹的改革者，晚期因多疑偏執走向暴政，設立祕密警察，屠殺貴族，甚至親手殺死兒子。向東大幅擴張版圖。</div>
+        <span class="figure-tag tag-tsardom">沙皇國時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">⚓</div>
+        <div class="figure-name">彼得一世（彼得大帝）</div>
+        <div class="figure-years">1672–1725 年</div>
+        <div class="figure-desc">身高超過200公分的巨人沙皇。親赴西歐做「木匠學徒」，回國強制推動現代化改革，建立海軍和聖彼得堡。讓俄羅斯從蠻荒之地變成歐洲大國。</div>
+        <span class="figure-tag tag-empire">帝俄時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">👸</div>
+        <div class="figure-name">葉卡捷琳娜二世（大帝）</div>
+        <div class="figure-years">1729–1796 年</div>
+        <div class="figure-desc">德國公主，靠政變奪得俄羅斯皇位。推動啟蒙改革，擴充藝術收藏，大幅擴張版圖。俄羅斯史上在位最長的女性統治者。</div>
+        <span class="figure-tag tag-empire">帝俄時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">✊</div>
+        <div class="figure-name">列寧（弗拉基米爾·烏里揚諾夫）</div>
+        <div class="figure-years">1870–1924 年</div>
+        <div class="figure-desc">布爾什維克黨領袖，1917年革命的核心人物，建立世界第一個共產主義政權，創立蘇聯。其思想「列寧主義」影響了20世紀幾乎所有共產黨。</div>
+        <span class="figure-tag tag-soviet">蘇聯時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">🔴</div>
+        <div class="figure-name">史達林（約瑟夫·朱加什維利）</div>
+        <div class="figure-years">1878–1953 年</div>
+        <div class="figure-desc">格魯吉亞人出身的蘇聯最高領袖。以恐怖統治清洗政敵和數百萬「敵人」，同時強制工業化讓蘇聯成為超級大國，並領導蘇聯贏得二戰。歷史上最有爭議的人物之一。</div>
+        <span class="figure-tag tag-soviet">蘇聯時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">🚀</div>
+        <div class="figure-name">尤里·加加林</div>
+        <div class="figure-years">1934–1968 年</div>
+        <div class="figure-desc">1961年4月12日，成為第一個進入宇宙的人類，繞地球飛行108分鐘後安全返回。蘇聯和俄羅斯至今最受愛戴的英雄。1968年因飛機失事英年早逝。</div>
+        <span class="figure-tag tag-soviet">蘇聯時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">🕊️</div>
+        <div class="figure-name">米哈伊爾·戈巴契夫</div>
+        <div class="figure-years">1931–2022 年</div>
+        <div class="figure-desc">蘇聯最後一任最高領導人。推動「公開化」和「改革重建」，終結冷戰，獲得諾貝爾和平獎。但他的改革引發的連鎖反應導致蘇聯解體，在俄羅斯國內評價至今兩極。</div>
+        <span class="figure-tag tag-soviet">蘇聯時代</span>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-icon">🐻</div>
+        <div class="figure-name">弗拉基米爾·普丁</div>
+        <div class="figure-years">1952年至今</div>
+        <div class="figure-desc">前KGB特工，自2000年起主導俄羅斯政治。恢復國家秩序與強國地位，但壓縮民主空間。2022年發動對烏克蘭全面戰爭，徹底改變了俄羅斯與西方的關係。</div>
+        <span class="figure-tag tag-modern">現代</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 名詞解釋 ══════════ -->
+  <section id="glossary" class="timeline-section">
+    <div class="section-intro">
+      <h2>📚 常見名詞解釋</h2>
+      <p>讀俄羅斯歷史時常遇到的專有名詞，一次搞懂。</p>
+    </div>
+
+    <div class="glossary-grid">
+      <div class="gloss-card">
+        <div class="gloss-term">沙皇（Tsar / Czar）</div>
+        <div class="gloss-def">源自羅馬「凱撒」（Caesar），是俄羅斯皇帝的稱號。1547年伊凡四世首次使用，象徵俄羅斯繼承羅馬與拜占庭的帝國傳統。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">東正教（Orthodox Christianity）</div>
+        <div class="gloss-def">基督教的東方分支，1054年與天主教分裂。988年成為基輔羅斯的國教，至今仍是俄羅斯文化認同的核心，著名標誌為「洋蔥頭」圓頂教堂。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">農奴（Serf）</div>
+        <div class="gloss-def">類似農奴的制度，農民被綁定在地主的土地上不得離開，可被買賣。俄羅斯農奴制於1649年法制化，1861年廢除，但遺留問題延續至革命。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">哥薩克（Cossack）</div>
+        <div class="gloss-def">東歐草原上以騎馬戰鬥技能聞名的自由武裝集團，許多原本是逃離農奴制的農民。他們征服了西伯利亞，也多次發動農民起義，是俄羅斯歷史的獨特角色。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">布爾什維克（Bolshevik）</div>
+        <div class="gloss-def">俄語「多數派」之意，列寧領導的馬克思主義政黨派系，主張革命推翻資本主義。1917年發動革命，建立蘇聯，後來演變為蘇聯共產黨。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">古拉格（Gulag）</div>
+        <div class="gloss-def">蘇聯的強制勞改營系統，遍佈西伯利亞和中亞。史達林時代巔峰期關押約180萬人（估計），環境極為惡劣，死亡率高。索忍尼辛的《古拉格群島》是最著名的文學紀錄。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">冷戰（Cold War）</div>
+        <div class="gloss-def">1947-1991年，美國與蘇聯兩個超級大國之間的意識形態對抗。雖然從未直接開戰，但透過核武競賽、太空競賽、代理人戰爭（越戰、韓戰、阿富汗等）相互較勁，深刻影響全球政治。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">寡頭（Oligarch）</div>
+        <div class="gloss-def">1990年代俄羅斯私有化過程中，藉政商關係以極低代價取得龐大國有資產的商人。他們一度控制俄羅斯媒體和政治，普丁上台後一部分臣服，一部分流亡或入獄。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">克里姆林宮（Kremlin）</div>
+        <div class="gloss-def">原意是「城內要塞」，各俄羅斯城市都有，但特指莫斯科的中央要塞。15世紀起是歷代俄羅斯統治者的宮殿，今日是俄羅斯聯邦總統官邸，也常被用來代指俄羅斯政府本身。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">KGB</div>
+        <div class="gloss-def">蘇聯時代的情報與祕密警察機構，全名「國家安全委員會」。普丁曾任KGB特工和局長。蘇聯解體後改組為俄羅斯聯邦安全局（FSB）等機構。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">公開化（Glasnost）</div>
+        <div class="gloss-def">戈巴契夫的改革政策之一，意為「開放」、「透明」，允許媒體報導蘇聯社會問題、批評官員。釋放了積累幾十年的批評能量，加速了蘇聯的政治變化。</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">改革重建（Perestroika）</div>
+        <div class="gloss-def">戈巴契夫的另一項改革政策，意為「重建」，試圖在保持共產黨領導的前提下改革蘇聯的經濟和政治體制。最終效果適得其反，加速了蘇聯崩潰。</div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>延伸閱讀建議：</strong>
+      如果你想更深入了解俄羅斯，托爾斯泰的《戰爭與和平》（帝俄時代）、索忍尼辛的《古拉格群島》（蘇聯恐怖）是兩部深刻的文學入口。
+      歷史非虛構書目則推薦奧蘭多·費吉斯（Orlando Figes）的《娜塔莎之舞》，從文化角度理解俄羅斯靈魂。
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>俄羅斯歷史全覽 · 內容整理自主要歷史文獻與學術資料 · CC BY 4.0</p>
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.timeline-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const idx = ['overview','medieval','tsardom','empire','soviet','modern','figures','glossary'].indexOf(id);
+    document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('expanded');
+  }
+</script>
+
+</body>
+</html>
