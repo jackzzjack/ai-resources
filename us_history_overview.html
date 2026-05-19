@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>美國歷史全覽：從殖民地到超級強權</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --red: #f87171;
+      --blue: #60a5fa;
+      --gold: #fbbf24;
+      --green: #4ade80;
+      --orange: #fb923c;
+      --teal: #2dd4bf;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(96,165,250,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(248,113,113,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(251,191,36,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232a2a3d' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--blue) 40%, var(--red) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .flag-stripe {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 18px;
+    }
+
+    .flag-stripe span {
+      display: inline-block;
+      width: 28px;
+      height: 6px;
+      border-radius: 3px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 20px 24px 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      scrollbar-width: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 10px 18px;
+      border-radius: 10px 10px 0 0;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--text); background: var(--surface2); }
+    .tab-btn.active {
+      background: var(--bg);
+      color: var(--text);
+      border-color: var(--border);
+      border-bottom-color: var(--bg);
+    }
+
+    .main-content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--blue), var(--accent), var(--red));
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 32px;
+      animation: fadeInUp 0.4s ease both;
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -26px;
+      top: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      flex-shrink: 0;
+    }
+
+    .tl-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .tl-card:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .tl-era {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .tl-year {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .tl-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tl-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .tl-expand {
+      font-size: 0.83rem;
+      color: var(--accent2);
+      margin-top: 10px;
+      line-height: 1.7;
+      display: none;
+    }
+    .tl-card.expanded .tl-expand { display: block; }
+
+    .tl-toggle {
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    /* Era cards */
+    .era-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    .era-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .era-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .era-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .era-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .era-period {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .era-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .era-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      font-size: 0.73rem;
+      padding: 3px 9px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* Key figures */
+    .figure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .figure-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .figure-card:hover {
+      border-color: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .figure-avatar {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+    }
+
+    .figure-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .figure-role {
+      font-size: 0.78rem;
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+
+    .figure-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+      text-align: left;
+    }
+
+    /* Key concepts */
+    .concept-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .concept-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .concept-card:hover { border-color: var(--accent); }
+
+    .concept-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface2);
+      border-radius: 12px;
+    }
+
+    .concept-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .concept-desc {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-intro {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(124,106,255,0.1), rgba(96,165,250,0.08));
+      border: 1px solid rgba(124,106,255,0.3);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin: 24px 0;
+    }
+
+    .highlight-box p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .color-red { color: var(--red); }
+    .color-blue { color: var(--blue); }
+    .color-gold { color: var(--gold); }
+    .color-green { color: var(--green); }
+    .color-orange { color: var(--orange); }
+    .color-teal { color: var(--teal); }
+    .color-accent { color: var(--accent2); }
+
+    .bg-red { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.35); color: var(--red); }
+    .bg-blue { background: rgba(96,165,250,0.15); border-color: rgba(96,165,250,0.35); color: var(--blue); }
+    .bg-gold { background: rgba(251,191,36,0.15); border-color: rgba(251,191,36,0.35); color: var(--gold); }
+    .bg-green { background: rgba(74,222,128,0.15); border-color: rgba(74,222,128,0.35); color: var(--green); }
+    .bg-orange { background: rgba(251,146,60,0.15); border-color: rgba(251,146,60,0.35); color: var(--orange); }
+    .bg-teal { background: rgba(45,212,191,0.15); border-color: rgba(45,212,191,0.35); color: var(--teal); }
+    .bg-accent { background: rgba(124,106,255,0.15); border-color: rgba(124,106,255,0.35); color: var(--accent2); }
+
+    @media (max-width: 600px) {
+      .era-grid { grid-template-columns: 1fr; }
+      .figure-grid { grid-template-columns: repeat(2, 1fr); }
+      .concept-card { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🇺🇸 美國歷史全覽</h1>
+  <p class="subtitle">從原住民文明到當代超級強權 — 給完全不懂的人的入門指南</p>
+  <div class="flag-stripe">
+    <span style="background:#f87171"></span>
+    <span style="background:#e8e8f0"></span>
+    <span style="background:#f87171"></span>
+    <span style="background:#e8e8f0"></span>
+    <span style="background:#f87171"></span>
+    <span style="background:#e8e8f0"></span>
+    <span style="background:#f87171"></span>
+    <span style="background:#60a5fa"></span>
+    <span style="background:#f87171"></span>
+    <span style="background:#e8e8f0"></span>
+    <span style="background:#f87171"></span>
+    <span style="background:#e8e8f0"></span>
+    <span style="background:#f87171"></span>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('overview')">📖 時代總覽</button>
+  <button class="tab-btn" onclick="switchTab('timeline')">📅 大事年表</button>
+  <button class="tab-btn" onclick="switchTab('figures')">🧑‍💼 關鍵人物</button>
+  <button class="tab-btn" onclick="switchTab('concepts')">💡 核心概念</button>
+  <button class="tab-btn" onclick="switchTab('wars')">⚔️ 重要戰爭</button>
+</nav>
+
+<div class="main-content">
+
+  <!-- ===== TAB: 時代總覽 ===== -->
+  <div id="tab-overview" class="tab-panel active">
+    <div class="section-intro">
+      美國的歷史不到 250 年，卻走過了從殖民地、獨立建國、內戰分裂、工業崛起，到兩次世界大戰後成為全球超強的戲劇性歷程。下面把整段歷史分成 8 個時代，每個時代都有它最重要的主題。
+    </div>
+
+    <div class="era-grid">
+
+      <div class="era-card">
+        <div class="era-icon">🌿</div>
+        <div class="era-name">史前與原住民時代</div>
+        <div class="era-period bg-green">約 15,000 BCE – 1492 CE</div>
+        <div class="era-desc">
+          美洲大陸早在數萬年前就有人類定居。美洲原住民建立了多元的文明與部落，從北方的易洛魁聯盟到西南部的納瓦霍人，各有獨特的語言、文化和政治組織。
+        </div>
+        <div class="era-tags">
+          <span class="tag">易洛魁聯盟</span>
+          <span class="tag">印地安文明</span>
+          <span class="tag">多元文化</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">⛵</div>
+        <div class="era-name">歐洲殖民時代</div>
+        <div class="era-period bg-blue">1492 – 1763</div>
+        <div class="era-desc">
+          哥倫布抵達美洲後，西班牙、法國、英國紛紛搶占殖民地。英國在東岸建立了 13 個殖民地，帶來了基督教信仰、英語語言，以及後來引爆矛盾的「奴隸貿易」。
+        </div>
+        <div class="era-tags">
+          <span class="tag">13 殖民地</span>
+          <span class="tag">清教徒移民</span>
+          <span class="tag">奴隸貿易起源</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🔔</div>
+        <div class="era-name">獨立革命時代</div>
+        <div class="era-period bg-gold">1763 – 1789</div>
+        <div class="era-desc">
+          英國對殖民地課稅引發反彈，殖民地人民喊出「無代表、不納稅」。1776 年宣布獨立，打敗英軍後建立了全球第一個民主共和國，起草《憲法》確立三權分立。
+        </div>
+        <div class="era-tags">
+          <span class="tag">獨立宣言 1776</span>
+          <span class="tag">美國憲法</span>
+          <span class="tag">三權分立</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🌾</div>
+        <div class="era-name">建國擴張時代</div>
+        <div class="era-period bg-orange">1789 – 1860</div>
+        <div class="era-desc">
+          新國家迅速向西擴張，「天命論」讓美國人相信向西佔領土地是使命。同時南北矛盾加劇：北方工業化、主張廢奴；南方依賴農業與奴隸制，衝突一觸即發。
+        </div>
+        <div class="era-tags">
+          <span class="tag">路易斯安那購地</span>
+          <span class="tag">天命論</span>
+          <span class="tag">南北矛盾</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">⚔️</div>
+        <div class="era-name">內戰與重建時代</div>
+        <div class="era-period bg-red">1861 – 1877</div>
+        <div class="era-desc">
+          南方 11 州脫離聯邦，爆發美國史上最慘烈的內戰（約 62 萬人陣亡）。北方最終獲勝，林肯廢除奴隸制，但種族歧視以「吉姆克勞法」等形式持續壓迫黑人達百年。
+        </div>
+        <div class="era-tags">
+          <span class="tag">南北戰爭</span>
+          <span class="tag">廢除奴隸制</span>
+          <span class="tag">重建時期</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🏭</div>
+        <div class="era-name">工業化鍍金時代</div>
+        <div class="era-period bg-accent">1877 – 1920</div>
+        <div class="era-desc">
+          鐵路橫貫大陸，鋼鐵、石油產業爆炸性成長。卡內基、洛克斐勒等「強盜男爵」積累驚人財富，卻也催生了勞工運動與「進步主義」改革浪潮，要求政府管制壟斷。
+        </div>
+        <div class="era-tags">
+          <span class="tag">工業革命</span>
+          <span class="tag">移民潮</span>
+          <span class="tag">進步主義</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🌍</div>
+        <div class="era-name">世界大戰與冷戰時代</div>
+        <div class="era-period bg-blue">1920 – 1991</div>
+        <div class="era-desc">
+          兩次世界大戰讓美國從孤立主義轉向全球領導者。二戰後與蘇聯展開冷戰對峙，韓戰、越戰相繼爆發。國內則有大蕭條、民權運動、登月壯舉等劃時代事件。
+        </div>
+        <div class="era-tags">
+          <span class="tag">二戰</span>
+          <span class="tag">冷戰</span>
+          <span class="tag">民權運動</span>
+          <span class="tag">登月</span>
+        </div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">💻</div>
+        <div class="era-name">當代美國</div>
+        <div class="era-period bg-teal">1991 – 至今</div>
+        <div class="era-desc">
+          冷戰結束後成為唯一超強，但 911 恐攻、伊拉克戰爭、2008 金融海嘯、新冠疫情、政治極化等挑戰接連而來，矽谷科技業則讓美國繼續主導全球科技走向。
+        </div>
+        <div class="era-tags">
+          <span class="tag">911 恐攻</span>
+          <span class="tag">科技霸主</span>
+          <span class="tag">政治極化</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="highlight-box" style="margin-top: 32px;">
+      <p><strong>💡 用一句話理解美國歷史的主軸：</strong><br>
+      美國歷史是一段不斷在「自由理想」與「現實矛盾」之間拉扯的故事——
+      高喊「人生而平等」的同時卻維持奴隸制；鼓吹民主自由的同時又在海外發動戰爭。
+      這種理想與現實的緊張關係，正是理解美國的鑰匙。</p>
+    </div>
+  </div>
+
+  <!-- ===== TAB: 大事年表 ===== -->
+  <div id="tab-timeline" class="tab-panel">
+    <div class="section-intro">
+      點擊每個事件可展開更詳細的說明。年表從最關鍵的節點出發，幫助你建立歷史感。
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--green)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-green">史前時代</div>
+          <div class="tl-year">約 15,000 BCE</div>
+          <div class="tl-title">人類跨越白令陸橋，抵達美洲</div>
+          <div class="tl-desc">最早的美洲人可能從西伯利亞經由冰期陸橋遷徙至此，逐漸發展出數百個不同的部落和文明。</div>
+          <div class="tl-expand">估計到歐洲人抵達前，北美洲原住民人口達 200–500 萬，南北美洲合計更達數千萬。他們建立了複雜的貿易網絡、農業系統，以及如易洛魁聯盟這樣的民主政治雛形——據說後者對美國憲法設計者有所啟發。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--blue)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-blue">殖民時代</div>
+          <div class="tl-year">1492</div>
+          <div class="tl-title">哥倫布抵達美洲，開啟殖民浪潮</div>
+          <div class="tl-desc">西班牙資助的哥倫布航行至加勒比海，此後歐洲列強爭相殖民美洲，帶來了疾病、奴役與文化衝突。</div>
+          <div class="tl-expand">歐洲人帶來的天花、麻疹等疾病對原住民是毀滅性的打擊，估計 90% 的原住民因此死亡。英國在 1607 年建立第一個永久殖民地「詹姆斯鎮」（維吉尼亞），1620 年清教徒乘「五月花號」抵達麻薩諸塞，簽訂《五月花公約》，被視為美國民主自治的精神起源。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--gold)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-gold">獨立革命</div>
+          <div class="tl-year">1776 年 7 月 4 日</div>
+          <div class="tl-title">《獨立宣言》發表</div>
+          <div class="tl-desc">托馬斯·傑佛遜起草，宣布 13 殖民地脫離英國獨立，寫下「人生而平等」的千古名句。</div>
+          <div class="tl-expand">
+            獨立的直接原因是英國的《印花稅法》、《茶稅法》等課稅政策，引發「波士頓茶葉事件」（1773）等抗議。《獨立宣言》的哲學基礎來自洛克的天賦人權理論。7 年獨立戰爭後，英國在 1783 年的《巴黎條約》正式承認美國獨立。
+          </div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--gold)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-gold">建國時期</div>
+          <div class="tl-year">1787 – 1789</div>
+          <div class="tl-title">美國憲法制定，聯邦政府成立</div>
+          <div class="tl-desc">費城制憲會議確立三權分立與聯邦制架構，華盛頓成為首任總統，美國正式建立。</div>
+          <div class="tl-expand">憲法設計的核心是防止權力集中：行政（總統）、立法（國會）、司法（最高法院）互相制衡。聯邦制則讓各州保有一定自治權。後來加入的《權利法案》（前十條修正案）保障言論、宗教、持槍等自由，至今仍是激烈爭議的焦點。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--orange)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-orange">擴張時代</div>
+          <div class="tl-year">1803 – 1853</div>
+          <div class="tl-title">向西擴張：從大西洋到太平洋</div>
+          <div class="tl-desc">美國以購買（路易斯安那）、戰爭（墨西哥戰爭）、條約等方式，將國土擴展至太平洋岸，面積增加三倍。</div>
+          <div class="tl-expand">1803 年拿破崙急需軍費，以 1500 萬美元將路易斯安那賣給美國，版圖瞬間翻倍。1830 年《印地安人遷移法》強制將原住民驅逐至密西西比河以西，史稱「血淚之路」，數千人死於途中。1848 年美墨戰爭後取得加州、德州等地，淘金熱隨即引爆西部開發熱潮。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--red)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-red">內戰時代</div>
+          <div class="tl-year">1861 – 1865</div>
+          <div class="tl-title">南北戰爭：美國最慘烈的戰爭</div>
+          <div class="tl-desc">奴隸制問題撕裂國家，南方 11 州成立「美利堅邦聯」脫離聯邦，爆發四年內戰，約 62 萬士兵陣亡。</div>
+          <div class="tl-expand">林肯在 1863 年發布《解放奴隸宣言》，讓戰爭從「維護聯邦」升格為「解放奴隸」的道德戰爭。北方憑藉工業優勢最終取勝，南方將領李將軍於 1865 年投降。戰後第 13 條修正案正式廢除奴隸制，但黑人仍面臨系統性歧視，種族平等的真正實現還需再等一百年。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--accent)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-accent">鍍金時代</div>
+          <div class="tl-year">1880s – 1900s</div>
+          <div class="tl-title">工業革命：鐵路、鋼鐵、石油帝國</div>
+          <div class="tl-desc">鐵路貫通全美，卡內基（鋼鐵）、洛克斐勒（石油）、摩根（金融）等巨頭崛起，美國成為全球最大工業國。</div>
+          <div class="tl-expand">1880–1920 年間約 2,000 萬移民湧入美國（主要來自東歐、南歐、中國），提供廉價勞動力。貧富懸殊引發勞工罷工與社會改革呼聲。西奧多·羅斯福總統以「反壟斷」著稱，強制拆解標準石油公司，奠定美國政府管制大企業的先例。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--red)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-red">大蕭條</div>
+          <div class="tl-year">1929 – 1939</div>
+          <div class="tl-title">股市崩盤、大蕭條與新政</div>
+          <div class="tl-desc">1929 年股市崩盤引發全球大蕭條，美國失業率高達 25%，羅斯福新政以政府介入重建經濟。</div>
+          <div class="tl-expand">羅斯福（FDR）的「新政」包含大量公共建設、社會安全網（社會安全法）、銀行改革，被視為美國轉向「大政府」的關鍵轉捩點。保守派批評新政擴大政府權力；自由派則認為它救了資本主義。大蕭條的教訓深刻影響了後來的總體經濟政策思維。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--blue)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-blue">二次世界大戰</div>
+          <div class="tl-year">1941 – 1945</div>
+          <div class="tl-title">珍珠港事變，美國正式參戰</div>
+          <div class="tl-desc">日本偷襲珍珠港使美國放棄孤立主義，投入二戰。原子彈終結太平洋戰爭，美國確立全球超強地位。</div>
+          <div class="tl-expand">美國在歐洲戰場策劃諾曼第登陸（1944），在太平洋島嶼逐步推進。1945 年在廣島與長崎投下兩枚原子彈，日本無條件投降。戰後美國主導建立聯合國、世界銀行、IMF，成為戰後世界秩序的主設計師。同時對日本、西德展開佔領與民主改造。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--teal)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-teal">冷戰時代</div>
+          <div class="tl-year">1947 – 1991</div>
+          <div class="tl-title">美蘇冷戰：意識形態的全球對決</div>
+          <div class="tl-desc">美（資本主義民主）vs 蘇聯（共產主義），在核威懾下展開太空競賽、代理人戰爭、情報鬥爭，長達 44 年。</div>
+          <div class="tl-expand">重要節點：1950–53 韓戰（美軍阻止共產勢力南下）、1962 古巴飛彈危機（最接近核戰的一刻）、1965–73 越戰（美國首次在戰場上失敗）、1969 阿波羅 11 號登月（太空競賽勝利）。1989 年柏林圍牆倒塌，1991 年蘇聯解體，冷戰終結，美國成為世界唯一超強。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--green)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-green">民權運動</div>
+          <div class="tl-year">1954 – 1968</div>
+          <div class="tl-title">馬丁·路德·金恩與民權運動</div>
+          <div class="tl-desc">黑人以非暴力抗爭反對種族隔離，推動《民權法案》（1964）與《投票權法案》（1965）通過，實現法律上的種族平等。</div>
+          <div class="tl-expand">關鍵事件：1955 蒙哥馬利公車抵制、1963 「我有一個夢想」演講（約 25 萬人在華盛頓聆聽）、1964 《民權法案》禁止種族歧視。金恩在 1968 年被暗殺，引發全美暴動。民權運動的成功被視為美國民主自我修正能力的體現，也啟發了後來的女性主義、LGBTQ 平權等社會運動。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--red)"></div>
+        <div class="tl-card" onclick="toggleExpand(this)">
+          <div class="tl-era color-red">當代</div>
+          <div class="tl-year">2001 年 9 月 11 日</div>
+          <div class="tl-title">911 恐攻，改變世界的一天</div>
+          <div class="tl-desc">蓋達組織劫持四架飛機，撞毀世貿雙塔，造成近 3,000 人死亡，引發「反恐戰爭」，深刻改變美國的內政外交。</div>
+          <div class="tl-expand">911 之後美國入侵阿富汗（2001）與伊拉克（2003），開啟長達二十年的「全球反恐戰爭」，耗費數兆美元。《愛國者法案》大幅擴大政府監控權力，引發公民自由爭議。2021 年美軍撤出阿富汗，塔利班重新掌權，被廣泛視為一場代價慘重的失敗。</div>
+          <div class="tl-toggle">▼ 展開詳情</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== TAB: 關鍵人物 ===== -->
+  <div id="tab-figures" class="tab-panel">
+    <div class="section-intro">
+      這些人物不只改變了美國，也改變了整個世界的走向。認識他們，就掌握了理解美國歷史的捷徑。
+    </div>
+
+    <div class="figure-grid">
+
+      <div class="figure-card">
+        <div class="figure-avatar">🎖️</div>
+        <div class="figure-name">喬治·華盛頓</div>
+        <div class="figure-role">首任總統（1789–1797）</div>
+        <div class="figure-desc">獨立戰爭統帥，帶領殖民地打敗英軍。最重要的貢獻是任滿兩屆後主動交權，樹立「總統有任期限制」的民主典範，被稱為「美國國父」。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">✍️</div>
+        <div class="figure-name">托馬斯·傑佛遜</div>
+        <div class="figure-role">第三任總統／《獨立宣言》起草人</div>
+        <div class="figure-desc">啟蒙思想信奉者，寫下「人生而平等」。推動路易斯安那購地使國土倍增。然而本人擁有逾 600 名奴隸，是美國歷史理想與現實矛盾的最佳象徵。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🎩</div>
+        <div class="figure-name">亞伯拉罕·林肯</div>
+        <div class="figure-role">第 16 任總統（1861–1865）</div>
+        <div class="figure-desc">南北戰爭中堅持維護聯邦統一，發布《解放奴隸宣言》。被暗殺身亡，成為美國史上最受敬愛的總統，象徵國家的犧牲與重生。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🛢️</div>
+        <div class="figure-name">約翰·洛克斐勒</div>
+        <div class="figure-role">標準石油公司創辦人</div>
+        <div class="figure-desc">史上最富有的美國人（以通膨調整後計算）。壟斷全美 90% 石油，被迫拆解後反而造就更多財富。慈善捐贈奠定了現代基金會模式。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🦽</div>
+        <div class="figure-name">富蘭克林·羅斯福（FDR）</div>
+        <div class="figure-role">第 32 任總統（1933–1945）</div>
+        <div class="figure-desc">身患小兒麻痺卻四度當選。以「新政」帶領美國走出大蕭條，領導二戰贏得勝利。大幅擴大聯邦政府職能，是 20 世紀影響最深遠的美國總統。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">✊</div>
+        <div class="figure-name">馬丁·路德·金恩</div>
+        <div class="figure-role">民權運動領袖</div>
+        <div class="figure-desc">以甘地式非暴力抗爭推動種族平等。「我有一個夢想」演講感動全美，促成《民權法案》通過。1968 年遭暗殺，成為美國良知的永恆象徵。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🚀</div>
+        <div class="figure-name">約翰·甘迺迪</div>
+        <div class="figure-role">第 35 任總統（1961–1963）</div>
+        <div class="figure-desc">宣布阿波羅登月計劃，成功解除古巴飛彈危機避免核戰。1963 年遇刺身亡，至今仍是美國最具魅力的政治偶像，暗殺謎團持續吸引世人關注。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🌹</div>
+        <div class="figure-name">羅莎·帕克斯</div>
+        <div class="figure-role">民權運動象徵</div>
+        <div class="figure-desc">1955 年拒絕在公車上讓座給白人乘客，遭到逮捕，引發蒙哥馬利公車抵制運動。她的一個「不」字成為對抗不公義最有力的示範。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🎬</div>
+        <div class="figure-name">隆納·雷根</div>
+        <div class="figure-role">第 40 任總統（1981–1989）</div>
+        <div class="figure-desc">前好萊塢演員，以「讓美國再次偉大」贏得選舉。強硬反蘇策略加速冷戰終結，大幅減稅的「雷根經濟學」至今仍是美國保守派的精神旗幟。</div>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-avatar">🏛️</div>
+        <div class="figure-name">貝拉克·歐巴馬</div>
+        <div class="figure-role">第 44 任總統（2009–2017）</div>
+        <div class="figure-desc">美國史上首位黑人總統，代表美國在種族平等道路上的里程碑。推行「歐巴馬健保」，從伊拉克撤軍，並在任內獲頒諾貝爾和平獎。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== TAB: 核心概念 ===== -->
+  <div id="tab-concepts" class="tab-panel">
+    <div class="section-intro">
+      這些概念是理解美國如何運作的基本框架，也是媒體報導美國新聞時最常出現的關鍵詞。
+    </div>
+
+    <div class="concept-list">
+
+      <div class="concept-card">
+        <div class="concept-icon">⚖️</div>
+        <div>
+          <div class="concept-title">三權分立與制衡</div>
+          <div class="concept-desc">美國政府分為行政（總統）、立法（參眾兩院）、司法（最高法院）三個獨立部門，互相制衡。任何一方都無法單獨行使全部權力。這個設計來自創建者對「暴君政治」的深刻恐懼。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">🗳️</div>
+        <div>
+          <div class="concept-title">兩黨制：民主黨 vs 共和黨</div>
+          <div class="concept-desc">美國政治由兩大黨主導。民主黨（左派）傾向政府介入、社會福利、多元包容；共和黨（右派）強調小政府、自由市場、傳統價值。兩黨激烈對立是美國當代政治最顯著的特徵。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">🏛️</div>
+        <div>
+          <div class="concept-title">聯邦制：聯邦政府 vs 州政府</div>
+          <div class="concept-desc">美國由 50 個州組成，各州擁有相當大的自治權（如教育、警察、部分稅收）。聯邦政府管理跨州事務與外交。正因如此，同樣在美國，不同州的法律可能差異極大（如大麻合法化、槍枝管制等）。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">📜</div>
+        <div>
+          <div class="concept-title">《權利法案》與修憲</div>
+          <div class="concept-desc">憲法前十條修正案保障言論自由、宗教自由、持槍權利、免受無理搜查等基本人權。美國憲法迄今共有 27 條修正案，修憲門檻極高（需 2/3 國會同意 + 3/4 州批准），反映了建國者對穩定性的重視。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">🌐</div>
+        <div>
+          <div class="concept-title">孤立主義 vs 全球主義</div>
+          <div class="concept-desc">美國外交政策長期在「不干涉他國事務」與「主導世界秩序」之間擺盪。兩次世界大戰將美國從孤立主義拉向全球參與，冷戰後更成為「世界警察」。近年民粹主義又引發新一波孤立主義回潮。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">⛓️</div>
+        <div>
+          <div class="concept-title">奴隸制的歷史遺緒</div>
+          <div class="concept-desc">奴隸制在 1865 年廢除，但其遺留的種族不平等問題延續至今，包括財富差距、教育機會、警察執法等各層面。2020 年喬治·佛洛伊德事件引發的「黑人的命也是命（BLM）」運動，是這段歷史在當代的延伸。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">🔫</div>
+        <div>
+          <div class="concept-title">槍枝文化與第二修正案</div>
+          <div class="concept-desc">憲法第二修正案保障「持有和攜帶武器的權利」，被保守派視為神聖不可侵犯。美國每年發生數萬起槍擊事件，管制槍枝的嘗試屢遭政治阻礙，是美國最難解的社會議題之一。</div>
+        </div>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-icon">💰</div>
+        <div>
+          <div class="concept-title">資本主義信仰與「美國夢」</div>
+          <div class="concept-desc">「任何人只要努力就能成功」的美國夢是美國文化的核心敘事，也是吸引全球移民的最大磁鐵。然而貧富差距不斷擴大，社會流動性下降，讓越來越多人質疑美國夢是否仍然可能實現。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== TAB: 重要戰爭 ===== -->
+  <div id="tab-wars" class="tab-panel">
+    <div class="section-intro">
+      美國在短短 250 年間打了無數場戰爭，每一場都塑造了當時的國家性格，也留下深遠影響。
+    </div>
+
+    <div class="era-grid">
+
+      <div class="era-card">
+        <div class="era-icon">🔔</div>
+        <div class="era-name">獨立戰爭</div>
+        <div class="era-period bg-gold">1775 – 1783</div>
+        <div class="era-desc"><strong>對陣：</strong>殖民地軍 vs 英國<br><strong>結果：</strong>美國贏，獨立建國<br><strong>意義：</strong>世界第一個民主共和國誕生，開啟全球民主革命浪潮。</div>
+        <div class="era-tags"><span class="tag">華盛頓</span><span class="tag">法軍助陣</span><span class="tag">約克鎮決戰</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">⚔️</div>
+        <div class="era-name">南北戰爭</div>
+        <div class="era-period bg-red">1861 – 1865</div>
+        <div class="era-desc"><strong>對陣：</strong>北方聯邦 vs 南方邦聯<br><strong>結果：</strong>北方勝，國家統一、奴隸獲解放<br><strong>意義：</strong>美國史上最慘烈戰爭，62 萬人死亡，決定了國家未來走向。</div>
+        <div class="era-tags"><span class="tag">林肯</span><span class="tag">葛底斯堡戰役</span><span class="tag">廢奴</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🌍</div>
+        <div class="era-name">第一次世界大戰</div>
+        <div class="era-period bg-blue">1917 – 1918（美國參戰）</div>
+        <div class="era-desc"><strong>對陣：</strong>協約國 vs 同盟國<br><strong>結果：</strong>協約國勝<br><strong>意義：</strong>美國首次大規模介入歐洲事務，威爾遜的「十四點計劃」奠定了國際秩序理念，卻因國內孤立主義而未能成功推行。</div>
+        <div class="era-tags"><span class="tag">威爾遜</span><span class="tag">國際聯盟</span><span class="tag">凡爾賽條約</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🌏</div>
+        <div class="era-name">第二次世界大戰</div>
+        <div class="era-period bg-blue">1941 – 1945</div>
+        <div class="era-desc"><strong>對陣：</strong>同盟國 vs 軸心國<br><strong>結果：</strong>同盟國勝<br><strong>意義：</strong>珍珠港事變讓美國參戰；諾曼第登陸解放歐洲；廣島、長崎原子彈結束太平洋戰爭。戰後美國成為全球霸主。</div>
+        <div class="era-tags"><span class="tag">FDR</span><span class="tag">艾森豪</span><span class="tag">原子彈</span><span class="tag">諾曼第</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🇰🇷</div>
+        <div class="era-name">韓戰</div>
+        <div class="era-period bg-teal">1950 – 1953</div>
+        <div class="era-desc"><strong>對陣：</strong>南韓＋美軍 vs 北韓＋中共軍<br><strong>結果：</strong>停戰、維持分治<br><strong>意義：</strong>冷戰第一場熱戰，以兩韓現狀收場，因缺乏戲劇性結局而被稱為「被遺忘的戰爭」。</div>
+        <div class="era-tags"><span class="tag">麥克阿瑟</span><span class="tag">三八線</span><span class="tag">中美直接衝突</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🌿</div>
+        <div class="era-name">越戰</div>
+        <div class="era-period bg-orange">1955 – 1975（美軍 1965–1973）</div>
+        <div class="era-desc"><strong>對陣：</strong>南越＋美軍 vs 北越＋越共<br><strong>結果：</strong>美軍撤退，南越最終淪陷<br><strong>意義：</strong>美國史上最具爭議的戰爭，58,000 名美軍陣亡，反戰運動撕裂國內社會，重創了美國的自信心與國際威信。</div>
+        <div class="era-tags"><span class="tag">詹森</span><span class="tag">尼克森</span><span class="tag">反戰運動</span><span class="tag">西貢淪陷</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🏜️</div>
+        <div class="era-name">波灣戰爭</div>
+        <div class="era-period bg-gold">1990 – 1991</div>
+        <div class="era-desc"><strong>對陣：</strong>聯合國多國聯軍 vs 伊拉克<br><strong>結果：</strong>100 小時地面戰速勝<br><strong>意義：</strong>冷戰後美國展示了壓倒性軍事優勢，建立「新世界秩序」的信心達到頂峰，電視直播改變了戰爭報導方式。</div>
+        <div class="era-tags"><span class="tag">老布希</span><span class="tag">CNN 直播</span><span class="tag">科威特解放</span></div>
+      </div>
+
+      <div class="era-card">
+        <div class="era-icon">🏔️</div>
+        <div class="era-name">阿富汗戰爭與伊拉克戰爭</div>
+        <div class="era-period bg-red">2001 – 2021 / 2003 – 2011</div>
+        <div class="era-desc"><strong>起因：</strong>911 恐攻引發「全球反恐戰爭」<br><strong>結果：</strong>未能達成民主改造目標，耗費逾 6 兆美元<br><strong>意義：</strong>美國深陷「反恐泥淖」二十年，動搖了美國在伊斯蘭世界的形象，也加速了中國崛起的相對優勢。</div>
+        <div class="era-tags"><span class="tag">小布希</span><span class="tag">賓拉登</span><span class="tag">塔利班</span><span class="tag">大規模毀滅性武器</span></div>
+      </div>
+
+    </div>
+
+    <div class="highlight-box" style="margin-top: 32px;">
+      <p><strong>📊 美國戰爭代價一覽（估計）：</strong><br>
+      南北戰爭 62 萬人陣亡 → 一戰 11.7 萬 → 二戰 40.5 萬 → 韓戰 3.6 萬 → 越戰 5.8 萬 → 波灣戰爭 383 人 → 阿富汗＋伊拉克戰爭 7,000 餘人。
+      美軍死亡人數逐步下降，反映科技優勢提升，但戰爭財政負擔與政治後遺症卻越來越沉重。</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleExpand(card) {
+    const isExpanded = card.classList.contains('expanded');
+    card.classList.toggle('expanded');
+    const toggle = card.querySelector('.tl-toggle');
+    toggle.textContent = isExpanded ? '▼ 展開詳情' : '▲ 收起';
+  }
+</script>
+
+</body>
+</html>
