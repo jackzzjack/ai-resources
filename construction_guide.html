@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>建築工程知識庫 | Construction Guide</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1a1a24;
+  --border: #2a2a3a;
+  --accent: #7c6aff;
+  --accent2: #a594ff;
+  --text: #e8e8f0;
+  --muted: #888899;
+  --success: #4ade80;
+  --warning: #facc15;
+  --danger: #f87171;
+  --info: #60a5fa;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Noto Sans TC', sans-serif;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+a { color: var(--accent2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Header */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header h1 {
+  font-size: 1.4rem;
+  color: var(--accent2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-link {
+  font-size: 0.85rem;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.back-link:hover {
+  color: var(--accent2);
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #0d0d18 0%, #13131a 50%, #0f0f1a 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+}
+.hero h2 {
+  font-size: 2.2rem;
+  background: linear-gradient(120deg, var(--accent), var(--accent2), #c4b5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.8rem;
+}
+.hero p {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  padding: 0 2rem;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 1rem 1.4rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--accent2);
+  border-bottom-color: var(--accent);
+}
+
+/* Tab Content */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Main layout */
+.main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+/* Section title */
+.section-title {
+  font-size: 1.5rem;
+  color: var(--accent2);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-subtitle {
+  color: var(--muted);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* Cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Expandable card */
+.expand-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.expand-card:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(124,106,255,0.1); }
+.expand-card.open { border-color: var(--accent); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  cursor: pointer;
+  user-select: none;
+}
+.card-icon {
+  font-size: 1.8rem;
+  width: 48px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.card-title-group { flex: 1; }
+.card-title { font-size: 1.05rem; font-weight: 600; color: var(--text); }
+.card-subtitle { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+.card-toggle {
+  color: var(--accent);
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+}
+.expand-card.open .card-toggle { transform: rotate(180deg); }
+
+.card-body {
+  display: none;
+  padding: 0 1.4rem 1.4rem;
+  border-top: 1px solid var(--border);
+}
+.expand-card.open .card-body { display: block; }
+
+.card-body h4 {
+  color: var(--accent2);
+  margin: 1rem 0 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.card-body p { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.5rem; }
+.card-body ul { padding-left: 1.2rem; }
+.card-body li { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.3rem; }
+.card-body li strong { color: var(--text); }
+
+/* Tags */
+.tag-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.tag {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.tag-green { border-color: var(--success); color: var(--success); background: rgba(74,222,128,0.08); }
+.tag-yellow { border-color: var(--warning); color: var(--warning); background: rgba(250,204,21,0.08); }
+.tag-red { border-color: var(--danger); color: var(--danger); background: rgba(248,113,113,0.08); }
+.tag-blue { border-color: var(--info); color: var(--info); background: rgba(96,165,250,0.08); }
+.tag-purple { border-color: var(--accent); color: var(--accent2); background: rgba(124,106,255,0.08); }
+
+/* Flow diagram */
+.flow-section { margin-bottom: 2.5rem; }
+.flow-title {
+  font-size: 1.1rem;
+  color: var(--accent2);
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+}
+.flow-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+}
+.flow-step {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  min-width: 130px;
+  text-align: center;
+  position: relative;
+}
+.flow-step-num {
+  font-size: 0.7rem;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+.flow-step-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+}
+.flow-step-desc {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.flow-arrow {
+  color: var(--accent);
+  font-size: 1.3rem;
+  padding: 0 0.3rem;
+  flex-shrink: 0;
+}
+.flow-row-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+/* Comparison table */
+.compare-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.compare-table th {
+  background: var(--surface2);
+  color: var(--accent2);
+  padding: 0.9rem 1.1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.compare-table td {
+  padding: 0.8rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(124,106,255,0.04); }
+.compare-table td:first-child { color: var(--text); font-weight: 600; }
+
+/* Rating bars */
+.rating-bar-wrap { display: flex; align-items: center; gap: 0.5rem; }
+.rating-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+  flex: 1;
+  min-width: 80px;
+  overflow: hidden;
+}
+.rating-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.8s ease;
+}
+.rating-label { font-size: 0.75rem; color: var(--muted); min-width: 24px; }
+
+/* Info box */
+.info-box {
+  background: rgba(124,106,255,0.08);
+  border: 1px solid rgba(124,106,255,0.3);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.info-box strong { color: var(--accent2); }
+.info-box p { color: var(--muted); font-size: 0.9rem; margin-top: 0.3rem; }
+
+.warning-box {
+  background: rgba(250,204,21,0.07);
+  border: 1px solid rgba(250,204,21,0.3);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.warning-box strong { color: var(--warning); }
+.warning-box p { color: var(--muted); font-size: 0.9rem; margin-top: 0.3rem; }
+
+/* Grid 2 cols */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Panel block */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.4rem;
+}
+.panel h3 {
+  color: var(--accent2);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.panel ul { padding-left: 1.2rem; }
+.panel li { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.4rem; }
+.panel li strong { color: var(--text); }
+
+/* Stage timeline */
+.timeline { position: relative; padding-left: 2rem; margin-bottom: 2rem; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent), transparent);
+}
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-dot {
+  position: absolute;
+  left: -1.65rem;
+  top: 0.35rem;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 8px var(--accent);
+}
+.tl-title { color: var(--text); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.3rem; }
+.tl-body { color: var(--muted); font-size: 0.87rem; }
+
+/* Highlight stat row */
+.stat-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.4rem;
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+}
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent2);
+  line-height: 1.2;
+}
+.stat-unit { font-size: 0.8rem; color: var(--muted); }
+.stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-left: 0.4rem;
+}
+.badge-accent { background: rgba(124,106,255,0.2); color: var(--accent2); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+}
+
+@media (max-width: 600px) {
+  .hero h2 { font-size: 1.5rem; }
+  .main { padding: 1rem; }
+  .tab-btn { padding: 0.8rem 0.9rem; font-size: 0.85rem; }
+  .flow-container { gap: 0.3rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>🏗️ 建築工程知識庫</h1>
+  <a href="index.html" class="back-link">← 返回首頁</a>
+</header>
+
+<div class="hero">
+  <h2>建築工程知識庫</h2>
+  <p>從地鐵捷運到住宅大樓，探索現代建築工程的核心技術、施工流程與工法比較</p>
+</div>
+
+<!-- Tab Navigation -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('metro')">🚇 如何蓋捷運</button>
+  <button class="tab-btn" onclick="switchTab('building')">🏢 如何蓋房子</button>
+  <button class="tab-btn" onclick="switchTab('compare')">📊 工法比較</button>
+  <button class="tab-btn" onclick="switchTab('common')">🔧 共通技術</button>
+</nav>
+
+<!-- ==================== TAB 1: 捷運 ==================== -->
+<div id="tab-metro" class="tab-content active">
+<div class="main">
+
+  <h2 class="section-title">🚇 捷運建設全流程</h2>
+  <p class="section-subtitle">從規劃到通車，一條捷運線的誕生需要數年乃至十年以上的努力</p>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-value">8–15</div>
+      <div class="stat-unit">年</div>
+      <div class="stat-label">平均建設週期</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">20–80</div>
+      <div class="stat-unit">億/km</div>
+      <div class="stat-label">地下段造價（新台幣）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">5–15</div>
+      <div class="stat-unit">億/km</div>
+      <div class="stat-label">高架段造價（新台幣）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">6–10</div>
+      <div class="stat-unit">m</div>
+      <div class="stat-label">標準隧道內徑</div>
+    </div>
+  </div>
+
+  <!-- 建設流程 -->
+  <div class="flow-section">
+    <div class="flow-title">📋 捷運建設六大階段</div>
+    <div class="flow-row-wrap">
+      <div class="flow-step">
+        <div class="flow-step-num">PHASE 01</div>
+        <div class="flow-step-name">可行性研究</div>
+        <div class="flow-step-desc">需求評估<br>財務分析</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">PHASE 02</div>
+        <div class="flow-step-name">路線規劃</div>
+        <div class="flow-step-desc">路廊選定<br>地質鑽探</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">PHASE 03</div>
+        <div class="flow-step-name">環境影響評估</div>
+        <div class="flow-step-desc">環評審查<br>公聽說明</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">PHASE 04</div>
+        <div class="flow-step-name">細部設計</div>
+        <div class="flow-step-desc">結構設計<br>機電規劃</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">PHASE 05</div>
+        <div class="flow-step-name">土木施工</div>
+        <div class="flow-step-desc">隧道挖掘<br>車站興建</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">PHASE 06</div>
+        <div class="flow-step-name">系統整合與試運轉</div>
+        <div class="flow-step-desc">軌道鋪設<br>正式通車</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 地下段流程 -->
+  <div class="flow-section">
+    <div class="flow-title">🕳️ 地下段施工詳細流程（以潛盾工法為例）</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">地質調查與前置作業</div>
+        <div class="tl-body">進行鑽孔取樣、地下水位量測、既有地下管線探測。依土質狀況（砂土、礫石、軟岩）選定潛盾機型。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">工作井（發進井）施作</div>
+        <div class="tl-body">以連續壁或鋼板樁圍束工作井，開挖至設計深度，安裝反力牆與始發架，供潛盾機組裝下放。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">潛盾機推進</div>
+        <div class="tl-body">刀盤旋轉切削土體，千斤頂頂推前進，同步在尾部組立預鑄混凝土管片（Segment）形成隧道環。每環推進約 1.5 m，注入豆礫石回填盾尾空隙。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">隧道二次襯砌與防水</div>
+        <div class="tl-body">管片內側施作二次現澆混凝土，並進行防水膜貼附、接縫填縫作業，確保隧道長期防水性。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">車站本體開挖（明挖或深開挖）</div>
+        <div class="tl-body">地鐵車站多以「明挖覆蓋法」施作，先施打連續壁，分層開挖並架設臨時支撐，待底版澆置後由下而上逐層施作樓版。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">機電系統安裝</div>
+        <div class="tl-body">軌道、電力（第三軌或架空線）、信號（CBTC）、通訊、月台門（PSD）、空調、消防及逃生系統全面安裝。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">測試驗收與試運轉</div>
+        <div class="tl-body">動態測試（空車）→ 模擬載客測試 → 正式通車。依各國規定，試運轉期通常需 3–6 個月。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高架段流程 -->
+  <div class="flow-section">
+    <div class="flow-title">🌉 高架段施工詳細流程</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">基樁施工</div>
+        <div class="tl-body">以鑽掘樁或場鑄樁深入持力層，樁徑通常 1.0–1.5 m，深度 20–40 m，需全程施工記錄與靜載試驗驗證。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">橋墩與帽梁施作</div>
+        <div class="tl-body">橋墩採 RC 或 PC 構造，依跨距設計帽梁（Cap Beam）。通常以爬模（Climbing Formwork）逐節澆置。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">上部結構架設</div>
+        <div class="tl-body">預鑄 U 型梁（U-Beam）為最常見選擇。以架橋機（Launching Gantry）逐跨架設，無需佔用地面交通。重量可達 200–400 噸/節。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">軌道版與道床施作</div>
+        <div class="tl-body">高架段可採道碴道床或無道碴混凝土道床（Ballastless Track），後者維護需求更低、適合城市高架環境。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-title">高架車站興建</div>
+        <div class="tl-body">月台層位於高架橋上方，站體通常為鋼構或 RC 框架，需考量側風及地震水平力設計，並配合月台門系統。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 工法卡片 -->
+  <h2 class="section-title">⚙️ 三大主要工法詳解</h2>
+  <p class="section-subtitle">點擊卡片可展開詳細說明</p>
+
+  <div class="cards-grid">
+
+    <!-- TBM -->
+    <div class="expand-card" id="card-tbm">
+      <div class="card-header" onclick="toggleCard('card-tbm')">
+        <div class="card-icon">🔩</div>
+        <div class="card-title-group">
+          <div class="card-title">潛盾工法（TBM）</div>
+          <div class="card-subtitle">Tunnel Boring Machine</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>工法原理</h4>
+        <p>潛盾機由圓形刀盤旋轉切削土體，機身中千斤頂頂推前進，同時在尾部組裝預鑄混凝土管片形成隧道壁。全程封閉式施工，對地表幾乎無影響。</p>
+        <h4>主要機型</h4>
+        <ul>
+          <li><strong>泥土加壓式（EPB）</strong> — 適合黏土、砂土，以土壓平衡地下水壓</li>
+          <li><strong>泥水加壓式（Slurry TBM）</strong> — 適合高滲透性砂礫、水下施工</li>
+          <li><strong>岩石 TBM（Open TBM）</strong> — 適合硬岩地層，推進速度快</li>
+        </ul>
+        <h4>技術要點</h4>
+        <ul>
+          <li><strong>刀盤磨耗管理</strong> — 更換刀具需在高氣壓環境作業（壓氣工法）</li>
+          <li><strong>地中對接</strong> — 兩台 TBM 在地中對接，精度要求 ±50 mm</li>
+          <li><strong>管片組裝</strong> — 每環由 5–7 片管片構成，拼裝精度決定隧道線形</li>
+          <li><strong>尾縫注漿</strong> — 即時回填盾尾空隙，防止地表沉陷</li>
+        </ul>
+        <h4>優勢</h4>
+        <ul>
+          <li>對地表影響極小，適合市區施工</li>
+          <li>工作環境相對安全，全機械化</li>
+          <li>可穿越道路、建築物下方</li>
+        </ul>
+        <h4>限制</h4>
+        <ul>
+          <li>設備造價高（每台 TBM 約 3–10 億台幣）</li>
+          <li>遇到障礙物或地質突變需特殊處理</li>
+          <li>半徑小的曲線段（R &lt; 200m）施工困難</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-green">地下段專用</span>
+          <span class="tag tag-blue">市區首選</span>
+          <span class="tag tag-yellow">高成本</span>
+          <span class="tag tag-green">低地表干擾</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cut & Cover -->
+    <div class="expand-card" id="card-cutcover">
+      <div class="card-header" onclick="toggleCard('card-cutcover')">
+        <div class="card-icon">🏗️</div>
+        <div class="card-title-group">
+          <div class="card-title">明挖覆蓋法</div>
+          <div class="card-subtitle">Cut & Cover Method</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>工法原理</h4>
+        <p>先在地面開挖溝槽或基坑，施作地下結構後再覆蓋回填地面，恢復地表使用。是最傳統的地下空間施工方式。</p>
+        <h4>兩種做法</h4>
+        <ul>
+          <li><strong>由上而下法（Top-Down）</strong> — 先施作頂版，再向下開挖，可提早回復地面使用，適合交通繁忙路段</li>
+          <li><strong>由下而上法（Bottom-Up）</strong> — 完全開挖後由底部向上施作結構，工序較單純但開挖期間地面完全封閉</li>
+        </ul>
+        <h4>支撐系統</h4>
+        <ul>
+          <li><strong>連續壁</strong> — 最常見，兼作永久擋土牆，深度可達 40–60 m</li>
+          <li><strong>鋼板樁</strong> — 成本較低，適合淺層開挖</li>
+          <li><strong>橫向支撐</strong> — H 型鋼或預力錨碇，防止連續壁向內位移</li>
+        </ul>
+        <h4>適用場景</h4>
+        <ul>
+          <li>淺層地下（深度 &lt; 20 m）車站或隧道</li>
+          <li>開放空間或寬闊路幅路段</li>
+          <li>需要大跨距空間的車站廳層</li>
+        </ul>
+        <h4>缺點</h4>
+        <ul>
+          <li>施工期間嚴重影響地面交通</li>
+          <li>周邊地盤沉陷風險，對鄰近建築物影響大</li>
+          <li>地下水處理複雜，需持續抽水</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-green">適合車站</span>
+          <span class="tag tag-yellow">交通影響大</span>
+          <span class="tag tag-blue">淺層施工</span>
+          <span class="tag tag-green">工序彈性</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Immersed Tube -->
+    <div class="expand-card" id="card-immersed">
+      <div class="card-header" onclick="toggleCard('card-immersed')">
+        <div class="card-icon">🌊</div>
+        <div class="card-title-group">
+          <div class="card-title">沉埋管段法</div>
+          <div class="card-subtitle">Immersed Tube Tunneling</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>工法原理</h4>
+        <p>在乾塢（Dry Dock）或船塢預製鋼筋混凝土或鋼製管段（Element），封端後浮運至施工水域，沉放至預先挖掘的河床溝槽，逐段對接並回填覆蓋。</p>
+        <h4>施工步驟</h4>
+        <ul>
+          <li><strong>疏浚與基礎處理</strong> — 挖掘水底溝槽，以砂石整平基礎</li>
+          <li><strong>管段預製</strong> — 岸上製作長 60–150 m 管段，內含防水系統</li>
+          <li><strong>浮運沉放</strong> — 控制注水速度精確沉放，精度 ±50 mm</li>
+          <li><strong>水下對接</strong> — 壓縮兩管段端部橡皮墊圈，排水完成連接</li>
+          <li><strong>回填保護</strong> — 回填砂石或拋石保護管頂，防止船錨損傷</li>
+        </ul>
+        <h4>適用場景</h4>
+        <ul>
+          <li>河流、港灣、海峽穿越</li>
+          <li>水深適中（5–50 m）且水底軟弱無法承受 TBM 的地點</li>
+          <li>大斷面穿越（可做雙向多車道）</li>
+        </ul>
+        <h4>技術挑戰</h4>
+        <ul>
+          <li>對接精度要求極高，需 GPS 水下定位輔助</li>
+          <li>施工期間需避讓船運交通</li>
+          <li>強流、惡劣天候對沉放作業影響大</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-blue">水下穿越</span>
+          <span class="tag tag-green">大斷面適用</span>
+          <span class="tag tag-yellow">技術複雜</span>
+          <span class="tag tag-purple">特殊場景</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NATM -->
+    <div class="expand-card" id="card-natm">
+      <div class="card-header" onclick="toggleCard('card-natm')">
+        <div class="card-icon">⛏️</div>
+        <div class="card-title-group">
+          <div class="card-title">新奧工法（NATM）</div>
+          <div class="card-subtitle">New Austrian Tunnelling Method</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>工法原理</h4>
+        <p>利用岩土自身的承載能力，以爆破或機械挖掘後快速噴射混凝土（Shotcrete）+ 岩栓（Rock Bolt）臨時支撐，隨時監測圍岩變形，適時施作永久二次噴凝土或現澆混凝土內殼。</p>
+        <h4>核心概念</h4>
+        <ul>
+          <li><strong>圍岩承重</strong> — 讓圍岩參與結構，形成「天然承載拱」</li>
+          <li><strong>即時監測</strong> — 收斂計、水平儀持續量測隧道變形</li>
+          <li><strong>彈性施工</strong> — 依量測結果即時調整支撐設計</li>
+        </ul>
+        <h4>適用場景</h4>
+        <ul>
+          <li>岩盤隧道（公路、鐵路）</li>
+          <li>地下車站擴挖、導坑先進</li>
+          <li>地質多變段，無法預鑄管片</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-purple">岩盤地層</span>
+          <span class="tag tag-green">彈性設計</span>
+          <span class="tag tag-blue">山嶺隧道</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end cards-grid -->
+
+</div><!-- end main -->
+</div><!-- end tab-metro -->
+
+<!-- ==================== TAB 2: 房子 ==================== -->
+<div id="tab-building" class="tab-content">
+<div class="main">
+
+  <h2 class="section-title">🏢 房屋建設全流程</h2>
+  <p class="section-subtitle">從一塊土地到可居住的建築，了解每個施工階段的關鍵技術</p>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-value">18–36</div>
+      <div class="stat-unit">個月</div>
+      <div class="stat-label">典型建案工期（大樓）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">5–20</div>
+      <div class="stat-unit">萬/坪</div>
+      <div class="stat-label">建造成本（不含地價）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">50+</div>
+      <div class="stat-unit">年</div>
+      <div class="stat-label">RC/SRC 設計使用年限</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">0.3g</div>
+      <div class="stat-unit">地震加速度</div>
+      <div class="stat-label">台灣建築最低耐震標準</div>
+    </div>
+  </div>
+
+  <!-- 建設流程 -->
+  <div class="flow-section">
+    <div class="flow-title">📋 房屋建設七大階段</div>
+    <div class="flow-row-wrap">
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 01</div>
+        <div class="flow-step-name">規劃設計</div>
+        <div class="flow-step-desc">建照申請<br>設計圖說</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 02</div>
+        <div class="flow-step-name">地基工程</div>
+        <div class="flow-step-desc">地質鑽探<br>基樁施作</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 03</div>
+        <div class="flow-step-name">地下室開挖</div>
+        <div class="flow-step-desc">擋土壁<br>地下各層</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 04</div>
+        <div class="flow-step-name">結構體工程</div>
+        <div class="flow-step-desc">柱梁版板<br>逐層施作</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 05</div>
+        <div class="flow-step-name">外殼工程</div>
+        <div class="flow-step-desc">外牆帷幕<br>屋頂防水</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 06</div>
+        <div class="flow-step-name">機電管線</div>
+        <div class="flow-step-desc">水電消防<br>空調弱電</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">STAGE 07</div>
+        <div class="flow-step-name">裝修完工</div>
+        <div class="flow-step-desc">隔間粉刷<br>驗收交屋</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 詳細分解 -->
+  <div class="grid-2">
+    <div>
+      <div class="flow-title">🏗️ 地基工程詳解</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">地質調查（Site Investigation）</div>
+          <div class="tl-body">鑽孔採樣（SPT 標準貫入試驗）、土壤顆粒分析、液化潛能評估，決定基礎型式。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">基樁選型與施作</div>
+          <div class="tl-body">
+            • <strong>預鑄樁</strong>：PC 或 PHC 預力樁，錘擊或靜壓打入<br>
+            • <strong>場鑄樁</strong>：鑽孔後灌漿，承載力大，適合高層建築<br>
+            • <strong>地梁</strong>：連結各基樁，使基礎共同承受側向力
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">擋土措施</div>
+          <div class="tl-body">依開挖深度選用：鋼板樁（&lt;5m）、H 型鋼+木擋板（5–10m）、連續壁（&gt;10m）。設計需考量周邊建築保護。</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="flow-title">🏛️ 結構體施工重點</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">模板工程</div>
+          <div class="tl-body">傳統木模、系統模板（快拆系統）或飛模（Table Form）。模板精度直接影響混凝土外觀與尺寸。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">鋼筋組裝</div>
+          <div class="tl-body">依結構計算圖說配置鋼筋，嚴格控制保護層厚度（3–4 cm）、搭接長度（40–60 倍直徑），確保耐久性。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">混凝土澆置與養護</div>
+          <div class="tl-body">使用預拌混凝土（3000–6000 psi）、泵送澆置，振動棒搗實，養護至少 28 天達設計強度，留置試體進行抗壓試驗。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">鋼構吊裝（若採 SC/SRC）</div>
+          <div class="tl-body">以塔吊吊裝預製鋼構件，現場焊接或高強度螺栓接合，超音波探傷確認銲接品質。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 結構系統卡片 -->
+  <h2 class="section-title">🏛️ 四大主要結構系統</h2>
+  <p class="section-subtitle">不同結構系統各有其適用場景與特性，點擊展開比較</p>
+
+  <div class="cards-grid">
+
+    <!-- RC -->
+    <div class="expand-card" id="card-rc">
+      <div class="card-header" onclick="toggleCard('card-rc')">
+        <div class="card-icon">🧱</div>
+        <div class="card-title-group">
+          <div class="card-title">鋼筋混凝土 RC</div>
+          <div class="card-subtitle">Reinforced Concrete</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>構造原理</h4>
+        <p>以混凝土承壓、鋼筋抗拉，形成複合材料。混凝土抗壓強度可達 280–420 kgf/cm²，鋼筋降伏強度 SD420 = 4200 kgf/cm²。</p>
+        <h4>適用範圍</h4>
+        <ul>
+          <li>1–20 層中低層住宅、商辦</li>
+          <li>台灣最普遍的建築結構系統</li>
+          <li>住宅公寓、透天厝</li>
+        </ul>
+        <h4>施工注意</h4>
+        <ul>
+          <li><strong>鋼筋保護層</strong> — 防鏽關鍵，室外 4–6 cm</li>
+          <li><strong>混凝土水灰比</strong> — 影響強度與耐久性，&lt;0.45 為宜</li>
+          <li><strong>養護時間</strong> — 7 天初期養護不可省略</li>
+          <li><strong>施工縫</strong> — 需正確處理，避免滲水裂縫</li>
+        </ul>
+        <h4>優缺點</h4>
+        <ul>
+          <li><strong>優：</strong>成本低、防火佳、施工簡單、耐久性好</li>
+          <li><strong>缺：</strong>自重大、施工期長（需養護）、難以大跨距</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-green">台灣主流</span>
+          <span class="tag tag-green">防火佳</span>
+          <span class="tag tag-blue">成本低</span>
+          <span class="tag tag-yellow">工期較長</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SC 鋼構 -->
+    <div class="expand-card" id="card-sc">
+      <div class="card-header" onclick="toggleCard('card-sc')">
+        <div class="card-icon">🔩</div>
+        <div class="card-title-group">
+          <div class="card-title">鋼構造 SC</div>
+          <div class="card-subtitle">Steel Construction</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>構造原理</h4>
+        <p>以 H 型鋼、箱型柱、鋼梁等鋼鐵構件為主體結構，現場以高強螺栓（F10T、F11T）或熔接（SMAW、FCAW）接合。</p>
+        <h4>適用範圍</h4>
+        <ul>
+          <li>超高層大樓（20 層以上）</li>
+          <li>大跨距廠房、體育館、展覽館</li>
+          <li>橋梁、工業設施</li>
+        </ul>
+        <h4>高層鋼構特殊技術</h4>
+        <ul>
+          <li><strong>阻尼器</strong> — 黏性流體阻尼器或摩擦阻尼器減少地震與風力振動</li>
+          <li><strong>調諧質量阻尼器（TMD）</strong> — 台北 101 採 660 噸鋼球 TMD</li>
+          <li><strong>耐火塗料</strong> — 鋼材需噴塗膨脹型防火漆，耐火時數 1–4 hr</li>
+        </ul>
+        <h4>優缺點</h4>
+        <ul>
+          <li><strong>優：</strong>重量輕、工廠預製品質穩定、工期短、大跨距</li>
+          <li><strong>缺：</strong>造價高、需防火處理、腐蝕防護維護成本高</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-purple">超高層</span>
+          <span class="tag tag-green">工期短</span>
+          <span class="tag tag-red">需防火處理</span>
+          <span class="tag tag-yellow">造價高</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SRC -->
+    <div class="expand-card" id="card-src">
+      <div class="card-header" onclick="toggleCard('card-src')">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title-group">
+          <div class="card-title">鋼骨鋼筋混凝土 SRC</div>
+          <div class="card-subtitle">Steel Reinforced Concrete</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>構造原理</h4>
+        <p>在鋼骨柱梁外側配置鋼筋並澆置混凝土，結合 RC 的防火耐久性與 SC 的高強度延展性，是台灣高層住宅最常見的選擇。</p>
+        <h4>適用範圍</h4>
+        <ul>
+          <li>15–60 層高層住宅大樓</li>
+          <li>需要高耐震性的地震帶建築</li>
+          <li>大跨距結構兼具防火需求</li>
+        </ul>
+        <h4>施工順序</h4>
+        <ul>
+          <li>吊裝鋼骨柱梁 → 配置鋼筋 → 立模 → 澆置混凝土</li>
+          <li>鋼骨兼作鋼筋籠，簡化施工流程</li>
+          <li>可用鋼骨作為工作平台，加速施工</li>
+        </ul>
+        <h4>優缺點</h4>
+        <ul>
+          <li><strong>優：</strong>強度最高、耐震優秀、防火性好、延展性佳</li>
+          <li><strong>缺：</strong>施工最複雜、造價最高、需同時具備 SC 與 RC 工班</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-green">台灣高層首選</span>
+          <span class="tag tag-green">最高強度</span>
+          <span class="tag tag-yellow">造價最高</span>
+          <span class="tag tag-green">防震防火</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLT 木構造 -->
+    <div class="expand-card" id="card-clt">
+      <div class="card-header" onclick="toggleCard('card-clt')">
+        <div class="card-icon">🌲</div>
+        <div class="card-title-group">
+          <div class="card-title">正交集成木板 CLT</div>
+          <div class="card-subtitle">Cross Laminated Timber</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>構造原理</h4>
+        <p>將木材以正交方向膠合成大尺寸板材，具備雙向承載能力。每層木紋方向交替 90°，消除木材異向性缺點。可用於樓版、牆板與屋頂版。</p>
+        <h4>全球案例</h4>
+        <ul>
+          <li><strong>Brock Commons（加拿大）</strong> — 18 層 CLT 學生宿舍</li>
+          <li><strong>Mjøstårnet（挪威）</strong> — 85 m 全木造混合結構</li>
+          <li><strong>台灣</strong> — 目前以 3–6 層試辦建築為主，法規逐步放寬</li>
+        </ul>
+        <h4>特點</h4>
+        <ul>
+          <li><strong>碳固存</strong> — 每 m³ CLT 固存約 0.9 噸 CO₂，為碳負材料</li>
+          <li><strong>重量輕</strong> — 比 RC 輕 4–5 倍，基礎負擔小</li>
+          <li><strong>預製化</strong> — 工廠 CNC 加工，現場乾式組裝，工期極短</li>
+          <li><strong>防火</strong> — 大截面木材外層炭化後保護內部，有一定耐火性</li>
+        </ul>
+        <h4>限制</h4>
+        <ul>
+          <li>台灣木材需大量進口，造價偏高</li>
+          <li>潮濕環境防腐處理要求高</li>
+          <li>高層應用在台灣法規尚未完整開放</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-green">低碳永續</span>
+          <span class="tag tag-blue">工期快</span>
+          <span class="tag tag-yellow">成本偏高</span>
+          <span class="tag tag-green">輕量化</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end cards-grid -->
+
+  <!-- 裝修階段說明 -->
+  <hr class="divider">
+  <div class="flow-title">🎨 裝修工程流程（室內裝修標準順序）</div>
+  <div class="info-box">
+    <strong>重要原則：</strong>
+    <p>裝修工程必須依照「先隱蔽後表面」、「先溼作後乾作」、「先高後低、先粗後細」的順序進行，避免返工浪費。</p>
+  </div>
+  <div class="flow-row-wrap" style="gap:0.5rem; flex-wrap:wrap;">
+    <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-name">拆除舊裝修</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-name">水電管路配管</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-name">隔間牆施作</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-name">粗泥水（打底）</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-name">門窗框安裝</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">6</div><div class="flow-step-name">貼磁磚地板</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">7</div><div class="flow-step-name">細木作天花板</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">8</div><div class="flow-step-name">油漆塗裝</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">9</div><div class="flow-step-name">燈具設備安裝</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">10</div><div class="flow-step-name">清潔驗收</div></div>
+  </div>
+
+</div><!-- end main -->
+</div><!-- end tab-building -->
+
+<!-- ==================== TAB 3: 比較 ==================== -->
+<div id="tab-compare" class="tab-content">
+<div class="main">
+
+  <h2 class="section-title">📊 工法全面比較</h2>
+  <p class="section-subtitle">客觀評比各工法的關鍵指標，協助工程師選定最適工法</p>
+
+  <!-- 捷運工法比較 -->
+  <h3 style="color:var(--accent2); margin-bottom:1rem;">🚇 捷運工法比較矩陣</h3>
+
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th>潛盾工法 TBM</th>
+          <th>明挖覆蓋法 Cut & Cover</th>
+          <th>沉埋管段法 Immersed Tube</th>
+          <th>新奧工法 NATM</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>地表干擾</td>
+          <td><span class="tag tag-green">極低</span> 地面幾乎無影響</td>
+          <td><span class="tag tag-red">高</span> 長期封路施工</td>
+          <td><span class="tag tag-blue">水面施工</span> 陸地影響小</td>
+          <td><span class="tag tag-green">低</span> 山嶺地區無地面設施</td>
+        </tr>
+        <tr>
+          <td>適用地質</td>
+          <td>軟土～硬岩均可（依機型）</td>
+          <td>各類土質均可</td>
+          <td>河床/海底軟質地層</td>
+          <td>岩盤（RQD &gt; 50%）</td>
+        </tr>
+        <tr>
+          <td>典型施工速度</td>
+          <td>10–30 m/天</td>
+          <td>依開挖深度，工期較長</td>
+          <td>視管段製作速度</td>
+          <td>5–15 m/天</td>
+        </tr>
+        <tr>
+          <td>相對造價</td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:90%"></div></div>
+              <span class="rating-label">高</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:50%"></div></div>
+              <span class="rating-label">中</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:75%"></div></div>
+              <span class="rating-label">中高</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:40%"></div></div>
+              <span class="rating-label">低</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>施工安全性</td>
+          <td><span class="tag tag-green">高</span> 封閉式機械化</td>
+          <td><span class="tag tag-yellow">中</span> 開挖崩塌風險</td>
+          <td><span class="tag tag-yellow">中</span> 水下作業風險</td>
+          <td><span class="tag tag-yellow">中</span> 岩石爆破風險</td>
+        </tr>
+        <tr>
+          <td>斷面形狀彈性</td>
+          <td>固定圓形（受刀盤限制）</td>
+          <td>自由設計（矩形最常用）</td>
+          <td>矩形為主</td>
+          <td>可客製化（馬蹄形等）</td>
+        </tr>
+        <tr>
+          <td>埋深範圍</td>
+          <td>10–80 m（彈性最大）</td>
+          <td>5–20 m（淺層）</td>
+          <td>水面下 5–50 m</td>
+          <td>10–500 m（山嶺）</td>
+        </tr>
+        <tr>
+          <td>典型應用案例</td>
+          <td>台北捷運環狀線地下段<br>倫敦 Crossrail</td>
+          <td>台北捷運各站體<br>香港 MTR 淺層段</td>
+          <td>香港西隧（WKCD）<br>波士頓大挖掘</td>
+          <td>雪山隧道<br>阿爾卑斯山隧道</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 房屋結構比較 -->
+  <h3 style="color:var(--accent2); margin-bottom:1rem;">🏢 房屋結構系統比較矩陣</h3>
+
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th>RC 鋼筋混凝土</th>
+          <th>SC 鋼構</th>
+          <th>SRC 鋼骨鋼筋混凝土</th>
+          <th>CLT 木構造</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>結構強度</td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:60%"></div></div>
+              <span class="rating-label">中</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:85%"></div></div>
+              <span class="rating-label">高</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:100%"></div></div>
+              <span class="rating-label">最高</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:45%"></div></div>
+              <span class="rating-label">中低</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>耐震性能</td>
+          <td><span class="tag tag-yellow">中等</span> 依設計而定</td>
+          <td><span class="tag tag-green">高</span> 延展性佳</td>
+          <td><span class="tag tag-green">最佳</span> 延展+強度</td>
+          <td><span class="tag tag-yellow">中等</span> 需抗側系統</td>
+        </tr>
+        <tr>
+          <td>防火等級</td>
+          <td><span class="tag tag-green">優</span> 1–3 hr 自然耐火</td>
+          <td><span class="tag tag-red">需防護</span> 需防火塗料</td>
+          <td><span class="tag tag-green">佳</span> 混凝土保護鋼骨</td>
+          <td><span class="tag tag-yellow">中</span> 表面炭化保護</td>
+        </tr>
+        <tr>
+          <td>工期</td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:40%; background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
+              <span class="rating-label">慢</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:80%; background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
+              <span class="rating-label">快</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:65%; background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
+              <span class="rating-label">中快</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:90%; background:linear-gradient(90deg,#60a5fa,#93c5fd)"></div></div>
+              <span class="rating-label">最快</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>建造成本</td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:30%; background:linear-gradient(90deg,#4ade80,#86efac)"></div></div>
+              <span class="rating-label">最低</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:70%; background:linear-gradient(90deg,#4ade80,#86efac)"></div></div>
+              <span class="rating-label">高</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:90%; background:linear-gradient(90deg,#4ade80,#86efac)"></div></div>
+              <span class="rating-label">最高</span>
+            </div>
+          </td>
+          <td>
+            <div class="rating-bar-wrap">
+              <div class="rating-bar"><div class="rating-fill" style="width:60%; background:linear-gradient(90deg,#4ade80,#86efac)"></div></div>
+              <span class="rating-label">中高</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>自重</td>
+          <td>重（2400 kg/m³）</td>
+          <td>輕（7850 kg/m³ 但用量少）</td>
+          <td>中重</td>
+          <td>輕（500–600 kg/m³）</td>
+        </tr>
+        <tr>
+          <td>維護需求</td>
+          <td>低（50 年不需大修）</td>
+          <td>中（定期防腐防火檢查）</td>
+          <td>低（同 RC）</td>
+          <td>中（防潮防白蟻）</td>
+        </tr>
+        <tr>
+          <td>最適用樓高</td>
+          <td>1–20 層</td>
+          <td>20–100 層以上</td>
+          <td>15–60 層</td>
+          <td>1–12 層（目前法規）</td>
+        </tr>
+        <tr>
+          <td>環保碳排</td>
+          <td><span class="tag tag-red">高</span> 水泥生產排碳多</td>
+          <td><span class="tag tag-yellow">中</span> 可回收再利用</td>
+          <td><span class="tag tag-yellow">中高</span></td>
+          <td><span class="tag tag-green">最低</span> 固碳材料</td>
+        </tr>
+        <tr>
+          <td>台灣典型建案</td>
+          <td>一般公寓、透天</td>
+          <td>台北 101、信義廠辦</td>
+          <td>宏泰、遠雄高層住宅</td>
+          <td>林業試驗所示範屋</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 選用建議 -->
+  <h3 style="color:var(--accent2); margin-bottom:1.2rem;">💡 工法選用決策指南</h3>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>🚇 捷運工法選用原則</h3>
+      <ul>
+        <li><strong>市區淺層段（&lt;15m）：</strong>優先考慮明挖覆蓋法，成本低</li>
+        <li><strong>市區深層段（&gt;15m）：</strong>潛盾工法，降低地表干擾</li>
+        <li><strong>跨越水域：</strong>沉埋管段法或潛盾工法（視水深）</li>
+        <li><strong>山嶺地區：</strong>NATM 或鑽炸工法，成本最低</li>
+        <li><strong>車站本體：</strong>幾乎皆採明挖覆蓋法（大空間需求）</li>
+        <li><strong>高架橋段：</strong>預鑄 U 梁架橋機工法，速度快成本低</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>🏢 房屋結構選用原則</h3>
+      <ul>
+        <li><strong>透天厝/2–5 層：</strong>RC 構造，性價比最高</li>
+        <li><strong>5–15 層公寓：</strong>RC 或 SRC，依預算決定</li>
+        <li><strong>15–50 層住宅：</strong>SRC 為台灣市場主流</li>
+        <li><strong>超高層（50+）：</strong>SC 或 SRC 混合使用</li>
+        <li><strong>大跨距廠房：</strong>輕型鋼構（LGS）或重型 SC</li>
+        <li><strong>低碳/永續建築：</strong>CLT 木構造，符合 ESG 目標</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</div><!-- end tab-compare -->
+
+<!-- ==================== TAB 4: 共通技術 ==================== -->
+<div id="tab-common" class="tab-content">
+<div class="main">
+
+  <h2 class="section-title">🔧 工程共通技術</h2>
+  <p class="section-subtitle">無論是捷運還是建築，以下技術是所有大型工程的共同基礎</p>
+
+  <div class="grid-2">
+    <!-- 地質調查 -->
+    <div class="expand-card" id="card-geo" style="height:fit-content">
+      <div class="card-header" onclick="toggleCard('card-geo')">
+        <div class="card-icon">🗺️</div>
+        <div class="card-title-group">
+          <div class="card-title">地質調查與評估</div>
+          <div class="card-subtitle">Site Investigation & Geotechnical Analysis</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>調查項目</h4>
+        <ul>
+          <li><strong>SPT 標準貫入試驗</strong> — 最常用，評估土壤承載力（N 值）</li>
+          <li><strong>CPT 靜力錐探試驗</strong> — 連續記錄，精度高</li>
+          <li><strong>地下水位量測</strong> — 判斷施工期間降水需求</li>
+          <li><strong>液化潛能分析</strong> — 地震時砂土液化風險評估（Seed & Idriss 法）</li>
+          <li><strong>土壤三軸壓縮試驗</strong> — 取得 c、φ 值，設計擋土結構</li>
+        </ul>
+        <h4>地下管線調查</h4>
+        <ul>
+          <li>GPR 地探雷達（Ground Penetrating Radar）探測既有管線</li>
+          <li>調閱各管線單位圖資，現場比對確認</li>
+          <li>敏感區域採人工試挖確認</li>
+        </ul>
+        <h4>岩盤調查（捷運/隧道）</h4>
+        <ul>
+          <li><strong>RQD 岩石品質指標</strong> — 評估岩盤完整性（0–100%）</li>
+          <li><strong>RMR/Q 系統</strong> — 岩體分類，決定支撐型式</li>
+          <li><strong>試驗室點載荷試驗</strong> — 推估單軸抗壓強度 UCS</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 結構計算 -->
+    <div class="expand-card" id="card-struct" style="height:fit-content">
+      <div class="card-header" onclick="toggleCard('card-struct')">
+        <div class="card-icon">📐</div>
+        <div class="card-title-group">
+          <div class="card-title">結構分析與設計</div>
+          <div class="card-subtitle">Structural Analysis & Design</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>載重分類</h4>
+        <ul>
+          <li><strong>靜載重（DL）</strong> — 自重、固定設備</li>
+          <li><strong>活載重（LL）</strong> — 人員、家具（住宅 200 kgf/m²）</li>
+          <li><strong>風載重（WL）</strong> — 依地區風速與建築高度計算</li>
+          <li><strong>地震力（E）</strong> — 以反應譜分析，台灣 PGA 0.23–0.33 g</li>
+          <li><strong>土壓力（H）</strong> — 擋土結構靜止/主動/被動土壓</li>
+        </ul>
+        <h4>設計方法</h4>
+        <ul>
+          <li><strong>LRFD 極限設計法</strong> — 台灣現行規範採用（ACI 318 / AISC LRFD）</li>
+          <li><strong>靜力彈塑分析（Pushover）</strong> — 評估結構在地震下的非線性行為</li>
+          <li><strong>時程分析</strong> — 高層建築使用實際或人工地震波</li>
+        </ul>
+        <h4>常用分析軟體</h4>
+        <ul>
+          <li><strong>ETABS</strong> — 建築結構分析首選</li>
+          <li><strong>SAP2000</strong> — 橋梁、通用結構</li>
+          <li><strong>PLAXIS</strong> — 大地工程有限元素分析</li>
+          <li><strong>MIDAS GTS</strong> — 隧道及地下工程</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 品質管制 -->
+    <div class="expand-card" id="card-qc" style="height:fit-content">
+      <div class="card-header" onclick="toggleCard('card-qc')">
+        <div class="card-icon">✅</div>
+        <div class="card-title-group">
+          <div class="card-title">品質管制與保證</div>
+          <div class="card-subtitle">Quality Control & Assurance</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>混凝土品質管制</h4>
+        <ul>
+          <li><strong>坍度試驗（Slump Test）</strong> — 確認工作性，標準 10–18 cm</li>
+          <li><strong>試體採樣</strong> — 每 100 m³ 至少一組，28 天抗壓試驗</li>
+          <li><strong>氯離子含量</strong> — &lt; 0.15 kg/m³（CNS 規範），防止鋼筋腐蝕</li>
+          <li><strong>超音波檢測</strong> — 非破壞性評估現有混凝土強度</li>
+        </ul>
+        <h4>鋼材品質管制</h4>
+        <ul>
+          <li><strong>Mill Test Report</strong> — 出廠試驗報告，確認化學成分與力學性質</li>
+          <li><strong>焊接 UT/MT 探傷</strong> — 超音波或磁粉探傷確認銲道完整性</li>
+          <li><strong>高強螺栓扭力檢查</strong> — 確認鎖緊扭矩符合設計值</li>
+        </ul>
+        <h4>施工監測</h4>
+        <ul>
+          <li><strong>地表沉陷量測</strong> — 每 10 m 設沉陷點，自動化即時監控</li>
+          <li><strong>擋土壁位移計</strong> — 測斜管偵測連續壁水平位移</li>
+          <li><strong>鄰房傾斜計</strong> — 保護既有建物</li>
+          <li><strong>BIM 整合</strong> — 3D 模型與現場施工整合，提前碰撞檢查</li>
+        </ul>
+        <h4>ISO 認證體系</h4>
+        <ul>
+          <li><strong>ISO 9001</strong> — 品質管理系統</li>
+          <li><strong>ISO 14001</strong> — 環境管理系統</li>
+          <li><strong>ISO 45001</strong> — 職業安全衛生管理系統</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 施工安全 -->
+    <div class="expand-card" id="card-safety" style="height:fit-content">
+      <div class="card-header" onclick="toggleCard('card-safety')">
+        <div class="card-icon">⛑️</div>
+        <div class="card-title-group">
+          <div class="card-title">施工安全與環境管理</div>
+          <div class="card-subtitle">Construction Safety & Environmental Management</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>高風險作業管制</h4>
+        <ul>
+          <li><strong>深開挖作業</strong> — 連續壁監測、緊急應變計畫、止水帷幕</li>
+          <li><strong>高空作業</strong> — 墜落防護（安全網、安全帶）、2 m 以上需防護</li>
+          <li><strong>吊重作業</strong> — 塔吊作業半徑管制、起重機具定期檢驗</li>
+          <li><strong>密閉空間</strong> — 潛盾機內缺氧、有毒氣體偵測與通風</li>
+        </ul>
+        <h4>環境污染防制</h4>
+        <ul>
+          <li><strong>廢水處理</strong> — 地下水抽除後 pH 調整、沉澱後排放</li>
+          <li><strong>廢土管理</strong> — 污染土壤分類清運，嚴禁非法棄置</li>
+          <li><strong>噪音振動</strong> — 夜間施工申請特許，打樁振動監測</li>
+          <li><strong>空氣污染</strong> — 工地圍籬防塵網、路面灑水降塵</li>
+        </ul>
+        <h4>緊急應變機制</h4>
+        <ul>
+          <li>現場設緊急應變組織圖與聯絡清單</li>
+          <li>每季舉行緊急演練（坍方、大量湧水、火災）</li>
+          <li>設置逃生指示燈與緊急廣播系統</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- end grid-2 -->
+
+  <hr class="divider">
+
+  <!-- BIM 介紹 -->
+  <div class="panel" style="margin-bottom:2rem;">
+    <h3>🖥️ BIM 建築資訊模型（Building Information Modeling）</h3>
+    <div class="grid-2" style="margin-top:1rem; margin-bottom:0;">
+      <div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:0.8rem;">BIM 是整合工程設計、施工、維護的數位化工具，以 3D 模型為核心，整合所有專業資訊。</p>
+        <ul>
+          <li><strong>碰撞檢查（Clash Detection）</strong> — 設計階段即時發現各專業管線衝突</li>
+          <li><strong>4D 施工模擬</strong> — 將時程加入 3D 模型，視覺化施工進度</li>
+          <li><strong>5D 成本估算</strong> — 模型直接連結工程數量與造價</li>
+          <li><strong>設施管理（FM）</strong> — 竣工模型移交業主，用於長期維護管理</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li><strong>LOD 精度等級</strong> — LOD 100（概念）到 LOD 500（竣工實測）</li>
+          <li><strong>IFC 開放格式</strong> — 跨軟體資料交換標準</li>
+          <li><strong>Revit</strong> — Autodesk 旗艦 BIM 軟體，建築/結構/機電</li>
+          <li><strong>Navisworks</strong> — 整合碰撞檢查與 4D 模擬</li>
+          <li><strong>台灣強制規定</strong> — 公共工程 5 億元以上需導入 BIM</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 防震設計 -->
+  <div class="flow-section">
+    <div class="flow-title">🌍 台灣耐震設計重點</div>
+    <div class="warning-box" style="margin-bottom:1.2rem;">
+      <strong>⚠️ 台灣位於環太平洋地震帶</strong>
+      <p>台灣平均每年發生規模 6 以上地震超過 2 次，建築耐震設計為強制規範，需符合「建築物耐震設計規範」。</p>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <h3>🏗️ 結構耐震設計要素</h3>
+        <ul>
+          <li><strong>韌性設計</strong> — 允許塑性變形但不崩塌（確保人員逃生）</li>
+          <li><strong>強柱弱梁</strong> — 梁先降伏消能，柱保持穩定</li>
+          <li><strong>剪力牆</strong> — 提供結構抗側向力，均勻配置</li>
+          <li><strong>基礎隔震（Base Isolation）</strong> — 鉛心橡膠支承（LRB）隔絕地震能量</li>
+          <li><strong>制震壁</strong> — 鋼板或阻尼器消耗地震能量</li>
+          <li><strong>軟弱層避免</strong> — 一樓挑高/開放設計需特殊補強</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>🚇 捷運耐震特殊要求</h3>
+        <ul>
+          <li><strong>高架橋柱耐震</strong> — 採塑性鉸設計，柱底加密箍筋</li>
+          <li><strong>隔震支承</strong> — 橡膠支承允許橋梁水平滑動</li>
+          <li><strong>地下結構</strong> — 土中結構受土壓力限制變形，相對安全</li>
+          <li><strong>軌道扣件防跳軌</strong> — 地震後軌道幾何快速回復能力</li>
+          <li><strong>地震自動停車</strong> — P 波偵測器觸發，列車減速停靠</li>
+          <li><strong>月台門保護</strong> — 地震時月台門自動聯鎖，防止人員跌落</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 現代施工技術趨勢 -->
+  <h2 class="section-title">🚀 現代施工技術趨勢</h2>
+  <div class="cards-grid">
+    <div class="expand-card" id="card-prefab">
+      <div class="card-header" onclick="toggleCard('card-prefab')">
+        <div class="card-icon">🏭</div>
+        <div class="card-title-group">
+          <div class="card-title">預製化與模組化施工</div>
+          <div class="card-subtitle">Prefabrication & Modular Construction</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>趨勢說明</h4>
+        <p>將工程構件移至工廠製作，現場僅進行組裝，大幅提升品質穩定性、縮短工期、改善現場工安。</p>
+        <ul>
+          <li><strong>PC 預鑄混凝土</strong> — 外牆板、樓版、梯間工廠生產</li>
+          <li><strong>鋼構模組</strong> — 機電室、廁所模組工廠組裝完成後吊裝</li>
+          <li><strong>捷運 U 梁預製</strong> — 標準化跨距批量生產，節省成本</li>
+          <li><strong>潛盾管片生產</strong> — 高精度預鑄環形管片，誤差 &lt; 1 mm</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="expand-card" id="card-drone">
+      <div class="card-header" onclick="toggleCard('card-drone')">
+        <div class="card-icon">🚁</div>
+        <div class="card-title-group">
+          <div class="card-title">無人機與遙測應用</div>
+          <div class="card-subtitle">UAV & Remote Sensing in Construction</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>應用場景</h4>
+        <ul>
+          <li><strong>工地空拍測量</strong> — 取代傳統水準測量，建立即時地形模型</li>
+          <li><strong>進度稽核</strong> — 定期飛行比對 BIM 模型與現況差異</li>
+          <li><strong>安全巡查</strong> — 高空結構、橋梁橋墩裂縫檢查</li>
+          <li><strong>點雲模型（LiDAR）</strong> — 高精度 3D 現況掃描，精度 ±5 mm</li>
+          <li><strong>熱影像</strong> — 偵測混凝土脫層、漏水、隔熱缺陷</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="expand-card" id="card-iot">
+      <div class="card-header" onclick="toggleCard('card-iot')">
+        <div class="card-icon">📡</div>
+        <div class="card-title-group">
+          <div class="card-title">智慧工地 IoT 監控</div>
+          <div class="card-subtitle">Smart Construction Site Monitoring</div>
+        </div>
+        <div class="card-toggle">▼</div>
+      </div>
+      <div class="card-body">
+        <h4>感測器部署</h4>
+        <ul>
+          <li><strong>MEMS 傾斜計</strong> — 即時偵測擋土牆、橋墩傾斜</li>
+          <li><strong>靜力水準儀</strong> — 多點地表沉陷自動化監測網</li>
+          <li><strong>振動加速規</strong> — 施工振動影響鄰近建物即時預警</li>
+          <li><strong>地下水位計</strong> — 抽水井效能與基坑安全監控</li>
+          <li><strong>人員定位（UWB）</strong> — 工地人員即時位置，緊急呼救</li>
+        </ul>
+        <h4>資料平台</h4>
+        <p>所有感測資料匯入工地管理平台，超出警戒值自動發送 LINE/SMS 通知工程師，並與 BIM 模型整合視覺化顯示。</p>
+      </div>
+    </div>
+
+  </div><!-- end cards-grid -->
+
+</div><!-- end main -->
+</div><!-- end tab-common -->
+
+<footer>
+  <p>建築工程知識庫 | 資料僅供教育與參考用途</p>
+  <p style="margin-top:0.5rem;"><a href="index.html">← 返回 AI 資源首頁</a></p>
+</footer>
+
+<script>
+function switchTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  // Remove active from all buttons
+  document.querySelectorAll('.tab-btn').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  // Show selected tab
+  var tab = document.getElementById('tab-' + tabName);
+  if (tab) tab.classList.add('active');
+  // Activate button
+  var btns = document.querySelectorAll('.tab-btn');
+  var tabIndex = { metro: 0, building: 1, compare: 2, common: 3 };
+  if (tabIndex[tabName] !== undefined && btns[tabIndex[tabName]]) {
+    btns[tabIndex[tabName]].classList.add('active');
+  }
+  // Animate rating bars in compare tab
+  if (tabName === 'compare') {
+    setTimeout(animateRatingBars, 100);
+  }
+}
+
+function toggleCard(cardId) {
+  var card = document.getElementById(cardId);
+  if (!card) return;
+  card.classList.toggle('open');
+}
+
+function animateRatingBars() {
+  var bars = document.querySelectorAll('.rating-fill');
+  bars.forEach(function(bar) {
+    var target = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(function() {
+      bar.style.width = target;
+    }, 50);
+  });
+}
+
+// Initialize: open first card in each section for demo
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-open TBM card as example
+  toggleCard('card-tbm');
+});
+</script>
+</body>
+</html>
