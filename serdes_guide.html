@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SerDes 完整實作指南</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --c-phy:   #3b82f6;
+      --c-link:  #10b981;
+      --c-proto: #f59e0b;
+      --c-err:   #ef4444;
+      --c-clk:   #8b5cf6;
+      --c-eq:    #ec4899;
+      --c-enc:   #06b6d4;
+      --c-si:    #84cc16;
+      --c-power: #f97316;
+      --c-pam:   #a78bfa;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', monospace, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,106,255,.22) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(59,130,246,.1) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 39px,
+        rgba(124,106,255,.04) 39px,
+        rgba(124,106,255,.04) 40px
+      );
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    header .sub {
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 680px;
+      margin: 0 auto 16px;
+      line-height: 1.6;
+    }
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+
+    nav.toc {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    nav.toc a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all .2s;
+    }
+    nav.toc a:hover {
+      color: var(--accent2);
+      border-color: var(--border);
+      background: var(--surface2);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      width: 100%;
+    }
+
+    section { margin-bottom: 60px; }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .section-desc {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 24px;
+      line-height: 1.7;
+      padding-left: 42px;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+
+    /* ── Cards Grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .card p {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .card ul {
+      margin-top: 8px;
+      padding-left: 18px;
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* ── Architecture Diagram ── */
+    .arch-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      overflow-x: auto;
+    }
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 700px;
+      justify-content: center;
+    }
+    .arch-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      min-width: 110px;
+      position: relative;
+    }
+    .arch-block .blk-title {
+      font-size: .8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .arch-block .blk-sub {
+      font-size: .7rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .arch-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+    .arch-arrow .line {
+      height: 2px;
+      width: 36px;
+      background: var(--border);
+    }
+    .arch-arrow .label {
+      font-size: .65rem;
+      color: var(--muted);
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+    .arch-arrow svg {
+      color: var(--muted);
+    }
+
+    /* ── Spec Table ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+    .spec-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 700;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    .spec-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .spec-table tr:hover td {
+      background: rgba(124,106,255,.04);
+    }
+    .spec-table .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    /* ── Signal Eye Diagram ── */
+    .eye-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .eye-box {
+      flex: 1;
+      min-width: 240px;
+    }
+    .eye-box h4 {
+      font-size: .9rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--accent2);
+    }
+    canvas.eye-canvas {
+      display: block;
+      width: 100%;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    /* ── Warning / Info boxes ── */
+    .info-box {
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: .875rem;
+      line-height: 1.7;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .info-box .icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .info-box.warn  { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.25); color: #fcd34d; }
+    .info-box.danger{ background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.25);  color: #fca5a5; }
+    .info-box.tip   { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.25); color: #6ee7b7; }
+    .info-box.info  { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.25); color: #93c5fd; }
+
+    /* ── Checklist ── */
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+    .check-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: .875rem;
+      line-height: 1.5;
+    }
+    .check-item .chk {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      margin-top: 1px;
+    }
+    .check-item strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .check-item span { color: var(--muted); }
+
+    /* ── Layer Stack ── */
+    .layer-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .layer-item {
+      border-radius: 10px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .875rem;
+      font-weight: 600;
+    }
+    .layer-item .layer-label { color: #fff; }
+    .layer-item .layer-tag   { font-size: .75rem; opacity: .8; }
+
+    /* ── Modulation Vis ── */
+    .mod-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .mod-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .mod-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .mod-card canvas {
+      width: 100%;
+      border-radius: 8px;
+      background: #060610;
+      display: block;
+    }
+    .mod-card p {
+      margin-top: 10px;
+      font-size: .825rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Waveform ── */
+    .waveform-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      overflow-x: auto;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .8rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .arch-flow { min-width: 500px; }
+      header { padding: 36px 16px 28px; }
+      main { padding: 28px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SerDes 完整實作指南</h1>
+  <p class="sub">Serializer/Deserializer — 高速串列介面的核心技術：原理、架構分類、訊號完整性與實作注意事項</p>
+  <div class="badge-row">
+    <span class="badge" style="background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.3)">PHY Layer</span>
+    <span class="badge" style="background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)">Signal Integrity</span>
+    <span class="badge" style="background:rgba(124,106,255,.15);color:#c4b5fd;border:1px solid rgba(124,106,255,.3)">High-Speed Design</span>
+    <span class="badge" style="background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)">PCIe / Ethernet</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#what">什麼是 SerDes</a>
+  <a href="#arch">基本架構</a>
+  <a href="#types">種類與規格</a>
+  <a href="#modulation">調變方式</a>
+  <a href="#eq">等化器</a>
+  <a href="#cdr">時脈回復</a>
+  <a href="#encoding">編碼方案</a>
+  <a href="#si">訊號完整性</a>
+  <a href="#impl">實作注意事項</a>
+  <a href="#checklist">實作清單</a>
+</nav>
+
+<main>
+
+  <!-- ① 什麼是 SerDes -->
+  <section id="what">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(59,130,246,.15);color:var(--c-phy)">①</div>
+      什麼是 SerDes
+    </div>
+    <p class="section-desc">
+      SerDes（Serializer / Deserializer）是一種混合訊號電路，負責在<strong style="color:var(--text)">並列資料（Parallel Data）</strong>與<strong style="color:var(--text)">串列資料（Serial Data）</strong>之間進行轉換。透過將多條低速並列資料合併成單條（或少數條）高速串列訊號，可大幅減少 PCB 走線數量、降低成本並提升傳輸速率。它是現代高速介面（PCIe、以太網路、USB、SATA、DisplayPort 等）不可或缺的核心 PHY 電路。
+    </p>
+    <div class="divider"></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-phy)"></div>Serializer（序列化器）</div>
+        <p>將 N 位元並列資料轉換成 1 條（或少數條）高速串列訊號。通常包含並列轉串列（P2S）移位暫存器、Mux，以及高頻時脈驅動邏輯。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-link)"></div>Deserializer（解序列化器）</div>
+        <p>從高速串列訊號中還原出 N 位元並列資料。需要先進行時脈資料回復（CDR），再透過串列轉並列（S2P）電路輸出。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-proto)"></div>為什麼需要 SerDes</div>
+        <ul>
+          <li>並列介面受 Skew 限制，無法超過幾 GHz</li>
+          <li>串列高速線對更少，EMI 干擾降低</li>
+          <li>差動訊號（Differential）抗雜訊佳</li>
+          <li>單通道速率持續突破（1.6 Tbps/lane 達成中）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-clk)"></div>常見應用場景</div>
+        <ul>
+          <li>PCIe Gen5/6（32 / 64 GT/s）</li>
+          <li>400G / 800G Ethernet（SERDES 112G、224G）</li>
+          <li>HBM、HBM3E 記憶體介面</li>
+          <li>USB 4 / Thunderbolt 4/5</li>
+          <li>DisplayPort 2.1、HDMI 2.1</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 基本架構 -->
+  <section id="arch">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(16,185,129,.15);color:var(--c-link)">②</div>
+      基本架構
+    </div>
+    <p class="section-desc">
+      一個完整的 SerDes 通道（Lane）由 TX 端與 RX 端組成，兩端各自包含多個功能模組，共同確保資料在高速傳輸下的正確性。
+    </p>
+    <div class="divider"></div>
+
+    <div class="arch-diagram" style="margin-bottom:24px">
+      <div style="text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:20px">TX 端（發送）</div>
+      <div class="arch-flow">
+        <div class="arch-block" style="border-color:var(--c-phy)">
+          <div class="blk-title" style="color:var(--c-phy)">Parallel Data</div>
+          <div class="blk-sub">N-bit 並列<br>（來自數位核心）</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-enc)">
+          <div class="blk-title" style="color:var(--c-enc)">Encoder</div>
+          <div class="blk-sub">8b/10b、64b/66b<br>128b/130b</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-clk)">
+          <div class="blk-title" style="color:var(--c-clk)">P2S MUX</div>
+          <div class="blk-sub">並列轉串列<br>高速 Mux</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-eq)">
+          <div class="blk-title" style="color:var(--c-eq)">TX EQ</div>
+          <div class="blk-sub">Pre-emphasis<br>De-emphasis<br>FIR tap</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-si)">
+          <div class="blk-title" style="color:var(--c-si)">Driver</div>
+          <div class="blk-sub">差動輸出<br>阻抗匹配<br>電流模式</div>
+        </div>
+        <div class="arch-arrow">
+          <div class="line"></div>
+          <div class="label">差動對</div>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-proto);min-width:70px">
+          <div class="blk-title" style="color:var(--c-proto)">Channel</div>
+          <div class="blk-sub">PCB 走線<br>連接器<br>Cable</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:12px">▲ 發送端訊號流向</div>
+    </div>
+
+    <div class="arch-diagram">
+      <div style="text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:20px">RX 端（接收）</div>
+      <div class="arch-flow">
+        <div class="arch-block" style="border-color:var(--c-proto);min-width:70px">
+          <div class="blk-title" style="color:var(--c-proto)">Channel</div>
+          <div class="blk-sub">含損耗、<br>反射、串擾</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-si)">
+          <div class="blk-title" style="color:var(--c-si)">CTLE</div>
+          <div class="blk-sub">連續時間線性<br>等化（頻率補償）</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-eq)">
+          <div class="blk-title" style="color:var(--c-eq)">DFE</div>
+          <div class="blk-sub">判決回授<br>等化（消 ISI）</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-clk)">
+          <div class="blk-title" style="color:var(--c-clk)">CDR</div>
+          <div class="blk-sub">時脈資料<br>回復 PLL</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-link)">
+          <div class="blk-title" style="color:var(--c-link)">S2P DEMUX</div>
+          <div class="blk-sub">串列轉並列<br>解多工</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-enc)">
+          <div class="blk-title" style="color:var(--c-enc)">Decoder</div>
+          <div class="blk-sub">解碼 + 錯誤<br>偵測</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="30" height="10" viewBox="0 0 30 10"><line x1="0" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2"/><polygon points="24,1 30,5 24,9" fill="currentColor"/></svg>
+        </div>
+        <div class="arch-block" style="border-color:var(--c-phy)">
+          <div class="blk-title" style="color:var(--c-phy)">Parallel Data</div>
+          <div class="blk-sub">N-bit 並列<br>（輸出至數位核心）</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:12px">▲ 接收端訊號流向</div>
+    </div>
+  </section>
+
+  <!-- ③ 種類與規格 -->
+  <section id="types">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(245,158,11,.15);color:var(--c-proto)">③</div>
+      種類與規格
+    </div>
+    <p class="section-desc">
+      SerDes 按照速率、調變方式及應用場景可分為多種規格。以下列出主流標準與對應規格。
+    </p>
+    <div class="divider"></div>
+
+    <div style="overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>介面標準</th>
+            <th>每通道速率</th>
+            <th>調變</th>
+            <th>編碼</th>
+            <th>最大通道損耗</th>
+            <th>典型應用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>PCIe Gen3</strong></td>
+            <td>8 GT/s</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>128b/130b</td>
+            <td>≈ 20 dB</td>
+            <td>GPU、SSD、NIC</td>
+          </tr>
+          <tr>
+            <td><strong>PCIe Gen4</strong></td>
+            <td>16 GT/s</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>128b/130b</td>
+            <td>≈ 28 dB</td>
+            <td>高速 GPU、AI 加速卡</td>
+          </tr>
+          <tr>
+            <td><strong>PCIe Gen5</strong></td>
+            <td>32 GT/s</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>128b/130b</td>
+            <td>≈ 36 dB</td>
+            <td>資料中心伺服器</td>
+          </tr>
+          <tr>
+            <td><strong>PCIe Gen6</strong></td>
+            <td>64 GT/s</td>
+            <td><span class="tag" style="background:rgba(167,139,250,.2);color:#c4b5fd">PAM4</span></td>
+            <td>FLIT 模式</td>
+            <td>≈ 36 dB</td>
+            <td>下一代 AI/HPC</td>
+          </tr>
+          <tr>
+            <td><strong>100G Ethernet</strong></td>
+            <td>25.78 Gbps × 4</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>64b/66b</td>
+            <td>—</td>
+            <td>資料中心 ToR</td>
+          </tr>
+          <tr>
+            <td><strong>400G Ethernet</strong></td>
+            <td>56 Gbps × 8</td>
+            <td><span class="tag" style="background:rgba(167,139,250,.2);color:#c4b5fd">PAM4</span></td>
+            <td>RS-FEC</td>
+            <td>—</td>
+            <td>骨幹網路交換</td>
+          </tr>
+          <tr>
+            <td><strong>800G / 1.6T Ethernet</strong></td>
+            <td>112G / 224G × 8</td>
+            <td><span class="tag" style="background:rgba(167,139,250,.2);color:#c4b5fd">PAM4</span></td>
+            <td>RS-FEC</td>
+            <td>—</td>
+            <td>AI 叢集互聯</td>
+          </tr>
+          <tr>
+            <td><strong>USB 3.2 Gen2</strong></td>
+            <td>10 Gbps</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>128b/132b</td>
+            <td>—</td>
+            <td>消費性裝置</td>
+          </tr>
+          <tr>
+            <td><strong>USB4 v2 / TB5</strong></td>
+            <td>40 / 120 Gbps</td>
+            <td><span class="tag" style="background:rgba(167,139,250,.2);color:#c4b5fd">PAM4</span></td>
+            <td>128b/132b</td>
+            <td>—</td>
+            <td>外接 GPU、顯示器</td>
+          </tr>
+          <tr>
+            <td><strong>DisplayPort 2.1</strong></td>
+            <td>20 Gbps × 4</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>128b/132b</td>
+            <td>—</td>
+            <td>8K 顯示器</td>
+          </tr>
+          <tr>
+            <td><strong>JESD204C</strong></td>
+            <td>24.75 Gbps/lane</td>
+            <td><span class="tag" style="background:rgba(59,130,246,.15);color:#93c5fd">NRZ</span></td>
+            <td>64b/66b</td>
+            <td>—</td>
+            <td>ADC/DAC 介面</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ④ 調變方式 -->
+  <section id="modulation">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(167,139,250,.15);color:var(--c-pam)">④</div>
+      調變方式：NRZ vs PAM4
+    </div>
+    <p class="section-desc">
+      SerDes 的調變方式決定了每個符號（Symbol）能攜帶的資訊量。主流選擇為 NRZ（2 電位）與 PAM4（4 電位），各有優缺點。
+    </p>
+    <div class="divider"></div>
+
+    <div class="mod-grid" style="margin-bottom:20px">
+      <div class="mod-card">
+        <h4 style="color:var(--c-phy)">NRZ（Non-Return-to-Zero）</h4>
+        <canvas id="nrzCanvas" height="80"></canvas>
+        <p>每個符號代表 1 bit（0 或 1）。電位擺幅大，雜訊容限高，實作較簡單。適用於 ≤ 28 Gbps 場景。隨速率提高，通道損耗急劇增加，超過 56 Gbps 後難以使用。</p>
+        <ul style="margin-top:8px;padding-left:18px;font-size:.8rem;color:var(--muted);line-height:1.8">
+          <li>眼圖：2-level（1 個眼孔）</li>
+          <li>雜訊容限：SNR 需求低</li>
+          <li>等化難度：相對容易</li>
+        </ul>
+      </div>
+      <div class="mod-card">
+        <h4 style="color:var(--c-pam)">PAM4（Pulse Amplitude Modulation 4）</h4>
+        <canvas id="pam4Canvas" height="80"></canvas>
+        <p>每個符號代表 2 bit（4 個電位：00、01、10、11）。同樣的符號率下傳輸量是 NRZ 的 2 倍，但眼圖高度縮小為 NRZ 的 1/3，對雜訊容限、FEC、等化要求大幅提高。</p>
+        <ul style="margin-top:8px;padding-left:18px;font-size:.8rem;color:var(--muted);line-height:1.8">
+          <li>眼圖：4-level（3 個眼孔）</li>
+          <li>雜訊容限：比 NRZ 低約 9.5 dB</li>
+          <li>必須搭配 RS-FEC（前向糾錯）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box warn">
+      <span class="icon">⚠️</span>
+      <div>PAM4 的 3 個眼孔高度僅 NRZ 的 1/3，加上等化殘差與串擾，實務上 BER 遠差於 NRZ。因此 IEEE 802.3 400G/800G 規格皆強制要求 RS-FEC（Reed-Solomon Forward Error Correction）來補足錯誤率。</div>
+    </div>
+  </section>
+
+  <!-- ⑤ 等化器 -->
+  <section id="eq">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(236,72,153,.15);color:var(--c-eq)">⑤</div>
+      等化器（Equalizer）
+    </div>
+    <p class="section-desc">
+      通道（PCB 走線、連接器、Cable）會造成高頻損耗，使訊號眼圖閉合。等化器的任務是補償這些損耗，重新打開眼圖。SerDes 通常同時配備 TX EQ 與多級 RX EQ。
+    </p>
+    <div class="divider"></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-eq)"></div>TX FIR（Pre-/De-emphasis）</div>
+        <p>在發送端提前對高頻分量補強（Pre-emphasis）或對低頻分量衰減（De-emphasis），以對抗通道高頻損耗。常見為 3-tap（pre, main, post）或更多 tap 的 FIR 濾波器。</p>
+        <ul>
+          <li>Coefficient: C(-1)、C(0)、C(+1)</li>
+          <li>PCIe 規格定義 Preset 0–10</li>
+          <li>透過 Link Training 自動協商</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-si)"></div>CTLE（連續時間線性等化）</div>
+        <p>RX 端的主動 RC 濾波器，對高頻進行提升（peaking）。電路形式為帶有高頻 zero 的差動放大器。可程式化 DC gain 與 peaking 頻率，由 adaptation 演算法控制。</p>
+        <ul>
+          <li>補償通道的 −20 dB/decade 損耗特性</li>
+          <li>過度 peaking 會放大高頻雜訊</li>
+          <li>與 DFE 配合使用效果最佳</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-phy)"></div>DFE（Decision Feedback Equalizer）</div>
+        <p>非線性等化器，利用已判決的符號回饋來消除符號間干擾（ISI）。對於後游標 ISI（post-cursor）特別有效，且不放大雜訊（優於 CTLE 的關鍵優點）。</p>
+        <ul>
+          <li>H1～H5 tap（或更多）回饋係數</li>
+          <li>限制：不處理前游標 ISI（需 TX EQ）</li>
+          <li>高速下 critical timing path（需 unrolling）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-power)"></div>FFE（Feed-Forward Equalizer）</div>
+        <p>純線性前饋等化器，可同時處理前游標與後游標 ISI，常用於 PAM4 高速設計（112G+）。與 CTLE 相比，可程式化彈性更高。</p>
+        <ul>
+          <li>Rx FFE 為 7~25 tap FIR</li>
+          <li>搭配 LMS 演算法自動適應</li>
+          <li>消耗功率較高</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑥ 時脈回復 -->
+  <section id="cdr">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(139,92,246,.15);color:var(--c-clk)">⑥</div>
+      時脈資料回復（CDR）
+    </div>
+    <p class="section-desc">
+      串列傳輸不傳送時脈訊號，RX 端必須從接收到的資料中自行重建時脈，這就是 CDR 的任務。CDR 通常以 PLL 或 DLL 為基礎實作。
+    </p>
+    <div class="divider"></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-clk)"></div>Linear CDR（PLL-based）</div>
+        <p>以 PLL 為核心，相位偵測器（PD）比較輸入資料邊緣與本地時脈，誤差訊號經低通濾波後控制 VCO 頻率，逐步鎖定至資料速率。</p>
+        <ul>
+          <li>帶寬決定 Jitter Tracking 範圍</li>
+          <li>VCO 相位雜訊直接影響 RX 抖動</li>
+          <li>Mueller–Müller PD 或 Alexander PD</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-link)"></div>Bang-Bang CDR</div>
+        <p>相位偵測器只輸出 +1/−1（非線性），結構簡單、速度快，適合高速設計。缺點是存在 Limit Cycle（有界振盪），引入確定性抖動（DJ）。</p>
+        <ul>
+          <li>廣泛用於 10G+ NRZ SerDes</li>
+          <li>Loop filter 設計關鍵：避免 LC 過大或過小</li>
+          <li>Jitter 容限需符合規格（UI 內）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-proto)"></div>參考時脈架構</div>
+        <p>現代 SerDes 通常採用外部參考時脈（RefClk）搭配 CDR 的雙迴路架構：</p>
+        <ul>
+          <li><strong style="color:var(--text)">SATA/PCIe SSC</strong>：RefClk 允許展頻（Spread Spectrum Clocking），CDR 需追蹤</li>
+          <li><strong style="color:var(--text)">Clock Forwarding</strong>：另外傳送時脈差動對（如 MIPI C-PHY）</li>
+          <li><strong style="color:var(--text)">Embedded Clock</strong>：從資料中嵌入時脈資訊（常見於光纖）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-pam)"></div>PAM4 CDR 特殊挑戰</div>
+        <p>PAM4 的眼圖只有 3 個較小的眼孔，相位偵測更困難。通常採用 Multi-level PD 並搭配更強的 DSP 才能可靠鎖定。</p>
+        <ul>
+          <li>Phase detector 需支援 4 電位判決</li>
+          <li>Adaptation 演算法更複雜</li>
+          <li>FEC 保護 CDR 初始鎖定階段</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑦ 編碼方案 -->
+  <section id="encoding">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(6,182,212,.15);color:var(--c-enc)">⑦</div>
+      編碼方案
+    </div>
+    <p class="section-desc">
+      編碼在資料送入 SerDes 前將其轉換，以確保足夠的訊號轉換（transition）頻率（有助 CDR 鎖定）及直流平衡（DC balance），並提供控制字元（K-code）機制。
+    </p>
+    <div class="divider"></div>
+
+    <div style="overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>編碼方式</th>
+            <th>效率</th>
+            <th>特色</th>
+            <th>使用場景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>8b/10b</strong></td>
+            <td>80%</td>
+            <td>DC 平衡、Running Disparity、豐富 K-code；硬體查表實作簡單</td>
+            <td>PCIe Gen1/2、SATA、USB 3.0、Fibre Channel</td>
+          </tr>
+          <tr>
+            <td><strong>64b/66b</strong></td>
+            <td>97%</td>
+            <td>2-bit Sync Header 取代大量 overhead；用 Scrambler 確保 DC 平衡</td>
+            <td>PCIe Gen3/4/5、10G/25G/100G Ethernet</td>
+          </tr>
+          <tr>
+            <td><strong>128b/130b</strong></td>
+            <td>98.5%</td>
+            <td>效率更高；搭配 Scrambler；PCIe Gen6 改為 FLIT 模式（256B 固定封包）</td>
+            <td>PCIe Gen6、USB 3.2、DisplayPort 2.1</td>
+          </tr>
+          <tr>
+            <td><strong>RS-FEC（加法）</strong></td>
+            <td>~91%（KP4）</td>
+            <td>並非傳統行編碼，而是前向糾錯碼；KR4 / KP4 為主流；PAM4 必備</td>
+            <td>400G / 800G Ethernet（PAM4）</td>
+          </tr>
+          <tr>
+            <td><strong>PRBS 加擾（Scrambler）</strong></td>
+            <td>100%（無額外開銷）</td>
+            <td>將資料與 PRBS 序列 XOR，使頻譜分散；不是糾錯，只是打散長串連 0/1</td>
+            <td>配合 64b/66b / 128b/130b 使用</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box info" style="margin-top:16px">
+      <span class="icon">ℹ️</span>
+      <div><strong>為什麼需要 DC 平衡？</strong>若訊號長期偏向高電位或低電位，交流耦合電容（AC coupling cap）兩端電壓差會影響判決閾值，導致誤碼。8b/10b 的 Running Disparity 機制，以及 64b/66b 的 Scrambler，都是解決此問題的方法。</div>
+    </div>
+  </section>
+
+  <!-- ⑧ 訊號完整性 -->
+  <section id="si">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(132,204,22,.15);color:var(--c-si)">⑧</div>
+      訊號完整性（Signal Integrity）
+    </div>
+    <p class="section-desc">
+      訊號完整性問題是高速 SerDes 設計的最大挑戰之一。下方涵蓋主要的 SI 效應與應對策略。
+    </p>
+    <div class="divider"></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-err)"></div>插入損耗（Insertion Loss）</div>
+        <p>PCB 介電材料的介電損耗（Dielectric Loss）與導體的趨膚效應（Skin Effect）造成高頻訊號衰減。在 28 GHz 下，普通 FR-4 每 inch 損耗約 1.5–2 dB。</p>
+        <ul>
+          <li>解法：使用低損耗基板（Megtron 6、Rogers）</li>
+          <li>縮短走線長度，減少過孔（Via）</li>
+          <li>增加 TX pre-emphasis + RX CTLE/DFE</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-proto)"></div>反射（Reflection）</div>
+        <p>阻抗不連續點（過孔、連接器轉接、佈線寬度突變）造成訊號反射。反射訊號疊加在主訊號上，形成 ISI 並縮小眼圖。</p>
+        <ul>
+          <li>差動阻抗維持 85–100 Ω（典型 85 Ω）</li>
+          <li>避免走線 Stub（過孔反鑽 Back-drill）</li>
+          <li>連接器選型：確認 Return Loss 規格</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-power)"></div>串擾（Crosstalk, NEXT/FEXT）</div>
+        <p>相鄰差動對之間的電磁耦合造成干擾，分為 Near-End Crosstalk（NEXT）與 Far-End Crosstalk（FEXT）。PAM4 因眼圖較小，對串擾更敏感。</p>
+        <ul>
+          <li>差動對間距 ≥ 3W（W = 走線寬度）</li>
+          <li>相鄰通道盡量反向走線（引入混合串擾抵消）</li>
+          <li>使用 XTALK-aware 3D EM 仿真驗證</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-clk)"></div>抖動（Jitter）</div>
+        <p>抖動指時脈邊緣偏離理想位置的時間偏差，是 SerDes 可靠性的核心指標。可分為確定性抖動（DJ）與隨機抖動（RJ）。</p>
+        <ul>
+          <li><strong style="color:var(--text)">TJ（Total Jitter）= DJ + n × RJ</strong></li>
+          <li>典型規格：TJ &lt; 0.3 UI（PCIe Gen5）</li>
+          <li>量測工具：抖動分析儀、BERT、示波器</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-link)"></div>電源完整性（Power Integrity）</div>
+        <p>SerDes 類比電路（PLL VCO、Driver）對電源雜訊極敏感。電源軌上的 SSN（Simultaneous Switching Noise）和 PDN 阻抗峰值都會轉換為相位雜訊。</p>
+        <ul>
+          <li>獨立供電軌（AVDD 與 DVDD 分離）</li>
+          <li>多級去耦電容（板端 + 封裝端 + Die 上 MIM cap）</li>
+          <li>PDN 阻抗仿真：目標平坦 &lt; 10 mΩ</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-eq)"></div>SSC（展頻時脈）與 Jitter Tolerance</div>
+        <p>PCIe/SATA 要求支援 SSC（Spread Spectrum Clocking，±0.5% 三角調製），以降低 EMI 輻射。CDR 必須有足夠帶寬追蹤 SSC，同時不放大高頻抖動。</p>
+        <ul>
+          <li>CDR 帶寬 vs. Jitter Tolerance 的 trade-off</li>
+          <li>SSC Down-spread vs. Center-spread</li>
+          <li>需對 SSC profile 做 Jitter Tolerance 測試</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑨ 實作注意事項 -->
+  <section id="impl">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(249,115,22,.15);color:var(--c-power)">⑨</div>
+      實作注意事項
+    </div>
+    <p class="section-desc">
+      SerDes 設計橫跨電路設計、PCB layout、韌體 / 驅動程式多個層面。以下整理各層面的關鍵注意事項。
+    </p>
+    <div class="divider"></div>
+
+    <!-- PCB Layout -->
+    <h3 style="color:var(--accent2);font-size:1rem;margin-bottom:16px;padding-left:4px">PCB Layout</h3>
+    <div class="cards" style="margin-bottom:32px">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-si)"></div>差動對佈線原則</div>
+        <ul>
+          <li>兩線同層、同寬、同長（Match length &lt; 5 mil）</li>
+          <li>差動對間距：1W～1.5W（緊耦合）</li>
+          <li>避免在差動對中間放置過孔或測試點</li>
+          <li>換層時 P/N 兩線同時換層，加 GND 過孔回流</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-err)"></div>過孔（Via）處理</div>
+        <ul>
+          <li>高速差動對過孔建議 Back-drill 去除 Stub</li>
+          <li>每個訊號過孔旁需配置 GND 回流過孔（&lt; 20 mil）</li>
+          <li>避免多余的測試點電容效應（&gt; 25 GHz 顯著）</li>
+          <li>使用 3D EM 工具（HFSS / CST）仿真過孔 S 參數</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-proto)"></div>參考層連續性</div>
+        <ul>
+          <li>差動走線下方 GND/PWR 參考層不得有分割縫隙</li>
+          <li>跨電源域時需在分割縫隙旁加橋接電容</li>
+          <li>GND 平面完整性比訊號走線更重要</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-power)"></div>AC 耦合電容</div>
+        <ul>
+          <li>一般使用 0.1 µF（低頻截止 &lt; 1 kHz）</li>
+          <li>電容 Pad 兩端需阻抗匹配設計（避免凸起）</li>
+          <li>PAM4 高速：注意電容諧振頻率（SRF）</li>
+          <li>PCIe 規範明確規定 AC 耦合位置（TX 端）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 電路設計 -->
+    <h3 style="color:var(--accent2);font-size:1rem;margin-bottom:16px;padding-left:4px">類比電路設計</h3>
+    <div class="cards" style="margin-bottom:32px">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-clk)"></div>PLL / VCO 設計</div>
+        <ul>
+          <li>VCO tuning range 需涵蓋 PVT 變化（±10–20%）</li>
+          <li>LC-VCO 優於 Ring VCO（相位雜訊）</li>
+          <li>Loop filter 電容佔用面積大，考慮外置選項</li>
+          <li>PLL 帶寬：通常為 參考時脈頻率的 1/10</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-eq)"></div>CTLE 設計</div>
+        <ul>
+          <li>Peaking 頻率應略低於奈奎斯特頻率</li>
+          <li>DC gain & AC gain 獨立可調（3–4 bit 精度）</li>
+          <li>Adaptation 演算法需對不同通道收斂</li>
+          <li>CTLE → DFE 的 gain partitioning 需仔細分配</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-link)"></div>DFE Unrolling</div>
+        <ul>
+          <li>1st tap DFE 在超高速（&gt;28 Gbps）下 critical path 嚴苛</li>
+          <li>需採用 Speculative DFE（Loop Unrolling）技術</li>
+          <li>代價：功耗與面積增加約 2×</li>
+          <li>2nd tap 以上通常不需 unrolling</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-phy)"></div>TX Driver 設計</div>
+        <ul>
+          <li>電流模式（CML）Driver：高速首選，但功耗較高</li>
+          <li>電壓模式 Driver：功耗低，但驅動能力受限</li>
+          <li>Pre-driver 的 slew rate 控制避免非線性失真</li>
+          <li>PAM4 Driver：4 電位精度要求 INL/DNL &lt; 0.5 LSB</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 韌體/驅動 -->
+    <h3 style="color:var(--accent2);font-size:1rem;margin-bottom:16px;padding-left:4px">韌體 / 驅動程式</h3>
+    <div class="cards" style="margin-bottom:32px">
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-enc)"></div>Link Training 流程</div>
+        <ul>
+          <li>PCIe LTSSM（Link Training and Status State Machine）需完整實作</li>
+          <li>Polling → Detect → Config → L0 各狀態轉換條件</li>
+          <li>Equalization Phase 0/1/2/3（Gen3+ 需完整協商）</li>
+          <li>逾時處理與 retry 機制不可省略</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-proto)"></div>Adaptation 演算法</div>
+        <ul>
+          <li>LMS（Least Mean Squares）：最常見，但需調 step size</li>
+          <li>Zero-Forcing：對 ISI 最佳化，但對雜訊敏感</li>
+          <li>MMSE（Minimum Mean Square Error）：平衡 ISI 與雜訊</li>
+          <li>Convergence 速度 vs. 穩態誤差的 trade-off</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-si)"></div>眼圖監測與 BER 估算</div>
+        <ul>
+          <li>嵌入式眼圖掃描（Eye Scan）用於 debug</li>
+          <li>FEC 計數器：監控 Symbol Error Rate 趨勢</li>
+          <li>BER Floor 偵測：若 FEC 修正量持續增加需告警</li>
+          <li>定期跑 Link Margin Test（垂直/水平眼圖餘量）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-dot" style="background:var(--c-pam)"></div>電源管理（ASPM）</div>
+        <ul>
+          <li>PCIe ASPM L0s / L1 / L1.1 / L1.2 各子狀態</li>
+          <li>進入低功耗狀態時 SerDes PHY 需正確關閉 PLL</li>
+          <li>喚醒序列（P1 → P0）需符合規格時序</li>
+          <li>測試：ASPM 連續切換下 BER 是否惡化</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box danger">
+      <span class="icon">🔴</span>
+      <div><strong>常見設計陷阱：</strong>忽略 PVT（製程 / 電壓 / 溫度）變化是高速 SerDes 失敗最常見的原因。等化器係數在 −40°C 與 +125°C 下可能相差 2× 以上，必須在設計初期就建立完整的 PVT 角落仿真計畫（Corner Simulation）。</div>
+    </div>
+
+    <div class="info-box tip">
+      <span class="icon">✅</span>
+      <div><strong>驗證流程建議：</strong>採用 IBIS-AMI 模型進行通道仿真（Keysight ADS / Mentor HyperLynx），搭配實際 BERT 量測。先確認 S 參數符合規格，再進行抖動分解分析（TJ/DJ/RJ 拆解），最後做壓力測試（溫度 / 電壓邊界）。</div>
+    </div>
+  </section>
+
+  <!-- ⑩ 實作清單 -->
+  <section id="checklist">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(16,185,129,.15);color:var(--c-link)">⑩</div>
+      實作清單
+    </div>
+    <p class="section-desc">
+      完成 SerDes 設計與量產前，建議逐項確認以下事項。
+    </p>
+    <div class="divider"></div>
+
+    <div class="checklist">
+      <div class="check-item">
+        <div class="chk" style="background:rgba(59,130,246,.15);color:#93c5fd">SI</div>
+        <div><strong>通道 S 參數仿真</strong><span>使用 3D EM 工具完成 PCB 走線、過孔、連接器的 S 參數提取，確認 IL/RL/NEXT/FEXT 符合規格。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(59,130,246,.15);color:#93c5fd">SI</div>
+        <div><strong>IBIS-AMI 通道仿真</strong><span>以 AMI 模型跑 10,000+ bit 統計眼圖，確認 BER &lt; 10⁻¹²（或含 FEC 後的目標）。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(16,185,129,.15);color:#6ee7b7">PCB</div>
+        <div><strong>差動對長度匹配</strong><span>P/N 兩線匹配 &lt; 5 mil；差動對間 skew &lt; 1 ps。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(16,185,129,.15);color:#6ee7b7">PCB</div>
+        <div><strong>Back-drill 驗收</strong><span>確認過孔 stub 長度 &lt; 10 mil（依速率調整），Back-drill 深度一致性。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(245,158,11,.15);color:#fcd34d">EQ</div>
+        <div><strong>等化器 PVT 角落驗證</strong><span>在 FF/SS/SF/FS + 電壓 ±10% + 溫度全範圍下確認等化器係數收斂。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(245,158,11,.15);color:#fcd34d">EQ</div>
+        <div><strong>DFE tap 範圍足夠</strong><span>H1 tap 係數範圍能涵蓋最差通道（最長走線 + 最多過孔）的後游標 ISI。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(139,92,246,.15);color:#c4b5fd">CLK</div>
+        <div><strong>PLL 鎖定範圍</strong><span>VCO tuning range 覆蓋所有 PVT 變化下的目標頻率範圍。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(139,92,246,.15);color:#c4b5fd">CLK</div>
+        <div><strong>Jitter 規格符合</strong><span>TX Jitter &lt; 規格（如 PCIe Gen5 TX TJ &lt; 0.3 UI）；RX Jitter Tolerance &gt; 規格。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(239,68,68,.15);color:#fca5a5">PWR</div>
+        <div><strong>PDN 阻抗仿真</strong><span>SerDes 供電軌 PDN 阻抗目標值 &lt; 10 mΩ（1 MHz–1 GHz 帶內）。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(239,68,68,.15);color:#fca5a5">PWR</div>
+        <div><strong>AVDD 雜訊量測</strong><span>上板後量測 AVDD 雜訊，確認 SSN peak &lt; 5 mVpp（依製程建議）。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(6,182,212,.15);color:#67e8f9">FW</div>
+        <div><strong>Link Training 完整測試</strong><span>涵蓋 Cold Reset / Warm Reset / ASPM 週期，確認 LTSSM 無 hang 狀態。</span></div>
+      </div>
+      <div class="check-item">
+        <div class="chk" style="background:rgba(6,182,212,.15);color:#67e8f9">FW</div>
+        <div><strong>壓力 BER 測試</strong><span>以 BERT 連跑 24h，確認 BER &lt; 10⁻¹²；溫度 / 電壓邊界下重複測試。</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>SerDes 完整實作指南 &nbsp;·&nbsp; 涵蓋 NRZ / PAM4 / PCIe / 以太網路 &nbsp;·&nbsp; <a href="index.html">← 返回主頁</a></p>
+</footer>
+
+<script>
+/* ── NRZ Waveform ── */
+(function() {
+  const c = document.getElementById('nrzCanvas');
+  if (!c) return;
+  c.width = c.offsetWidth * devicePixelRatio || 400;
+  c.height = 80 * devicePixelRatio;
+  c.style.height = '80px';
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const bits = [1,0,1,1,0,0,1,0,1,1,0,1];
+  const segW = W / bits.length;
+  const hi = H * 0.15, lo = H * 0.75;
+
+  ctx.fillStyle = '#060610';
+  ctx.fillRect(0, 0, W, H);
+
+  // grid
+  ctx.strokeStyle = 'rgba(255,255,255,.07)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= bits.length; i++) {
+    ctx.beginPath();
+    ctx.moveTo(i * segW, 0);
+    ctx.lineTo(i * segW, H);
+    ctx.stroke();
+  }
+
+  // labels
+  ctx.fillStyle = 'rgba(147,197,253,.5)';
+  ctx.font = `${10 * devicePixelRatio}px monospace`;
+  ctx.fillText('1', 4, hi + 4);
+  ctx.fillText('0', 4, lo + 4);
+
+  // waveform
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 2.5 * devicePixelRatio;
+  ctx.shadowColor = '#3b82f6';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  bits.forEach((b, i) => {
+    const x = i * segW, y = b ? hi : lo;
+    const xn = x + segW;
+    if (i === 0) ctx.moveTo(x, y);
+    else {
+      const prev = bits[i - 1] ? hi : lo;
+      if (prev !== y) { ctx.lineTo(x, prev); ctx.lineTo(x, y); }
+    }
+    ctx.lineTo(xn, y);
+  });
+  ctx.stroke();
+})();
+
+/* ── PAM4 Waveform ── */
+(function() {
+  const c = document.getElementById('pam4Canvas');
+  if (!c) return;
+  c.width = c.offsetWidth * devicePixelRatio || 400;
+  c.height = 80 * devicePixelRatio;
+  c.style.height = '80px';
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const symbols = [3,1,2,0,3,2,1,0,2,3,1,2]; // 00=0,01=1,10=2,11=3
+  const levels = [H*0.12, H*0.37, H*0.62, H*0.87];
+  const colors = ['#a78bfa','#8b5cf6','#7c3aed','#6d28d9'];
+  const segW = W / symbols.length;
+
+  ctx.fillStyle = '#060610';
+  ctx.fillRect(0, 0, W, H);
+
+  // horizontal level guides
+  levels.forEach((ly, i) => {
+    ctx.strokeStyle = 'rgba(167,139,250,.15)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(0, ly); ctx.lineTo(W, ly); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // waveform
+  ctx.strokeStyle = '#a78bfa';
+  ctx.lineWidth = 2.5 * devicePixelRatio;
+  ctx.shadowColor = '#a78bfa';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  symbols.forEach((s, i) => {
+    const x = i * segW, y = levels[3 - s];
+    const xn = x + segW;
+    if (i === 0) { ctx.moveTo(x, y); }
+    else {
+      const prev = levels[3 - symbols[i-1]];
+      if (prev !== y) { ctx.lineTo(x, prev); ctx.lineTo(x, y); }
+    }
+    ctx.lineTo(xn, y);
+  });
+  ctx.stroke();
+
+  // level labels
+  ctx.fillStyle = 'rgba(196,181,253,.6)';
+  ctx.font = `${9 * devicePixelRatio}px monospace`;
+  ['11','10','01','00'].forEach((lbl, i) => {
+    ctx.fillText(lbl, W - 24 * devicePixelRatio, levels[i] - 3);
+  });
+})();
+</script>
+
+</body>
+</html>

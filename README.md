@@ -39,6 +39,7 @@
 | `gerd_guide.html` | 胃食道逆流完整指南（GERD 成因、症狀辨別、潛在後果、治療策略、衛教影片嵌入） |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學（眼球構造、虹膜調光機制、顏色成因與遺傳、動物瞳孔多樣性） |
 | `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
+| `serdes_guide.html` | SerDes 完整實作指南（序列化器/解序列化器原理、NRZ/PAM4 調變、等化器、CDR、訊號完整性、實作清單） |
 
 ---
 
