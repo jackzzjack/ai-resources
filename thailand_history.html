@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>泰國歷史完整指南</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --thai-gold: #f59e0b;
+      --thai-red: #dc2626;
+      --thai-blue: #2563eb;
+      --thai-green: #10b981;
+      --thai-orange: #f97316;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245,158,11,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 50%, rgba(220,38,38,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 50%, rgba(37,99,235,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232a2a3d' fill-opacity='0.35'%3E%3Cpath d='M40 0 L45 15 L60 15 L48 24 L53 39 L40 30 L27 39 L32 24 L20 15 L35 15 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 20px;
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.35);
+      color: #fcd34d;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #fcd34d 45%, var(--thai-red) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    /* Tab Navigation */
+    .nav-bar {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover { color: var(--text); border-color: var(--accent); }
+    .nav-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Main layout */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+      width: 100%;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--thai-gold), var(--thai-red), var(--thai-blue));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -28px;
+      top: 14px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      flex-shrink: 0;
+    }
+
+    .timeline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .timeline-card:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .timeline-card.expanded { border-color: var(--accent); }
+
+    .timeline-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .era-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    .timeline-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .timeline-period {
+      color: var(--muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .timeline-summary {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-top: 8px;
+    }
+
+    .timeline-detail {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .timeline-detail.show { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .detail-item {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .detail-item .label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .detail-item .value {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .detail-text {
+      color: var(--text);
+      font-size: 0.92rem;
+      line-height: 1.8;
+    }
+
+    .detail-text p { margin-bottom: 10px; }
+    .detail-text p:last-child { margin-bottom: 0; }
+
+    .key-points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .key-points li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .key-points li::before {
+      content: '▸';
+      color: var(--thai-gold);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Cards grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .card .highlight {
+      color: var(--thai-gold);
+      font-weight: 600;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    /* Ruler table */
+    .ruler-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .ruler-table th {
+      text-align: left;
+      padding: 10px 16px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ruler-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(42,42,61,0.5);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .ruler-table tr:last-child td { border-bottom: none; }
+
+    .ruler-table tr:hover td {
+      background: rgba(124,106,255,0.05);
+    }
+
+    .ruler-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .ruler-period {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .ruler-note {
+      color: var(--muted);
+    }
+
+    .table-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      overflow-x: auto;
+    }
+
+    /* Pill tags */
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--thai-gold), var(--thai-red));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Map-style layout */
+    .region-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .region-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .region-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .region-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .timeline { padding-left: 24px; }
+      .timeline-dot { left: -22px; }
+      .timeline-card { padding: 16px; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">🇹🇭 東南亞文明探索</div>
+  <h1>泰國歷史完整指南</h1>
+  <p>從史前聚落到現代君主立憲，超過千年的王朝興衰、戰爭外交與文化演變——為完全初學者打造的導覽地圖。</p>
+</header>
+
+<nav class="nav-bar">
+  <button class="nav-btn active" onclick="showSection('overview')">總覽</button>
+  <button class="nav-btn" onclick="showSection('timeline')">歷史時間軸</button>
+  <button class="nav-btn" onclick="showSection('kingdoms')">重要王朝</button>
+  <button class="nav-btn" onclick="showSection('culture')">文化與信仰</button>
+  <button class="nav-btn" onclick="showSection('modern')">近現代史</button>
+  <button class="nav-btn" onclick="showSection('keypeople')">關鍵人物</button>
+</nav>
+
+<main>
+
+  <!-- ===== OVERVIEW ===== -->
+  <section id="overview" class="section active">
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num">~5000年</div>
+        <div class="stat-label">有史可考的文明史</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">5 大</div>
+        <div class="stat-label">主要王朝時期</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">唯一</div>
+        <div class="stat-label">未被殖民的東南亞國家</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">95%</div>
+        <div class="stat-label">人口信仰佛教</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">泰國是什麼樣的國家？</h2>
+    <p class="section-desc">泰國（舊稱暹羅 Siam）位於東南亞中心，是一個有著豐富歷史的佛教君主國。它曾是東南亞最強盛的帝國之一，也是近代唯一沒有被西方殖民的東南亞大國，靠著巧妙的外交在列強夾縫中求生存。</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <span class="card-icon">🗺️</span>
+        <h3>地理位置的優勢</h3>
+        <p>位於中南半島中心，北接緬甸、寮國，東鄰柬埔寨，南連馬來西亞。<span class="highlight">昭披耶河</span>（湄南河）貫穿全國，孕育出肥沃的農業文明，歷代首都都沿此河建立。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <h3>五大王朝脈絡</h3>
+        <p>泰國歷史可以用五個主要時期來理解：<span class="highlight">素可泰 → 阿瑜陀耶 → 吞武里 → 拉達那哥欣（曼谷）</span>，加上更早期的各民族邦國時代。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">☸️</span>
+        <h3>佛教立國之本</h3>
+        <p>上座部佛教（南傳佛教）深入泰國文化每個角落，影響語言、藝術、曆法與政治。國王被視為<span class="highlight">法王（Dhammaraja）</span>，需守護佛法與人民。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <h3>戰爭與外交並重</h3>
+        <p>泰國歷史充滿與緬甸、柬埔寨的戰爭，也有高明的外交手腕。19世紀面對英法殖民壓力，<span class="highlight">拉瑪四世、五世</span>以現代化改革換取主權，是近代史奇蹟。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">👑</span>
+        <h3>君主制的延續</h3>
+        <p>泰國王室從1782年曼谷王朝至今延續不斷，是全球最長久的王朝之一。現任國王為<span class="highlight">拉瑪十世（瑪哈·瓦集拉隆功）</span>，即位於2016年。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <h3>多元民族融合</h3>
+        <p>泰族為主體，還有華人、馬來人、孟人、高棉人等族群。尤其<span class="highlight">華裔泰人</span>在商業上舉足輕重，泰語中也吸收了大量中文、梵文、巴利文詞彙。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TIMELINE ===== -->
+  <section id="timeline" class="section">
+    <h2 class="section-title">歷史時間軸</h2>
+    <p class="section-desc">點選各時期卡片，展開詳細說明。從史前到現代，掌握泰國歷史的完整脈絡。</p>
+
+    <div class="timeline">
+
+      <!-- 史前 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#6b7280;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(107,114,128,0.2);color:#9ca3af;border:1px solid rgba(107,114,128,0.3);">史前時期</span>
+            <span class="timeline-title">班清文化與早期聚落</span>
+            <span class="timeline-period">約 3600 BCE – 500 CE</span>
+          </div>
+          <p class="timeline-summary">泰國東北部出土的班清文化遺址，證明此地早在5000年前已有青銅器文明，是東南亞最古老的金屬文明之一。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">核心遺址</div><div class="value">班清（Bhan Chiang），烏隆他尼府，已列UNESCO世界遺產</div></div>
+              <div class="detail-item"><div class="label">青銅器年代</div><div class="value">約西元前2000年，比中東部分地區更早</div></div>
+              <div class="detail-item"><div class="label">早期民族</div><div class="value">孟族（Mon）、高棉族（Khmer）是最早在此建立文明的民族</div></div>
+              <div class="detail-item"><div class="label">外來影響</div><div class="value">印度文化（印度教、佛教、梵文）從西元初年起透過海路貿易傳入</div></div>
+            </div>
+            <div class="detail-text">
+              <p>現今泰國領土上最早的居民並非泰族。孟族與高棉族在泰族南下之前，便已在此地建立城邦，他們的文化（尤其是高棉的吳哥文明）深刻影響了後來的泰族國家。</p>
+              <p>印度文化的傳入是這個時期最重要的轉變，帶來了印度教的宇宙觀、梵文書寫系統、建築風格，以及後來席捲東南亞的佛教。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 哈里奔猜 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#10b981;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);">孟族王國</span>
+            <span class="timeline-title">哈里奔猜王國（Hariphunchai）</span>
+            <span class="timeline-period">約 660 – 1292 CE</span>
+          </div>
+          <p class="timeline-summary">由孟族建立，以今日清邁南方的南奔為中心，是泰北地區最早成熟的佛教王國，對後來的蘭納王國影響深遠。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">首都</div><div class="value">哈里奔猜（今南奔府，Lamphun）</div></div>
+              <div class="detail-item"><div class="label">宗教</div><div class="value">上座部佛教，留下哈里奔猜大塔等重要遺跡</div></div>
+              <div class="detail-item"><div class="label">滅亡</div><div class="value">1292年，孟萊王（蘭納開國君主）攻滅</div></div>
+            </div>
+            <div class="detail-text">
+              <p>哈里奔猜是泰國北部最重要的早期佛教王國，其佛教傳統後來被蘭納繼承，形成泰北獨特的「蘭納佛教文化」，與中部的文化有所區別。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 素可泰 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f59e0b;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">泰族立國</span>
+            <span class="timeline-title">素可泰王國（Sukhothai）</span>
+            <span class="timeline-period">1238 – 1438 CE</span>
+          </div>
+          <p class="timeline-summary">泰族建立的第一個獨立王國，被視為泰國的「黎明」。發明了泰文字母，確立了佛教立國的基礎，素可泰意為「幸福的黎明」。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">開國之君</div><div class="value">因他拉帝（Sri Indraditya），脫離高棉控制而建國</div></div>
+              <div class="detail-item"><div class="label">最盛時期</div><div class="value">蘭甘亨大帝（Ramkhamhaeng）在位，約1279–1298</div></div>
+              <div class="detail-item"><div class="label">重大成就</div><div class="value">1283年創制泰文字母，建立父王式仁政制度</div></div>
+              <div class="detail-item"><div class="label">宗教</div><div class="value">從斯里蘭卡引進上座部佛教，成為國教</div></div>
+              <div class="detail-item"><div class="label">衰亡</div><div class="value">1438年併入阿瑜陀耶王國，成為其附庸</div></div>
+              <div class="detail-item"><div class="label">遺址</div><div class="value">素可泰歷史公園，UNESCO世界遺產</div></div>
+            </div>
+            <div class="detail-text">
+              <p>素可泰是泰國歷史上的精神原鄉。蘭甘亨大帝留下的石碑銘文，是現存最早的泰文文獻，描述了一個「魚多水豐、田中稻熟」的理想盛世，國王親自接受子民陳情。</p>
+              <p>這個時期確立的「國王—佛教—人民」三角關係，成為日後泰國政治文化的核心架構，一直延續至今。</p>
+              <ul class="key-points">
+                <li>泰文字母由蘭甘亨大帝根據高棉文與孟文改良創製</li>
+                <li>引進錫蘭（斯里蘭卡）正統上座部佛教，取代原有的印度教影響</li>
+                <li>陶瓷藝術（宋卡洛陶瓷）達到高峰，成為重要出口品</li>
+                <li>素可泰式佛像藝術，是泰國佛教藝術史上最重要的風格之一</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 蘭納 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#8b5cf6;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);">北部王國</span>
+            <span class="timeline-title">蘭納王國（Lanna）</span>
+            <span class="timeline-period">1292 – 1775 CE</span>
+          </div>
+          <p class="timeline-summary">孟萊王在泰北建立的獨立王國，以清邁為首都，擁有獨特的蘭納文化、語言與佛教傳統，與南部的阿瑜陀耶王國並立數百年。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">開國之君</div><div class="value">孟萊王（Mangrai），統一泰北各邦</div></div>
+              <div class="detail-item"><div class="label">首都</div><div class="value">清邁（Chiang Mai），建於1296年，至今仍是泰北重鎮</div></div>
+              <div class="detail-item"><div class="label">黃金時期</div><div class="value">提洛卡拉王在位（1441–1487），學術與佛教大盛</div></div>
+              <div class="detail-item"><div class="label">緬甸統治</div><div class="value">1558年起被緬甸東吁王朝征服，統治逾200年</div></div>
+              <div class="detail-item"><div class="label">終結</div><div class="value">1775年暹羅攻克清邁，後成為曼谷王朝藩屬</div></div>
+            </div>
+            <div class="detail-text">
+              <p>蘭納文化至今仍鮮明存在於泰國北部：清邁話（蘭納語）、蘭納文字、獨特的廟宇建築風格、傳統節慶（如水燈節的蓮花燈），都是蘭納遺產的一部分。</p>
+              <p>蘭納在15世紀是東南亞重要的佛教學術中心，1477年在清邁召開了一次重要的佛典結集大會，校訂巴利文三藏。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 阿瑜陀耶 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#dc2626;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);">帝國盛世</span>
+            <span class="timeline-title">阿瑜陀耶王國（Ayutthaya）</span>
+            <span class="timeline-period">1351 – 1767 CE</span>
+          </div>
+          <p class="timeline-summary">泰國歷史上最強盛的王朝，統治長達417年，是東南亞最重要的國際貿易港之一，與中國、日本、歐洲各國皆有往來。最終被緬甸軍隊摧毀。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">開國之君</div><div class="value">烏通王（Uthong），1351年建都阿瑜陀耶</div></div>
+              <div class="detail-item"><div class="label">地理優勢</div><div class="value">位於三河匯流之處，天然水上要塞，貿易地位極佳</div></div>
+              <div class="detail-item"><div class="label">鼎盛規模</div><div class="value">17世紀時人口超過百萬，是當時全球最大城市之一</div></div>
+              <div class="detail-item"><div class="label">重大戰爭</div><div class="value">1569年首度淪陷於緬甸，納黎萱大帝光復；1767年再度覆滅</div></div>
+              <div class="detail-item"><div class="label">外交成就</div><div class="value">與中國、葡萄牙、荷蘭、法國、日本建立貿易關係</div></div>
+              <div class="detail-item"><div class="label">遺址</div><div class="value">阿瑜陀耶歷史公園，UNESCO世界遺產</div></div>
+            </div>
+            <div class="detail-text">
+              <p>阿瑜陀耶是泰國歷史的高峰，也是最令人扼腕的悲劇。這個繁榮了四個世紀的偉大城市，在1767年4月被緬甸軍隊徹底摧毀——廟宇被燒、佛像被毀、文獻付之一炬，倖存者被強制帶回緬甸。</p>
+              <p>今日阿瑜陀耶的斷頭佛像，是這段歷史最深刻的視覺符號。但這場浩劫也只持續了短暫時間——僅僅15年後，鄭信大帝便復興了暹羅。</p>
+              <ul class="key-points">
+                <li>納黎萱大帝（1590–1605）以親征大象決鬥的方式，擊敗緬甸王儲，光復阿瑜陀耶</li>
+                <li>17世紀法王路易十四曾派遣使節，阿瑜陀耶王也回訪巴黎</li>
+                <li>日本山田長政曾率日本傭兵隊效力於阿瑜陀耶王廷</li>
+                <li>從高棉借鑒的「天神王」（Devaraja）概念，使國王地位神聖化</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 吞武里 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f97316;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(249,115,22,0.15);color:#fdba74;border:1px solid rgba(249,115,22,0.3);">復國英雄</span>
+            <span class="timeline-title">吞武里王國（Thonburi）</span>
+            <span class="timeline-period">1767 – 1782 CE</span>
+          </div>
+          <p class="timeline-summary">鄭信大帝（Taksin）在阿瑜陀耶覆滅後僅7個月，便在昭披耶河西岸建立吞武里，驅逐緬甸軍，統一暹羅，是泰國歷史上最傳奇的復國故事。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">建國者</div><div class="value">鄭信（Taksin），華裔泰人，父親來自中國廣東澄海</div></div>
+              <div class="detail-item"><div class="label">首都</div><div class="value">吞武里（今曼谷西岸，Thonburi）</div></div>
+              <div class="detail-item"><div class="label">主要功績</div><div class="value">7個月內復國，10年內統一暹羅，擊敗緬甸多次入侵</div></div>
+              <div class="detail-item"><div class="label">終結</div><div class="value">1782年，因精神失常說法，被政變推翻，被昭披耶卻克里（拉瑪一世）取代</div></div>
+            </div>
+            <div class="detail-text">
+              <p>鄭信大帝是泰國最受崇敬的歷史英雄之一。他在最絕望的時刻帶領殘兵從阿瑜陀耶突圍，在東部積蓄力量後反攻，展現了驚人的軍事才能與意志力。</p>
+              <p>由於鄭信有華人血統，他也是泰國華人社群認同的重要象徵。他的結局至今仍有爭議——官方說法是精神失常後被賜死，但也有說法認為他出走海外。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拉達那哥欣 / 曼谷王朝 -->
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#2563eb;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">現存王朝</span>
+            <span class="timeline-title">拉達那哥欣王朝（曼谷王朝）</span>
+            <span class="timeline-period">1782 CE – 至今</span>
+          </div>
+          <p class="timeline-summary">昭披耶卻克里將軍建立的王朝，首都遷至昭披耶河東岸的曼谷，延續至今已超過240年，共傳十位國王（拉瑪一世至拉瑪十世）。</p>
+          <div class="timeline-detail">
+            <div class="detail-grid">
+              <div class="detail-item"><div class="label">建立者</div><div class="value">昭披耶卻克里將軍，即拉瑪一世（Rama I）</div></div>
+              <div class="detail-item"><div class="label">首都</div><div class="value">曼谷（Bangkok / Krung Thep），1782年建都</div></div>
+              <div class="detail-item"><div class="label">王朝名號</div><div class="value">卻克里王朝（Chakri Dynasty）</div></div>
+              <div class="detail-item"><div class="label">現任國王</div><div class="value">拉瑪十世，瑪哈·瓦集拉隆功，2016年即位</div></div>
+              <div class="detail-item"><div class="label">政體轉變</div><div class="value">1932年從絕對君主制改為君主立憲制</div></div>
+              <div class="detail-item"><div class="label">最重要國王</div><div class="value">拉瑪四世（蒙固）、拉瑪五世（朱拉隆功）、拉瑪九世（蒲美蓬）</div></div>
+            </div>
+            <div class="detail-text">
+              <p>曼谷王朝是泰國歷史最後也是現存的王朝。拉瑪一世重建了因戰亂而消逝的阿瑜陀耶文化遺產——重新編纂典籍、建造大皇宮、鑄造佛像——讓曼谷成為阿瑜陀耶的精神繼承者。</p>
+              <p>19世紀的拉瑪四世、五世面對英法殖民壓力，採取主動現代化策略，廢除奴隸制、引進西方教育與法律，成功在列強之間保住主權，這是近代史上少見的外交與改革奇蹟。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+  </section>
+
+  <!-- ===== KINGDOMS ===== -->
+  <section id="kingdoms" class="section">
+    <h2 class="section-title">重要王朝深度解析</h2>
+    <p class="section-desc">每個王朝都有獨特的性格與貢獻，以下從多個角度比較各王朝的特色。</p>
+
+    <div class="cards-grid" style="margin-bottom:36px;">
+      <div class="card" style="border-color:rgba(245,158,11,0.3);">
+        <span class="card-icon">🌅</span>
+        <h3 style="color:#fcd34d;">素可泰（1238–1438）</h3>
+        <p>泰族文化認同的起源。蘭甘亨大帝創製泰文字母，奠定了泰族文化的基礎。政治上採取父王式仁政，國王平易近人。宗教上正式確立上座部佛教為核心。</p>
+        <div class="tag-row">
+          <span class="tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">文化奠基</span>
+          <span class="tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">泰文創制</span>
+          <span class="tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">佛教立國</span>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(220,38,38,0.3);">
+        <span class="card-icon">👑</span>
+        <h3 style="color:#fca5a5;">阿瑜陀耶（1351–1767）</h3>
+        <p>泰國史上最強盛的帝國，統治417年。國際貿易樞紐，與全球各大強權往來。政治採神王體制，制度更為複雜。最終被緬甸所滅，留下斷壁殘垣的歷史警示。</p>
+        <div class="tag-row">
+          <span class="tag" style="background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);">帝國霸權</span>
+          <span class="tag" style="background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);">國際貿易</span>
+          <span class="tag" style="background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);">文化巔峰</span>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(37,99,235,0.3);">
+        <span class="card-icon">🏙️</span>
+        <h3 style="color:#93c5fd;">曼谷王朝（1782–至今）</h3>
+        <p>延續至今的現存王朝。19世紀成功抵禦殖民、推動現代化；20世紀走向民主但政局多變；蒲美蓬國王（拉瑪九世）在位70年，深受人民愛戴，奠定現代泰國面貌。</p>
+        <div class="tag-row">
+          <span class="tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">現代化改革</span>
+          <span class="tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">抵禦殖民</span>
+          <span class="tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">君主立憲</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--text);">泰緬戰爭：反覆糾纏的宿命</h3>
+    <div class="table-wrapper" style="margin-bottom:36px;">
+      <table class="ruler-table">
+        <thead>
+          <tr>
+            <th>時間</th>
+            <th>事件</th>
+            <th>結果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ruler-period">1548–1549</td>
+            <td class="ruler-name">緬甸東吁王朝首次入侵阿瑜陀耶</td>
+            <td class="ruler-note">圍城失敗，撤退</td>
+          </tr>
+          <tr>
+            <td class="ruler-period">1563–1569</td>
+            <td class="ruler-name">緬甸征服阿瑜陀耶（第一次淪陷）</td>
+            <td class="ruler-note">阿瑜陀耶成緬甸藩屬，被統治15年</td>
+          </tr>
+          <tr>
+            <td class="ruler-period">1584–1593</td>
+            <td class="ruler-name">納黎萱大帝獨立戰爭</td>
+            <td class="ruler-note">阿瑜陀耶復國，1593年象戰決定勝負</td>
+          </tr>
+          <tr>
+            <td class="ruler-period">1765–1767</td>
+            <td class="ruler-name">緬甸貢榜王朝滅阿瑜陀耶</td>
+            <td class="ruler-note">首都被焚毀，阿瑜陀耶王朝覆滅</td>
+          </tr>
+          <tr>
+            <td class="ruler-period">1767–1779</td>
+            <td class="ruler-name">鄭信大帝復國</td>
+            <td class="ruler-note">7個月內驅逐緬軍，重建暹羅</td>
+          </tr>
+          <tr>
+            <td class="ruler-period">1785–1812</td>
+            <td class="ruler-name">緬甸數次入侵曼谷王朝</td>
+            <td class="ruler-note">均被擊退，泰緬邊界大致確定</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== CULTURE ===== -->
+  <section id="culture" class="section">
+    <h2 class="section-title">文化、宗教與社會</h2>
+    <p class="section-desc">佛教、王室與社會秩序三位一體，構成泰國文化的核心支柱。理解這三者，才能真正看懂泰國。</p>
+
+    <div class="cards-grid" style="margin-bottom:36px;">
+      <div class="card">
+        <span class="card-icon">☸️</span>
+        <h3>上座部佛教</h3>
+        <p>泰國約95%人口信仰佛教，影響遍及日常生活：每天清晨僧侶化緣、成年男子出家「還俗」是成年禮、重要節日皆與佛曆相關。泰國有超過<span class="highlight">3萬座寺廟</span>，是全球密度最高的國家之一。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">👑</span>
+        <h3>王室崇敬文化</h3>
+        <p>泰國人對王室有深厚情感，褻瀆王室在法律上屬刑事罪行（冒犯君主法）。國王不只是元首，更是<span class="highlight">道德典範與國家象徵</span>。蒲美蓬國王（拉瑪九世）在位70年（1946–2016），是人民精神上的依靠。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🙏</span>
+        <h3>功德與業力觀</h3>
+        <p>泰國社會深受佛教「功德（Bun）」觀念影響。做善事積功德、布施僧侶、釋放動物，都是日常行為。這種觀念也形塑了<span class="highlight">Thai smile（泰式微笑）文化</span>——以和氣待人，避免衝突。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <h3>宮廷藝術傳承</h3>
+        <p>孔劇（Khon，戴面具的傳統舞劇）、影偶戲（Nang Yai）、泰拳（Muay Thai）都起源於宮廷或軍事訓練。<span class="highlight">孔劇</span>2018年列入UNESCO非物質文化遺產，主題多取自拉瑪堅那史詩（印度史詩《羅摩衍那》的泰文版）。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌸</span>
+        <h3>重要節慶</h3>
+        <p><span class="highlight">宋干節（Songkran）</span>：泰曆新年（4月），潑水節象徵洗去舊年厄運。<span class="highlight">水燈節（Loy Krathong）</span>：農曆12月，放水燈祈福，源自古老的水神信仰。<span class="highlight">萬佛節、三寶節</span>等佛教節日均為國定假日。</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍜</span>
+        <h3>飲食文化</h3>
+        <p>泰國飲食融合了中國、印度、馬來飲食文化。<span class="highlight">泰式炒河粉（Pad Thai）</span>雖是20世紀政府推廣的「國民料理」，但咖哩、冬陰功湯則有數百年歷史。香料、椰奶、魚露是泰國料理的三大基礎。</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--text);">印度文化的深遠影響</h3>
+    <div class="region-grid">
+      <div class="region-card">
+        <h3>📜 語言與文字</h3>
+        <p>泰語中有大量梵文與巴利文借詞，尤其在宗教、王室與正式場合。泰文字母的祖先可追溯至印度婆羅米文字系統。</p>
+      </div>
+      <div class="region-card">
+        <h3>🏛️ 建築藝術</h3>
+        <p>泰國寺廟的尖頂（Prang）源自印度教宇宙山（須彌山）的概念；大皇宮建築融合了印度教、佛教與中國風格。</p>
+      </div>
+      <div class="region-card">
+        <h3>⚖️ 法律制度</h3>
+        <p>阿瑜陀耶時期的法典深受印度《摩奴法典》影響，建立了階級化的社會秩序（Sakdina制度）。</p>
+      </div>
+      <div class="region-card">
+        <h3>🎪 神話傳說</h3>
+        <p>拉瑪堅那（Ramakien）是印度史詩《羅摩衍那》的泰國版，是宮廷藝術、壁畫、孔劇的核心題材，至今仍是文化教育的一部分。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MODERN ===== -->
+  <section id="modern" class="section">
+    <h2 class="section-title">近現代史（1850年代–至今）</h2>
+    <p class="section-desc">從殖民壓力到民主化、從軍事政變到現代君主立憲，泰國近代史充滿戲劇性轉折。</p>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f59e0b;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">現代化</span>
+            <span class="timeline-title">拉瑪四世、五世改革（1851–1910）</span>
+            <span class="timeline-period">1851 – 1910</span>
+          </div>
+          <p class="timeline-summary">面對英法殖民壓力，蒙固王（拉瑪四世）主動引進西方知識，朱拉隆功王（拉瑪五世）則大規模廢除奴隸制、建立現代政府，成功保住主權。</p>
+          <div class="timeline-detail">
+            <div class="detail-text">
+              <p><strong style="color:var(--thai-gold);">拉瑪四世（蒙固，1851–1868）：</strong>出家為僧27年的他，精通拉丁文、英文，與西方傳教士和外交官交好。即位後與英法簽訂不平等但能接受的條約（鮑林條約），用開放貿易換取主權保全。他聘請英國女教師安娜·李奧諾文斯（《國王與我》的原型），顯示他對西方文化的開放態度。</p>
+              <p><strong style="color:var(--thai-gold);">拉瑪五世（朱拉隆功，1868–1910）：</strong>被稱為「大帝」的改革君主。廢除奴隸制（1905年）、建立現代行政體系、引進鐵路與電報、設立現代化學校、派遣皇子赴歐留學。雖被迫割讓寮國（給法國）和馬來半島部分土地（給英國），但保住了泰國的獨立，至今受到最高崇敬。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#8b5cf6;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);">政體轉變</span>
+            <span class="timeline-title">1932年革命：絕對君主制終結</span>
+            <span class="timeline-period">1932</span>
+          </div>
+          <p class="timeline-summary">留歐歸國的軍官與文官發動不流血政變，拉瑪七世接受立憲，泰國從絕對君主制轉型為君主立憲制，開啟了此後數十年政治動盪的序幕。</p>
+          <div class="timeline-detail">
+            <div class="detail-text">
+              <p>這場政變由「人民黨（Khana Ratsadon）」發動，成員多為在法國接受教育的軍官和文官。他們受到民主思想影響，認為泰國需要現代化政治體制。</p>
+              <p>拉瑪七世（巴差提朴）接受了憲法，但此後政局動盪，軍方勢力迅速崛起。1933年發生反政變，1935年拉瑪七世退位，泰國進入軍人政治時代。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#dc2626;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);">二戰</span>
+            <span class="timeline-title">二次世界大戰與日軍借道</span>
+            <span class="timeline-period">1941 – 1945</span>
+          </div>
+          <p class="timeline-summary">1941年日本軍隊入侵泰國，泰國在數小時抵抗後簽訂協議讓日軍借道，隨後宣布加入軸心國。但同時，「自由泰運動」秘密與盟國合作，讓泰國戰後免於戰敗國處分。</p>
+          <div class="timeline-detail">
+            <div class="detail-text">
+              <p>鑾披汶政府（Phibun）選擇與日本合作，宣布對英美宣戰。然而駐美大使社尼·巴莫拒絕遞交宣戰書，並組織「自由泰（Seri Thai）」運動在盟國支持下從事地下抵抗。</p>
+              <p>這套「兩面押注」策略讓泰國在戰後以戰勝國身份出現，避免了領土割讓與賠款。這是泰國外交靈活性的又一典型案例。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#2563eb;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">冷戰時期</span>
+            <span class="timeline-title">冷戰與軍政府時代</span>
+            <span class="timeline-period">1947 – 1988</span>
+          </div>
+          <p class="timeline-summary">泰國成為美國在東南亞的重要盟友，允許美軍使用基地支援越戰。國內則由一系列軍事政府輪番執政，政變成為政權更迭的常態手段。</p>
+          <div class="timeline-detail">
+            <div class="detail-text">
+              <p>這個時期泰國經歷了多次政變，軍方成為最重要的政治力量。沙立·他那叻政府（1957–1963）打著反共旗幟，推動經濟發展，也強化了王室與軍隊的連結。</p>
+              <p>越戰期間泰國接受大量美援，芭達雅等地因美軍度假而發展成旅遊業重鎮。1970年代共產勢力威脅加劇，但泰國最終未被「骨牌效應」波及。</p>
+              <p>1973年學生運動推翻他儂獨裁政府，但1976年再度政變，民主化過程屢遭中斷。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#10b981;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);">民主化</span>
+            <span class="timeline-title">民主化浪潮與經濟起飛</span>
+            <span class="timeline-period">1988 – 1997</span>
+          </div>
+          <p class="timeline-summary">1988年查猜政府上台，泰國進入短暫的民選政府時期。同時經濟高速成長，曼谷成為東南亞重要金融中心，直到1997年亞洲金融風暴重創泰國。</p>
+          <div class="timeline-detail">
+            <div class="detail-text">
+              <p>1992年「黑色五月」事件：軍政府鎮壓示威民眾，最終在拉瑪九世調停下平息，此後泰國進入較穩定的民主時期。</p>
+              <p>1997年泰銖崩潰，引發亞洲金融風暴，泰國被迫接受IMF援助計畫，經濟大幅萎縮，但也推動了金融體系改革。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#f97316;"></div>
+        <div class="timeline-card" onclick="toggleDetail(this)">
+          <div class="timeline-header">
+            <span class="era-tag" style="background:rgba(249,115,22,0.15);color:#fdba74;border:1px solid rgba(249,115,22,0.3);">當代</span>
+            <span class="timeline-title">塔克辛時代與政治分裂（2001–至今）</span>
+            <span class="timeline-period">2001 – 至今</span>
+          </div>
+          <p class="timeline-summary">電信億萬富翁塔克辛·西那瓦以民粹政策贏得農村支持，卻引發精英與保守派反彈。2006年政變後泰國陷入「紅衫軍vs黃衫軍」的長期政治分裂，至今未完全解決。</p>
+          <div class="timeline-detail">
+            <div class="detail-text">
+              <p><strong style="color:var(--thai-gold);">紅衫軍（UDD）</strong>：支持塔克辛及其盟友，以農村與北部選民為主，主張選舉民主。</p>
+              <p><strong style="color:var(--thai-gold);">黃衫軍（PAD）</strong>：反塔克辛，以城市中產階級與保守派為主，強調傳統秩序與精英政治。</p>
+              <p>2014年巴育將軍發動政變，建立軍政府，2019年以新憲法舉行大選，但選舉結果仍受爭議。2023年前進黨大選獲得最多席次，但最終被憲法法院解散，顯示泰國民主化之路仍多坎坷。</p>
+              <p>2016年拉瑪九世（蒲美蓬）駕崩，在位70年的「父親之王」逝世引發全國哀悼，翌年拉瑪十世即位。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== KEY PEOPLE ===== -->
+  <section id="keypeople" class="section">
+    <h2 class="section-title">關鍵歷史人物</h2>
+    <p class="section-desc">這些人物在泰國歷史的關鍵時刻留下了決定性的印記。</p>
+
+    <div class="table-wrapper">
+      <table class="ruler-table">
+        <thead>
+          <tr>
+            <th>人物</th>
+            <th>時期</th>
+            <th>身份</th>
+            <th>歷史貢獻</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="ruler-name">蘭甘亨大帝</div>
+              <div class="ruler-period">Ramkhamhaeng</div>
+            </td>
+            <td class="ruler-period">約 1279–1298</td>
+            <td><span class="tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">素可泰王</span></td>
+            <td class="ruler-note">創制泰文字母（1283年），奠定泰族文化基礎，留下著名的蘭甘亨石碑銘文</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">孟萊王</div>
+              <div class="ruler-period">Mangrai</div>
+            </td>
+            <td class="ruler-period">約 1238–1311</td>
+            <td><span class="tag" style="background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);">蘭納開國</span></td>
+            <td class="ruler-note">建立蘭納王國，1296年建清邁城，統一泰北各邦，與素可泰、帕堯同盟</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">納黎萱大帝</div>
+              <div class="ruler-period">Naresuan</div>
+            </td>
+            <td class="ruler-period">1590–1605</td>
+            <td><span class="tag" style="background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);">民族英雄</span></td>
+            <td class="ruler-note">帶領阿瑜陀耶脫離緬甸統治，1593年以大象決鬥親斬緬甸王儲，成為泰國最重要的軍事英雄</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">鄭信大帝</div>
+              <div class="ruler-period">Taksin / 達信</div>
+            </td>
+            <td class="ruler-period">1767–1782</td>
+            <td><span class="tag" style="background:rgba(249,115,22,0.15);color:#fdba74;border:1px solid rgba(249,115,22,0.3);">復國之王</span></td>
+            <td class="ruler-note">阿瑜陀耶覆滅後7個月重建暹羅，建立吞武里王朝，驅逐緬甸，重新統一全國</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">拉瑪一世</div>
+              <div class="ruler-period">昭披耶卻克里</div>
+            </td>
+            <td class="ruler-period">1782–1809</td>
+            <td><span class="tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">曼谷王朝</span></td>
+            <td class="ruler-note">建立卻克里王朝，定都曼谷，重建阿瑜陀耶文化傳統，編纂拉瑪堅那史詩</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">拉瑪四世（蒙固）</div>
+              <div class="ruler-period">Mongkut</div>
+            </td>
+            <td class="ruler-period">1851–1868</td>
+            <td><span class="tag" style="background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);">開明君主</span></td>
+            <td class="ruler-note">引進西方科學與外交，簽訂鮑林條約，用開放換取主權，奠定現代化基礎</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">拉瑪五世（朱拉隆功）</div>
+              <div class="ruler-period">Chulalongkorn</div>
+            </td>
+            <td class="ruler-period">1868–1910</td>
+            <td><span class="tag" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);">改革大帝</span></td>
+            <td class="ruler-note">廢除奴隸制，建立現代政府、教育、鐵路，在英法夾縫中保住獨立主權，是泰國最受崇敬的君主之一</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ruler-name">拉瑪九世（蒲美蓬）</div>
+              <div class="ruler-period">Bhumibol Adulyadej</div>
+            </td>
+            <td class="ruler-period">1946–2016</td>
+            <td><span class="tag" style="background:rgba(37,99,235,0.15);color:#93c5fd;border:1px solid rgba(37,99,235,0.3);">父親之王</span></td>
+            <td class="ruler-note">在位70年（全球最長），多次在政治危機中扮演調停角色，推動農村發展計畫，逝世時舉國哀悼</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:32px;">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--text);">如果你只能記住三件事……</h3>
+      <div class="cards-grid">
+        <div class="card" style="border-color:rgba(245,158,11,0.4);">
+          <span class="card-icon">1️⃣</span>
+          <h3>泰國從未被殖民</h3>
+          <p>在整個東南亞都淪為殖民地的19世紀，泰國靠著拉瑪四世、五世的現代化改革與靈活外交，成為唯一保住主權的大國。這是泰國人最驕傲的歷史遺產。</p>
+        </div>
+        <div class="card" style="border-color:rgba(220,38,38,0.4);">
+          <span class="card-icon">2️⃣</span>
+          <h3>阿瑜陀耶的興亡</h3>
+          <p>統治417年的偉大帝國在1767年被緬甸一夕摧毀，但15年後就被鄭信大帝復興。這段歷史是泰國人心中「滅而復生」的韌性象徵。</p>
+        </div>
+        <div class="card" style="border-color:rgba(37,99,235,0.4);">
+          <span class="card-icon">3️⃣</span>
+          <h3>佛教是理解泰國的鑰匙</h3>
+          <p>上座部佛教滲透泰國歷史的每個層面——政治合法性、社會秩序、藝術表達、日常生活。不懂佛教，就很難真正讀懂泰國。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>泰國歷史完整指南 · 資料截至 2025 年 · CC BY 4.0</p>
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const btns = document.querySelectorAll('.nav-btn');
+    const labels = ['overview','timeline','kingdoms','culture','modern','keypeople'];
+    btns[labels.indexOf(id)].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleDetail(card) {
+    const detail = card.querySelector('.timeline-detail');
+    const isOpen = detail.classList.contains('show');
+    // close all
+    document.querySelectorAll('.timeline-detail').forEach(d => d.classList.remove('show'));
+    document.querySelectorAll('.timeline-card').forEach(c => c.classList.remove('expanded'));
+    if (!isOpen) {
+      detail.classList.add('show');
+      card.classList.add('expanded');
+    }
+  }
+</script>
+
+</body>
+</html>
