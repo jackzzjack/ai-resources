@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PCIe 與 Linux Driver 完整指南</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --c-pcie:   #3b82f6;
+      --c-hw:     #10b981;
+      --c-driver: #8b5cf6;
+      --c-app:    #f59e0b;
+      --c-net:    #06b6d4;
+      --c-storage:#ef4444;
+      --c-gpu:    #ec4899;
+      --c-misc:   #84cc16;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', monospace, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,.22) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(139,92,246,.1) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg, transparent, transparent 39px,
+        rgba(59,130,246,.04) 39px, rgba(59,130,246,.04) 40px
+      );
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #60a5fa 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+    header .sub {
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 680px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+      position: relative;
+    }
+    .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; position: relative; }
+    .badge {
+      padding: 4px 12px; border-radius: 99px; font-size: .78rem; font-weight: 600;
+      border: 1px solid; letter-spacing: .03em;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      display: flex; gap: 4px; overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav a {
+      color: var(--muted); text-decoration: none;
+      padding: 14px 14px; font-size: .85rem; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--accent); }
+
+    /* ── Layout ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px 80px; }
+    section { margin-bottom: 72px; }
+    .section-title {
+      font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title .icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    /* ── Cards ── */
+    .cards { display: grid; gap: 16px; }
+    .cards-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .cards-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .cards-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-title { font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .card-body { color: var(--muted); font-size: .9rem; line-height: 1.65; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── PCIe Architecture Diagram ── */
+    .arch-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      overflow-x: auto;
+    }
+    .arch-layer {
+      display: flex; align-items: stretch; gap: 8px; margin-bottom: 8px;
+    }
+    .arch-label {
+      width: 100px; flex-shrink: 0;
+      font-size: .75rem; color: var(--muted);
+      display: flex; align-items: center;
+      text-align: right; justify-content: flex-end;
+      padding-right: 10px;
+    }
+    .arch-boxes { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+    .arch-box {
+      flex: 1; min-width: 80px; padding: 10px 12px;
+      border-radius: 10px; text-align: center;
+      font-size: .8rem; font-weight: 600;
+      border: 1px solid; cursor: pointer;
+      transition: filter .2s, transform .2s;
+    }
+    .arch-box:hover { filter: brightness(1.2); transform: scale(1.02); }
+    .arch-arrow {
+      text-align: center; color: var(--muted); font-size: 1.2rem;
+      margin: 2px 0; padding-left: 108px;
+    }
+
+    /* ── PCIe Lane / Speed Table ── */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); }
+    table {
+      width: 100%; border-collapse: collapse;
+      background: var(--surface); font-size: .88rem;
+    }
+    th {
+      background: var(--surface2); color: var(--accent2);
+      padding: 12px 16px; text-align: left;
+      font-size: .8rem; text-transform: uppercase; letter-spacing: .06em;
+    }
+    td { padding: 11px 16px; border-top: 1px solid var(--border); color: var(--text); }
+    tr:hover td { background: rgba(124,106,255,.06); }
+    .gen-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 99px;
+      font-size: .75rem; font-weight: 700;
+    }
+
+    /* ── Topology Diagram ── */
+    .topo-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .topo-svg-container { overflow-x: auto; }
+
+    /* ── Driver Flow ── */
+    .flow-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+    }
+    .flow-steps { display: flex; flex-direction: column; gap: 0; }
+    .flow-step {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-num {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .85rem; margin-top: 2px;
+    }
+    .flow-content h4 { font-size: .95rem; margin-bottom: 6px; }
+    .flow-content p { color: var(--muted); font-size: .88rem; line-height: 1.6; }
+    .flow-content code {
+      background: var(--surface2); padding: 1px 6px; border-radius: 5px;
+      font-family: monospace; font-size: .82rem; color: var(--accent2);
+    }
+
+    /* ── Code Block ── */
+    .code-block {
+      background: #0d0d18; border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px;
+      font-family: 'Courier New', monospace; font-size: .83rem;
+      line-height: 1.7; overflow-x: auto; color: #cdd6f4;
+      white-space: pre;
+    }
+    .code-block .kw  { color: #cba6f7; }
+    .code-block .fn  { color: #89b4fa; }
+    .code-block .cm  { color: #6c7086; font-style: italic; }
+    .code-block .str { color: #a6e3a1; }
+    .code-block .num { color: #fab387; }
+    .code-block .pp  { color: #f38ba8; }
+
+    /* ── Device Driver Table ── */
+    .driver-table th:first-child { width: 160px; }
+    .driver-row-gpu td:first-child { border-left: 3px solid var(--c-gpu); }
+    .driver-row-net td:first-child { border-left: 3px solid var(--c-net); }
+    .driver-row-storage td:first-child { border-left: 3px solid var(--c-storage); }
+    .driver-row-misc td:first-child { border-left: 3px solid var(--c-misc); }
+
+    /* ── Info Box ── */
+    .info-box {
+      border-radius: 12px; padding: 16px 20px;
+      border: 1px solid; margin-bottom: 16px;
+      font-size: .9rem; line-height: 1.65;
+    }
+    .info-box.blue { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.3); }
+    .info-box.purple { background: rgba(139,92,246,.08); border-color: rgba(139,92,246,.3); }
+    .info-box.green { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.3); }
+    .info-box.yellow { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); }
+    .info-box strong { display: block; margin-bottom: 6px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); cursor: pointer;
+      font-size: .85rem; transition: all .2s;
+    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Accordion ── */
+    .accordion { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .acc-item { border-bottom: 1px solid var(--border); }
+    .acc-item:last-child { border-bottom: none; }
+    .acc-head {
+      padding: 16px 20px; cursor: pointer; font-weight: 600;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface); transition: background .2s;
+      font-size: .93rem;
+    }
+    .acc-head:hover { background: var(--surface2); }
+    .acc-head .arrow { transition: transform .3s; color: var(--muted); }
+    .acc-item.open .acc-head .arrow { transform: rotate(180deg); }
+    .acc-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .35s;
+      background: var(--surface2);
+      font-size: .88rem; color: var(--muted); line-height: 1.7;
+    }
+    .acc-item.open .acc-body { max-height: 800px; padding: 16px 20px; }
+
+    /* ── Subsystem Map ── */
+    .subsys-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .subsys-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px;
+    }
+    .subsys-card h4 { font-size: .88rem; margin-bottom: 10px; }
+    .subsys-card ul { list-style: none; }
+    .subsys-card li {
+      font-size: .82rem; color: var(--muted);
+      padding: 3px 0; display: flex; align-items: center; gap: 6px;
+    }
+    .subsys-card li::before { content: '›'; color: var(--accent2); }
+
+    /* ── Progress bars ── */
+    .speed-bar-wrap { margin: 6px 0; }
+    .speed-bar-label { font-size: .8rem; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .speed-bar-bg { background: var(--surface2); border-radius: 99px; height: 8px; overflow: hidden; }
+    .speed-bar { height: 100%; border-radius: 99px; transition: width 1s ease; }
+
+    footer {
+      text-align: center; padding: 24px;
+      color: var(--muted); font-size: .82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>PCIe 與 Linux Driver 完整指南</h1>
+  <p class="sub">從硬體協定、拓撲架構，到 Linux Kernel 驅動流程、裝置支援與程式模型的全面解析</p>
+  <div class="badges">
+    <span class="badge" style="color:var(--c-pcie);border-color:var(--c-pcie)">PCIe Gen 1~6</span>
+    <span class="badge" style="color:var(--c-driver);border-color:var(--c-driver)">Linux Kernel Driver</span>
+    <span class="badge" style="color:var(--c-gpu);border-color:var(--c-gpu)">GPU / AI 加速</span>
+    <span class="badge" style="color:var(--c-net);border-color:var(--c-net)">網路卡 NIC</span>
+    <span class="badge" style="color:var(--c-storage);border-color:var(--c-storage)">NVMe SSD</span>
+  </div>
+</header>
+
+<nav id="main-nav">
+  <a href="#what-is-pcie">什麼是 PCIe</a>
+  <a href="#spec">規格演進</a>
+  <a href="#topology">拓撲架構</a>
+  <a href="#tlp">封包協定</a>
+  <a href="#linux-subsystem">Linux 子系統</a>
+  <a href="#driver-flow">Driver 驅動流程</a>
+  <a href="#driver-api">Driver API</a>
+  <a href="#devices">裝置與 Driver</a>
+  <a href="#debug">偵錯工具</a>
+</nav>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════
+       § 1  什麼是 PCIe
+  ══════════════════════════════════════════ -->
+  <section id="what-is-pcie">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(59,130,246,.15);color:var(--c-pcie)">⚡</div>
+      什麼是 PCIe（PCI Express）
+    </div>
+
+    <div class="info-box blue">
+      <strong>PCIe（Peripheral Component Interconnect Express）</strong>
+      是現今最主流的高速串列匯流排介面標準，由 PCI-SIG 制定並持續演進。它取代了早期的平行式 PCI / AGP 介面，以點對點串列連線、差分訊號、全雙工傳輸為核心，提供極高頻寬與低延遲，廣泛用於 GPU、NVMe SSD、網路卡（NIC）、AI 加速器等高效能元件。
+    </div>
+
+    <div class="cards cards-3" style="margin-top:20px">
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--c-pcie)"></span>串列 + 點對點</div>
+        <div class="card-body">每條 PCIe 連線（Link）由一或多條 Lane 組成，每條 Lane 含 4 條差分線（TX+/TX−、RX+/RX−），實現全雙工通訊，不再有舊式 PCI 的匯流排競爭問題。</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--c-hw)"></span>Lane 可擴展</div>
+        <div class="card-body">支援 x1、x2、x4、x8、x16、x32 等 Lane 組態；Lane 數愈多頻寬愈大。GPU 常用 x16，NVMe SSD 常用 x4，M.2 網卡用 x1。</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--c-driver)"></span>分層架構</div>
+        <div class="card-body">PCIe 協定分為三層：<br>① 交易層（Transaction Layer）<br>② 資料鏈路層（Data Link Layer）<br>③ 實體層（Physical Layer）<br>類似網路 OSI 模型的概念設計。</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--c-app)"></span>向下相容</div>
+        <div class="card-body">PCIe 插槽與裝置向下相容；PCIe 5.0 裝置可插入 4.0 插槽，以較低速協商運作。物理插槽也可支援較小 x 數（x16 槽接 x4 卡）。</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--c-net)"></span>記憶體映射 I/O</div>
+        <div class="card-body">PCIe 裝置的暫存器與記憶體透過 BAR（Base Address Register）映射至 CPU 的實體位址空間，驅動程式可直接讀寫，無需特殊 I/O 指令。</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--c-storage)"></span>MSI / MSI-X 中斷</div>
+        <div class="card-body">取代舊式 INTx 共享中斷，透過記憶體寫入觸發中斷，支援多向量（MSI-X 最多 2048 個），大幅提升多核心環境的中斷分散效率。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 2  規格演進
+  ══════════════════════════════════════════ -->
+  <section id="spec">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(139,92,246,.15);color:var(--c-driver)">📈</div>
+      PCIe 規格演進（Gen 1 → Gen 6）
+    </div>
+
+    <div class="table-wrap" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)">
+      <table>
+        <thead>
+          <tr>
+            <th>版本</th>
+            <th>年份</th>
+            <th>編碼</th>
+            <th>每 Lane 速率（單向）</th>
+            <th>x16 總頻寬（雙向）</th>
+            <th>主要特性</th>
+          </tr>
+        </thead>
+        <tbody id="spec-table-body">
+          <tr>
+            <td><span class="gen-badge" style="background:rgba(107,114,128,.2);color:#9ca3af">Gen 1</span></td>
+            <td>2003</td><td>8b/10b</td>
+            <td>250 MB/s</td><td>8 GB/s</td>
+            <td>首個 PCIe 標準，取代 AGP/PCI</td>
+          </tr>
+          <tr>
+            <td><span class="gen-badge" style="background:rgba(59,130,246,.2);color:#60a5fa">Gen 2</span></td>
+            <td>2007</td><td>8b/10b</td>
+            <td>500 MB/s</td><td>16 GB/s</td>
+            <td>速率加倍，改善電源管理</td>
+          </tr>
+          <tr>
+            <td><span class="gen-badge" style="background:rgba(16,185,129,.2);color:#34d399">Gen 3</span></td>
+            <td>2010</td><td>128b/130b</td>
+            <td>~985 MB/s</td><td>~32 GB/s</td>
+            <td>改用 128b/130b 編碼，效率提升至 98.5%；NVMe SSD 主流世代</td>
+          </tr>
+          <tr>
+            <td><span class="gen-badge" style="background:rgba(245,158,11,.2);color:#fbbf24">Gen 4</span></td>
+            <td>2017</td><td>128b/130b</td>
+            <td>~1969 MB/s</td><td>~64 GB/s</td>
+            <td>AMD Zen 2 率先支援；高速 NVMe、AI 推論卡</td>
+          </tr>
+          <tr>
+            <td><span class="gen-badge" style="background:rgba(239,68,68,.2);color:#f87171">Gen 5</span></td>
+            <td>2019</td><td>128b/130b</td>
+            <td>~3938 MB/s</td><td>~128 GB/s</td>
+            <td>Intel Alder Lake / AMD Zen 4；企業 NVMe、400G 網路卡</td>
+          </tr>
+          <tr>
+            <td><span class="gen-badge" style="background:rgba(168,85,247,.2);color:#c084fc">Gen 6</span></td>
+            <td>2022</td><td>PAM4 + FLIT</td>
+            <td>~7877 MB/s</td><td>~256 GB/s</td>
+            <td>首次採用 PAM4 訊號與 FLIT 模式；CXL 3.0 基礎；AI 資料中心導向</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:24px">
+      <div style="font-size:.9rem;color:var(--muted);margin-bottom:12px">x16 雙向總頻寬（相對比較）</div>
+      <div class="speed-bar-wrap">
+        <div class="speed-bar-label"><span>Gen 1</span><span>8 GB/s</span></div>
+        <div class="speed-bar-bg"><div class="speed-bar" style="width:3.1%;background:#6b7280"></div></div>
+      </div>
+      <div class="speed-bar-wrap">
+        <div class="speed-bar-label"><span>Gen 2</span><span>16 GB/s</span></div>
+        <div class="speed-bar-bg"><div class="speed-bar" style="width:6.3%;background:#60a5fa"></div></div>
+      </div>
+      <div class="speed-bar-wrap">
+        <div class="speed-bar-label"><span>Gen 3</span><span>~32 GB/s</span></div>
+        <div class="speed-bar-bg"><div class="speed-bar" style="width:12.5%;background:#34d399"></div></div>
+      </div>
+      <div class="speed-bar-wrap">
+        <div class="speed-bar-label"><span>Gen 4</span><span>~64 GB/s</span></div>
+        <div class="speed-bar-bg"><div class="speed-bar" style="width:25%;background:#fbbf24"></div></div>
+      </div>
+      <div class="speed-bar-wrap">
+        <div class="speed-bar-label"><span>Gen 5</span><span>~128 GB/s</span></div>
+        <div class="speed-bar-bg"><div class="speed-bar" style="width:50%;background:#f87171"></div></div>
+      </div>
+      <div class="speed-bar-wrap">
+        <div class="speed-bar-label"><span>Gen 6</span><span>~256 GB/s</span></div>
+        <div class="speed-bar-bg"><div class="speed-bar" style="width:100%;background:linear-gradient(90deg,#c084fc,#7c6aff)"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 3  拓撲架構
+  ══════════════════════════════════════════ -->
+  <section id="topology">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(245,158,11,.15);color:var(--c-app)">🔗</div>
+      拓撲架構（Topology）
+    </div>
+
+    <div class="topo-wrap">
+      <svg viewBox="0 0 800 320" style="width:100%;min-width:600px;display:block">
+        <!-- CPU -->
+        <rect x="300" y="10" width="200" height="50" rx="10" fill="rgba(124,106,255,.2)" stroke="#7c6aff" stroke-width="1.5"/>
+        <text x="400" y="40" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="bold">CPU</text>
+
+        <!-- Root Complex -->
+        <rect x="260" y="90" width="280" height="44" rx="10" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="400" y="117" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="bold">Root Complex（RC）</text>
+        <line x1="400" y1="60" x2="400" y2="90" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+        <!-- Switch -->
+        <rect x="300" y="168" width="200" height="40" rx="10" fill="rgba(16,185,129,.15)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="400" y="193" text-anchor="middle" fill="#34d399" font-size="12" font-weight="bold">PCIe Switch</text>
+        <line x1="400" y1="134" x2="400" y2="168" stroke="#6b7280" stroke-width="1.5"/>
+
+        <!-- End Points -->
+        <!-- GPU -->
+        <rect x="30" y="248" width="130" height="44" rx="10" fill="rgba(236,72,153,.15)" stroke="#ec4899" stroke-width="1.5"/>
+        <text x="95" y="269" text-anchor="middle" fill="#f472b6" font-size="11" font-weight="bold">GPU / dGPU</text>
+        <text x="95" y="283" text-anchor="middle" fill="#6b7280" font-size="10">x16, Gen 4/5</text>
+
+        <!-- NVMe -->
+        <rect x="185" y="248" width="130" height="44" rx="10" fill="rgba(239,68,68,.15)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="250" y="269" text-anchor="middle" fill="#f87171" font-size="11" font-weight="bold">NVMe SSD</text>
+        <text x="250" y="283" text-anchor="middle" fill="#6b7280" font-size="10">x4, Gen 3/4/5</text>
+
+        <!-- NIC -->
+        <rect x="340" y="248" width="130" height="44" rx="10" fill="rgba(6,182,212,.15)" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="405" y="269" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="bold">NIC / RDMA</text>
+        <text x="405" y="283" text-anchor="middle" fill="#6b7280" font-size="10">x8/x16, Gen 4/5</text>
+
+        <!-- AI Card -->
+        <rect x="495" y="248" width="130" height="44" rx="10" fill="rgba(245,158,11,.15)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="560" y="269" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="bold">AI 加速卡</text>
+        <text x="560" y="283" text-anchor="middle" fill="#6b7280" font-size="10">x16, Gen 5/6</text>
+
+        <!-- USB/SATA Bridge -->
+        <rect x="640" y="248" width="130" height="44" rx="10" fill="rgba(132,204,22,.15)" stroke="#84cc22" stroke-width="1.5"/>
+        <text x="705" y="269" text-anchor="middle" fill="#a3e635" font-size="11" font-weight="bold">Bridge Chip</text>
+        <text x="705" y="283" text-anchor="middle" fill="#6b7280" font-size="10">USB / SATA 橋接</text>
+
+        <!-- Lines from RC to endpoints (directly) -->
+        <line x1="300" y1="112" x2="95" y2="248" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+        <!-- Lines from Switch to endpoints -->
+        <line x1="340" y1="208" x2="250" y2="248" stroke="#6b7280" stroke-width="1.2"/>
+        <line x1="400" y1="208" x2="405" y2="248" stroke="#6b7280" stroke-width="1.2"/>
+        <line x1="440" y1="208" x2="560" y2="248" stroke="#6b7280" stroke-width="1.2"/>
+        <line x1="460" y1="208" x2="705" y2="248" stroke="#6b7280" stroke-width="1.2"/>
+
+        <!-- Labels -->
+        <text x="165" y="178" fill="#4b5563" font-size="10">直連 EP（無 Switch）</text>
+        <text x="340" y="240" fill="#4b5563" font-size="10">Switch 下游 EP</text>
+      </svg>
+    </div>
+
+    <div class="cards cards-3" style="margin-top:20px">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent2)">Root Complex（RC）</div>
+        <div class="card-body">PCIe 拓撲的根節點，由 CPU 或 PCH 提供。負責管理位址空間分配（BARs）、產生/接收 TLP、連接 DRAM 與 PCIe Fabric。Linux 中對應 <code>/sys/bus/pci/devices/</code> 的 domain:bus 根。</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#34d399">PCIe Switch</div>
+        <div class="card-body">提供多個下游埠（Downstream Port），讓一個上游連線可扇出至多個 Endpoint。Switch 本質是一個中繼路由器，依 Bus Number 轉發 TLP，在 AI 伺服器與 NVMe JBOF 中大量使用。</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#f472b6">Endpoint（EP）</div>
+        <div class="card-body">實際的功能裝置（GPU、NIC、NVMe SSD 等），是 TLP 的最終來源或目的地。EP 可以是 Type 0 Header（不轉發）。SR-IOV 技術可讓一個 Physical Function 虛擬出多個 Virtual Function（VF）。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 4  TLP 封包協定
+  ══════════════════════════════════════════ -->
+  <section id="tlp">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(6,182,212,.15);color:var(--c-net)">📦</div>
+      TLP 封包協定（Transaction Layer Packet）
+    </div>
+
+    <div class="info-box purple">
+      <strong>PCIe 三層協定簡介</strong>
+      <b>交易層（TL）</b> → 產生/消費 TLP，處理流量控制 ｜ <b>資料鏈路層（DLL）</b> → DLLP、ACK/NAK、重傳 ｜ <b>實體層（PL）</b> → 8b/10b 或 128b/130b 編碼、時脈、差分訊號
+    </div>
+
+    <div class="cards cards-2">
+      <div class="card">
+        <div class="card-title">TLP 主要類型</div>
+        <div class="card-body">
+          <div style="margin-bottom:8px"><span style="color:#60a5fa;font-weight:700">MRd / MWr</span> — 記憶體讀寫（最常用，Driver BAR 存取）</div>
+          <div style="margin-bottom:8px"><span style="color:#34d399;font-weight:700">IORd / IOWr</span> — Legacy I/O 讀寫（舊式相容）</div>
+          <div style="margin-bottom:8px"><span style="color:#fbbf24;font-weight:700">CfgRd / CfgWr</span> — 組態空間讀寫（RC 枚舉用）</div>
+          <div style="margin-bottom:8px"><span style="color:#f472b6;font-weight:700">Msg</span> — 訊息（INTx 模擬、錯誤報告、電源管理）</div>
+          <div><span style="color:#c084fc;font-weight:700">Cpl / CplD</span> — 完成封包（帶或不帶資料的回應）</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">TLP Header 結構（MWr 為例）</div>
+        <div class="card-body" style="font-family:monospace;font-size:.82rem;line-height:1.8">
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px">
+            <span style="color:#f472b6">Fmt[2:0]</span><span style="color:var(--muted)">封包格式（有無 Data、32/64b 位址）</span>
+            <span style="color:#60a5fa">Type[4:0]</span><span style="color:var(--muted)">TLP 類型碼</span>
+            <span style="color:#34d399">TC[2:0]</span><span style="color:var(--muted)">流量等級 Traffic Class</span>
+            <span style="color:#fbbf24">Length[9:0]</span><span style="color:var(--muted)">Payload 長度（DW 數）</span>
+            <span style="color:#c084fc">Requester ID</span><span style="color:var(--muted)">Bus:Device:Function</span>
+            <span style="color:#f87171">Tag[9:0]</span><span style="color:var(--muted)">交易標籤（用於配對 Cpl）</span>
+            <span style="color:#a3e635">Address[63:0]</span><span style="color:var(--muted)">目標位址（32 或 64 位元）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box green" style="margin-top:16px">
+      <strong>DMA（Direct Memory Access）與 IOMMU</strong>
+      PCIe 裝置可透過 DMA 直接讀寫 Host 記憶體（發出 MRd/MWr TLP 至 Host 位址）。Linux 的 IOMMU（Intel VT-d / AMD-Vi）會建立 I/O 頁表，限制裝置只能存取授權記憶體範圍，防止惡意裝置攻擊（DMA Attack）。驅動程式透過 <code>dma_alloc_coherent()</code> 分配可被裝置存取的 DMA 緩衝區。
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 5  Linux PCIe 子系統
+  ══════════════════════════════════════════ -->
+  <section id="linux-subsystem">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(139,92,246,.15);color:var(--c-driver)">🐧</div>
+      Linux PCIe 子系統架構
+    </div>
+
+    <!-- Architecture Stack -->
+    <div class="arch-diagram">
+      <div style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Linux Kernel PCIe 軟體堆疊（由上至下）</div>
+
+      <div class="arch-layer">
+        <div class="arch-label">User Space</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.4)">應用程式 / DPDK</div>
+          <div class="arch-box" style="background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.4)">lspci / setpci</div>
+          <div class="arch-box" style="background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.4)">VFIO / UIO</div>
+          <div class="arch-box" style="background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.4)">nvme-cli / ethtool</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕ syscall / ioctl</div>
+      <div class="arch-layer">
+        <div class="arch-label">Kernel：裝置驅動</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="background:rgba(236,72,153,.12);color:#f472b6;border-color:rgba(236,72,153,.4)">nvidia / amdgpu<br><small style="opacity:.7">GPU Driver</small></div>
+          <div class="arch-box" style="background:rgba(239,68,68,.12);color:#f87171;border-color:rgba(239,68,68,.4)">nvme<br><small style="opacity:.7">NVMe Driver</small></div>
+          <div class="arch-box" style="background:rgba(6,182,212,.12);color:#22d3ee;border-color:rgba(6,182,212,.4)">mlx5 / ixgbe<br><small style="opacity:.7">NIC Driver</small></div>
+          <div class="arch-box" style="background:rgba(132,204,22,.12);color:#a3e635;border-color:rgba(132,204,22,.4)">xhci / ahci<br><small style="opacity:.7">Controller</small></div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕ PCI 核心 API（pci_enable_device, request_irq …）</div>
+      <div class="arch-layer">
+        <div class="arch-label">Kernel：PCI 核心</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.4)">PCI Bus Driver<br><small style="opacity:.7">pci/bus.c</small></div>
+          <div class="arch-box" style="background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.4)">PCI Core<br><small style="opacity:.7">pci.c / probe.c</small></div>
+          <div class="arch-box" style="background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.4)">PCI MSI<br><small style="opacity:.7">msi.c</small></div>
+          <div class="arch-box" style="background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.4)">IOMMU / DMA<br><small style="opacity:.7">dma-mapping</small></div>
+          <div class="arch-box" style="background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.4)">PCIe AER/PME<br><small style="opacity:.7">aer.c / pme.c</small></div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕ 平台特定實作</div>
+      <div class="arch-layer">
+        <div class="arch-label">Kernel：Host Controller</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="background:rgba(16,185,129,.12);color:#34d399;border-color:rgba(16,185,129,.4)">pcie-dw<br><small style="opacity:.7">DesignWare IP</small></div>
+          <div class="arch-box" style="background:rgba(16,185,129,.12);color:#34d399;border-color:rgba(16,185,129,.4)">pcie-rockchip<br><small style="opacity:.7">RK3399 等</small></div>
+          <div class="arch-box" style="background:rgba(16,185,129,.12);color:#34d399;border-color:rgba(16,185,129,.4)">pci-imx6<br><small style="opacity:.7">NXP i.MX</small></div>
+          <div class="arch-box" style="background:rgba(16,185,129,.12);color:#34d399;border-color:rgba(16,185,129,.4)">pci-hyperv<br><small style="opacity:.7">Hyper-V 虛擬</small></div>
+          <div class="arch-box" style="background:rgba(16,185,129,.12);color:#34d399;border-color:rgba(16,185,129,.4)">ACPI / DT<br><small style="opacity:.7">枚舉來源</small></div>
+        </div>
+      </div>
+      <div class="arch-arrow">↕ 硬體介面</div>
+      <div class="arch-layer">
+        <div class="arch-label">Hardware</div>
+        <div class="arch-boxes">
+          <div class="arch-box" style="background:rgba(107,114,128,.1);color:#9ca3af;border-color:rgba(107,114,128,.3)">PCIe Root Complex</div>
+          <div class="arch-box" style="background:rgba(107,114,128,.1);color:#9ca3af;border-color:rgba(107,114,128,.3)">PCIe Switch</div>
+          <div class="arch-box" style="background:rgba(107,114,128,.1);color:#9ca3af;border-color:rgba(107,114,128,.3)">Endpoint Devices</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="subsys-grid">
+        <div class="subsys-card">
+          <h4 style="color:#60a5fa">PCI Core（drivers/pci/）</h4>
+          <ul>
+            <li>pci.c — 主核心函式</li>
+            <li>probe.c — 裝置枚舉掃描</li>
+            <li>bus.c — Bus/Device/Driver 模型</li>
+            <li>msi.c — MSI/MSI-X 管理</li>
+            <li>ats.c — Address Translation</li>
+            <li>iov.c — SR-IOV 支援</li>
+            <li>pcie/aer.c — 進階錯誤回報</li>
+          </ul>
+        </div>
+        <div class="subsys-card">
+          <h4 style="color:#34d399">Host Controller</h4>
+          <ul>
+            <li>controller/dwc/ — DesignWare</li>
+            <li>controller/rockchip/ — RK 系列</li>
+            <li>controller/tegra/ — NVIDIA Tegra</li>
+            <li>controller/intel-gw.c — Intel</li>
+            <li>controller/xilinx.c — FPGA</li>
+            <li>controller/pci-hyperv.c</li>
+          </ul>
+        </div>
+        <div class="subsys-card">
+          <h4 style="color:#f472b6">GPU Driver</h4>
+          <ul>
+            <li>drivers/gpu/drm/nouveau/</li>
+            <li>drivers/gpu/drm/amd/amdgpu/</li>
+            <li>NVIDIA proprietary (nvidia.ko)</li>
+            <li>drivers/gpu/drm/i915/ (Intel)</li>
+            <li>DRM subsystem 共用框架</li>
+          </ul>
+        </div>
+        <div class="subsys-card">
+          <h4 style="color:#f87171">NVMe Driver</h4>
+          <ul>
+            <li>drivers/nvme/host/pci.c</li>
+            <li>drivers/nvme/host/core.c</li>
+            <li>Block layer 整合</li>
+            <li>NVMe-oF (over Fabrics)</li>
+            <li>多佇列 (blk-mq)</li>
+          </ul>
+        </div>
+        <div class="subsys-card">
+          <h4 style="color:#22d3ee">網路卡 NIC</h4>
+          <ul>
+            <li>drivers/net/ethernet/intel/</li>
+            <li>drivers/net/ethernet/mellanox/</li>
+            <li>drivers/net/ethernet/broadcom/</li>
+            <li>RDMA / RoCE 支援</li>
+            <li>ethtool / netdev ops</li>
+          </ul>
+        </div>
+        <div class="subsys-card">
+          <h4 style="color:#a3e635">其他子系統</h4>
+          <ul>
+            <li>drivers/usb/host/xhci-pci.c</li>
+            <li>drivers/ata/ahci.c (SATA)</li>
+            <li>drivers/crypto/ (加密卡)</li>
+            <li>VFIO — 裝置直通虛擬機</li>
+            <li>UIO — 用戶空間 IO</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 6  Driver 驅動流程
+  ══════════════════════════════════════════ -->
+  <section id="driver-flow">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(16,185,129,.15);color:var(--c-hw)">⚙️</div>
+      Linux PCIe Driver 驅動流程
+    </div>
+
+    <div class="info-box blue" style="margin-bottom:20px">
+      <strong>枚舉流程概述</strong>
+      系統啟動時，BIOS/UEFI 或 Linux 的 PCI 核心透過讀寫組態空間（Configuration Space）掃描所有匯流排，發現每個裝置的 Vendor ID / Device ID，分配 BAR 位址與 Bus Number，再由 Driver 核心比對 <code>pci_device_id</code> 表進行 probe。
+    </div>
+
+    <div class="flow-wrap">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <h4>系統啟動：BIOS / ACPI 枚舉</h4>
+            <p>BIOS/UEFI 掃描 PCIe 拓撲，對每個 Endpoint 分配 Bus:Device:Function（BDF）、BAR 位址範圍（MMIO 與 I/O）、中斷路由。相關資訊透過 ACPI MCFG 表傳遞給 Linux，讓核心取得 ECAM（Enhanced Config Access Mechanism）基底位址。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <h4>PCI Core 掃描：<code>pci_scan_bus()</code></h4>
+            <p>Linux PCI 核心呼叫 <code>pci_scan_bus()</code> → <code>pci_scan_slot()</code> → <code>pci_scan_device()</code>，讀取每個裝置的 Configuration Space Header（256B ~ 4KB ECAM），建立 <code>struct pci_dev</code>，解析 Capability List（MSI、PCIe Capability、AER 等）。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <h4>Driver 比對：<code>pci_device_id</code> 表</h4>
+            <p>每個 PCIe 驅動程式透過 <code>MODULE_DEVICE_TABLE(pci, ...)</code> 宣告支援的 <code>{vendor, device, subvendor, subdevice, class, class_mask}</code> 組合。核心的 <code>pci_bus_match()</code> 函式將掃描到的裝置與已載入驅動的 ID 表逐一比對。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <h4>Driver Probe：<code>driver→probe(pdev, id)</code></h4>
+            <p>比對成功後核心呼叫驅動的 <code>.probe()</code> 回呼。驅動程式依序：<code>pci_enable_device()</code> 啟用裝置 → <code>pci_request_regions()</code> 聲明 BAR → <code>pci_iomap()</code> / <code>ioremap()</code> 映射暫存器 → 設定 DMA mask → 配置 MSI/MSI-X 中斷 → 初始化硬體。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <div class="flow-content">
+            <h4>中斷配置：MSI / MSI-X</h4>
+            <p>呼叫 <code>pci_alloc_irq_vectors(pdev, min, max, PCI_IRQ_MSI | PCI_IRQ_MSIX)</code> 配置向量，再用 <code>request_irq()</code> 或 <code>request_threaded_irq()</code> 註冊 ISR。NVMe 與高速 NIC 通常為每個 CPU core 配置一個 MSI-X 向量實現中斷親和性。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">6</div>
+          <div class="flow-content">
+            <h4>DMA 設定：Coherent / Streaming</h4>
+            <p><code>dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64))</code> 設定裝置可定址的記憶體範圍。<code>dma_alloc_coherent()</code> 分配 CPU 與裝置均可見的一致性緩衝區（適合 descriptor ring）；<code>dma_map_single()</code> / <code>dma_map_sg()</code> 用於 streaming 模式（資料路徑）。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">7</div>
+          <div class="flow-content">
+            <h4>裝置移除：<code>driver→remove(pdev)</code></h4>
+            <p>驅動程式必須按照 probe 的反序釋放資源：停止硬體 → <code>free_irq()</code> → <code>pci_free_irq_vectors()</code> → <code>dma_free_coherent()</code> → <code>pci_iounmap()</code> → <code>pci_release_regions()</code> → <code>pci_disable_device()</code>。任何資源洩漏均會導致 kernel oops 或記憶體洩漏。</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">8</div>
+          <div class="flow-content">
+            <h4>電源管理：PCIe ASPM / D-states</h4>
+            <p>驅動可實作 <code>struct dev_pm_ops</code>（<code>.suspend</code>/<code>.resume</code>）支援 S3/S4 睡眠。PCIe ASPM（L0s/L1/L1ss）由核心 <code>drivers/pci/pcie/aspm.c</code> 管理；<code>pci_save_state()</code> / <code>pci_restore_state()</code> 保存/恢復組態空間。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 7  Driver API
+  ══════════════════════════════════════════ -->
+  <section id="driver-api">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(124,106,255,.15);color:var(--accent)">💻</div>
+      PCIe Driver 核心 API 與程式碼範本
+    </div>
+
+    <div class="tabs" id="api-tabs">
+      <button class="tab-btn active" onclick="switchTab('api-tabs','tab-skeleton','api-tabs')">Driver 骨架</button>
+      <button class="tab-btn" onclick="switchTab('api-tabs','tab-bar','api-tabs')">BAR 映射</button>
+      <button class="tab-btn" onclick="switchTab('api-tabs','tab-dma','api-tabs')">DMA 操作</button>
+      <button class="tab-btn" onclick="switchTab('api-tabs','tab-irq','api-tabs')">MSI-X 中斷</button>
+    </div>
+
+    <div id="tab-skeleton" class="tab-panel active">
+      <div class="code-block"><span class="pp">#include</span> <span class="str">&lt;linux/pci.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;linux/module.h&gt;</span>
+
+<span class="cm">/* 宣告支援的裝置列表 */</span>
+<span class="kw">static const</span> <span class="fn">struct pci_device_id</span> my_pci_ids[] = {
+    { PCI_DEVICE(<span class="num">0x10DE</span>, <span class="num">0x2684</span>) },  <span class="cm">/* NVIDIA RTX 4090 */</span>
+    { PCI_DEVICE(<span class="num">0x1022</span>, <span class="num">0x149C</span>) },  <span class="cm">/* AMD Instinct MI300X */</span>
+    { <span class="num">0</span>, }
+};
+MODULE_DEVICE_TABLE(pci, my_pci_ids);
+
+<span class="kw">static int</span> <span class="fn">my_probe</span>(<span class="kw">struct</span> pci_dev *pdev, <span class="kw">const struct</span> pci_device_id *id)
+{
+    <span class="kw">int</span> ret;
+
+    ret = <span class="fn">pci_enable_device</span>(pdev);          <span class="cm">/* 1. 啟用裝置電源 */</span>
+    <span class="kw">if</span> (ret) <span class="kw">return</span> ret;
+
+    ret = <span class="fn">pci_request_regions</span>(pdev, <span class="str">"my_driver"</span>); <span class="cm">/* 2. 聲明 BAR */</span>
+    <span class="kw">if</span> (ret) <span class="kw">goto</span> err_disable;
+
+    <span class="fn">pci_set_master</span>(pdev);                    <span class="cm">/* 3. 允許 Bus Master（DMA） */</span>
+
+    ret = <span class="fn">dma_set_mask_and_coherent</span>(&pdev->dev, DMA_BIT_MASK(<span class="num">64</span>));
+    <span class="kw">if</span> (ret) <span class="kw">goto</span> err_release;              <span class="cm">/* 4. 設定 64-bit DMA mask */</span>
+
+    <span class="cm">/* 5. 映射 BAR、配置 MSI-X、初始化硬體 … */</span>
+
+    <span class="kw">return</span> <span class="num">0</span>;
+
+err_release: <span class="fn">pci_release_regions</span>(pdev);
+err_disable: <span class="fn">pci_disable_device</span>(pdev);
+    <span class="kw">return</span> ret;
+}
+
+<span class="kw">static void</span> <span class="fn">my_remove</span>(<span class="kw">struct</span> pci_dev *pdev)
+{
+    <span class="cm">/* 按 probe 反序釋放資源 */</span>
+    <span class="fn">pci_release_regions</span>(pdev);
+    <span class="fn">pci_disable_device</span>(pdev);
+}
+
+<span class="kw">static struct</span> pci_driver my_driver = {
+    .name     = <span class="str">"my_pcie_driver"</span>,
+    .id_table = my_pci_ids,
+    .probe    = my_probe,
+    .remove   = my_remove,
+};
+
+<span class="fn">module_pci_driver</span>(my_driver);</div>
+    </div>
+
+    <div id="tab-bar" class="tab-panel">
+      <div class="code-block"><span class="cm">/* ── BAR（Base Address Register）映射 ── */</span>
+
+<span class="cm">/* 取得 BAR 0 的實體位址與大小 */</span>
+resource_size_t bar_start = <span class="fn">pci_resource_start</span>(pdev, <span class="num">0</span>);
+resource_size_t bar_len   = <span class="fn">pci_resource_len</span>(pdev, <span class="num">0</span>);
+
+<span class="cm">/* 映射至虛擬位址（ioremap 內部也做 barrier） */</span>
+<span class="kw">void __iomem</span> *bar = <span class="fn">pci_iomap</span>(pdev, <span class="num">0</span>, bar_len);
+<span class="kw">if</span> (!bar) <span class="kw">return</span> -ENOMEM;
+
+<span class="cm">/* 讀寫裝置暫存器（使用 accessor，保證記憶體順序） */</span>
+<span class="kw">u32</span> val = <span class="fn">ioread32</span>(bar + <span class="num">0x100</span>);    <span class="cm">/* 讀 32-bit 暫存器 */</span>
+<span class="fn">iowrite32</span>(<span class="num">0xDEADBEEF</span>, bar + <span class="num">0x104</span>); <span class="cm">/* 寫 32-bit 暫存器 */</span>
+
+<span class="cm">/* 完成後解除映射 */</span>
+<span class="fn">pci_iounmap</span>(pdev, bar);
+
+<span class="cm">/* ── MMIO vs I/O Port ── */</span>
+<span class="cm">/* 判斷 BAR 類型 */</span>
+<span class="kw">if</span> (<span class="fn">pci_resource_flags</span>(pdev, <span class="num">0</span>) & IORESOURCE_MEM) {
+    <span class="cm">/* MMIO BAR → 使用 ioremap / ioread/iowrite */</span>
+} <span class="kw">else if</span> (<span class="fn">pci_resource_flags</span>(pdev, <span class="num">0</span>) & IORESOURCE_IO) {
+    <span class="cm">/* I/O Port BAR → 使用 inb/outb (已罕見) */</span>
+}</div>
+    </div>
+
+    <div id="tab-dma" class="tab-panel">
+      <div class="code-block"><span class="cm">/* ── Coherent DMA（descriptor ring 常用） ── */</span>
+dma_addr_t dma_handle;
+<span class="kw">void</span> *cpu_addr = <span class="fn">dma_alloc_coherent</span>(&pdev->dev,
+                    PAGE_SIZE,       <span class="cm">/* 分配大小 */</span>
+                    &dma_handle,     <span class="cm">/* 輸出：裝置可見的物理位址 */</span>
+                    GFP_KERNEL);
+<span class="cm">/* cpu_addr   — CPU 端虛擬位址 */</span>
+<span class="cm">/* dma_handle — 寫入裝置 descriptor 的 DMA 位址 */</span>
+
+<span class="cm">/* 釋放 */</span>
+<span class="fn">dma_free_coherent</span>(&pdev->dev, PAGE_SIZE, cpu_addr, dma_handle);
+
+<span class="cm">/* ── Streaming DMA（資料路徑，效能較高） ── */</span>
+dma_addr_t dma_addr = <span class="fn">dma_map_single</span>(&pdev->dev,
+                          buf,           <span class="cm">/* CPU 虛擬位址 */</span>
+                          buf_len,
+                          DMA_TO_DEVICE); <span class="cm">/* 或 DMA_FROM_DEVICE */</span>
+<span class="kw">if</span> (<span class="fn">dma_mapping_error</span>(&pdev->dev, dma_addr)) { <span class="cm">/* 錯誤處理 */</span> }
+
+<span class="cm">/* 裝置 DMA 完成後 unmap（同步 cache） */</span>
+<span class="fn">dma_unmap_single</span>(&pdev->dev, dma_addr, buf_len, DMA_TO_DEVICE);
+
+<span class="cm">/* ── Scatter-Gather DMA ── */</span>
+<span class="kw">int</span> nents = <span class="fn">dma_map_sg</span>(&pdev->dev, sgl, sg_count, DMA_FROM_DEVICE);
+<span class="kw">for_each_sg</span>(sgl, sg, nents, i) {
+    desc->addr = <span class="fn">sg_dma_address</span>(sg);
+    desc->len  = <span class="fn">sg_dma_len</span>(sg);
+}
+<span class="fn">dma_unmap_sg</span>(&pdev->dev, sgl, sg_count, DMA_FROM_DEVICE);</div>
+    </div>
+
+    <div id="tab-irq" class="tab-panel">
+      <div class="code-block"><span class="cm">/* ── MSI-X 中斷配置 ── */</span>
+<span class="kw">int</span> nvec = <span class="fn">pci_alloc_irq_vectors</span>(pdev,
+               <span class="num">1</span>,       <span class="cm">/* min vectors */</span>
+               <span class="num">32</span>,      <span class="cm">/* max vectors */</span>
+               PCI_IRQ_MSIX | PCI_IRQ_MSI);
+<span class="kw">if</span> (nvec < <span class="num">0</span>) <span class="kw">return</span> nvec;
+
+<span class="cm">/* 為每個向量註冊 ISR */</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < nvec; i++) {
+    <span class="kw">int</span> irq = <span class="fn">pci_irq_vector</span>(pdev, i);
+    ret = <span class="fn">request_irq</span>(irq, my_irq_handler, <span class="num">0</span>,
+                     <span class="str">"my_driver"</span>, priv);
+    <span class="kw">if</span> (ret) <span class="kw">goto</span> err_free_vectors;
+}
+
+<span class="cm">/* ISR 範例：取得 queue index 並 schedule NAPI / tasklet */</span>
+<span class="kw">static irqreturn_t</span> <span class="fn">my_irq_handler</span>(<span class="kw">int</span> irq, <span class="kw">void</span> *data)
+{
+    <span class="kw">struct</span> my_queue *q = data;
+    <span class="fn">napi_schedule</span>(&q->napi);    <span class="cm">/* 或 tasklet_schedule() */</span>
+    <span class="kw">return</span> IRQ_HANDLED;
+}
+
+<span class="cm">/* 釋放 */</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < nvec; i++)
+    <span class="fn">free_irq</span>(<span class="fn">pci_irq_vector</span>(pdev, i), priv);
+<span class="fn">pci_free_irq_vectors</span>(pdev);
+
+<span class="cm">/* ── 設定 IRQ affinity（綁定 CPU core）── */</span>
+<span class="fn">irq_set_affinity_hint</span>(<span class="fn">pci_irq_vector</span>(pdev, i), cpumask_of(i));</div>
+    </div>
+
+    <div style="margin-top:20px">
+      <div class="accordion" id="api-accord">
+        <div class="acc-item">
+          <div class="acc-head" onclick="toggleAcc(this)">常用 PCI Core 函式速查 <span class="arrow">▼</span></div>
+          <div class="acc-body">
+            <table style="width:100%;font-size:.82rem">
+              <tr><th style="width:260px">函式</th><th>用途</th></tr>
+              <tr><td><code style="color:#60a5fa">pci_enable_device(pdev)</code></td><td>啟用裝置（電源、時脈）</td></tr>
+              <tr><td><code style="color:#60a5fa">pci_disable_device(pdev)</code></td><td>停用裝置</td></tr>
+              <tr><td><code style="color:#34d399">pci_request_regions(pdev, name)</code></td><td>聲明佔用所有 BAR 資源</td></tr>
+              <tr><td><code style="color:#34d399">pci_release_regions(pdev)</code></td><td>釋放 BAR 資源</td></tr>
+              <tr><td><code style="color:#fbbf24">pci_iomap(pdev, bar, maxlen)</code></td><td>映射指定 BAR 至虛擬位址</td></tr>
+              <tr><td><code style="color:#fbbf24">pci_iounmap(pdev, addr)</code></td><td>解除 BAR 映射</td></tr>
+              <tr><td><code style="color:#f472b6">pci_set_master(pdev)</code></td><td>啟用 Bus Master（DMA 必要）</td></tr>
+              <tr><td><code style="color:#f472b6">pci_clear_master(pdev)</code></td><td>停用 Bus Master</td></tr>
+              <tr><td><code style="color:#c084fc">pci_read_config_dword(pdev, pos, val)</code></td><td>讀取組態空間 DWORD</td></tr>
+              <tr><td><code style="color:#c084fc">pci_write_config_dword(pdev, pos, val)</code></td><td>寫入組態空間 DWORD</td></tr>
+              <tr><td><code style="color:#22d3ee">pci_find_capability(pdev, cap)</code></td><td>搜尋 Capability（如 PCI_CAP_ID_EXP）</td></tr>
+              <tr><td><code style="color:#a3e635">pci_save_state(pdev)</code></td><td>儲存組態空間（PM 用）</td></tr>
+              <tr><td><code style="color:#a3e635">pci_restore_state(pdev)</code></td><td>還原組態空間（PM 用）</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="toggleAcc(this)">SR-IOV（Single Root I/O Virtualization）<span class="arrow">▼</span></div>
+          <div class="acc-body">
+            SR-IOV 允許一張 PCIe 網卡或 GPU 向 OS 呈現多個 Virtual Function（VF），每個 VF 可直通給虛擬機器（VM），享有接近裸機的 I/O 效能。<br><br>
+            <b>啟用 SR-IOV：</b><code>echo 4 &gt; /sys/bus/pci/devices/0000:01:00.0/sriov_numvfs</code><br><br>
+            驅動端需實作 <code>pci_driver.sriov_configure()</code>，核心呼叫時驅動程式創建 VF 的 <code>pci_dev</code> 並初始化其資源。VF 由獨立的輕量驅動（如 <code>iavf</code>、<code>mlx5_core</code>）管理。
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="toggleAcc(this)">AER（Advanced Error Reporting）<span class="arrow">▼</span></div>
+          <div class="acc-body">
+            PCIe AER 是硬體層錯誤偵測與報告機制，分為 Correctable（可糾正）、Uncorrectable Non-Fatal、Uncorrectable Fatal 三類。<br><br>
+            Linux 的 <code>drivers/pci/pcie/aer.c</code> 攔截 AER 中斷，解析錯誤狀態暫存器，並呼叫驅動程式的錯誤回呼（<code>pci_error_handlers.error_detected()</code>）。驅動可選擇重置裝置、標記錯誤或發出 kernel warning。<br><br>
+            查看 AER 事件：<code>dmesg | grep -i "aer\|pcie error"</code><br>
+            手動觸發 AER 測試：<code>setpci -s BDF ECAP_AER+0x08.l=0x4</code>
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="toggleAcc(this)">VFIO — 用戶空間裝置直通<span class="arrow">▼</span></div>
+          <div class="acc-body">
+            VFIO（Virtual Function I/O）框架讓用戶空間程式（如 QEMU）可安全地直接控制 PCIe 裝置，不需要 kernel driver。核心流程：<br><br>
+            1. 解除 kernel driver：<code>echo "0000:01:00.0" &gt; /sys/bus/pci/drivers/nvidia/unbind</code><br>
+            2. 綁定 vfio-pci：<code>echo "10de 2684" &gt; /sys/bus/pci/drivers/vfio-pci/new_id</code><br>
+            3. QEMU 透過 <code>/dev/vfio/&lt;group&gt;</code> 取得裝置控制權，搭配 IOMMU 隔離確保安全性。<br><br>
+            DPDK 也使用 VFIO 或 UIO 旁繞 kernel 網路 stack 達到線速封包處理。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 8  裝置與 Driver
+  ══════════════════════════════════════════ -->
+  <section id="devices">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(245,158,11,.15);color:var(--c-app)">🖥️</div>
+      常見裝置類型與對應 Linux Driver
+    </div>
+
+    <div class="tabs" id="dev-tabs">
+      <button class="tab-btn active" onclick="switchTab('dev-tabs','dev-gpu','dev-tabs')">GPU / 加速器</button>
+      <button class="tab-btn" onclick="switchTab('dev-tabs','dev-storage','dev-tabs')">儲存裝置</button>
+      <button class="tab-btn" onclick="switchTab('dev-tabs','dev-net','dev-tabs')">網路卡</button>
+      <button class="tab-btn" onclick="switchTab('dev-tabs','dev-misc','dev-tabs')">其他裝置</button>
+    </div>
+
+    <div id="dev-gpu" class="tab-panel active">
+      <div class="table-wrap" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+        <table class="driver-table">
+          <thead><tr><th>廠商 / 裝置</th><th>PCIe 組態</th><th>Linux Driver</th><th>Kernel 模組</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr class="driver-row-gpu"><td>NVIDIA GeForce / RTX</td><td>x16, Gen 4/5</td><td>NVIDIA 閉源驅動</td><td>nvidia.ko, nvidia-uvm.ko</td><td>需從 NVIDIA 官方安裝；支援 CUDA、OpenGL</td></tr>
+            <tr class="driver-row-gpu"><td>NVIDIA Hopper / Blackwell（H100/B200）</td><td>x16, Gen 5</td><td>nvidia + NVLink</td><td>nvidia.ko + nvlink</td><td>NVLink Bridge 額外 PCIe BDF；支援 SXM 版本</td></tr>
+            <tr class="driver-row-gpu"><td>AMD Radeon RX（RDNA）</td><td>x16, Gen 4/5</td><td>AMDGPU（開源）</td><td>amdgpu.ko</td><td>含於 mainline kernel；支援 ROCm 計算</td></tr>
+            <tr class="driver-row-gpu"><td>AMD Instinct MI300X</td><td>x16, Gen 5</td><td>AMDGPU + ROCm</td><td>amdgpu.ko</td><td>APU 架構，支援統一記憶體，AI 訓練</td></tr>
+            <tr class="driver-row-gpu"><td>Intel Arc（Alchemist）</td><td>x16, Gen 4</td><td>i915 / xe</td><td>xe.ko（6.2+）</td><td>新世代 xe 驅動取代 i915；支援 XeSS</td></tr>
+            <tr class="driver-row-gpu"><td>Intel integrated GPU</td><td>內建，x16</td><td>i915</td><td>i915.ko</td><td>最成熟的開源 GPU 驅動，含 GuC/HuC firmware</td></tr>
+            <tr class="driver-row-gpu"><td>Google TPU v4/v5（PCIe）</td><td>x16, Gen 5</td><td>accel/google-tpu</td><td>gasket.ko</td><td>Google 客製化，使用 Gasket 框架</td></tr>
+            <tr class="driver-row-gpu"><td>AWS Trainium / Inferentia</td><td>x16, Gen 4/5</td><td>neuron-driver</td><td>neuron.ko（外部）</td><td>AWS 閉源，需安裝 Neuron SDK</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="dev-storage" class="tab-panel">
+      <div class="table-wrap" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+        <table class="driver-table">
+          <thead><tr><th>裝置類型</th><th>PCIe 組態</th><th>Linux Driver</th><th>Kernel 模組</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr class="driver-row-storage"><td>NVMe SSD（M.2 / U.2）</td><td>x4, Gen 3/4/5</td><td>NVMe Host Driver</td><td>nvme.ko + nvme-core.ko</td><td>支援 NVMe 1.x/2.x；多佇列 blk-mq；Namespace 管理</td></tr>
+            <tr class="driver-row-storage"><td>NVMe-oF（RDMA/TCP）</td><td>x8~x16 HCA</td><td>nvme-rdma / nvme-tcp</td><td>nvme-rdma.ko</td><td>透過 RDMA 遠端存取 NVMe，需搭配 InfiniBand 或 RoCE NIC</td></tr>
+            <tr class="driver-row-storage"><td>PCIe AHCI SATA 控制器</td><td>x1~x4</td><td>AHCI Driver</td><td>ahci.ko + libahci.ko</td><td>傳統 SATA SSD/HDD；最大 6 Gbit/s；仍廣泛使用</td></tr>
+            <tr class="driver-row-storage"><td>SAS 控制器（LSI / Broadcom）</td><td>x8, Gen 3</td><td>mpt3sas</td><td>mpt3sas.ko</td><td>企業 RAID 卡；最大 22.5 Gbit/s（SAS4）</td></tr>
+            <tr class="driver-row-storage"><td>Optane / 3D XPoint</td><td>x4, Gen 3</td><td>nvme.ko</td><td>nvme.ko</td><td>Intel 已停產，但 driver 相同；PMEM 模式需 libnvdimm</td></tr>
+            <tr class="driver-row-storage"><td>RAID 控制器（HP SmartArray）</td><td>x8, Gen 3</td><td>hpsa</td><td>hpsa.ko</td><td>HP/HPE 伺服器 RAID；也支援 Smart Array 系列</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="dev-net" class="tab-panel">
+      <div class="table-wrap" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+        <table class="driver-table">
+          <thead><tr><th>裝置 / 晶片</th><th>速率 / Lane</th><th>Linux Driver</th><th>Kernel 模組</th><th>特色</th></tr></thead>
+          <tbody>
+            <tr class="driver-row-net"><td>Intel 82599 / X550</td><td>10GbE, x8 Gen2/3</td><td>ixgbe</td><td>ixgbe.ko</td><td>SR-IOV 最多 63 VF；DPDK 首選之一</td></tr>
+            <tr class="driver-row-net"><td>Intel E810（Columbiaville）</td><td>100GbE, x16 Gen4</td><td>ice</td><td>ice.ko</td><td>可程式化 Pipeline；ADQ（Application Device Queues）</td></tr>
+            <tr class="driver-row-net"><td>Intel igc（I225/I226）</td><td>2.5GbE, x1 Gen2</td><td>igc</td><td>igc.ko</td><td>TSN（Time-Sensitive Networking）支援，工業 / 嵌入式</td></tr>
+            <tr class="driver-row-net"><td>NVIDIA/Mellanox ConnectX-6/7</td><td>200/400GbE, x16</td><td>mlx5_core</td><td>mlx5_core.ko</td><td>RoCE v2、InfiniBand、RDMA；廣泛用於 AI 叢集互連</td></tr>
+            <tr class="driver-row-net"><td>Broadcom BCM57414/57508</td><td>25/100GbE, x8/x16</td><td>bnxt_en</td><td>bnxt_en.ko</td><td>SR-IOV、ROCE；雲端 hypervisor 常見</td></tr>
+            <tr class="driver-row-net"><td>Realtek RTL8125</td><td>2.5GbE, x1</td><td>r8169</td><td>r8169.ko</td><td>消費級主機板常見；mainline 支援</td></tr>
+            <tr class="driver-row-net"><td>Marvell AQtion AQC107</td><td>10GbE, x4</td><td>atlantic</td><td>atlantic.ko</td><td>高性價比 10GbE；Linux mainline 支援</td></tr>
+            <tr class="driver-row-net"><td>Pensando（AMD）DSC</td><td>25/100GbE, x16</td><td>ionic</td><td>ionic.ko</td><td>DPU 架構；offload 安全、QoS</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="dev-misc" class="tab-panel">
+      <div class="table-wrap" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+        <table class="driver-table">
+          <thead><tr><th>裝置類型</th><th>PCIe 組態</th><th>Linux Driver</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr class="driver-row-misc"><td>USB 3.x 控制器（xHCI）</td><td>x1, Gen 2</td><td>xhci-hcd（xhci-pci.ko）</td><td>主機板北橋整合；也有獨立 PCIe USB 卡</td></tr>
+            <tr class="driver-row-misc"><td>音效卡（Creative/ASUS）</td><td>x1, Gen 2/3</td><td>ALSA snd-hda / snd-pci</td><td>HDA（High Definition Audio）通用驅動</td></tr>
+            <tr class="driver-row-misc"><td>Wi-Fi 6/6E 卡（Intel AX210）</td><td>x1, Gen 2</td><td>iwlwifi + iwlmvm</td><td>Intel Wi-Fi 全系列 mainline 支援</td></tr>
+            <tr class="driver-row-misc"><td>FPGA（Xilinx / Intel Altera）</td><td>x8~x16, Gen 3/4</td><td>xdma.ko / altera-cvp</td><td>Xilinx DMA IP 搭配 XDMA 驅動；DPDK FPGA PMD</td></tr>
+            <tr class="driver-row-misc"><td>加密加速卡（QAT）</td><td>x8, Gen 3</td><td>qat_dh895xcc</td><td>Intel QuickAssist；SSL/TLS offload</td></tr>
+            <tr class="driver-row-misc"><td>CXL Memory（Gen 6 基礎）</td><td>x16, Gen 5/6</td><td>cxl_core / cxl_mem</td><td>Compute Express Link；記憶體擴展、記憶體語意裝置</td></tr>
+            <tr class="driver-row-misc"><td>PCIe 時脈卡 / GPS</td><td>x1</td><td>ptp_ocp.ko</td><td>精準時脈（PTP/IEEE 1588）；5G RAN / 金融 HFT 使用</td></tr>
+            <tr class="driver-row-misc"><td>影像採集卡</td><td>x4~x8, Gen 3</td><td>v4l2 + 廠商 ko</td><td>Ximea、Basler、Magewell 等工業相機</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       § 9  偵錯工具
+  ══════════════════════════════════════════ -->
+  <section id="debug">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(132,204,22,.15);color:var(--c-misc)">🔍</div>
+      PCIe 偵錯與診斷工具
+    </div>
+
+    <div class="cards cards-2">
+      <div class="card">
+        <div class="card-title" style="color:#a3e635">lspci — 列出 PCIe 裝置</div>
+        <div class="card-body" style="font-family:monospace;font-size:.83rem;line-height:1.9">
+          <div style="color:#22d3ee"># 列出所有裝置（含廠商名稱）</div>
+          <div>lspci -v</div>
+          <div style="color:#22d3ee; margin-top:6px"># 顯示特定裝置詳細資訊與 capabilities</div>
+          <div>lspci -vvv -s 01:00.0</div>
+          <div style="color:#22d3ee; margin-top:6px"># 查看 PCIe Link Speed / Width</div>
+          <div>lspci -vvv | grep -A5 "LnkCap\|LnkSta"</div>
+          <div style="color:#22d3ee; margin-top:6px"># 以樹狀顯示拓撲</div>
+          <div>lspci -t -v</div>
+          <div style="color:#22d3ee; margin-top:6px"># 顯示 Kernel driver in use</div>
+          <div>lspci -k</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#fbbf24">sysfs — 運行時資訊</div>
+        <div class="card-body" style="font-family:monospace;font-size:.83rem;line-height:1.9">
+          <div style="color:#22d3ee"># 列出所有 PCIe 裝置</div>
+          <div>ls /sys/bus/pci/devices/</div>
+          <div style="color:#22d3ee; margin-top:6px"># 查看裝置的 Vendor / Device ID</div>
+          <div>cat /sys/bus/pci/devices/0000:01:00.0/vendor</div>
+          <div style="color:#22d3ee; margin-top:6px"># 查看目前使用的 driver</div>
+          <div>readlink /sys/bus/pci/devices/0000:01:00.0/driver</div>
+          <div style="color:#22d3ee; margin-top:6px"># 動態解除/重新綁定 driver</div>
+          <div>echo "0000:01:00.0" &gt; /sys/bus/pci/drivers/nvme/unbind</div>
+          <div>echo "0000:01:00.0" &gt; /sys/bus/pci/drivers/nvme/bind</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#f87171">setpci — 讀寫組態空間</div>
+        <div class="card-body" style="font-family:monospace;font-size:.83rem;line-height:1.9">
+          <div style="color:#22d3ee"># 讀取 Command Register（0x04）</div>
+          <div>setpci -s 01:00.0 COMMAND</div>
+          <div style="color:#22d3ee; margin-top:6px"># 啟用 Bus Master bit</div>
+          <div>setpci -s 01:00.0 COMMAND=0007</div>
+          <div style="color:#22d3ee; margin-top:6px"># 讀取 PCIe Link Status（ECAP）</div>
+          <div>setpci -s 01:00.0 ECAP_EXP+0x12.w</div>
+          <div style="color:#22d3ee; margin-top:6px"># 讀取 BAR0 位址</div>
+          <div>setpci -s 01:00.0 BASE_ADDRESS_0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#c084fc">dmesg / perf — 核心日誌與效能</div>
+        <div class="card-body" style="font-family:monospace;font-size:.83rem;line-height:1.9">
+          <div style="color:#22d3ee"># 查看 PCIe 初始化與 AER 錯誤</div>
+          <div>dmesg | grep -i "pci\|pcie\|aer"</div>
+          <div style="color:#22d3ee; margin-top:6px"># 動態追蹤 PCI probe</div>
+          <div>echo 'p:probe pci_device_probe' &gt; /sys/kernel/debug/tracing/kprobe_events</div>
+          <div style="color:#22d3ee; margin-top:6px"># PCIe 效能計數器（pmem / GPU）</div>
+          <div>perf stat -e uncore_imc/cas_count_read/ -a sleep 1</div>
+          <div style="color:#22d3ee; margin-top:6px"># 查看 IRQ 分佈</div>
+          <div>cat /proc/interrupts | grep nvme</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box yellow" style="margin-top:16px">
+      <strong>常見問題排查</strong>
+      <b>Link 降速（x16 跑 x8）：</b>確認插槽 PCIe Lane 供給、CPU PCIe Lane 數限制（多顯卡分配）。<br>
+      <b>Gen 5 → Gen 3 降版：</b>檢查 <code>lspci -vvv</code> 的 LnkSta vs LnkCap，可能是 BIOS 設定或訊號品質問題。<br>
+      <b>裝置未被偵測：</b>確認 BIOS 中 PCIe 插槽已啟用；用 <code>lspci -nn</code> 確認 Vendor/Device ID；排查電源是否到位（6-pin / 8-pin）。<br>
+      <b>AER Correctable Error：</b>少量可忽略，大量需更換線材或降低 PCIe 速度（ASPM 問題）。
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  <a href="index.html">← 返回首頁</a> ｜
+  PCIe 與 Linux Driver 完整指南 ｜ 資料截至 2026 年 ｜
+  規格參考：<a href="#">PCI-SIG</a>、Linux Kernel Source
+</footer>
+
+<script>
+  /* ── Tab Switcher ── */
+  function switchTab(groupId, panelId, navId) {
+    const nav = document.getElementById(navId) || document.querySelector(`#${groupId}`);
+    const buttons = document.querySelectorAll(`#${groupId} .tab-btn`);
+    const panels  = document.querySelectorAll(`#${groupId} ~ .tab-panel, #${panelId}`);
+
+    // find the container that holds both buttons and panels
+    const container = buttons[0]?.closest('section') || document.body;
+
+    // deactivate all tabs in this group
+    buttons.forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+    // activate clicked
+    document.getElementById(panelId).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  /* ── Accordion ── */
+  function toggleAcc(head) {
+    const item = head.closest('.acc-item');
+    const isOpen = item.classList.contains('open');
+    item.closest('.accordion').querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  /* ── Active Nav on Scroll ── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  /* ── Animate speed bars on load ── */
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.speed-bar').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0';
+      setTimeout(() => { bar.style.width = w; }, 300);
+    });
+  });
+</script>
+</body>
+</html>

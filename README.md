@@ -41,6 +41,7 @@
 | `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
 | `serdes_guide.html` | SerDes 完整實作指南（序列化器/解序列化器原理、NRZ/PAM4 調變、等化器、CDR、訊號完整性、實作清單） |
 | `usb_hub_architecture.html` | USB HUB 架構完整解析（常用 IC、Transaction Translator、頻寬機制、ODM 硬體開發流程） |
+| `pcie_linux_driver.html` | PCIe 與 Linux Driver 完整指南（協定分層、Gen 1~6 規格演進、拓撲架構、TLP 封包、Linux 子系統、Driver 驅動流程、核心 API、裝置與 Driver 對照表、偵錯工具） |
 
 ---
 
