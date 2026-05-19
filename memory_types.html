@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記憶體類型完整指南 — SRAM · DRAM · NOR · NAND · eMMC</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #252535;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent3: #60c8ff;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+      --green: #10b981;
+      --yellow: #fbbf24;
+      --red: #ef4444;
+      --orange: #fb923c;
+      --cyan: #22d3ee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 80px 24px 50px;
+      text-align: center;
+      background: radial-gradient(circle at 50% -10%, rgba(124,106,255,0.18), transparent 65%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 640px;
+      margin: 0 auto 24px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent2);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      transition: all 0.2s;
+    }
+
+    .back-link:hover { border-color: var(--accent); background: var(--surface2); }
+
+    nav.toc {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .toc-btn {
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toc-btn:hover, .toc-btn.active {
+      border-color: var(--accent);
+      color: var(--accent2);
+      background: rgba(124,106,255,0.1);
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    section {
+      margin-bottom: 64px;
+      scroll-margin-top: 80px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .section-title { font-size: 1.6rem; font-weight: 700; color: #fff; }
+    .section-subtitle { font-size: 0.9rem; color: var(--muted); margin-top: 2px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+
+    /* Memory hierarchy visual */
+    .hierarchy {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    .hier-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      transition: all 0.2s;
+      cursor: default;
+    }
+
+    .hier-row:hover { border-color: var(--accent); transform: translateX(4px); }
+
+    .hier-label { font-weight: 700; color: #fff; min-width: 100px; font-size: 0.95rem; }
+    .hier-tech { color: var(--accent2); font-size: 0.85rem; min-width: 200px; }
+    .hier-speed { color: var(--green); font-size: 0.8rem; }
+    .hier-cost { color: var(--yellow); font-size: 0.8rem; margin-left: auto; }
+
+    .hier-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.5s ease;
+    }
+
+    /* Spec table */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .spec-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .spec-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent2);
+      margin-bottom: 4px;
+    }
+
+    .spec-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: 20px 0;
+    }
+
+    .compare-table th {
+      background: var(--surface2);
+      padding: 12px 16px;
+      text-align: left;
+      color: var(--accent2);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      white-space: nowrap;
+    }
+
+    .compare-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      vertical-align: middle;
+    }
+
+    .compare-table tr:hover td { background: var(--surface2); color: var(--text); }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+    .tag-yellow { background: rgba(251,191,36,0.15); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
+    .tag-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .tag-blue { background: rgba(124,106,255,0.15); color: var(--accent2); border: 1px solid rgba(124,106,255,0.3); }
+    .tag-cyan { background: rgba(34,211,238,0.15); color: var(--cyan); border: 1px solid rgba(34,211,238,0.3); }
+
+    /* SRAM cell visual */
+    .cell-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .cell-diagram svg {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+
+    /* Snake mode animation */
+    .snake-grid {
+      display: grid;
+      gap: 3px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+
+    .snake-cell {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--muted);
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .snake-cell.active {
+      background: var(--accent);
+      border-color: var(--accent2);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(124,106,255,0.5);
+    }
+
+    .snake-cell.visited {
+      background: rgba(124,106,255,0.2);
+      border-color: var(--accent);
+      color: var(--accent2);
+    }
+
+    .snake-arrow {
+      font-size: 0.7rem;
+      position: absolute;
+      color: var(--cyan);
+    }
+
+    .snake-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 16px 0;
+    }
+
+    .btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: rgba(124,106,255,0.1);
+      color: var(--accent2);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover { background: rgba(124,106,255,0.25); }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.primary:hover { background: #9580ff; }
+
+    /* NAND page structure */
+    .nand-visual {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 16px 0;
+    }
+
+    .nand-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nand-block:hover { border-color: var(--yellow); background: rgba(251,191,36,0.05); }
+    .nand-block.selected { border-color: var(--yellow); background: rgba(251,191,36,0.1); }
+
+    .nand-block-title { font-size: 0.7rem; color: var(--yellow); font-weight: 700; margin-bottom: 6px; }
+
+    .nand-page {
+      height: 6px;
+      border-radius: 2px;
+      background: var(--border);
+      margin-bottom: 3px;
+      transition: all 0.2s;
+    }
+
+    .nand-page.written { background: var(--green); }
+    .nand-page.erased { background: var(--border); }
+    .nand-page.bad { background: var(--red); }
+
+    .nand-info {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      display: none;
+    }
+
+    .nand-info.visible { display: block; }
+
+    /* eMMC layers */
+    .emmc-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 20px 0;
+      max-width: 500px;
+    }
+
+    .emmc-layer {
+      padding: 16px 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .emmc-layer:hover, .emmc-layer.open { border-color: var(--cyan); }
+    .emmc-layer.open { background: rgba(34,211,238,0.05); }
+
+    .emmc-layer-name { font-weight: 700; color: #fff; font-size: 0.95rem; }
+    .emmc-layer-desc { font-size: 0.82rem; color: var(--muted); }
+    .emmc-layer-badge { font-size: 0.75rem; color: var(--cyan); white-space: nowrap; }
+
+    .emmc-detail {
+      display: none;
+      padding: 16px 24px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .emmc-detail.open { display: block; }
+
+    /* Progress bars */
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .progress-label { min-width: 120px; font-size: 0.85rem; color: var(--muted); }
+    .progress-track {
+      flex: 1;
+      height: 8px;
+      background: var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 1s ease;
+      width: 0;
+    }
+
+    .progress-val { font-size: 0.8rem; color: var(--accent2); min-width: 60px; text-align: right; }
+
+    /* Use cases */
+    .use-cases {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .use-case {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .use-case:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .use-case-icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .use-case-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .use-case-mem { font-size: 0.75rem; color: var(--accent2); }
+
+    /* Callout */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 10px;
+      border-left: 4px solid;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+
+    .callout-info { background: rgba(124,106,255,0.08); border-color: var(--accent); color: var(--muted); }
+    .callout-warn { background: rgba(251,191,36,0.08); border-color: var(--yellow); color: var(--muted); }
+    .callout-tip  { background: rgba(16,185,129,0.08); border-color: var(--green); color: var(--muted); }
+
+    .callout strong { color: var(--text); }
+
+    /* Floating index */
+    .float-toc {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 100;
+    }
+
+    .float-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .float-dot.active { background: var(--accent2); border-color: var(--accent); transform: scale(1.3); }
+
+    footer {
+      text-align: center;
+      padding: 60px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .float-toc { display: none; }
+      .hier-tech { display: none; }
+      .nand-visual { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-link">← 回到主頁</a>
+  <h1 style="margin-top: 24px;">記憶體類型完整指南</h1>
+  <p>從 SRAM 快取到 NAND Flash，徹底理解各類記憶體的原理、架構與應用場景</p>
+</header>
+
+<nav class="toc">
+  <button class="toc-btn" onclick="scrollTo('intro')">記憶體概論</button>
+  <button class="toc-btn" onclick="scrollTo('sram')">SRAM</button>
+  <button class="toc-btn" onclick="scrollTo('dram')">DRAM</button>
+  <button class="toc-btn" onclick="scrollTo('nor')">NOR Flash</button>
+  <button class="toc-btn" onclick="scrollTo('nand')">NAND Flash</button>
+  <button class="toc-btn" onclick="scrollTo('emmc')">eMMC</button>
+  <button class="toc-btn" onclick="scrollTo('snake')">蛇模式</button>
+  <button class="toc-btn" onclick="scrollTo('compare')">比較總表</button>
+</nav>
+
+<div class="float-toc" id="floatToc">
+  <div class="float-dot active" data-sec="intro" title="概論"></div>
+  <div class="float-dot" data-sec="sram" title="SRAM"></div>
+  <div class="float-dot" data-sec="dram" title="DRAM"></div>
+  <div class="float-dot" data-sec="nor" title="NOR"></div>
+  <div class="float-dot" data-sec="nand" title="NAND"></div>
+  <div class="float-dot" data-sec="emmc" title="eMMC"></div>
+  <div class="float-dot" data-sec="snake" title="蛇模式"></div>
+  <div class="float-dot" data-sec="compare" title="比較"></div>
+</div>
+
+<main>
+
+  <!-- ====== 1. 概論 ====== -->
+  <section id="intro">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(124,106,255,0.15);">🧠</div>
+      <div>
+        <div class="section-title">記憶體是什麼？</div>
+        <div class="section-subtitle">Memory — 電腦儲存資訊的核心元件</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>基本定義</h3>
+      <p>
+        記憶體（Memory）是能夠儲存二進位資訊（0 與 1）的電子元件。每個儲存單元保存一個位元（bit），
+        藉由物理狀態（電荷、磁場、電阻等）的差異來代表不同的值。
+        記憶體依據<strong style="color:var(--text)">揮發性</strong>分為兩大類：
+        斷電後資料消失（揮發性，如 SRAM、DRAM），
+        或斷電後資料保留（非揮發性，如 NOR Flash、NAND Flash）。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>記憶體層次架構（Memory Hierarchy）</h3>
+      <p style="margin-bottom: 16px;">越靠近 CPU，速度越快、容量越小、成本越高。</p>
+      <div class="hierarchy" id="hierVis">
+        <div class="hier-row">
+          <div class="hier-label">L1 快取</div>
+          <div class="hier-tech">SRAM（6T）</div>
+          <div class="hier-speed">< 1ns</div>
+          <div style="flex:1; padding:0 16px"><div class="hier-bar" style="width:98%"></div></div>
+          <div class="hier-cost">最貴</div>
+        </div>
+        <div class="hier-row">
+          <div class="hier-label">L2 / L3 快取</div>
+          <div class="hier-tech">SRAM（6T / 8T）</div>
+          <div class="hier-speed">2–10 ns</div>
+          <div style="flex:1; padding:0 16px"><div class="hier-bar" style="width:82%"></div></div>
+          <div class="hier-cost">很貴</div>
+        </div>
+        <div class="hier-row">
+          <div class="hier-label">主記憶體</div>
+          <div class="hier-tech">DRAM（DDR5）</div>
+          <div class="hier-speed">~60 ns</div>
+          <div style="flex:1; padding:0 16px"><div class="hier-bar" style="width:55%"></div></div>
+          <div class="hier-cost">中等</div>
+        </div>
+        <div class="hier-row">
+          <div class="hier-label">嵌入式儲存</div>
+          <div class="hier-tech">eMMC / UFS</div>
+          <div class="hier-speed">50–500 μs</div>
+          <div style="flex:1; padding:0 16px"><div class="hier-bar" style="width:35%"></div></div>
+          <div class="hier-cost">便宜</div>
+        </div>
+        <div class="hier-row">
+          <div class="hier-label">快閃記憶體</div>
+          <div class="hier-tech">NAND / NOR Flash</div>
+          <div class="hier-speed">0.1–1 ms</div>
+          <div style="flex:1; padding:0 16px"><div class="hier-bar" style="width:22%"></div></div>
+          <div class="hier-cost">最便宜</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="use-cases">
+      <div class="use-case"><div class="use-case-icon">🖥️</div><div class="use-case-name">桌機 / 筆電</div><div class="use-case-mem">DDR5 + SSD NAND</div></div>
+      <div class="use-case"><div class="use-case-icon">📱</div><div class="use-case-name">智慧型手機</div><div class="use-case-mem">LPDDR5 + UFS 3.1</div></div>
+      <div class="use-case"><div class="use-case-icon">🎮</div><div class="use-case-name">遊戲主機</div><div class="use-case-mem">GDDR6 + NAND</div></div>
+      <div class="use-case"><div class="use-case-icon">🔌</div><div class="use-case-name">嵌入式裝置</div><div class="use-case-mem">NOR（開機）+ eMMC</div></div>
+      <div class="use-case"><div class="use-case-icon">🤖</div><div class="use-case-name">AI 加速器</div><div class="use-case-mem">HBM3（DRAM 3D 堆疊）</div></div>
+      <div class="use-case"><div class="use-case-icon">🚗</div><div class="use-case-name">車用電子</div><div class="use-case-mem">LPDDR4 + eMMC</div></div>
+    </div>
+  </section>
+
+  <!-- ====== 2. SRAM ====== -->
+  <section id="sram">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(16,185,129,0.15);">⚡</div>
+      <div>
+        <div class="section-title">SRAM — 靜態隨機存取記憶體</div>
+        <div class="section-subtitle">Static Random Access Memory · 速度最快的記憶體</div>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-value">6T</div><div class="spec-label">標準單元電晶體數</div></div>
+      <div class="spec-item"><div class="spec-value">< 1 ns</div><div class="spec-label">存取延遲</div></div>
+      <div class="spec-item"><div class="spec-value">揮發性</div><div class="spec-label">斷電資料消失</div></div>
+      <div class="spec-item"><div class="spec-value">無需刷新</div><div class="spec-label">保持方式</div></div>
+    </div>
+
+    <div class="card">
+      <h3>6 電晶體（6T）單元結構</h3>
+      <p style="margin-bottom: 16px;">SRAM 最常見的是由 6 個 MOSFET 組成的儲存單元，形成一個「雙穩態」（bistable）閂鎖電路。</p>
+
+      <div class="cell-diagram">
+        <svg viewBox="0 0 520 220" width="520" height="220" xmlns="http://www.w3.org/2000/svg">
+          <!-- VDD -->
+          <line x1="180" y1="20" x2="340" y2="20" stroke="#ef4444" stroke-width="2"/>
+          <text x="510" y="24" fill="#ef4444" font-size="13" font-family="monospace">VDD</text>
+
+          <!-- GND -->
+          <line x1="180" y1="200" x2="340" y2="200" stroke="#8888aa" stroke-width="2"/>
+          <text x="510" y="204" fill="#8888aa" font-size="13" font-family="monospace">GND</text>
+
+          <!-- Left PMOS (PL) -->
+          <rect x="155" y="40" width="50" height="28" rx="5" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="180" y="59" fill="#ef4444" font-size="12" font-family="monospace" text-anchor="middle">PL</text>
+          <line x1="180" y1="20" x2="180" y2="40" stroke="#ef4444" stroke-width="2"/>
+
+          <!-- Right PMOS (PR) -->
+          <rect x="315" y="40" width="50" height="28" rx="5" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="340" y="59" fill="#ef4444" font-size="12" font-family="monospace" text-anchor="middle">PR</text>
+          <line x1="340" y1="20" x2="340" y2="40" stroke="#ef4444" stroke-width="2"/>
+
+          <!-- Left NMOS (NL) -->
+          <rect x="155" y="110" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="180" y="129" fill="#10b981" font-size="12" font-family="monospace" text-anchor="middle">NL</text>
+
+          <!-- Right NMOS (NR) -->
+          <rect x="315" y="110" width="50" height="28" rx="5" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="340" y="129" fill="#10b981" font-size="12" font-family="monospace" text-anchor="middle">NR</text>
+
+          <!-- GND connections -->
+          <line x1="180" y1="138" x2="180" y2="200" stroke="#8888aa" stroke-width="2"/>
+          <line x1="340" y1="138" x2="340" y2="200" stroke="#8888aa" stroke-width="2"/>
+
+          <!-- Q node (left) -->
+          <line x1="180" y1="68" x2="180" y2="110" stroke="#a78bfa" stroke-width="2"/>
+          <circle cx="180" cy="90" r="4" fill="#a78bfa"/>
+          <text x="148" y="94" fill="#a78bfa" font-size="12" font-family="monospace">Q</text>
+
+          <!-- QB node (right) -->
+          <line x1="340" y1="68" x2="340" y2="110" stroke="#60c8ff" stroke-width="2"/>
+          <circle cx="340" cy="90" r="4" fill="#60c8ff"/>
+          <text x="348" y="94" fill="#60c8ff" font-size="12" font-family="monospace">Q̄</text>
+
+          <!-- Cross coupling -->
+          <path d="M180,90 C220,90 230,90 280,90" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" fill="none"/>
+          <line x1="280" y1="90" x2="280" y2="55" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="280" y1="55" x2="315" y2="55" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <path d="M340,90 C300,90 290,90 240,90" stroke="#60c8ff" stroke-width="1.5" stroke-dasharray="4,3" fill="none"/>
+          <line x1="240" y1="90" x2="240" y2="55" stroke="#60c8ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="240" y1="55" x2="205" y2="55" stroke="#60c8ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <!-- Access transistors (AL, AR) -->
+          <rect x="95" y="80" width="42" height="28" rx="5" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="116" y="99" fill="#fbbf24" font-size="12" font-family="monospace" text-anchor="middle">AL</text>
+
+          <rect x="383" y="80" width="42" height="28" rx="5" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="404" y="99" fill="#fbbf24" font-size="12" font-family="monospace" text-anchor="middle">AR</text>
+
+          <line x1="137" y1="94" x2="155" y2="94" stroke="#fbbf24" stroke-width="1.5"/>
+          <line x1="383" y1="94" x2="340" y2="94" stroke="#fbbf24" stroke-width="1.5"/>
+
+          <!-- BL / BLB -->
+          <line x1="95" y1="94" x2="60" y2="94" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="20" y="98" fill="#fbbf24" font-size="12" font-family="monospace">BL</text>
+
+          <line x1="425" y1="94" x2="460" y2="94" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="464" y="98" fill="#fbbf24" font-size="12" font-family="monospace">BL̄</text>
+
+          <!-- WL -->
+          <line x1="116" y1="80" x2="116" y2="50" stroke="#22d3ee" stroke-width="1.5"/>
+          <line x1="404" y1="80" x2="404" y2="50" stroke="#22d3ee" stroke-width="1.5"/>
+          <line x1="116" y1="50" x2="404" y2="50" stroke="#22d3ee" stroke-width="1.5"/>
+          <text x="255" y="44" fill="#22d3ee" font-size="12" font-family="monospace" text-anchor="middle">WL（字元線）</text>
+        </svg>
+      </div>
+
+      <p>
+        <strong style="color:var(--text)">Q / Q̄</strong>：互補的雙穩態節點（存「1」時 Q=high, Q̄=low）。<br>
+        <strong style="color:var(--text)">WL</strong>（Word Line 字元線）：高電位時打開存取電晶體 AL / AR。<br>
+        <strong style="color:var(--text)">BL / BL̄</strong>（Bit Line 位元線）：用於讀取差分電壓或寫入數值。<br>
+        <strong style="color:var(--text)">PL / PR</strong>（PMOS 負載）：維持 VDD 供電，強化保持能力。<br>
+        <strong style="color:var(--text)">NL / NR</strong>（NMOS 驅動）：拉低對應節點至 GND。
+      </p>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>為什麼 SRAM 不需要刷新？</strong><br>
+      6T 雙穩態結構依靠兩個互鎖的反向器持續互相驅動，只要有電源就能永遠保持狀態，不像 DRAM 的電容會慢慢漏電。
+    </div>
+
+    <div class="card">
+      <h3>主要應用場景</h3>
+      <div class="use-cases" style="grid-template-columns: repeat(auto-fill, minmax(150px,1fr));">
+        <div class="use-case"><div class="use-case-icon">🏎️</div><div class="use-case-name">CPU L1/L2/L3</div><div class="use-case-mem">最速快取</div></div>
+        <div class="use-case"><div class="use-case-icon">🔧</div><div class="use-case-name">MCU 內建 SRAM</div><div class="use-case-mem">ARM Cortex-M</div></div>
+        <div class="use-case"><div class="use-case-icon">🖧</div><div class="use-case-name">網路設備緩衝區</div><div class="use-case-mem">封包轉發</div></div>
+        <div class="use-case"><div class="use-case-icon">🎮</div><div class="use-case-name">FPGA 內部 Block RAM</div><div class="use-case-mem">查找表</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== 3. DRAM ====== -->
+  <section id="dram">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(96,200,255,0.12);">💧</div>
+      <div>
+        <div class="section-title">DRAM — 動態隨機存取記憶體</div>
+        <div class="section-subtitle">Dynamic RAM · 電腦主記憶體的核心</div>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-value">1T1C</div><div class="spec-label">每個位元：1 電晶體 + 1 電容</div></div>
+      <div class="spec-item"><div class="spec-value">~60 ns</div><div class="spec-label">存取延遲（DDR5）</div></div>
+      <div class="spec-item"><div class="spec-value">~64 ms</div><div class="spec-label">刷新週期</div></div>
+      <div class="spec-item"><div class="spec-value">揮發性</div><div class="spec-label">需持續刷新</div></div>
+    </div>
+
+    <div class="card">
+      <h3>1T1C 儲存原理</h3>
+      <p>
+        DRAM 每個位元只需 <strong style="color:var(--text)">1 個電晶體 + 1 個電容</strong>，面積是 SRAM（6T）的 1/6，因此能做到更大容量、更低成本。
+        電容充電 → 代表「1」；放電 → 代表「0」。<br><br>
+        缺點：電容會因漏電緩慢放電，必須在資料消失前定期<strong style="color:var(--text)">「刷新（Refresh）」</strong>，典型週期為每 64ms 刷新全部列。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>DDR 世代演進</h3>
+      <div style="margin: 16px 0;">
+        <div class="progress-row"><div class="progress-label">DDR1（2000）</div><div class="progress-track"><div class="progress-fill" style="width:10%; background: #6b7280;"></div></div><div class="progress-val">3.2 GB/s</div></div>
+        <div class="progress-row"><div class="progress-label">DDR2（2003）</div><div class="progress-track"><div class="progress-fill" style="width:16%; background: #8b5cf6;"></div></div><div class="progress-val">8.5 GB/s</div></div>
+        <div class="progress-row"><div class="progress-label">DDR3（2007）</div><div class="progress-track"><div class="progress-fill" style="width:28%; background: #3b82f6;"></div></div><div class="progress-val">17 GB/s</div></div>
+        <div class="progress-row"><div class="progress-label">DDR4（2014）</div><div class="progress-track"><div class="progress-fill" style="width:52%; background: #10b981;"></div></div><div class="progress-val">32 GB/s</div></div>
+        <div class="progress-row"><div class="progress-label">DDR5（2020）</div><div class="progress-track"><div class="progress-fill" style="width:85%; background: linear-gradient(90deg,var(--accent),var(--accent2));"></div></div><div class="progress-val">51 GB/s</div></div>
+        <div class="progress-row"><div class="progress-label">HBM3（2D堆疊）</div><div class="progress-track"><div class="progress-fill" style="width:100%; background: linear-gradient(90deg,var(--red),var(--yellow));"></div></div><div class="progress-val">819 GB/s</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>常見 DRAM 類型</h3>
+      <table class="compare-table">
+        <tr>
+          <th>類型</th><th>全名</th><th>特點</th><th>應用</th>
+        </tr>
+        <tr><td><span class="tag tag-blue">DDR5</span></td><td>Double Data Rate 5</td><td>雙通道內建 ECC</td><td>桌機、伺服器</td></tr>
+        <tr><td><span class="tag tag-green">LPDDR5</span></td><td>Low Power DDR5</td><td>低電壓 1.1V</td><td>手機、平板</td></tr>
+        <tr><td><span class="tag tag-yellow">GDDR6X</span></td><td>Graphics DDR6X</td><td>PAM4 信號, 超高頻寬</td><td>GPU 顯示卡</td></tr>
+        <tr><td><span class="tag tag-red">HBM3</span></td><td>High Bandwidth Memory 3</td><td>3D 堆疊, 矽中介層</td><td>AI 加速器（H100）</td></tr>
+        <tr><td><span class="tag tag-cyan">ECC RDIMM</span></td><td>Error Correcting Code</td><td>位元錯誤修正</td><td>資料中心</td></tr>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>DRAM 刷新開銷：</strong>現代 DRAM 每 64ms 需對所有列（Row）進行刷新，在高溫環境中需縮短至 32ms，消耗約 1–3% 的頻寬資源。
+    </div>
+  </section>
+
+  <!-- ====== 4. NOR Flash ====== -->
+  <section id="nor">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(251,191,36,0.12);">🔦</div>
+      <div>
+        <div class="section-title">NOR Flash</div>
+        <div class="section-subtitle">可原地執行（XIP）的非揮發性快閃記憶體</div>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-value">~100 ns</div><div class="spec-label">讀取延遲</div></div>
+      <div class="spec-item"><div class="spec-value">可 XIP</div><div class="spec-label">原地執行程式碼</div></div>
+      <div class="spec-item"><div class="spec-value">非揮發</div><div class="spec-label">斷電資料保留</div></div>
+      <div class="spec-item"><div class="spec-value">10萬次</div><div class="spec-label">擦寫壽命（典型）</div></div>
+    </div>
+
+    <div class="card">
+      <h3>NOR vs NAND 架構差異</h3>
+      <p>
+        NOR Flash 的每個儲存單元（浮閘電晶體）並聯連接到位元線，如同 CMOS 中的「NOR 閘」。
+        這使得<strong style="color:var(--text)">任意位址可獨立隨機讀取</strong>，非常適合直接執行程式碼（XIP, eXecute In Place）。
+      </p>
+      <br>
+      <p>
+        寫入前必須先以<strong style="color:var(--text)">扇區（Sector）</strong>為單位進行擦除（通常 64KB～128KB），無法以小單位寫入。
+        擦寫次數有限（約 10 萬次），且容量比 NAND 小、成本較高。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>主要應用</h3>
+      <div class="use-cases" style="grid-template-columns: repeat(auto-fill, minmax(160px,1fr));">
+        <div class="use-case"><div class="use-case-icon">🔌</div><div class="use-case-name">BIOS / UEFI</div><div class="use-case-mem">主機板開機韌體</div></div>
+        <div class="use-case"><div class="use-case-icon">📟</div><div class="use-case-name">MCU 程式碼</div><div class="use-case-mem">STM32、ESP32</div></div>
+        <div class="use-case"><div class="use-case-icon">🚗</div><div class="use-case-name">汽車 ECU</div><div class="use-case-mem">引擎控制單元</div></div>
+        <div class="use-case"><div class="use-case-icon">📡</div><div class="use-case-name">通訊設備</div><div class="use-case-mem">路由器 bootloader</div></div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <strong>為什麼 BIOS 用 NOR 而不用 NAND？</strong><br>
+      CPU 上電後必須立刻從固定位址執行指令，NOR Flash 的隨機存取特性讓 CPU 可直接定址讀取，NAND 則需先複製到 SRAM 才能執行。
+    </div>
+  </section>
+
+  <!-- ====== 5. NAND Flash ====== -->
+  <section id="nand">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(251,146,60,0.12);">📦</div>
+      <div>
+        <div class="section-title">NAND Flash</div>
+        <div class="section-subtitle">大容量儲存裝置的核心 · SSD · eMMC 的基礎</div>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-value">串聯串</div><div class="spec-label">位元線架構</div></div>
+      <div class="spec-item"><div class="spec-value">Page/Block</div><div class="spec-label">讀/擦單位</div></div>
+      <div class="spec-item"><div class="spec-value">SLC~QLC</div><div class="spec-label">每單元 1~4 位元</div></div>
+      <div class="spec-item"><div class="spec-value">3D TLC</div><div class="spec-label">主流消費型規格</div></div>
+    </div>
+
+    <div class="card">
+      <h3>NAND 層次結構（Block / Page / Cell）</h3>
+      <p style="margin-bottom: 16px;">點擊方塊查看細節：</p>
+      <div class="nand-visual" id="nandGrid"></div>
+      <div class="nand-info" id="nandInfo">
+        <strong id="nandInfoTitle"></strong><br>
+        <span id="nandInfoText"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>SLC / MLC / TLC / QLC 比較</h3>
+      <table class="compare-table">
+        <tr><th>類型</th><th>每格位元</th><th>電壓層數</th><th>壽命（P/E 週期）</th><th>速度</th><th>用途</th></tr>
+        <tr><td><span class="tag tag-green">SLC</span></td><td>1 bit</td><td>2 層</td><td>10萬次</td><td>最快</td><td>企業 SSD</td></tr>
+        <tr><td><span class="tag tag-blue">MLC</span></td><td>2 bit</td><td>4 層</td><td>1～3萬次</td><td>快</td><td>高階消費 SSD</td></tr>
+        <tr><td><span class="tag tag-yellow">TLC</span></td><td>3 bit</td><td>8 層</td><td>3000次</td><td>中</td><td>主流消費 SSD</td></tr>
+        <tr><td><span class="tag tag-red">QLC</span></td><td>4 bit</td><td>16 層</td><td>1000次</td><td>慢</td><td>大容量 / 讀取為主</td></tr>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>NAND 的「先擦再寫」限制：</strong><br>
+      NAND 只能將位元從 1 → 0（程式化），不能直接覆寫。要重新寫入必須先以整個 Block 為單位擦除（將所有位元設回 1），這就是為什麼 SSD 需要垃圾回收（Garbage Collection）與 TRIM 機制。
+    </div>
+  </section>
+
+  <!-- ====== 6. eMMC ====== -->
+  <section id="emmc">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(34,211,238,0.12);">💾</div>
+      <div>
+        <div class="section-title">eMMC — 嵌入式多媒體卡</div>
+        <div class="section-subtitle">embedded MultiMediaCard · 整合 NAND 控制器的封裝模組</div>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-item"><div class="spec-value">HS400</div><div class="spec-label">最高規格（400 MB/s）</div></div>
+      <div class="spec-item"><div class="spec-value">8-bit 並行</div><div class="spec-label">資料匯流排</div></div>
+      <div class="spec-item"><div class="spec-value">BGA 封裝</div><div class="spec-label">焊死在主機板</div></div>
+      <div class="spec-item"><div class="spec-value">3.3V / 1.8V</div><div class="spec-label">工作電壓</div></div>
+    </div>
+
+    <div class="card">
+      <h3>eMMC 內部層次架構（點擊展開）</h3>
+      <div class="emmc-stack" id="emmcStack">
+        <div class="emmc-layer" onclick="toggleEmmc(0)">
+          <div><div class="emmc-layer-name">應用層（Host Controller）</div><div class="emmc-layer-desc">主機端的 eMMC 控制器驅動</div></div>
+          <span class="emmc-layer-badge">MMC 協議</span>
+        </div>
+        <div class="emmc-detail" id="emmc-0">
+          主機 SoC 透過 <strong>SDMMC 介面</strong>傳送讀寫指令（CMD）與資料（DAT[7:0]）。Linux 核心中對應 <code>drivers/mmc/</code> 子系統，包含 mmcblk 區塊裝置驅動。
+        </div>
+
+        <div class="emmc-layer" onclick="toggleEmmc(1)">
+          <div><div class="emmc-layer-name">eMMC 控制器（Flash Controller）</div><div class="emmc-layer-desc">FTL + ECC + 排程</div></div>
+          <span class="emmc-layer-badge">FTL</span>
+        </div>
+        <div class="emmc-detail" id="emmc-1">
+          <strong>Flash Translation Layer (FTL)</strong> 負責：<br>
+          • 邏輯位址 (LBA) → 物理位址 (PBA) 映射<br>
+          • 損耗均衡（Wear Leveling）：平均分散寫入<br>
+          • 壞塊管理（Bad Block Management）<br>
+          • 垃圾回收（Garbage Collection）
+        </div>
+
+        <div class="emmc-layer" onclick="toggleEmmc(2)">
+          <div><div class="emmc-layer-name">ECC 引擎</div><div class="emmc-layer-desc">BCH / LDPC 錯誤修正</div></div>
+          <span class="emmc-layer-badge">糾錯碼</span>
+        </div>
+        <div class="emmc-detail" id="emmc-2">
+          NAND Flash 在多次擦寫後位元錯誤率上升，ECC 引擎使用 <strong>BCH</strong> 或更新的 <strong>LDPC</strong> 演算法進行錯誤偵測與修正。
+          每個 Page 附帶 OOB（Out-Of-Band）區域儲存 ECC 校驗碼。
+        </div>
+
+        <div class="emmc-layer" onclick="toggleEmmc(3)">
+          <div><div class="emmc-layer-name">NAND Flash 陣列</div><div class="emmc-layer-desc">實體儲存介質</div></div>
+          <span class="emmc-layer-badge">3D TLC / MLC</span>
+        </div>
+        <div class="emmc-detail" id="emmc-3">
+          eMMC 封裝內有多個 NAND Flash Die，透過多通道（Multi-Channel）同時存取以提升效能。
+          現代 eMMC 5.1 使用 3D TLC NAND，容量從 4GB 到 256GB 不等。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>eMMC vs UFS 比較</h3>
+      <table class="compare-table">
+        <tr><th>規格</th><th>eMMC 5.1</th><th>UFS 3.1</th><th>UFS 4.0</th></tr>
+        <tr><td>匯流排</td><td>並行 8-bit</td><td>串行 2-lane</td><td>串行 2-lane</td></tr>
+        <tr><td>最高讀取</td><td>400 MB/s</td><td>2,100 MB/s</td><td>4,200 MB/s</td></tr>
+        <tr><td>命令佇列</td><td>❌ 無</td><td>✅ 32 queue</td><td>✅ 32 queue</td></tr>
+        <tr><td>全雙工</td><td>❌ 半雙工</td><td>✅ 全雙工</td><td>✅ 全雙工</td></tr>
+        <tr><td>典型應用</td><td>平價手機、IoT</td><td>中高階手機</td><td>旗艦手機</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ====== 7. 蛇模式 ====== -->
+  <section id="snake">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(167,139,250,0.15);">🐍</div>
+      <div>
+        <div class="section-title">蛇模式（Snake Bit-Line）</div>
+        <div class="section-subtitle">NAND Flash 位元線折返架構 · 節省面積的關鍵設計</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>蛇模式的由來</h3>
+      <p>
+        在 NAND Flash 的記憶體陣列中，每條位元線（Bit Line）底部都有一個<strong style="color:var(--text)">感測放大器（Sense Amplifier）</strong>。
+        如果每條位元線都獨立配置一個感測放大器，晶片面積會非常大。
+      </p>
+      <br>
+      <p>
+        <strong style="color:var(--text)">蛇模式（Snake / Folded Bit-Line 架構）</strong>的解法是：
+        讓奇數位元線往下走到底部後，「折回」往上延伸，再與偶數位元線共享一個感測放大器。
+        兩條位元線形成一對「差動對（Differential Pair）」，狀如蛇形 S 路徑，因此得名。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>互動示意：蛇形位元線掃描</h3>
+      <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">
+        下方模擬 NAND 陣列的讀取掃描順序（奇偶列交替折返），觀察蛇形路徑如何形成。
+      </p>
+      <div id="snakeContainer" style="display:flex; flex-direction:column; align-items:center;"></div>
+      <div class="snake-controls">
+        <button class="btn primary" onclick="startSnake()">▶ 開始動畫</button>
+        <button class="btn" onclick="resetSnake()">↺ 重置</button>
+        <select id="snakeSpeed" style="padding:8px 12px; background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:8px; font-family:inherit; cursor:pointer;">
+          <option value="120">慢速</option>
+          <option value="60" selected>中速</option>
+          <option value="25">快速</option>
+        </select>
+      </div>
+      <div id="snakeLegend" style="display:flex; gap:16px; justify-content:center; margin-top:8px; font-size:0.82rem; color:var(--muted);">
+        <span><span style="display:inline-block;width:12px;height:12px;background:var(--accent);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>目前讀取</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:rgba(124,106,255,0.25);border:1px solid var(--accent);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>已完成</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>待讀取</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>折返位元線的優勢</h3>
+      <table class="compare-table">
+        <tr><th>比較項目</th><th>開放位元線（Open Bit-Line）</th><th>折返位元線（蛇模式）</th></tr>
+        <tr><td>感測放大器數量</td><td>每列 1 個</td><td>每 2 列共用 1 個（節省 50%）</td></tr>
+        <tr><td>雜訊抑制</td><td>單端，容易受干擾</td><td>差動對，共模雜訊相消</td></tr>
+        <tr><td>感測靈敏度</td><td>低</td><td>高（差動感測）</td></tr>
+        <tr><td>面積效率</td><td>低</td><td>高</td></tr>
+        <tr><td>配線複雜度</td><td>低</td><td>較高</td></tr>
+      </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <strong>蛇模式在 3D NAND 中的演化：</strong><br>
+      現代 3D NAND（如 BiCS FLASH、V-NAND）將記憶體層垂直堆疊，蛇形位元線仍然被保留作為感測放大器共用策略，但路徑從平面延伸成垂直柱狀結構。
+    </div>
+  </section>
+
+  <!-- ====== 8. 比較總表 ====== -->
+  <section id="compare">
+    <div class="section-header">
+      <div class="section-icon" style="background: rgba(251,191,36,0.12);">📊</div>
+      <div>
+        <div class="section-title">各記憶體類型完整比較</div>
+        <div class="section-subtitle">一張表掌握所有重點</div>
+      </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table class="compare-table">
+        <tr>
+          <th>類型</th>
+          <th>揮發性</th>
+          <th>存取速度</th>
+          <th>容量密度</th>
+          <th>可原地執行</th>
+          <th>需刷新</th>
+          <th>最小寫入單位</th>
+          <th>典型應用</th>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">SRAM</span></td>
+          <td>揮發</td>
+          <td>< 1 ns</td>
+          <td>最低</td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>1 bit</td>
+          <td>CPU 快取</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">DRAM</span></td>
+          <td>揮發</td>
+          <td>~60 ns</td>
+          <td>高</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>1 burst</td>
+          <td>主記憶體</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-yellow">NOR Flash</span></td>
+          <td>非揮發</td>
+          <td>~100 ns 讀</td>
+          <td>中低</td>
+          <td>✅</td>
+          <td>❌</td>
+          <td>Sector 擦除</td>
+          <td>BIOS、MCU 韌體</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">NAND Flash</span></td>
+          <td>非揮發</td>
+          <td>50μs～1ms</td>
+          <td>最高</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>Page 寫 / Block 擦</td>
+          <td>SSD、記憶卡</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-cyan">eMMC</span></td>
+          <td>非揮發</td>
+          <td>最高 400 MB/s</td>
+          <td>高</td>
+          <td>❌（需載入）</td>
+          <td>❌</td>
+          <td>由 FTL 管理</td>
+          <td>手機、IoT</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout callout-info" style="margin-top: 24px;">
+      <strong>選型建議：</strong><br>
+      需要<strong style="color:var(--text)">最低延遲</strong> → SRAM（L1快取）；
+      需要<strong style="color:var(--text)">大容量工作記憶體</strong> → DRAM；
+      需要<strong style="color:var(--text)">原地執行韌體</strong> → NOR Flash；
+      需要<strong style="color:var(--text)">大容量非揮發儲存</strong> → NAND Flash；
+      需要<strong style="color:var(--text)">嵌入式整合方案</strong> → eMMC。
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p><a href="index.html">← 回到 AI Resources Hub</a> · 本頁採 <a href="LICENSE">CC BY 4.0</a> 授權</p>
+</footer>
+
+<script>
+// TOC scroll
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Floating TOC
+const sections = ['intro','sram','dram','nor','nand','emmc','snake','compare'];
+const dots = document.querySelectorAll('.float-dot');
+
+window.addEventListener('scroll', () => {
+  let cur = 'intro';
+  for (const s of sections) {
+    const el = document.getElementById(s);
+    if (el && el.getBoundingClientRect().top < window.innerHeight * 0.5) cur = s;
+  }
+  dots.forEach(d => d.classList.toggle('active', d.dataset.sec === cur));
+});
+
+dots.forEach(d => d.addEventListener('click', () => scrollTo(d.dataset.sec)));
+
+// eMMC accordion
+function toggleEmmc(i) {
+  const detail = document.getElementById('emmc-' + i);
+  const layer = document.querySelectorAll('.emmc-layer')[i];
+  const isOpen = detail.classList.contains('open');
+  document.querySelectorAll('.emmc-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.emmc-layer').forEach(l => l.classList.remove('open'));
+  if (!isOpen) { detail.classList.add('open'); layer.classList.add('open'); }
+}
+
+// NAND grid
+const nandData = [
+  { title: 'Block 0', pages: [true,true,true,true,true,true,false,false], info: 'Block 是 NAND 的最小擦除單位，通常為 256KB～4MB。擦除後所有 Page 位元重設為 1（全 0xFF）。' },
+  { title: 'Block 1', pages: [true,true,true,true,true,true,true,false], info: 'Block 1 已寫入 7 個 Page。NAND 必須按順序寫入 Page，不能跳過。' },
+  { title: 'Block 2', pages: [false,false,false,false,false,false,false,false], info: 'Block 2 已擦除，所有 Page 為空（待寫）。' },
+  { title: 'Block 3 (BAD)', pages: [true,false,true,false,true,false,false,false], info: '壞塊（Bad Block）：製造時或使用中產生永久性錯誤，FTL 會標記並跳過此 Block。', bad: true },
+];
+
+const grid = document.getElementById('nandGrid');
+nandData.forEach((b, i) => {
+  const div = document.createElement('div');
+  div.className = 'nand-block' + (b.bad ? ' bad' : '');
+  if (b.bad) div.style.borderColor = 'var(--red)';
+  div.innerHTML = `<div class="nand-block-title">${b.title}</div>` +
+    b.pages.map(p => `<div class="nand-page ${p ? 'written' : 'erased'}"></div>`).join('');
+  div.onclick = () => {
+    document.querySelectorAll('.nand-block').forEach(x => x.classList.remove('selected'));
+    div.classList.add('selected');
+    const info = document.getElementById('nandInfo');
+    document.getElementById('nandInfoTitle').textContent = b.title;
+    document.getElementById('nandInfoText').textContent = b.info;
+    info.classList.add('visible');
+  };
+  grid.appendChild(div);
+});
+
+// Snake animation
+const ROWS = 6, COLS = 8;
+let snakeTimer = null;
+let snakePath = [];
+
+function buildSnakePath() {
+  const path = [];
+  for (let c = 0; c < COLS; c++) {
+    if (c % 2 === 0) {
+      for (let r = 0; r < ROWS; r++) path.push([r, c]);
+    } else {
+      for (let r = ROWS - 1; r >= 0; r--) path.push([r, c]);
+    }
+  }
+  return path;
+}
+
+function buildSnakeGrid() {
+  const container = document.getElementById('snakeContainer');
+  container.innerHTML = '';
+  const table = document.createElement('div');
+  table.style.display = 'grid';
+  table.style.gridTemplateColumns = `repeat(${COLS}, 40px)`;
+  table.style.gap = '4px';
+  table.id = 'snakeTable';
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'snake-cell';
+      cell.id = `sc-${r}-${c}`;
+      // column label on top row
+      if (r === 0) { const lbl = document.createElement('span'); lbl.style.cssText='font-size:0.6rem;color:var(--cyan);position:absolute;top:2px;'; lbl.textContent=`BL${c}`; cell.appendChild(lbl); }
+      // row label on left col
+      if (c === 0) { const lbl = document.createElement('span'); lbl.style.cssText='font-size:0.6rem;color:var(--muted);position:absolute;left:2px;'; lbl.textContent=`WL${r}`; cell.appendChild(lbl); }
+      table.appendChild(cell);
+    }
+  }
+  container.appendChild(table);
+
+  // SA row
+  const saRow = document.createElement('div');
+  saRow.style.display = 'grid';
+  saRow.style.gridTemplateColumns = `repeat(${COLS}, 40px)`;
+  saRow.style.gap = '4px';
+  saRow.style.marginTop = '4px';
+  for (let c = 0; c < COLS; c++) {
+    const sa = document.createElement('div');
+    sa.id = `sa-${c}`;
+    sa.style.cssText = `height:18px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--muted);transition:all 0.15s;`;
+    sa.textContent = `SA`;
+    saRow.appendChild(sa);
+  }
+  container.appendChild(saRow);
+}
+
+function startSnake() {
+  clearInterval(snakeTimer);
+  resetSnake();
+  snakePath = buildSnakePath();
+  let idx = 0;
+  const speed = parseInt(document.getElementById('snakeSpeed').value);
+  let prev = null;
+
+  snakeTimer = setInterval(() => {
+    if (idx >= snakePath.length) { clearInterval(snakeTimer); return; }
+
+    if (prev) {
+      const [pr, pc] = prev;
+      const prevCell = document.getElementById(`sc-${pr}-${pc}`);
+      if (prevCell) { prevCell.classList.remove('active'); prevCell.classList.add('visited'); }
+    }
+
+    const [r, c] = snakePath[idx];
+    const cell = document.getElementById(`sc-${r}-${c}`);
+    if (cell) cell.classList.add('active');
+
+    // highlight SA when reaching bottom of column
+    if ((c % 2 === 0 && r === ROWS-1) || (c % 2 === 1 && r === 0)) {
+      const sa = document.getElementById(`sa-${c}`);
+      if (sa) { sa.style.background = 'rgba(124,106,255,0.3)'; sa.style.borderColor = 'var(--accent)'; sa.style.color = 'var(--accent2)'; }
+    }
+
+    prev = [r, c];
+    idx++;
+  }, speed);
+}
+
+function resetSnake() {
+  clearInterval(snakeTimer);
+  buildSnakeGrid();
+}
+
+buildSnakeGrid();
+</script>
+
+</body>
+</html>
