@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USB HUB 架構完整解析</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --surface3: #22222f;
+    --accent: #7c6aff;
+    --accent2: #a78bfa;
+    --accent3: #c4b5fd;
+    --green: #34d399;
+    --blue: #60a5fa;
+    --orange: #fb923c;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --cyan: #22d3ee;
+    --pink: #f472b6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #2d2d3d;
+    --radius: 12px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #0d0d18 0%, #1a1030 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,106,255,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(124,106,255,0.15);
+    border: 1px solid rgba(124,106,255,0.4);
+    border-radius: 99px;
+    padding: 0.3rem 1rem;
+    font-size: 0.8rem;
+    color: var(--accent3);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 30%, var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+  }
+  header p {
+    color: var(--text2);
+    font-size: 1.05rem;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  /* ── Nav tabs ── */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1.2rem 2rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--accent3); background: rgba(124,106,255,0.08); }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+  /* ── Main layout ── */
+  main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .card-title span { font-size: 1.4rem; }
+
+  /* ── Section headings ── */
+  .section-heading {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-heading::before {
+    content: '';
+    width: 4px;
+    height: 1.6rem;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── SVG diagram ── */
+  .diagram-wrap {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+  .diagram-wrap svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* ── Tooltip ── */
+  #tooltip {
+    position: fixed;
+    background: var(--surface3);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    max-width: 280px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 9999;
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  #tooltip.show { opacity: 1; }
+
+  /* ── Grid ── */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; }
+
+  /* ── Info boxes ── */
+  .info-box {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .info-box.green { border-left-color: var(--green); }
+  .info-box.blue { border-left-color: var(--blue); }
+  .info-box.orange { border-left-color: var(--orange); }
+  .info-box.red { border-left-color: var(--red); }
+  .info-box.cyan { border-left-color: var(--cyan); }
+  .info-box h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .info-box p, .info-box li { font-size: 0.9rem; color: var(--text2); }
+  .info-box ul { padding-left: 1.2rem; }
+  .info-box li { margin-bottom: 0.2rem; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th {
+    background: var(--surface3);
+    color: var(--accent3);
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(124,106,255,0.05); }
+  .tag {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0.1rem;
+  }
+  .tag-purple { background: rgba(124,106,255,0.2); color: var(--accent3); }
+  .tag-green  { background: rgba(52,211,153,0.2);  color: var(--green); }
+  .tag-blue   { background: rgba(96,165,250,0.2);  color: var(--blue); }
+  .tag-orange { background: rgba(251,146,60,0.2);  color: var(--orange); }
+  .tag-cyan   { background: rgba(34,211,238,0.2);  color: var(--cyan); }
+  .tag-red    { background: rgba(248,113,113,0.2); color: var(--red); }
+
+  /* ── Bandwidth viz ── */
+  .bw-bar-wrap { margin-bottom: 1.2rem; }
+  .bw-label { font-size: 0.85rem; color: var(--text2); margin-bottom: 0.35rem; display: flex; justify-content: space-between; }
+  .bw-bar-bg { background: var(--surface3); border-radius: 99px; height: 22px; overflow: hidden; }
+  .bw-bar {
+    height: 100%;
+    border-radius: 99px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── Dev mode cards ── */
+  .dev-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .dev-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .dev-card-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+  .dev-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .dev-card p { font-size: 0.88rem; color: var(--text2); line-height: 1.6; }
+  .dev-card .chip-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+
+  /* ── Flow steps ── */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .flow-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: -8px;
+    width: 2px;
+    background: var(--border);
+  }
+  .flow-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .flow-content { padding: 0.4rem 0 1.5rem; }
+  .flow-content h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .flow-content p { font-size: 0.88rem; color: var(--text2); }
+
+  /* ── Protocol viz ── */
+  .protocol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .protocol-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .protocol-block:hover, .protocol-block.selected {
+    border-color: var(--accent);
+    background: rgba(124,106,255,0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(124,106,255,0.2);
+  }
+  .protocol-block .speed { font-size: 1.5rem; font-weight: 800; }
+  .protocol-block .name  { font-size: 0.8rem; color: var(--text2); margin: 0.2rem 0 0.6rem; }
+  .protocol-block .band  { font-size: 1.1rem; font-weight: 700; }
+
+  .protocol-detail {
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    margin-top: 1rem;
+    display: none;
+  }
+  .protocol-detail.show { display: block; }
+  .protocol-detail h4 { color: var(--accent3); margin-bottom: 0.8rem; font-size: 1rem; }
+
+  /* ── TT animation ── */
+  #tt-canvas { display: block; width: 100%; border-radius: 10px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    main { padding: 1rem; }
+    .card { padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="tooltip"></div>
+
+<header>
+  <div class="header-badge">🔌 硬體架構解析</div>
+  <h1>USB HUB 完整圖解</h1>
+  <p>從電路架構、常用 IC、頻寬機制，到韌體開發流程的全方位技術解析</p>
+</header>
+
+<!-- Tab navigation -->
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="overview">📐 架構總覽</button>
+  <button class="tab-btn" data-tab="ic">🧩 常用 IC</button>
+  <button class="tab-btn" data-tab="bandwidth">📶 頻寬機制</button>
+  <button class="tab-btn" data-tab="tt">🔄 TT 交易轉譯</button>
+  <button class="tab-btn" data-tab="dev">🛠 硬體開發</button>
+  <button class="tab-btn" data-tab="compare">📊 規格比較</button>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1: 架構總覽
+═══════════════════════════════════════════════════════ -->
+<section class="section active" id="sec-overview">
+  <h2 class="section-heading">USB HUB 內部架構</h2>
+
+  <div class="card">
+    <div class="card-title"><span>📐</span>拓撲結構圖（點擊區塊查看說明）</div>
+    <div class="diagram-wrap">
+      <svg id="arch-svg" viewBox="0 0 820 520" width="820" height="520" font-family="Segoe UI, system-ui, sans-serif">
+        <!-- Background grid -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#7c6aff" opacity="0.8"/>
+          </marker>
+          <marker id="arr-w" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#60a5fa" opacity="0.8"/>
+          </marker>
+          <marker id="arr-g" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#34d399" opacity="0.8"/>
+          </marker>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="hubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2d1f6e"/>
+            <stop offset="100%" stop-color="#1a1040"/>
+          </linearGradient>
+          <linearGradient id="portGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1e3a5f"/>
+            <stop offset="100%" stop-color="#0f2040"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Host / PC -->
+        <rect x="10" y="200" width="130" height="80" rx="10" fill="#1a2a1a" stroke="#34d399" stroke-width="2"
+          class="svg-clickable" data-tip="主機端（Host）&#xa;USB Root Hub 內建於 CPU/南橋晶片，為 HUB 的上游連線來源。提供電力（VBUS 5V）與差動信號（D+/D−）。"/>
+        <text x="75" y="234" text-anchor="middle" fill="#34d399" font-weight="700" font-size="14">🖥️ Host PC</text>
+        <text x="75" y="252" text-anchor="middle" fill="#a7f3d0" font-size="11">Root Hub</text>
+        <text x="75" y="268" text-anchor="middle" fill="#6ee7b7" font-size="10">USB Controller</text>
+
+        <!-- Upstream cable -->
+        <line x1="140" y1="240" x2="200" y2="240" stroke="#34d399" stroke-width="2.5"
+          stroke-dasharray="6,3" marker-end="url(#arr-g)"/>
+        <text x="170" y="230" text-anchor="middle" fill="#6ee7b7" font-size="10">Upstream</text>
+        <text x="170" y="258" text-anchor="middle" fill="#6ee7b7" font-size="10">D+/D−</text>
+
+        <!-- HUB Controller (main block) -->
+        <rect x="200" y="80" width="380" height="340" rx="14" fill="url(#hubGrad)"
+          stroke="#7c6aff" stroke-width="2.5"/>
+        <text x="390" y="108" text-anchor="middle" fill="#c4b5fd" font-weight="800" font-size="16">HUB Controller IC</text>
+        <text x="390" y="126" text-anchor="middle" fill="#8b7ee8" font-size="11">（如 GL850G / VL817 / FE1.1s）</text>
+
+        <!-- Upstream Port block -->
+        <rect x="215" y="140" width="140" height="60" rx="8" fill="#1f1a40" stroke="#7c6aff" stroke-width="1.5"
+          class="svg-clickable" data-tip="上游端口（Upstream Port）&#xa;接收來自主機的封包，由 Upstream Facing Port (UFP) 收發器負責。包含 HS/FS/LS 線路狀態機器，偵測 RESET、SUSPEND、RESUME 訊號。"/>
+        <text x="285" y="166" text-anchor="middle" fill="#a78bfa" font-weight="600" font-size="12">Upstream Port</text>
+        <text x="285" y="183" text-anchor="middle" fill="#7c6aff" font-size="10">UFP Transceiver</text>
+
+        <!-- Repeater/Hub Repeater -->
+        <rect x="215" y="225" width="140" height="55" rx="8" fill="#1a2535" stroke="#60a5fa" stroke-width="1.5"
+          class="svg-clickable" data-tip="Hub Repeater&#xa;負責在 HS（480 Mbps）模式下，將封包從上游廣播到所有已啟用的下游端口，或將下游封包回傳上游。實作 USB 協定狀態機（SOF, token, data, handshake）。"/>
+        <text x="285" y="249" text-anchor="middle" fill="#93c5fd" font-weight="600" font-size="12">Hub Repeater</text>
+        <text x="285" y="265" text-anchor="middle" fill="#60a5fa" font-size="10">Protocol FSM</text>
+
+        <!-- Transaction Translator -->
+        <rect x="215" y="305" width="140" height="55" rx="8" fill="#2d1a10" stroke="#fb923c" stroke-width="1.5"
+          class="svg-clickable" data-tip="Transaction Translator (TT)&#xa;當下游有 FS（12 Mbps）或 LS（1.5 Mbps）裝置時，TT 負責轉換速度。它在 HS 幀中分配 Split Transaction，讓低速裝置不影響高速匯流排效率。Single TT 全局共用；Multi-TT 每個端口獨立 TT。"/>
+        <text x="285" y="329" text-anchor="middle" fill="#fdba74" font-weight="600" font-size="12">Transaction</text>
+        <text x="285" y="345" text-anchor="middle" fill="#fdba74" font-weight="600" font-size="12">Translator (TT)</text>
+        <text x="285" y="360" text-anchor="middle" fill="#fb923c" font-size="10">FS/LS 橋接</text>
+
+        <!-- Downstream Port Controller -->
+        <rect x="385" y="140" width="180" height="55" rx="8" fill="#1a2a1a" stroke="#34d399" stroke-width="1.5"
+          class="svg-clickable" data-tip="下游端口控制器&#xa;管理每個 Downstream Facing Port (DFP)，包括：&#xa;• VBUS 電源開關（Power Switch IC）&#xa;• 過電流偵測&#xa;• 連線/移除偵測（attach/detach）&#xa;• 每端口啟用/停用"/>
+        <text x="475" y="163" text-anchor="middle" fill="#86efac" font-weight="600" font-size="12">Downstream Port</text>
+        <text x="475" y="180" text-anchor="middle" fill="#4ade80" font-size="11">Controller × N ports</text>
+
+        <!-- Register / Config -->
+        <rect x="385" y="220" width="180" height="55" rx="8" fill="#1f1f10" stroke="#fbbf24" stroke-width="1.5"
+          class="svg-clickable" data-tip="暫存器 / 韌體核心&#xa;USB HUB Class 規格定義的描述符（Hub Descriptor）存放於此，包含端口數量、TT 設定、電源特性。部分 IC 附帶小型 MCU（如 8051 核心）執行 Hub-Class 命令與端口管理。"/>
+        <text x="475" y="244" text-anchor="middle" fill="#fde68a" font-weight="600" font-size="12">Hub Descriptor /</text>
+        <text x="475" y="260" text-anchor="middle" fill="#fde68a" font-weight="600" font-size="12">Register Core</text>
+
+        <!-- Power Mgmt -->
+        <rect x="385" y="300" width="180" height="60" rx="8" fill="#1a101a" stroke="#f472b6" stroke-width="1.5"
+          class="svg-clickable" data-tip="電源管理&#xa;• VBUS 開關：每端口獨立供電（RT9711, SY6280 等 Power Switch）&#xa;• BC1.2 / Apple 充電偵測&#xa;• USB-PD（僅 USB 3.2 Gen2 以上高階 IC）&#xa;• 3.3V / 1.8V / 1.0V 內部 LDO 供核心邏輯使用"/>
+        <text x="475" y="322" text-anchor="middle" fill="#f9a8d4" font-weight="600" font-size="12">Power Management</text>
+        <text x="475" y="339" text-anchor="middle" fill="#f472b6" font-size="10">VBUS SW / BC1.2 / PD</text>
+        <text x="475" y="355" text-anchor="middle" fill="#f472b6" font-size="10">LDO（3.3V/1.8V/1.0V）</text>
+
+        <!-- Internal buses (arrows) -->
+        <line x1="355" y1="168" x2="385" y2="168" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="355" y1="248" x2="385" y2="248" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="355" y1="330" x2="385" y2="330" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="475" y1="195" x2="475" y2="220" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="475" y1="275" x2="475" y2="300" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="285" y1="200" x2="285" y2="225" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="285" y1="280" x2="285" y2="305" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- Crystal oscillator -->
+        <rect x="230" y="400" width="80" height="30" rx="6" fill="#1a1a10" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="270" y="419" text-anchor="middle" fill="#fde68a" font-size="11">🔷 12 / 24 MHz XTAL</text>
+        <line x1="270" y1="400" x2="305" y2="385" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <!-- Downstream ports -->
+        <!-- Port 1 -->
+        <rect x="620" y="100" width="110" height="65" rx="8" fill="url(#portGrad)" stroke="#60a5fa" stroke-width="1.5"
+          class="svg-clickable" data-tip="下游端口 1（Port 1）&#xa;每個端口物理上有：D+, D−（USB 2.0）及 TX+/TX−, RX+/RX−（USB 3.x SuperSpeed）。連接到實際 USB Type-A 或 Type-C 插座。由 Hub IC 控制 VBUS 電源開關。"/>
+        <text x="675" y="124" text-anchor="middle" fill="#93c5fd" font-weight="700" font-size="12">Port 1</text>
+        <text x="675" y="140" text-anchor="middle" fill="#60a5fa" font-size="10">USB Type-A/C</text>
+        <text x="675" y="156" text-anchor="middle" fill="#3b82f6" font-size="10">VBUS + D+/D−</text>
+
+        <!-- Port 2 -->
+        <rect x="620" y="190" width="110" height="65" rx="8" fill="url(#portGrad)" stroke="#60a5fa" stroke-width="1.5"
+          class="svg-clickable" data-tip="下游端口 2（Port 2）&#xa;可獨立供電（最高 900mA @ USB 3.0；5A @ USB-PD）。USB 2.0 端口共享 TT 或各有獨立 TT（Multi-TT 模式）。"/>
+        <text x="675" y="214" text-anchor="middle" fill="#93c5fd" font-weight="700" font-size="12">Port 2</text>
+        <text x="675" y="230" text-anchor="middle" fill="#60a5fa" font-size="10">USB Type-A/C</text>
+        <text x="675" y="246" text-anchor="middle" fill="#3b82f6" font-size="10">VBUS + D+/D−</text>
+
+        <!-- Port 3 -->
+        <rect x="620" y="280" width="110" height="65" rx="8" fill="url(#portGrad)" stroke="#60a5fa" stroke-width="1.5"
+          class="svg-clickable" data-tip="下游端口 3（Port 3）&#xa;在 USB 3.x HUB 中，SuperSpeed 信號（5/10/20 Gbps）不經由 Hub Repeater，而透過獨立的 SSIC PHY 路由，每個 SS 端口獨享頻寬。"/>
+        <text x="675" y="304" text-anchor="middle" fill="#93c5fd" font-weight="700" font-size="12">Port 3</text>
+        <text x="675" y="320" text-anchor="middle" fill="#60a5fa" font-size="10">USB Type-A/C</text>
+        <text x="675" y="336" text-anchor="middle" fill="#3b82f6" font-size="10">VBUS + SS TX/RX</text>
+
+        <!-- Port 4 -->
+        <rect x="620" y="370" width="110" height="65" rx="8" fill="url(#portGrad)" stroke="#60a5fa" stroke-width="1.5"
+          class="svg-clickable" data-tip="下游端口 4（Port 4）&#xa;USB HUB 規格最多支援 7 個下游端口（USB 2.0 spec 2.0 §11.23）。多端口 HUB 常見 4 或 7 port。電源預算：單端口 USB 2.0 最大 500mA，USB 3.x 最大 900mA，BC1.2 最大 1.5A。"/>
+        <text x="675" y="394" text-anchor="middle" fill="#93c5fd" font-weight="700" font-size="12">Port 4</text>
+        <text x="675" y="410" text-anchor="middle" fill="#60a5fa" font-size="10">USB Type-A/C</text>
+        <text x="675" y="426" text-anchor="middle" fill="#3b82f6" font-size="10">VBUS + D+/D−</text>
+
+        <!-- Hub to ports arrows -->
+        <line x1="580" y1="168" x2="620" y2="132" stroke="#60a5fa" stroke-width="2" marker-end="url(#arr-w)"/>
+        <line x1="580" y1="220" x2="620" y2="222" stroke="#60a5fa" stroke-width="2" marker-end="url(#arr-w)"/>
+        <line x1="580" y1="300" x2="620" y2="313" stroke="#60a5fa" stroke-width="2" marker-end="url(#arr-w)"/>
+        <line x1="580" y1="360" x2="620" y2="403" stroke="#60a5fa" stroke-width="2" marker-end="url(#arr-w)"/>
+
+        <!-- Power supply -->
+        <rect x="620" y="456" width="110" height="50" rx="8" fill="#1a1020" stroke="#f472b6" stroke-width="1.5"
+          class="svg-clickable" data-tip="電源輸入&#xa;• Bus-Powered（匯流排供電）：從 USB Host 取電，限制總輸出電流。&#xa;• Self-Powered（自供電）：外接 AC 變壓器，可提供完整每端口電流（最高 USB3: 900mA/port）。&#xa;常見電源 IC：SY6280, RT9711, USBLC6 保護二極體。"/>
+        <text x="675" y="477" text-anchor="middle" fill="#f9a8d4" font-weight="700" font-size="11">⚡ Power Supply</text>
+        <text x="675" y="494" text-anchor="middle" fill="#f472b6" font-size="10">Self / Bus Powered</text>
+        <line x1="625" y1="456" x2="580" y2="350" stroke="#f472b6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- EEPROM -->
+        <rect x="50" y="380" width="90" height="40" rx="6" fill="#101020" stroke="#a78bfa" stroke-width="1.5"
+          class="svg-clickable" data-tip="EEPROM（選配）&#xa;部分 HUB IC 支援外掛 I²C EEPROM，用於客製化 VID/PID、序號、Hub Descriptor、端口電源特性等。讓 ODM/OEM 廠商可在不重新流片的情況下自訂產品識別。"/>
+        <text x="95" y="396" text-anchor="middle" fill="#c4b5fd" font-weight="600" font-size="11">EEPROM</text>
+        <text x="95" y="411" text-anchor="middle" fill="#a78bfa" font-size="10">I²C / VID/PID</text>
+        <line x1="140" y1="395" x2="200" y2="340" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- USB 3.0 SSIC label -->
+        <text x="390" y="440" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic">＊USB 3.x HUB 另含 SuperSpeed PHY（每端口獨立 SSIC 或 LTSSM 狀態機）</text>
+      </svg>
+    </div>
+
+    <div class="grid-2">
+      <div class="info-box green">
+        <h4>🔗 USB 拓撲限制</h4>
+        <ul>
+          <li>USB 規格最多允許 <strong>5 層 HUB 串接</strong>（USB 2.0：最深 7 層）</li>
+          <li>每個 HUB 最多 <strong>7 個下游端口</strong>（USB 2.0 Spec §11.23）</li>
+          <li>整個 USB 樹狀結構最多 <strong>127 個裝置</strong>（7-bit 位址）</li>
+        </ul>
+      </div>
+      <div class="info-box blue">
+        <h4>⚡ 電源架構</h4>
+        <ul>
+          <li><strong>Bus-Powered</strong>：從 Host 取電，受限於 500mA/900mA</li>
+          <li><strong>Self-Powered</strong>：外接 DC，每端口可獨立提供 900mA</li>
+          <li>BC 1.2 充電端口可達 1.5A，USB-PD 最高 5A@20V</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2: 常用 IC
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-ic">
+  <h2 class="section-heading">主流 USB HUB 控制器 IC</h2>
+
+  <div class="card">
+    <div class="card-title"><span>🧩</span>USB 2.0 HUB IC（480 Mbps）</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>廠商</th><th>型號</th><th>端口</th><th>TT</th><th>介面</th><th>特點</th><th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Genesys Logic<br>創惟科技（台）</strong></td>
+            <td>GL850G</td>
+            <td>4-port</td>
+            <td>Single/Multi TT</td>
+            <td>QFN-32</td>
+            <td><span class="tag tag-green">最熱銷</span> 低成本、I²C EEPROM、Bus/Self-Powered</td>
+            <td>消費性 USB HUB</td>
+          </tr>
+          <tr>
+            <td>VIA Labs<br>威鋒電子（台）</td>
+            <td>VL160</td>
+            <td>4-port</td>
+            <td>Multi-TT</td>
+            <td>QFN-40</td>
+            <td><span class="tag tag-blue">省電</span> 0.35 µm 製程，USB 2.0 HUB Class</td>
+            <td>筆電 docking</td>
+          </tr>
+          <tr>
+            <td>Terminus Tech<br>偉詮電子（台）</td>
+            <td>FE1.1s</td>
+            <td>4-port</td>
+            <td>Multi-TT</td>
+            <td>SOP-28</td>
+            <td><span class="tag tag-orange">DIY 熱門</span> 相容好，文件齊全，淘寶常見</td>
+            <td>DIY / 工業</td>
+          </tr>
+          <tr>
+            <td>WCH 南京沁恆（陸）</td>
+            <td>CH334R</td>
+            <td>4-port</td>
+            <td>Multi-TT</td>
+            <td>QFN-24</td>
+            <td><span class="tag tag-cyan">國產</span> 低成本、無需 EEPROM、ESD 保護</td>
+            <td>國內消費品</td>
+          </tr>
+          <tr>
+            <td>Microchip (SMSC)</td>
+            <td>USB2514B</td>
+            <td>4-port</td>
+            <td>Multi-TT</td>
+            <td>QFN-36</td>
+            <td><span class="tag tag-purple">工業</span> SMBus 配置、FlexConnect、高可靠性</td>
+            <td>工業/嵌入式</td>
+          </tr>
+          <tr>
+            <td>Texas Instruments</td>
+            <td>TUSB2046B</td>
+            <td>4-port</td>
+            <td>Single TT</td>
+            <td>LQFP-32</td>
+            <td><span class="tag tag-purple">工業</span> 3.3V 單電源，工業級溫度範圍</td>
+            <td>工業設備</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🚀</span>USB 3.x HUB IC（5/10/20 Gbps）</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>廠商</th><th>型號</th><th>端口</th><th>速度</th><th>特點</th><th>晶片架構</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Genesys Logic</strong></td>
+            <td><strong>GL3523</strong></td>
+            <td>4-port</td>
+            <td><span class="tag tag-blue">USB 3.2 Gen1</span> 5 Gbps</td>
+            <td>PCIe 上行（選配）、BC1.2、低功耗</td>
+            <td>內建 8051 MCU + LTSSM</td>
+          </tr>
+          <tr>
+            <td><strong>Genesys Logic</strong></td>
+            <td><strong>GL3590</strong></td>
+            <td>4-port</td>
+            <td><span class="tag tag-purple">USB 3.2 Gen2x2</span> 20 Gbps</td>
+            <td>每端口 10 Gbps、USB-PD 3.0、DisplayPort Alt</td>
+            <td>ARM Cortex-M + SS PHY</td>
+          </tr>
+          <tr>
+            <td><strong>VIA Labs</strong></td>
+            <td><strong>VL812</strong></td>
+            <td>4-port</td>
+            <td><span class="tag tag-blue">USB 3.2 Gen1</span> 5 Gbps</td>
+            <td>xHCI 相容、含 USB 2.0 HUB 整合</td>
+            <td>雙核：SS LTSSM + HS Hub</td>
+          </tr>
+          <tr>
+            <td><strong>VIA Labs</strong></td>
+            <td><strong>VL822</strong></td>
+            <td>4-port</td>
+            <td><span class="tag tag-green">USB 3.2 Gen2</span> 10 Gbps</td>
+            <td>Type-C 支援、SSIC、省電 Link PM</td>
+            <td>ARM core + USB3 PHY</td>
+          </tr>
+          <tr>
+            <td>Microchip</td>
+            <td>USB5734</td>
+            <td>4-port</td>
+            <td><span class="tag tag-blue">USB 3.2 Gen1</span> 5 Gbps</td>
+            <td>FlexConnect、SMBus、OTP 配置</td>
+            <td>工業級嵌入式 ARM</td>
+          </tr>
+          <tr>
+            <td>Realtek 瑞昱</td>
+            <td>RTS5411</td>
+            <td>4-port</td>
+            <td><span class="tag tag-blue">USB 3.2 Gen1</span> 5 Gbps</td>
+            <td>常見於筆電 docking 站</td>
+            <td>整合 MCU + SS PHY</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="info-box orange">
+      <h4>🏭 台灣 IC 設計廠商主導</h4>
+      <p>全球 USB HUB IC 市場由台灣廠商主導：創惟（Genesys Logic）、威鋒（VIA Labs）、偉詮（Terminus）合計佔市場 60% 以上。Genesys Logic（股票代號：6555）是全球最大 USB HUB IC 供應商。</p>
+    </div>
+    <div class="info-box cyan">
+      <h4>🔮 IC 內部核心架構</h4>
+      <ul>
+        <li>USB 2.0 IC：純硬體狀態機（無 MCU）或小型 8051</li>
+        <li>USB 3.x IC：ARM Cortex-M0/M3 執行韌體</li>
+        <li>高端 IC（含 PD/Alt Mode）：ARM M4 + SS PHY IP</li>
+        <li>所有 IC 內建 USB PHY（差動線路驅動器 + 接收器）</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3: 頻寬機制
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-bandwidth">
+  <h2 class="section-heading">頻寬機制：為什麼可以這麼多 Port？</h2>
+
+  <div class="card">
+    <div class="card-title"><span>📶</span>點選下方版本查看頻寬詳細說明</div>
+    <div class="protocol-grid" id="proto-grid">
+      <div class="protocol-block" data-proto="usb11" onclick="showProto(this)">
+        <div class="speed" style="color:#fb923c">USB 1.1</div>
+        <div class="name">Full Speed / Low Speed</div>
+        <div class="band" style="color:#fb923c">12 / 1.5 Mbps</div>
+      </div>
+      <div class="protocol-block" data-proto="usb20" onclick="showProto(this)">
+        <div class="speed" style="color:#60a5fa">USB 2.0</div>
+        <div class="name">High Speed</div>
+        <div class="band" style="color:#60a5fa">480 Mbps</div>
+      </div>
+      <div class="protocol-block" data-proto="usb31" onclick="showProto(this)">
+        <div class="speed" style="color:#34d399">USB 3.2 Gen1</div>
+        <div class="name">SuperSpeed</div>
+        <div class="band" style="color:#34d399">5 Gbps</div>
+      </div>
+      <div class="protocol-block" data-proto="usb32" onclick="showProto(this)">
+        <div class="speed" style="color:#a78bfa">USB 3.2 Gen2</div>
+        <div class="name">SuperSpeed+</div>
+        <div class="band" style="color:#a78bfa">10 Gbps</div>
+      </div>
+      <div class="protocol-block" data-proto="usb4" onclick="showProto(this)">
+        <div class="speed" style="color:#f472b6">USB4 Gen3</div>
+        <div class="name">USB4 / Thunderbolt 4</div>
+        <div class="band" style="color:#f472b6">40 Gbps</div>
+      </div>
+    </div>
+
+    <div class="protocol-detail" id="proto-detail"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📊</span>USB 2.0 HUB：共享匯流排頻寬示意</div>
+    <p style="font-size:0.9rem;color:var(--text2);margin-bottom:1.2rem;">USB 2.0 HUB 所有下游端口共享同一條 480 Mbps 上行頻道。越多裝置同時傳輸，每個裝置實際頻寬越少。</p>
+    <div id="bw-sim">
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.9rem;color:var(--text2);">模擬同時傳輸的裝置數：
+          <select id="device-count" onchange="updateBwSim()" style="background:var(--surface3);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.6rem;margin-left:0.5rem;">
+            <option value="1">1 台裝置</option>
+            <option value="2">2 台裝置</option>
+            <option value="4" selected>4 台裝置（全滿）</option>
+            <option value="7">7 台裝置</option>
+          </select>
+        </label>
+      </div>
+      <div id="bw-bars"></div>
+      <div style="font-size:0.85rem;color:var(--text3);margin-top:0.6rem;">
+        ＊理論值，實際因 USB 協定 overhead（token packet、handshake 等）有效吞吐約為標稱值的 60~80%
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>⚡</span>USB 3.x HUB：SuperSpeed 各端口獨立頻寬</div>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 280" width="700" height="280" font-family="Segoe UI, system-ui, sans-serif">
+        <!-- USB 3.x SS architecture -->
+        <rect x="0" y="0" width="700" height="280" fill="var(--surface2)" rx="10"/>
+
+        <!-- Host -->
+        <rect x="20" y="110" width="100" height="60" rx="8" fill="#1a2a1a" stroke="#34d399" stroke-width="2"/>
+        <text x="70" y="137" text-anchor="middle" fill="#34d399" font-weight="700" font-size="13">Host xHCI</text>
+        <text x="70" y="155" text-anchor="middle" fill="#6ee7b7" font-size="10">USB 3.x Controller</text>
+
+        <!-- HUB -->
+        <rect x="200" y="80" width="160" height="120" rx="10" fill="#1a1040" stroke="#7c6aff" stroke-width="2"/>
+        <text x="280" y="108" text-anchor="middle" fill="#c4b5fd" font-weight="700" font-size="13">USB 3.x HUB IC</text>
+        <!-- HS hub inside -->
+        <rect x="215" y="118" width="60" height="30" rx="5" fill="#1f1a40" stroke="#7c6aff" stroke-width="1"/>
+        <text x="245" y="137" text-anchor="middle" fill="#a78bfa" font-size="10">HS Hub</text>
+        <!-- SS hub inside -->
+        <rect x="285" y="118" width="60" height="30" rx="5" fill="#1a2535" stroke="#34d399" stroke-width="1"/>
+        <text x="315" y="137" text-anchor="middle" fill="#34d399" font-size="10">SS Router</text>
+        <!-- LTSSM -->
+        <text x="280" y="170" text-anchor="middle" fill="#64748b" font-size="10">LTSSM State Machine</text>
+        <text x="280" y="185" text-anchor="middle" fill="#64748b" font-size="10">Link PM / U0~U3</text>
+
+        <!-- HS upstream -->
+        <line x1="120" y1="133" x2="200" y2="133" stroke="#7c6aff" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="160" y="127" text-anchor="middle" fill="#a78bfa" font-size="10">HS 480M</text>
+        <!-- SS upstream -->
+        <line x1="120" y1="147" x2="200" y2="147" stroke="#34d399" stroke-width="2.5" marker-end="url(#arr-g)"/>
+        <text x="160" y="159" text-anchor="middle" fill="#34d399" font-size="10">SS 5G+</text>
+
+        <!-- Ports -->
+        <g>
+          <rect x="450" y="30" width="100" height="50" rx="7" fill="#1a2a40" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="500" y="52" text-anchor="middle" fill="#93c5fd" font-weight="600" font-size="11">Port 1</text>
+          <text x="500" y="68" text-anchor="middle" fill="#60a5fa" font-size="10">5 Gbps 獨享</text>
+        </g>
+        <g>
+          <rect x="450" y="100" width="100" height="50" rx="7" fill="#1a2a40" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="500" y="122" text-anchor="middle" fill="#93c5fd" font-weight="600" font-size="11">Port 2</text>
+          <text x="500" y="138" text-anchor="middle" fill="#60a5fa" font-size="10">5 Gbps 獨享</text>
+        </g>
+        <g>
+          <rect x="450" y="170" width="100" height="50" rx="7" fill="#1a2a40" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="500" y="192" text-anchor="middle" fill="#93c5fd" font-weight="600" font-size="11">Port 3</text>
+          <text x="500" y="208" text-anchor="middle" fill="#60a5fa" font-size="10">5 Gbps 獨享</text>
+        </g>
+        <g>
+          <rect x="450" y="240" width="100" height="35" rx="7" fill="#1a2a40" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="500" y="258" text-anchor="middle" fill="#93c5fd" font-weight="600" font-size="11">Port 4</text>
+          <text x="500" y="270" text-anchor="middle" fill="#60a5fa" font-size="10">5 Gbps 獨享</text>
+        </g>
+
+        <!-- SS Router to ports -->
+        <line x1="360" y1="133" x2="450" y2="55" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)"/>
+        <line x1="360" y1="133" x2="450" y2="125" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)"/>
+        <line x1="360" y1="133" x2="450" y2="195" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)"/>
+        <line x1="360" y1="133" x2="450" y2="258" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)"/>
+
+        <!-- Note -->
+        <text x="570" y="30" text-anchor="middle" fill="#34d399" font-size="11">SS = 每端口</text>
+        <text x="570" y="45" text-anchor="middle" fill="#34d399" font-size="11">各自獨立</text>
+        <text x="570" y="60" text-anchor="middle" fill="#34d399" font-size="11">不共享！</text>
+
+        <text x="350" y="260" fill="#64748b" font-size="10">注意：SS 上行仍受限於 Host 端口速度，例如 Host 為 5 Gbps，4 個裝置同時跑仍需共享 5G 上行</text>
+      </svg>
+    </div>
+    <div class="info-box blue">
+      <h4>💡 關鍵差異：Shared vs. Per-Port</h4>
+      <p>USB 2.0 HUB 使用「Hub Repeater」廣播機制，所有端口共享 480 Mbps；而 USB 3.x HUB 對 SuperSpeed 通道使用「Router」架構，下游端口到 HUB IC 之間各自有獨立 5/10 Gbps 通道。但整個 HUB 對 Host 只有一條上行鏈路，因此 4 個裝置全力傳輸時仍需分享上行頻寬。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4: Transaction Translator
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-tt">
+  <h2 class="section-heading">Transaction Translator（TT）原理</h2>
+
+  <div class="card">
+    <div class="card-title"><span>🔄</span>為什麼需要 TT？</div>
+    <div class="grid-2">
+      <div class="info-box orange">
+        <h4>⚠️ 速度不相容問題</h4>
+        <p>USB 2.0 HUB 工作在 HS（480 Mbps），但鍵盤、滑鼠等老裝置是 FS（12 Mbps）或 LS（1.5 Mbps）。如果直接連到 HS 匯流排，速度不匹配會導致整條匯流排降速至 FS 或 LS——所有高速裝置都被拖慢。</p>
+      </div>
+      <div class="info-box green">
+        <h4>✅ TT 的解法</h4>
+        <p>Transaction Translator 在 HUB 內部扮演「速度橋接器」：在 HS 幀中收到 Host 的 Split Transaction（START SPLIT），先暫存資料，再用 FS/LS 速度與低速裝置溝通，完成後在後續 micro-frame 回傳結果（COMPLETE SPLIT）。HS 匯流排只看到 Split 封包，不降速。</p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap" style="margin-top:1rem;">
+      <canvas id="tt-canvas" width="760" height="260"></canvas>
+    </div>
+    <div style="text-align:center;margin-top:0.5rem;">
+      <button onclick="restartTTAnim()" style="background:var(--accent);border:none;color:#fff;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;font-size:0.9rem;">▶ 重新播放動畫</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>⚖️</span>Single TT vs. Multi-TT</div>
+    <div class="grid-2">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.2rem;">
+        <h3 style="color:var(--blue);margin-bottom:0.8rem;">Single TT（共用）</h3>
+        <svg viewBox="0 0 280 160" width="100%">
+          <rect x="0" y="0" width="280" height="160" fill="none"/>
+          <rect x="90" y="10" width="100" height="40" rx="6" fill="#1a2535" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="140" y="28" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="600">HUB IC</text>
+          <text x="140" y="42" text-anchor="middle" fill="#60a5fa" font-size="10">Single TT（共用）</text>
+          <rect x="20" y="90" width="60" height="30" rx="5" fill="#2d1a10" stroke="#fb923c" stroke-width="1"/>
+          <text x="50" y="109" text-anchor="middle" fill="#fdba74" font-size="10">Port1 FS</text>
+          <rect x="110" y="90" width="60" height="30" rx="5" fill="#2d1a10" stroke="#fb923c" stroke-width="1"/>
+          <text x="140" y="109" text-anchor="middle" fill="#fdba74" font-size="10">Port2 LS</text>
+          <rect x="200" y="90" width="60" height="30" rx="5" fill="#1a2535" stroke="#60a5fa" stroke-width="1"/>
+          <text x="230" y="109" text-anchor="middle" fill="#93c5fd" font-size="10">Port3 HS</text>
+          <line x1="50" y1="90" x2="120" y2="50" stroke="#fb923c" stroke-width="1.5"/>
+          <line x1="140" y1="90" x2="140" y2="50" stroke="#fb923c" stroke-width="1.5"/>
+          <line x1="230" y1="90" x2="160" y2="50" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="140" y="150" text-anchor="middle" fill="#64748b" font-size="10">Port1 和 Port2 共搶同一個 TT → 互相等待</text>
+        </svg>
+        <ul style="font-size:0.85rem;color:var(--text2);padding-left:1.2rem;margin-top:0.5rem;">
+          <li>成本低、晶片面積小</li>
+          <li>多個 FS/LS 裝置同時使用時互搶 TT，延遲增加</li>
+          <li>適合低速裝置少（鍵盤+滑鼠）的情境</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.2rem;">
+        <h3 style="color:var(--green);margin-bottom:0.8rem;">Multi-TT（每端口獨立）</h3>
+        <svg viewBox="0 0 280 160" width="100%">
+          <rect x="0" y="0" width="280" height="160" fill="none"/>
+          <rect x="80" y="5" width="120" height="40" rx="6" fill="#1a2a1a" stroke="#34d399" stroke-width="1.5"/>
+          <text x="140" y="23" text-anchor="middle" fill="#86efac" font-size="11" font-weight="600">HUB IC</text>
+          <text x="140" y="38" text-anchor="middle" fill="#34d399" font-size="10">Multi-TT（每端口獨立）</text>
+          <rect x="10" y="80" width="55" height="35" rx="5" fill="#1a2a1a" stroke="#34d399" stroke-width="1"/>
+          <text x="37" y="95" text-anchor="middle" fill="#86efac" font-size="9">Port1</text>
+          <text x="37" y="108" text-anchor="middle" fill="#34d399" font-size="9">TT#1</text>
+          <rect x="80" y="80" width="55" height="35" rx="5" fill="#1a2a1a" stroke="#34d399" stroke-width="1"/>
+          <text x="107" y="95" text-anchor="middle" fill="#86efac" font-size="9">Port2</text>
+          <text x="107" y="108" text-anchor="middle" fill="#34d399" font-size="9">TT#2</text>
+          <rect x="150" y="80" width="55" height="35" rx="5" fill="#1a2a1a" stroke="#34d399" stroke-width="1"/>
+          <text x="177" y="95" text-anchor="middle" fill="#86efac" font-size="9">Port3</text>
+          <text x="177" y="108" text-anchor="middle" fill="#34d399" font-size="9">TT#3</text>
+          <rect x="220" y="80" width="55" height="35" rx="5" fill="#1a2a1a" stroke="#34d399" stroke-width="1"/>
+          <text x="247" y="95" text-anchor="middle" fill="#86efac" font-size="9">Port4</text>
+          <text x="247" y="108" text-anchor="middle" fill="#34d399" font-size="9">TT#4</text>
+          <line x1="37" y1="80" x2="110" y2="45" stroke="#34d399" stroke-width="1.5"/>
+          <line x1="107" y1="80" x2="130" y2="45" stroke="#34d399" stroke-width="1.5"/>
+          <line x1="177" y1="80" x2="150" y2="45" stroke="#34d399" stroke-width="1.5"/>
+          <line x1="247" y1="80" x2="170" y2="45" stroke="#34d399" stroke-width="1.5"/>
+          <text x="140" y="150" text-anchor="middle" fill="#64748b" font-size="10">每端口獨立 TT → 並行不衝突，延遲低</text>
+        </svg>
+        <ul style="font-size:0.85rem;color:var(--text2);padding-left:1.2rem;margin-top:0.5rem;">
+          <li>每端口有獨立 TT 佇列</li>
+          <li>多個 FS/LS 裝置可平行處理</li>
+          <li>適合工業設備、多週邊應用</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5: 硬體開發
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-dev">
+  <h2 class="section-heading">硬體開發方式</h2>
+
+  <div class="grid-3" style="margin-bottom:1.5rem;">
+    <div class="dev-card">
+      <div class="dev-card-icon">⚙️</div>
+      <h3 style="color:var(--accent3)">純硬體（無 MCU）</h3>
+      <p>最常見的消費性 HUB 做法。HUB IC 內部是純粹的數位邏輯（狀態機、FIFO），所有 USB 協定完全在 RTL 硬體中實作，上電即可運作，不需要韌體燒錄。</p>
+      <div class="chip-list">
+        <span class="tag tag-green">GL850G</span>
+        <span class="tag tag-green">FE1.1s</span>
+        <span class="tag tag-green">CH334R</span>
+      </div>
+    </div>
+    <div class="dev-card">
+      <div class="dev-card-icon">🤖</div>
+      <h3 style="color:var(--blue)">MCU 韌體（Embedded）</h3>
+      <p>USB 3.x 以上高階 HUB IC 內建 ARM Cortex-M 或 8051 核心，執行韌體處理 LTSSM 連結訓練、Link PM（U0~U3）、USB-PD、配置 EEPROM 解析等複雜邏輯。</p>
+      <div class="chip-list">
+        <span class="tag tag-blue">GL3523</span>
+        <span class="tag tag-blue">VL812</span>
+        <span class="tag tag-blue">USB5734</span>
+      </div>
+    </div>
+    <div class="dev-card">
+      <div class="dev-card-icon">🐧</div>
+      <h3 style="color:var(--cyan)">Linux 主機端驅動</h3>
+      <p>HUB IC 本身不跑 Linux，但 Linux kernel 的 <code>hub.c</code> 驅動管理整個 HUB 生命週期：枚舉、端口狀態、Reset、Suspend/Resume、TT 清除等。Managed HUB 透過 USB Class Request 控制。</p>
+      <div class="chip-list">
+        <span class="tag tag-cyan">drivers/usb/core/hub.c</span>
+        <span class="tag tag-cyan">usbhub kmod</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🛠</span>ODM/OEM 廠商開發流程</div>
+    <div class="grid-2">
+      <div>
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+              <h4>IC 選型與 Datasheet 研讀</h4>
+              <p>依據端口數、速度（USB 2.0/3.x）、電源方式（Bus/Self）、成本預算選擇 IC。向 Genesys / VIA Labs 申請完整 Datasheet（需 NDA）。</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+              <h4>原理圖設計（Schematic）</h4>
+              <p>參考 IC 廠商提供的 Reference Design，設計電源（LDO、DC-DC）、每端口 Power Switch IC（SY6280、RT9711）、ESD 保護、EEPROM、晶振電路。</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+              <h4>PCB 佈線（Layout）</h4>
+              <p>USB 差動訊號需受控阻抗走線（90Ω for USB 2.0，85Ω for USB 3.x）、等長配對、減少 via、USB 3.x SuperSpeed 需要嚴格的 TX/RX 對稱走線。</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+              <h4>EEPROM 配置（選配）</h4>
+              <p>使用 IC 廠商提供的 GUI 工具燒錄 EEPROM，設定 VID/PID（需向 USB-IF 申請）、產品名稱字串、端口電流配置、BC1.2 模式等。</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">5</div>
+            <div class="flow-content">
+              <h4>USB-IF 認證 & EMC 測試</h4>
+              <p>通過 USB-IF Compliance Test（USBCV、USBET）取得 USB-IF 認證標誌。進行 EMC（CE/FCC）測試，確保輻射不超標。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="info-box cyan" style="margin-bottom:1rem;">
+          <h4>🔧 USB 3.x 韌體開發工具</h4>
+          <ul>
+            <li><strong>GL3523 SDK</strong>：Genesys 提供 ARM GCC 工具鏈 + 範例碼，開發者修改 HUB Class 擴充功能</li>
+            <li><strong>SMBus 配置</strong>：Microchip USB5734 支援 SMBus 動態配置，可由主機 MCU 在運行時更改端口設定</li>
+            <li><strong>OTP 燒錄</strong>：部分 IC 支援一次性可程式化 OTP 取代 EEPROM，量產更省 BOM</li>
+          </ul>
+        </div>
+        <div class="info-box orange" style="margin-bottom:1rem;">
+          <h4>🐧 Linux Kernel HUB 驅動架構</h4>
+          <ul>
+            <li><code>drivers/usb/core/hub.c</code> — 核心 HUB 驅動，處理枚舉、端口事件</li>
+            <li><code>usb_hub_probe()</code> — HUB 被識別後初始化所有下游端口</li>
+            <li><code>hub_port_connect()</code> — 偵測裝置插入，啟動 Reset 序列</li>
+            <li>Hub Class Request（GET_STATUS, SET_FEATURE 等）透過 USB 控制傳輸發送給 HUB IC</li>
+          </ul>
+        </div>
+        <div class="info-box" style="background:var(--surface2);border-left:3px solid var(--accent);">
+          <h4>🏭 典型 BOM 組成</h4>
+          <ul style="font-size:0.88rem;color:var(--text2);">
+            <li>HUB Controller IC（GL850G ~$0.8, VL812 ~$2.5）</li>
+            <li>Power Switch IC × N（SY6280, RT9711）~$0.15/ea</li>
+            <li>晶振 12/24 MHz ~$0.1</li>
+            <li>EEPROM 24C02（選配）~$0.08</li>
+            <li>ESD TVS 陣列（USBLC6）~$0.1/port</li>
+            <li>USB Type-A/C 連接器 ~$0.3~$1.2</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🐧</span>Linux 中的 USB HUB：有沒有 Linux 跑在 HUB 裡？</div>
+    <div class="grid-2">
+      <div class="info-box green">
+        <h4>✅ 一般情況：HUB IC 本身不跑 Linux</h4>
+        <p>消費性與工業標準 USB HUB IC 內部是硬體狀態機或小型 MCU（8051/ARM-M0），執行的是 bare-metal 韌體，<strong>不跑 Linux</strong>。Linux 跑在連接 HUB 的 Host 端（PC、SBC 如 Raspberry Pi）。</p>
+      </div>
+      <div class="info-box blue">
+        <h4>🔮 特殊案例：智慧型 HUB（Managed Hub）</h4>
+        <p>部分企業級「Managed USB Hub」（如 Acroname、Cypress EZ-USB HX3）內建較強 MCU，可透過 USB 或 Ethernet 遠端控制每個端口的電源與連線，有些甚至跑 RTOS（FreeRTOS）但不是完整 Linux。</p>
+      </div>
+    </div>
+    <div class="info-box orange" style="margin-top:0;">
+      <h4>🤖 Raspberry Pi / SBC 上的 USB HUB</h4>
+      <p>Raspberry Pi 4 內建 VL805 USB 3.0 Host Controller + 一個 4-port HUB，由板上 ARM Cortex-A 跑 Linux 管理。這裡 Linux 是跑在「使用 HUB」的 SoC 上，而非 HUB IC 本身。在工業應用中，有人用 ESP32、STM32 搭配外部 USB HUB IC（如 USB2514B 透過 SMBus 配置），MCU 管理 HUB 的電源開關，但此 MCU 跑 FreeRTOS 而非 Linux。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6: 規格比較
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="sec-compare">
+  <h2 class="section-heading">USB HUB 規格完整比較</h2>
+
+  <div class="card">
+    <div class="card-title"><span>📊</span>各 USB 版本 HUB 完整規格</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>規格</th>
+            <th>USB 1.1 HUB</th>
+            <th>USB 2.0 HUB</th>
+            <th>USB 3.2 Gen1 HUB</th>
+            <th>USB 3.2 Gen2 HUB</th>
+            <th>USB4 Gen3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>上行頻寬</strong></td>
+            <td>12 Mbps</td>
+            <td>480 Mbps</td>
+            <td>5 Gbps</td>
+            <td>10 Gbps</td>
+            <td>40 Gbps</td>
+          </tr>
+          <tr>
+            <td><strong>頻寬分配</strong></td>
+            <td>共享</td>
+            <td>共享（Repeater）</td>
+            <td>SS 獨享 / HS 共享</td>
+            <td>SS 獨享 / HS 共享</td>
+            <td>Tunnel 各自獨享</td>
+          </tr>
+          <tr>
+            <td><strong>最大端口數</strong></td>
+            <td>7</td>
+            <td>7</td>
+            <td>4（實際常見）</td>
+            <td>4</td>
+            <td>2~4</td>
+          </tr>
+          <tr>
+            <td><strong>最大串接層數</strong></td>
+            <td>5</td>
+            <td>5</td>
+            <td>5</td>
+            <td>5</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td><strong>Transaction Translator</strong></td>
+            <td>不需要</td>
+            <td>需要（Single/Multi TT）</td>
+            <td>需要（向下相容）</td>
+            <td>需要</td>
+            <td>整合</td>
+          </tr>
+          <tr>
+            <td><strong>每端口電流 (最大)</strong></td>
+            <td>100 mA</td>
+            <td>500 mA</td>
+            <td>900 mA</td>
+            <td>900 mA</td>
+            <td>5 A (PD)</td>
+          </tr>
+          <tr>
+            <td><strong>IC 內部架構</strong></td>
+            <td>純硬體 FSM</td>
+            <td>純硬體 FSM</td>
+            <td>MCU + SS PHY</td>
+            <td>MCU + SS PHY</td>
+            <td>ARM + USB4 PHY</td>
+          </tr>
+          <tr>
+            <td><strong>韌體</strong></td>
+            <td>無</td>
+            <td>無（或 EEPROM 配置）</td>
+            <td>ROM 韌體（不可更新）</td>
+            <td>Flash 韌體（可更新）</td>
+            <td>Flash 韌體</td>
+          </tr>
+          <tr>
+            <td><strong>典型 IC 成本</strong></td>
+            <td>—</td>
+            <td>$0.3~$1</td>
+            <td>$1.5~$4</td>
+            <td>$4~$10</td>
+            <td>$15~$30+</td>
+          </tr>
+          <tr>
+            <td><strong>連接器</strong></td>
+            <td>Type-A</td>
+            <td>Type-A / B</td>
+            <td>Type-A / Type-C</td>
+            <td>Type-C</td>
+            <td>Type-C</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>💡</span>常見 QA</div>
+    <div style="display:flex;flex-direction:column;gap:0.8rem;">
+      <details style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;">
+        <summary style="cursor:pointer;font-weight:600;color:var(--accent3);">Q：USB HUB 為什麼可以一個 IC 做到多個 Port？</summary>
+        <p style="margin-top:0.8rem;font-size:0.9rem;color:var(--text2);">USB 協定是「主從架構」，Host 主導所有通訊。HUB 內部的 Hub Repeater（USB 2.0）或 SS Router（USB 3.x）在 IC 內部以硬體邏輯實作。每個端口的物理 PHY（差動收發器）由 IC 內建的多路 PHY 陣列提供，IC 製造商在設計時就把 N 個 PHY 整合進去，透過內部匯流排與 Hub Repeater 連結。本質上是「IC 的面積換端口數」。</p>
+      </details>
+      <details style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;">
+        <summary style="cursor:pointer;font-weight:600;color:var(--accent3);">Q：USB HUB 插越多裝置速度越慢嗎？</summary>
+        <p style="margin-top:0.8rem;font-size:0.9rem;color:var(--text2);">USB 2.0 HUB：是的，共享 480 Mbps，同時傳輸時各裝置平分頻寬。USB 3.x HUB：SuperSpeed 通道每端口各自連到 HUB IC，不互相競爭；但所有端口仍共用一條上行 SuperSpeed 到 Host，所以 Host 端的上行仍是瓶頸。例如 4 個裝置接 USB 3.2 Gen1 HUB，上行總頻寬 5 Gbps 由 4 個裝置共享。</p>
+      </details>
+      <details style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;">
+        <summary style="cursor:pointer;font-weight:600;color:var(--accent3);">Q：USB HUB 在 Linux 如何被識別？</summary>
+        <p style="margin-top:0.8rem;font-size:0.9rem;color:var(--text2);">插上後 <code>lsusb</code> 可見 HUB 裝置（bDeviceClass=09 Hub），<code>lsusb -t</code> 顯示樹狀結構。<code>dmesg</code> 可見 <code>usb X-Y: new high-speed USB device number Z</code> 訊息，接著 <code>hub.c</code> 啟動端口偵測。可用 <code>cat /sys/bus/usb/devices/X-Y/bNbrPorts</code> 查詢端口數、<code>bTTThinkTime</code> 查 TT 設定。</p>
+      </details>
+      <details style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;">
+        <summary style="cursor:pointer;font-weight:600;color:var(--accent3);">Q：可以自製 USB HUB 嗎（自己設計電路）？</summary>
+        <p style="margin-top:0.8rem;font-size:0.9rem;color:var(--text2);">完全可以！購買 GL850G 或 FE1.1s（淘寶/立創有售），參考 Datasheet Reference Design 畫原理圖，加上 12MHz 晶振、SY6280 Power Switch、ESD 保護、Type-A 座，即可做出 4-port USB 2.0 HUB。不需要任何韌體，上電即可使用。KiCad/Altium 繪製 PCB 後，可至 JLCPCB 打樣約 50 元人民幣。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="text-align:center;padding:2rem;color:var(--text3);font-size:0.85rem;border-top:1px solid var(--border);margin-top:2rem;">
+  USB HUB 架構完整解析 · 基於 USB 2.0 Specification Rev 2.0 & USB 3.2 Specification · CC BY 4.0
+</footer>
+
+<script>
+// ── Tabs ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + tab).classList.add('active');
+    if (tab === 'bandwidth') updateBwSim();
+    if (tab === 'tt') startTTAnim();
+  });
+});
+
+// ── SVG tooltips ──
+const tooltip = document.getElementById('tooltip');
+document.querySelectorAll('.svg-clickable').forEach(el => {
+  el.style.cursor = 'pointer';
+  el.addEventListener('mousemove', e => {
+    tooltip.innerHTML = el.dataset.tip.replace(/\n/g, '<br>');
+    tooltip.classList.add('show');
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top  = (e.clientY - 10) + 'px';
+  });
+  el.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+});
+
+// ── Protocol detail ──
+const protoData = {
+  usb11: {
+    color: '#fb923c',
+    title: 'USB 1.1 — Full Speed 12 Mbps / Low Speed 1.5 Mbps',
+    body: `<ul style="font-size:0.9rem;color:var(--text2);padding-left:1.2rem;line-height:1.8;">
+      <li>1998 年發布，最古老的 HUB 規格</li>
+      <li>Full Speed (FS) = 12 Mbps，Low Speed (LS) = 1.5 Mbps</li>
+      <li>不需要 Transaction Translator（因為沒有更高速度）</li>
+      <li>HUB 是純粹的 Repeater，接收後重新廣播給所有下游</li>
+      <li>現已幾乎絕跡，被 USB 2.0 完全取代</li>
+    </ul>`
+  },
+  usb20: {
+    color: '#60a5fa',
+    title: 'USB 2.0 — High Speed 480 Mbps',
+    body: `<ul style="font-size:0.9rem;color:var(--text2);padding-left:1.2rem;line-height:1.8;">
+      <li>2000 年發布，至今仍是 HUB IC 最大市場</li>
+      <li><strong>所有下游端口共享</strong> 480 Mbps 上行頻寬</li>
+      <li>Hub Repeater 架構：封包從上游廣播到啟用的下游端口</li>
+      <li>必須實作 Transaction Translator 支援 FS/LS 裝置</li>
+      <li>每個 SOF（Start of Frame）間隔 1ms（125µs micro-frame）</li>
+      <li>典型有效吞吐：~320~380 Mbps（去除協定 overhead）</li>
+      <li>代表 IC：GL850G、FE1.1s、CH334R</li>
+    </ul>`
+  },
+  usb31: {
+    color: '#34d399',
+    title: 'USB 3.2 Gen1 — SuperSpeed 5 Gbps',
+    body: `<ul style="font-size:0.9rem;color:var(--text2);padding-left:1.2rem;line-height:1.8;">
+      <li>SuperSpeed 通道：每端口到 HUB IC 各自獨立 5 Gbps 路徑</li>
+      <li>HUB IC 內部為 <strong>SS Router</strong> 架構（非廣播）</li>
+      <li>同時包含 USB 2.0 子系統（向下相容 HS/FS/LS）</li>
+      <li>LTSSM（Link Training and Status State Machine）管理 SS 連結</li>
+      <li>Link Power Management：U0（活躍）→ U3（休眠）狀態</li>
+      <li>8b/10b 編碼 → 有效頻寬 ~4 Gbps</li>
+      <li>代表 IC：GL3523、VL812、RTS5411</li>
+    </ul>`
+  },
+  usb32: {
+    color: '#a78bfa',
+    title: 'USB 3.2 Gen2 — SuperSpeed+ 10 Gbps',
+    body: `<ul style="font-size:0.9rem;color:var(--text2);padding-left:1.2rem;line-height:1.8;">
+      <li>使用 128b/132b 編碼（比 Gen1 的 8b/10b 更有效率）</li>
+      <li>有效頻寬 ~9.7 Gbps（編碼效率 97%）</li>
+      <li>每端口需要更高品質的走線（SI 要求更嚴格）</li>
+      <li>通常搭配 USB Type-C 連接器</li>
+      <li>HUB IC 內建 ARM MCU，韌體可透過 DFU 更新</li>
+      <li>常見於 Docking Station、Pro HUB 產品</li>
+      <li>代表 IC：GL3590、VL822、GL3525</li>
+    </ul>`
+  },
+  usb4: {
+    color: '#f472b6',
+    title: 'USB4 Gen3 — 40 Gbps（Thunderbolt 4 相容）',
+    body: `<ul style="font-size:0.9rem;color:var(--text2);padding-left:1.2rem;line-height:1.8;">
+      <li>基於 Thunderbolt 3 協定，由 Intel 授權給 USB-IF</li>
+      <li>Tunnel 架構：可同時傳輸 USB 3.x、DisplayPort 1.4、PCIe 資料</li>
+      <li>每個 Tunnel 有獨立頻寬分配，不互相競爭</li>
+      <li>必須使用 USB Type-C 連接器</li>
+      <li>HUB IC 需要完整 ARM 核心 + 複雜韌體（Intel/Apple 認證）</li>
+      <li>售價顯著更高（IC 成本 $15~$30+）</li>
+      <li>代表 IC：Intel JHL8540、Goshen Ridge、Maple Ridge</li>
+    </ul>`
+  }
+};
+
+function showProto(el) {
+  document.querySelectorAll('.protocol-block').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const p = protoData[el.dataset.proto];
+  const detail = document.getElementById('proto-detail');
+  detail.innerHTML = `<h4 style="color:${p.color}">${p.title}</h4>${p.body}`;
+  detail.classList.add('show');
+}
+
+// ── Bandwidth simulator ──
+function updateBwSim() {
+  const n = parseInt(document.getElementById('device-count').value);
+  const totalBw = 480;
+  const perDevice = (totalBw / n).toFixed(0);
+  const colors = ['#7c6aff','#60a5fa','#34d399','#fbbf24','#f472b6','#fb923c','#22d3ee'];
+  let html = '';
+  for (let i = 0; i < n; i++) {
+    const pct = (100 / n).toFixed(1);
+    html += `<div class="bw-bar-wrap">
+      <div class="bw-label"><span>裝置 ${i+1}</span><span>${perDevice} Mbps (${pct}%)</span></div>
+      <div class="bw-bar-bg">
+        <div class="bw-bar" style="width:${pct}%;background:${colors[i%colors.length]}">${perDevice}M</div>
+      </div>
+    </div>`;
+  }
+  html += `<div class="bw-bar-wrap">
+    <div class="bw-label"><strong>上行總頻寬</strong><span style="color:var(--green)">480 Mbps (固定)</span></div>
+    <div class="bw-bar-bg">
+      <div class="bw-bar" style="width:100%;background:linear-gradient(90deg,#34d399,#60a5fa)">480 Mbps</div>
+    </div>
+  </div>`;
+  document.getElementById('bw-bars').innerHTML = html;
+}
+
+// ── TT Animation ──
+let ttAnimId = null;
+let ttT = 0;
+
+function startTTAnim() {
+  if (ttAnimId) cancelAnimationFrame(ttAnimId);
+  ttT = 0;
+  drawTT();
+}
+function restartTTAnim() {
+  startTTAnim();
+}
+
+function drawTT() {
+  const canvas = document.getElementById('tt-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#13131a';
+  ctx.fillRect(0, 0, W, H);
+
+  const t = ttT;
+  const frameW = W / 8;
+
+  // ── Draw micro-frames ──
+  for (let i = 0; i < 8; i++) {
+    const x = i * frameW;
+    ctx.strokeStyle = '#2d2d3d';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, 40); ctx.lineTo(x, H - 20); ctx.stroke();
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`µF${i}`, x + frameW/2, 35);
+  }
+
+  // ── HS bus (top) ──
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 45, W, 40);
+  ctx.strokeStyle = '#7c6aff';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(0, 45, W, 40);
+  ctx.fillStyle = '#a78bfa';
+  ctx.font = '11px Segoe UI';
+  ctx.textAlign = 'left';
+  ctx.fillText('HS Bus (480 Mbps) — Host 視角', 8, 60);
+
+  // SOF tokens
+  for (let i = 0; i < 8; i++) {
+    const x = i * frameW + 4;
+    ctx.fillStyle = '#7c6aff';
+    ctx.fillRect(x, 52, 18, 24);
+    ctx.fillStyle = '#fff';
+    ctx.font = '9px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('SOF', x+9, 68);
+  }
+
+  // START SPLIT in µF0, µF1, µF2 (animated)
+  const splitFrames = [0, 1, 2];
+  splitFrames.forEach((fi, idx) => {
+    const progress = Math.min(1, Math.max(0, (t - fi * 30) / 25));
+    if (progress > 0) {
+      const x = fi * frameW + 26;
+      const w = (frameW - 34) * progress;
+      ctx.fillStyle = '#fb923c';
+      ctx.fillRect(x, 52, w, 24);
+      if (w > 30) {
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('SSPLIT', x + w/2, 68);
+      }
+    }
+  });
+
+  // COMPLETE SPLIT in µF4, µF5
+  const cSplitFrames = [4, 5];
+  cSplitFrames.forEach(fi => {
+    const progress = Math.min(1, Math.max(0, (t - 100 - fi * 25) / 25));
+    if (progress > 0) {
+      const x = fi * frameW + 26;
+      const w = (frameW - 34) * progress;
+      ctx.fillStyle = '#34d399';
+      ctx.fillRect(x, 52, w, 24);
+      if (w > 30) {
+        ctx.fillStyle = '#fff';
+        ctx.font = '9px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('CSPLIT', x + w/2, 68);
+      }
+    }
+  });
+
+  // ── TT Buffer (middle) ──
+  ctx.fillStyle = '#2d1a10';
+  ctx.fillRect(0, 110, W, 60);
+  ctx.strokeStyle = '#fb923c';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(0, 110, W, 60);
+  ctx.fillStyle = '#fdba74';
+  ctx.font = '11px Segoe UI';
+  ctx.textAlign = 'left';
+  ctx.fillText('TT Buffer（HUB 內部）— 暫存 FS/LS 資料', 8, 127);
+
+  // Receiving data
+  const bufProgress = Math.min(1, Math.max(0, (t - 10) / 60));
+  if (bufProgress > 0) {
+    const grad = ctx.createLinearGradient(30, 0, 30 + bufProgress * 400, 0);
+    grad.addColorStop(0, '#fb923c');
+    grad.addColorStop(1, '#fbbf24');
+    ctx.fillStyle = grad;
+    ctx.fillRect(30, 135, bufProgress * 400, 22);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (bufProgress > 0.2)
+      ctx.fillText(`FS/LS 資料封包 (${Math.floor(bufProgress*100)}%)`, 30 + bufProgress*200, 150);
+  }
+
+  // ── FS Bus (bottom) ──
+  ctx.fillStyle = '#1a2a1a';
+  ctx.fillRect(0, 190, W, 50);
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(0, 190, W, 50);
+  ctx.fillStyle = '#86efac';
+  ctx.font = '11px Segoe UI';
+  ctx.textAlign = 'left';
+  ctx.fillText('FS Bus (12 Mbps) — FS 裝置視角（如 USB 鍵盤、滑鼠）', 8, 207);
+
+  // FS transaction (slower, longer)
+  const fsProgress = Math.min(1, Math.max(0, (t - 15) / 120));
+  if (fsProgress > 0) {
+    ctx.fillStyle = '#34d399';
+    ctx.fillRect(30, 215, fsProgress * 680, 18);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (fsProgress > 0.15)
+      ctx.fillText(`FS Transaction (${Math.floor(fsProgress*100)}%)`, 30 + fsProgress*340, 227);
+  }
+
+  // ── Arrows ──
+  // SSPLIT down to TT
+  if (t > 20) {
+    const alpha = Math.min(1, (t - 20) / 20);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#fb923c';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(0.5 * frameW, 76);
+    ctx.lineTo(0.5 * frameW, 110);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
+
+  // TT to FS
+  if (t > 30) {
+    const alpha = Math.min(1, (t - 30) / 20);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#34d399';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(200, 170);
+    ctx.lineTo(200, 190);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
+
+  // CSPLIT up from TT
+  if (t > 120) {
+    const alpha = Math.min(1, (t - 120) / 20);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#34d399';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(4.5 * frameW, 110);
+    ctx.lineTo(4.5 * frameW, 76);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
+
+  // Legend
+  ctx.fillStyle = '#fb923c';
+  ctx.fillRect(W - 220, H - 58, 14, 12);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '11px Segoe UI';
+  ctx.textAlign = 'left';
+  ctx.fillText('SSPLIT（Host→HUB，告知即將傳 FS）', W - 202, H - 48);
+
+  ctx.fillStyle = '#34d399';
+  ctx.fillRect(W - 220, H - 38, 14, 12);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillText('CSPLIT（Host→HUB，取回 FS 完成狀態）', W - 202, H - 28);
+
+  ttT++;
+  if (ttT < 220) {
+    ttAnimId = requestAnimationFrame(drawTT);
+  }
+}
+
+// Init
+updateBwSim();
+</script>
+</body>
+</html>
