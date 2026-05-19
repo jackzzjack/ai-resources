@@ -43,6 +43,7 @@
 | `usb_hub_architecture.html` | USB HUB 架構完整解析（常用 IC、Transaction Translator、頻寬機制、ODM 硬體開發流程） |
 | `pcie_linux_driver.html` | PCIe 與 Linux Driver 完整指南（協定分層、Gen 1~6 規格演進、拓撲架構、TLP 封包、Linux 子系統、Driver 驅動流程、核心 API、裝置與 Driver 對照表、偵錯工具） |
 | `train_knowledge.html` | 火車百科（歷史演進、種類解析、速度紀錄、主要車型規格數據、全球出口國與未來趨勢） |
+| `japan_history.html` | 日本歷史全覽（繩文・彌生・古墳・飛鳥・奈良・平安・鎌倉・戰國・江戶・明治維新・二戰・現代） |
 
 ---
 
