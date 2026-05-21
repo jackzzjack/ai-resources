@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成都旅遊知識庫｜景點、美食、交通與台灣出發攻略</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #9b9bbb;
+      --success: #34d399;
+      --warning: #f59e0b;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+    .hero {
+      background: radial-gradient(circle at 0% 0%, rgba(124, 106, 255, 0.2), transparent 40%), var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; margin-bottom: 10px; }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      margin-right: 6px;
+      color: var(--muted);
+    }
+    ul { padding-left: 1.1rem; margin: 0.5rem 0; }
+    li { margin: 0.35rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--surface2); }
+    .note {
+      border-left: 4px solid var(--warning);
+      background: rgba(245, 158, 11, 0.08);
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+    .ok {
+      border-left-color: var(--success);
+      background: rgba(52, 211, 153, 0.1);
+    }
+    a { color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>成都旅遊知識庫（台灣旅客版）</h1>
+      <p class="muted">整理成都自由行會用到的核心資訊：氣候、景點、美食、交通、預算與台灣出發路線建議。</p>
+      <span class="tag">四川省省會</span>
+      <span class="tag">美食之都</span>
+      <span class="tag">熊貓基地</span>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>城市重點</h2>
+        <ul>
+          <li><strong>定位：</strong>西南地區交通樞紐、歷史文化名城。</li>
+          <li><strong>最佳旅遊季節：</strong>3–5 月、9–11 月（氣候舒適）。</li>
+          <li><strong>建議天數：</strong>4–6 天可完成市區 + 近郊精華。</li>
+          <li><strong>時區：</strong>UTC+8（與台灣同時區，無時差）。</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>必訪景點</h2>
+        <ul>
+          <li>成都大熊貓繁育研究基地（建議早上到）。</li>
+          <li>寬窄巷子、錦里古街（夜間氣氛佳）。</li>
+          <li>武侯祠（蜀漢文化重點）。</li>
+          <li>都江堰 + 青城山（可安排一日遊）。</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>美食清單</h2>
+        <ul>
+          <li>四川火鍋（可選微辣/鴛鴦鍋）。</li>
+          <li>擔擔麵、鐘水餃、夫妻肺片。</li>
+          <li>龍抄手、甜水麵、賴湯圓。</li>
+          <li>茶館文化：蓋碗茶 + 採耳體驗。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>台灣怎麼去成都？（重點攻略）</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>方式</th>
+            <th>說明</th>
+            <th>適合對象</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>直飛（有航班時）</td>
+            <td>台北（桃園）或高雄出發直飛成都天府/雙流，飛行時間約 3.5～4 小時。班次可能依季節調整。</td>
+            <td>時間有限、想快速抵達</td>
+          </tr>
+          <tr>
+            <td>轉機</td>
+            <td>可經香港、澳門、上海、深圳、廈門等城市中轉，通常總旅程 6～10 小時。</td>
+            <td>追求票價彈性、出發地選擇多</td>
+          </tr>
+          <tr>
+            <td>先飛中國其他城市再高鐵</td>
+            <td>若成都機票偏高，可先到重慶、西安等城市，再搭高鐵進成都。</td>
+            <td>想順遊多城市</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        建議下訂前確認：<strong>台胞證效期</strong>、航空公司最新航班、入境規定與隨身藥品申報條件。
+      </div>
+    </section>
+
+    <section class="grid" style="margin-top:22px;">
+      <article class="card">
+        <h2>行前文件與通訊</h2>
+        <ul>
+          <li>有效台胞證（務必檢查效期）。</li>
+          <li>回程機票/住宿資訊備查。</li>
+          <li>行動網路：eSIM、漫遊或當地 SIM 卡。</li>
+          <li>下載離線地圖、翻譯與叫車 App。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>支付與預算</h2>
+        <ul>
+          <li>電子支付普及，可先準備可綁定的支付工具。</li>
+          <li>建議仍攜帶少量人民幣現金備用。</li>
+          <li>市區中價旅遊（不含機票）約 RMB 350–700/日。</li>
+          <li>熱門景點建議預約，節省排隊時間。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>範例 5 天行程</h2>
+        <ul>
+          <li>D1：抵達、春熙路/太古里散步。</li>
+          <li>D2：熊貓基地 + 文殊院 + 夜訪錦里。</li>
+          <li>D3：都江堰 + 青城山一日遊。</li>
+          <li>D4：武侯祠 + 寬窄巷子 + 茶館。</li>
+          <li>D5：伴手禮採買後返台。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:22px;">
+      <h2>旅遊風險與實用提醒</h2>
+      <ul>
+        <li>夏季炎熱且可能有午後雷陣雨，建議備輕便雨具。</li>
+        <li>川菜偏辣，腸胃敏感者可先告知店家「微辣」。</li>
+        <li>熱門連假（五一、十一）人潮高，需提早預訂機票與住宿。</li>
+        <li>行程若包含山區，請留意天候與交通管制公告。</li>
+      </ul>
+      <div class="note ok">若你想，我可以再幫你延伸成「成都 + 重慶雙城版」或「親子版熊貓主題行程」。</div>
+    </section>
+  </div>
+</body>
+</html>
