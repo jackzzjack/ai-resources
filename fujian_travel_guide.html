@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>福建旅遊知識庫｜台灣出發交通、城市路線與行前攻略</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #9b9bbb;
+      --success: #34d399;
+      --warning: #f59e0b;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+    .hero { background: radial-gradient(circle at 0% 0%, rgba(124, 106, 255, 0.2), transparent 40%), var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 22px; }
+    h1, h2, h3 { margin-top: 0; }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; margin-bottom: 10px; }
+    .muted { color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 22px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+    .tag { display: inline-block; font-size: 0.78rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); margin-right: 6px; color: var(--muted); }
+    ul { padding-left: 1.1rem; margin: 0.5rem 0; }
+    li { margin: 0.35rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { border: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: top; }
+    th { background: var(--surface2); }
+    .note { border-left: 4px solid var(--warning); background: rgba(245, 158, 11, 0.08); padding: 12px 14px; border-radius: 10px; margin-top: 12px; }
+    .ok { border-left-color: var(--success); background: rgba(52, 211, 153, 0.1); }
+    a { color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>福建旅遊知識庫（台灣旅客版）</h1>
+      <p class="muted">整理福建自由行核心資訊：城市特色、景點、美食、交通、台灣出發路線與行前準備。</p>
+      <span class="tag">福州・廈門・泉州</span>
+      <span class="tag">閩南文化</span>
+      <span class="tag">海島與古城</span>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>福建旅遊重點</h2>
+        <ul>
+          <li><strong>定位：</strong>中國東南沿海省分，對台交通相對便利。</li>
+          <li><strong>最佳季節：</strong>3–5 月、10–12 月（較舒適，避開盛夏悶熱）。</li>
+          <li><strong>建議天數：</strong>5–8 天可安排雙城或三城路線。</li>
+          <li><strong>時區：</strong>UTC+8（與台灣同時區，無時差）。</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>必訪城市與景點</h2>
+        <ul>
+          <li><strong>廈門：</strong>鼓浪嶼、南普陀寺、曾厝垵、環島路。</li>
+          <li><strong>福州：</strong>三坊七巷、上下杭、平潭島藍眼淚季。</li>
+          <li><strong>泉州：</strong>開元寺、清淨寺、西街（世界遺產城市）。</li>
+          <li><strong>延伸：</strong>武夷山（自然景觀）、土樓（客家建築）。</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>福建代表美食</h2>
+        <ul>
+          <li>沙茶麵、海蠣煎、土筍凍、花生湯（廈門）。</li>
+          <li>佛跳牆、魚丸、肉燕（福州）。</li>
+          <li>麵線糊、薑母鴨、牛肉羹（泉州）。</li>
+          <li>茶文化：武夷岩茶、安溪鐵觀音。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>台灣如何去福建旅遊？（交通懶人包）</h2>
+      <table>
+        <thead><tr><th>方式</th><th>說明</th><th>適合對象</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>直飛廈門／福州</td>
+            <td>桃園或高雄出發至福建主要機場，飛行時間通常約 1.5～2 小時（依航線與季節調整）。</td>
+            <td>時間有限、想快速抵達</td>
+          </tr>
+          <tr>
+            <td>小三通（金門/馬祖中轉）</td>
+            <td>先飛金門或馬祖，再搭船前往廈門/福州沿海口岸，常見於彈性規劃或順遊離島行程。</td>
+            <td>想體驗海空聯運、票價彈性較高者</td>
+          </tr>
+          <tr>
+            <td>轉機</td>
+            <td>可經香港、澳門、上海、深圳等城市轉機再進福建，通常班次選擇較多。</td>
+            <td>追求時間或票價彈性</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">下訂前請確認：<strong>台胞證效期</strong>、最新航班/船班、入境規定、旅遊保險與緊急聯絡方式。</div>
+    </section>
+
+    <section class="grid" style="margin-top:22px;">
+      <article class="card">
+        <h2>行前文件與通訊</h2>
+        <ul>
+          <li>有效台胞證與回程機票（或後續交通）資料。</li>
+          <li>住宿訂單、旅遊保險與緊急聯絡人資訊。</li>
+          <li>網路建議：eSIM、漫遊或當地 SIM 卡。</li>
+          <li>先下載離線地圖、翻譯與叫車 App。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>支付與預算</h2>
+        <ul>
+          <li>電子支付普及，建議先準備可綁定支付工具。</li>
+          <li>仍可帶少量人民幣現金作為備用。</li>
+          <li>中價位旅遊（不含機票）約 RMB 300–650/日。</li>
+          <li>熱門景點與高鐵建議提早預約購票。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>範例 6 天路線</h2>
+        <ul>
+          <li>D1：抵達廈門，夜遊中山路。</li>
+          <li>D2：鼓浪嶼 + 南普陀寺 + 曾厝垵。</li>
+          <li>D3：高鐵前往泉州，西街與古城散策。</li>
+          <li>D4：泉州文化景點深度遊。</li>
+          <li>D5：前往福州，三坊七巷與上下杭。</li>
+          <li>D6：返程回台。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:22px;">
+      <h2>旅遊提醒</h2>
+      <ul>
+        <li>福建沿海多雨，請備輕便雨具與防滑鞋。</li>
+        <li>颱風季（約夏秋）需留意航班與船班異動。</li>
+        <li>連假人流大（五一、十一、春節），交通住宿請提早安排。</li>
+        <li>如安排海島或山區路線，請保留天候備案日。</li>
+      </ul>
+      <div class="note ok">若你要，我也可以再幫你做「親子版」或「長輩友善慢遊版」福建行程。</div>
+    </section>
+  </div>
+</body>
+</html>
