@@ -51,6 +51,7 @@
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
+| `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 
 ---
 
