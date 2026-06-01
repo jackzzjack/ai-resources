@@ -52,6 +52,7 @@
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
+| `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
 
 ---
 
