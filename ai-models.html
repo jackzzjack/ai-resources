@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 模型指南 — OpenAI · Anthropic · OpenRouter</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(124,106,255,0.2) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-inline: auto;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      max-width: 700px;
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(124,106,255,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-color, var(--accent));
+    }
+    .icard-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .icard-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .icard-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .icard-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+    }
+    .spec-chip.hi { color: var(--accent2); border-color: rgba(124,106,255,0.3); }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 20px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .comp-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .callout h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>AI 模型指南</h1>
+  <p>探索主流大型語言模型（LLM）的特色、規格與挑選建議，含 OpenRouter 整合方案介紹。</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="families">🏢 模組家族</div>
+    <div class="tab" data-tab="openrouter">🌐 OpenRouter</div>
+    <div class="tab" data-tab="comparison">📊 綜合比較</div>
+    <div class="tab" data-tab="guide">💡 挑選建議</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- 模組家族 -->
+  <div class="tab-panel active" id="panel-families">
+    <div class="section-heading">
+      <h2>主流 AI 模組家族</h2>
+      <p>目前市場上由科技巨頭與新創公司主導的幾大模組系列，各有其擅長的領域。</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- OpenAI -->
+      <div class="icard" style="--card-color: #10a37f;">
+        <div class="icard-head">
+          <div class="icard-title">OpenAI (GPT 系列)</div>
+        </div>
+        <div class="icard-desc">最具代表性的模型，綜合能力最強，生態系最完整。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">GPT-4o</span>
+          <span class="spec-chip hi">o1 (推理模型)</span>
+          <span class="spec-chip">多模態</span>
+          <span class="spec-chip">最強 API 支持</span>
+        </div>
+      </div>
+
+      <!-- Anthropic -->
+      <div class="icard" style="--card-color: #d97757;">
+        <div class="icard-head">
+          <div class="icard-title">Anthropic (Claude 系列)</div>
+        </div>
+        <div class="icard-desc">以文字風格自然、邏輯細膩著稱，程式碼能力極強，深受開發者喜愛。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Claude 3.5 Sonnet</span>
+          <span class="spec-chip hi">Claude 3.5 Haiku</span>
+          <span class="spec-chip">超長 Context</span>
+          <span class="spec-chip">視覺理解</span>
+        </div>
+      </div>
+
+      <!-- Google -->
+      <div class="icard" style="--card-color: #4285f4;">
+        <div class="icard-head">
+          <div class="icard-title">Google (Gemini 系列)</div>
+        </div>
+        <div class="icard-desc">擁有最長的上下文窗口（Context Window），深度整合 Google 生態系。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Gemini 1.5 Pro</span>
+          <span class="spec-chip hi">Gemini 1.5 Flash</span>
+          <span class="spec-chip">2M 上下文</span>
+          <span class="spec-chip">原生多模態</span>
+        </div>
+      </div>
+
+      <!-- Meta -->
+      <div class="icard" style="--card-color: #0668e1;">
+        <div class="icard-head">
+          <div class="icard-title">Meta (Llama 系列)</div>
+        </div>
+        <div class="icard-desc">開源模組的領導者，可用於本地部署，性能接近閉源頂尖模組。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Llama 3.1</span>
+          <span class="spec-chip hi">Llama 3.2 (視覺)</span>
+          <span class="spec-chip">開源 / 本地部署</span>
+          <span class="spec-chip">社群支持廣</span>
+        </div>
+      </div>
+
+      <!-- DeepSeek -->
+      <div class="icard" style="--card-color: #6156d3;">
+        <div class="icard-head">
+          <div class="icard-title">DeepSeek (深度求索)</div>
+        </div>
+        <div class="icard-desc">來自中國的高性價比模組，程式碼與數學推理能力驚人，性價比極高。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">DeepSeek-V3</span>
+          <span class="spec-chip hi">DeepSeek-R1 (推理)</span>
+          <span class="spec-chip">極低成本</span>
+          <span class="spec-chip">程式碼專家</span>
+        </div>
+      </div>
+
+      <!-- Mistral -->
+      <div class="icard" style="--card-color: #f5d142;">
+        <div class="icard-head">
+          <div class="icard-icon">🌪️</div>
+          <div class="icard-title">Mistral AI</div>
+        </div>
+        <div class="icard-desc">法國 AI 領頭羊，以輕量、高效、開放著稱，適合歐洲企業。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">Mistral Large 2</span>
+          <span class="spec-chip hi">Pixtral (視覺)</span>
+          <span class="spec-chip">高效推理</span>
+          <span class="spec-chip">歐洲主權 AI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OpenRouter -->
+  <div class="tab-panel" id="panel-openrouter">
+    <div class="section-heading">
+      <h2>OpenRouter：模型聚合平台</h2>
+      <p>OpenRouter 是一個統一的 API 閘道，讓你可以透過單一介面存取幾乎所有主流的 AI 模型。</p>
+    </div>
+
+    <div class="callout" style="--accent: var(--accent-blue);">
+      <h3>為什麼使用 OpenRouter？</h3>
+      <p>傳統上，如果你想同時使用 GPT-4、Claude 3.5 和 Llama 3，你需要分別向 OpenAI、Anthropic 和 Meta (或雲端供應商) 申請 API Key。OpenRouter 解決了這個痛點。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-title">統一 API</div>
+        </div>
+        <div class="icard-desc">使用單一 API Key 即可調用超過 100 種模型，無需維護多個帳戶。</div>
+      </div>
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-title">價格透明</div>
+        </div>
+        <div class="icard-desc">OpenRouter 通常直接傳遞供應商的價格，有時甚至更便宜（透過大量採購）。</div>
+      </div>
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-title">高可用性</div>
+        </div>
+        <div class="icard-desc">當某個模型供應商（如 Anthropic）當機時，OpenRouter 可自動切換到其他供應商提供的相同模型。</div>
+      </div>
+    </div>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>功能</th>
+            <th>官方 API</th>
+            <th>OpenRouter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Key 管理</td>
+            <td>每個廠商一個 Key</td>
+            <td class="hi">一個 Key 搞定全部</td>
+          </tr>
+          <tr>
+            <td>支付方式</td>
+            <td>需綁定多張信用卡</td>
+            <td class="hi">統一儲值（支援加密貨幣）</td>
+          </tr>
+          <tr>
+            <td>模型覆蓋</td>
+            <td>僅限該廠商</td>
+            <td class="hi">涵蓋 OpenAI, Anthropic, Google, Meta, DeepSeek 等</td>
+          </tr>
+          <tr>
+            <td>延遲</td>
+            <td>最低 (直連)</td>
+            <td>極低 (多一層轉發，體感不明顯)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 綜合比較 -->
+  <div class="tab-panel" id="panel-comparison">
+    <div class="section-heading">
+      <h2>頂尖模型綜合比較 (2024–2025)</h2>
+      <p>根據各項評測指標與實際體驗，對當前最強模型進行橫向對比。</p>
+    </div>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>模型</th>
+            <th>推理/思考</th>
+            <th>程式碼</th>
+            <th>創意寫作</th>
+            <th>Context Window</th>
+            <th>擅長領域</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hi">GPT-4o</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>128k</td>
+            <td>全能型、語音與多模態</td>
+          </tr>
+          <tr>
+            <td class="hi">Claude 3.5 Sonnet</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>200k</td>
+            <td>寫程式、細膩文案、長文分析</td>
+          </tr>
+          <tr>
+            <td class="hi">Gemini 1.5 Pro</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐</td>
+            <td class="hi">2,000k</td>
+            <td>超長文件分析、Google 生態整合</td>
+          </tr>
+          <tr>
+            <td class="hi">o1 (OpenAI)</td>
+            <td class="hi">⭐⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐</td>
+            <td>128k</td>
+            <td>數學、物理、極限邏輯推理</td>
+          </tr>
+          <tr>
+            <td class="hi">DeepSeek-V3</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐</td>
+            <td>128k</td>
+            <td>高性價比、程式碼輔助</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 挑選建議 -->
+  <div class="tab-panel" id="panel-guide">
+    <div class="section-heading">
+      <h2>我該選哪一個模型？</h2>
+      <p>根據你的具體使用情境，我們給出以下建議：</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #10a37f;">
+        <div class="icard-head"><div class="icard-title">日常全能助理</div></div>
+        <div class="icard-desc">首選 <strong>GPT-4o</strong>。回答速度快，多模態能力強，且 ChatGPT App 體驗極佳。</div>
+      </div>
+      <div class="icard" style="--card-color: #d97757;">
+        <div class="icard-head"><div class="icard-title">程式開發 / 重度寫作</div></div>
+        <div class="icard-desc">首選 <strong>Claude 3.5 Sonnet</strong>。它是目前公認最強的 coding 助手，語氣也最像人類。</div>
+      </div>
+      <div class="icard" style="--card-color: #4285f4;">
+        <div class="icard-head"><div class="icard-title">超長文件 / 論文分析</div></div>
+        <div class="icard-desc">首選 <strong>Gemini 1.5 Pro</strong>。你可以把一整本書或一小時的影片丟給它，它能精準回答細節。</div>
+      </div>
+      <div class="icard" style="--card-color: #6156d3;">
+        <div class="icard-head"><div class="icard-title">開發預算有限</div></div>
+        <div class="icard-desc">首選 <strong>DeepSeek-V3</strong>。能力接近 GPT-4o，但 API 價格僅為其幾十分之一。</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 持續更新中</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

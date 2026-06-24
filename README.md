@@ -8,6 +8,7 @@
 |------|------|
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
+| `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
 | `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
