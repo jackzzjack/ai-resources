@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graphify 入門指南 — AI 程式碼知識圖譜</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+      --code-bg: #000000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-back {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--accent2); }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+
+    header {
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(124, 106, 255, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent2);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 40%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      color: var(--accent2);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-panel { display: none; animation: fadeIn 0.3s ease-out; }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Content Cards */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .icard h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icard p { margin-bottom: 16px; color: var(--text); opacity: 0.9; }
+
+    /* Code block */
+    pre {
+      background: var(--code-bg);
+      padding: 20px;
+      border-radius: 10px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      position: relative;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 0.9rem;
+      color: #e0e0e0;
+    }
+
+    .code-comment { color: #6a9955; }
+    .code-keyword { color: #569cd6; }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .feature-item {
+      background: var(--surface2);
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Callout */
+    .callout {
+      background: rgba(124, 106, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 20px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 24px 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      main { padding: 40px 16px; }
+      .icard { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav-bar">
+  <a href="index.html" class="nav-back">← 返回主頁</a>
+  <div style="font-size: 0.8rem; color: var(--muted);">AI Resources Hub / Graphify Guide</div>
+</nav>
+
+<main>
+  <header>
+    <span class="badge">AI Coding Tool</span>
+    <h1>Graphify 入門指南</h1>
+    <p>將整個程式碼庫轉換為 AI 可查詢的知識圖譜，大幅降低 Token 消耗並提升理解深度。</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="intro">簡介</div>
+    <div class="tab" data-tab="install">安裝</div>
+    <div class="tab" data-tab="usage">使用教學</div>
+    <div class="tab" data-tab="features">核心功能</div>
+  </div>
+
+  <!-- 簡介 -->
+  <div class="tab-panel active" id="panel-intro">
+    <div class="icard">
+      <h2>什麼是 Graphify？</h2>
+      <p>Graphify 是一個專為 AI 程式碼助手（如 Claude Code）設計的知識圖譜工具。它會分析你的整個專案目錄（包含程式碼、文件、SQL Schema、甚至圖片與影片），將其壓縮成一個結構化的<strong>知識圖譜 (Knowledge Graph)</strong>。</p>
+
+      <div class="callout">
+        <span class="callout-title">💡 為什麼需要它？</span>
+        傳統 AI 助手通常依賴 grep 或全檔讀取來理解專案，當專案變大時，每次詢問都會消耗大量 Token，且難以理解跨檔案的結構關係。Graphify 預先完成繁重的分析，讓 AI 透過查詢圖譜來回答問題。
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <span class="feature-icon">💰</span>
+          <span class="feature-title">節省 70%+ Token</span>
+          <span class="feature-desc">透過圖譜查詢取代重複讀取原始檔案，顯著降低 API 使用成本。</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">⚡</span>
+          <span class="feature-title">極速上下文</span>
+          <span class="feature-desc">AI 能在幾秒內理解萬行代碼的架構，無需逐一掃描檔案。</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🕸️</span>
+          <span class="feature-title">結構化理解</span>
+          <span class="feature-desc">理解函數調用、類別繼承與數據流向，而非僅僅是關鍵字。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 安裝 -->
+  <div class="tab-panel" id="panel-install">
+    <div class="icard">
+      <h2>安裝步驟</h2>
+      <p>Graphify 推薦使用 <code>uv</code> 或 <code>pipx</code> 進行安裝，以確保 CLI 工具在全域可用。</p>
+
+      <div class="callout" style="background: rgba(245, 158, 11, 0.1); border-color: #f59e0b;">
+        <span class="callout-title" style="color: #fbbf24;">⚠️ 注意：PyPI 名稱</span>
+        官方套件名稱為 <strong><code>graphifyy</code></strong> (字尾有兩個 y)，請勿裝錯。
+      </div>
+
+      <p>1. 使用 uv 安裝（推薦）：</p>
+      <pre><code>uv tool install <span class="code-keyword">graphifyy</span></code></pre>
+
+      <p>2. 或使用 pipx 安裝：</p>
+      <pre><code>pipx install <span class="code-keyword">graphifyy</span></code></pre>
+
+      <p>3. 註冊 AI 助手技能（以 Claude Code 為例）：</p>
+      <pre><code>graphify install</code></pre>
+      <p style="font-size: 0.85rem; color: var(--muted);">這會在你的 AI 助手環境中註冊 <code>/graphify</code> 指令。</p>
+    </div>
+  </div>
+
+  <!-- 使用教學 -->
+  <div class="tab-panel" id="panel-usage">
+    <div class="icard">
+      <h2>如何在專案中使用？</h2>
+      <p>安裝完成後，你可以在支援的 AI 助手（如 Claude Code, Codex）中使用以下流程：</p>
+
+      <div class="callout">
+        <span class="callout-title">第一步：初始化圖譜</span>
+        在專案根目錄下，詢問 AI：<br>
+        <strong>「/graphify」</strong><br>
+        AI 會開始掃描專案並建立 <code>graphify-out/</code> 資料夾。
+      </div>
+
+      <p>常用情境範例：</p>
+      <ul>
+        <li style="margin-bottom: 12px;"><strong>架構導覽：</strong>「請根據圖譜解釋這個專案的 Auth Flow 是如何實現的？」</li>
+        <li style="margin-bottom: 12px;"><strong>影響分析：</strong>「如果我修改了 <code>user.ts</code> 中的 <code>login</code> 函數，會影響到哪些組件？」</li>
+        <li style="margin-bottom: 12px;"><strong>視覺化：</strong> 執行 <code>graphify export callflow-html</code> 生成可互動的調用鏈網頁。</li>
+      </ul>
+
+      <p style="margin-top: 24px;">你也可以直接在終端機開啟視覺化圖譜：</p>
+      <pre><code><span class="code-comment"># 在瀏覽器打開圖譜網頁</span>
+open graphify-out/graph.html</code></pre>
+    </div>
+  </div>
+
+  <!-- 核心功能 -->
+  <div class="tab-panel" id="panel-features">
+    <div class="icard">
+      <h2>核心功能清單</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <span class="feature-icon">🔍</span>
+          <span class="feature-title">多模態索引</span>
+          <span class="feature-desc">除了程式碼，還支援 SQL、PDF、甚至是錄製的設計會議影片（需 AI 模型支援）。</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📊</span>
+          <span class="feature-title">可視化報告</span>
+          <span class="feature-desc">自動生成 <code>GRAPH_REPORT.md</code>，摘要專案的核心概念與驚人關聯。</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🗺️</span>
+          <span class="feature-title">Call Flow Export</span>
+          <span class="feature-desc">將複雜的函數調用鏈導出為 Mermaid 圖表或獨立 HTML 頁面。</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🔒</span>
+          <span class="feature-title">隱私優先</span>
+          <span class="feature-desc">圖譜數據存儲在本地磁碟，不會在未經授權的情況下上傳原始代碼。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="icard">
+      <h2>相關資源</h2>
+      <ul style="padding-left: 20px;">
+        <li style="margin-bottom: 10px;"><a href="https://github.com/safishamsi/graphify" target="_blank" style="color: var(--accent2);">GitHub Repository (safishamsi/graphify)</a></li>
+        <li style="margin-bottom: 10px;"><a href="https://www.mindstudio.ai/blog/graphify-claude-code-knowledge-graph-large-codebase-70x" target="_blank" style="color: var(--accent2);">技術部落格：如何節省 70% Token 成本</a></li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本指南由 AI Resources Hub 整理 · 採 CC BY 4.0 授權</p>
+</footer>
+
+<script>
+  // Tab Switching Logic
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+
+      tab.classList.add('active');
+      document.getElementById(`panel-${target}`).classList.add('active');
+
+      // Smooth scroll back to tabs if mobile
+      if (window.innerWidth < 600) {
+        tab.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
