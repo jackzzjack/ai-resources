@@ -217,17 +217,17 @@
 </header>
 
 <div class="filters">
-  <button class="filter-btn active" onclick="filterAll(this)">全部</button>
-  <button class="filter-btn" onclick="filterSection('chat', this)">💬 對話與寫作</button>
-  <button class="filter-btn" onclick="filterSection('search', this)">🔍 搜尋與研究</button>
-  <button class="filter-btn" onclick="filterSection('code', this)">💻 程式碼</button>
-  <button class="filter-btn" onclick="filterSection('agent', this)">🤖 AI 代理</button>
-  <button class="filter-btn" onclick="filterSection('image', this)">🎨 圖像生成</button>
-  <button class="filter-btn" onclick="filterSection('video', this)">🎬 影片生成</button>
-  <button class="filter-btn" onclick="filterSection('audio', this)">🎵 語音與音樂</button>
-  <button class="filter-btn" onclick="filterSection('productivity', this)">📋 生產力與筆記</button>
-  <button class="filter-btn" onclick="filterSection('design', this)">✨ 設計與簡報</button>
-  <button class="filter-btn" onclick="filterSection('study', this)">📚 學習與筆記</button>
+  <button class="filter-btn active" data-cat="all">全部</button>
+  <button class="filter-btn" data-cat="chat">💬 對話與寫作</button>
+  <button class="filter-btn" data-cat="search">🔍 搜尋與研究</button>
+  <button class="filter-btn" data-cat="code">💻 程式碼</button>
+  <button class="filter-btn" data-cat="agent">🤖 AI 代理</button>
+  <button class="filter-btn" data-cat="image">🎨 圖像生成</button>
+  <button class="filter-btn" data-cat="video">🎬 影片生成</button>
+  <button class="filter-btn" data-cat="audio">🎵 語音與音樂</button>
+  <button class="filter-btn" data-cat="productivity">📋 生產力與筆記</button>
+  <button class="filter-btn" data-cat="design">✨ 設計與簡報</button>
+  <button class="filter-btn" data-cat="study">📚 學習與筆記</button>
 </div>
 
 <main>
@@ -470,6 +470,17 @@
         </div>
         <div class="card-desc">GitHub 推出的代理型工作流，從 Issue 直接生成計畫並執行程式碼變更。</div>
         <span class="card-arrow">前往 →</span>
+      </a>
+      <a class="card" href="https://github.com/safishamsi/graphify" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-logo"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="" /></div>
+          <div>
+            <div class="card-name">Graphify</div>
+            <span class="card-tag">知識圖譜</span> <span class="badge-free">免費</span>
+          </div>
+        </div>
+        <div class="card-desc">將整個程式碼庫轉換為可查詢的知識圖譜，大幅提升 AI 對大型專案的理解力並節省 Token。</div>
+        <span class="card-arrow">前往 GitHub →</span>
       </a>
       <a class="card" href="https://aider.chat" target="_blank" rel="noopener">
         <div class="card-top">
@@ -812,20 +823,19 @@
 </footer>
 
 <script>
-  function filterAll(btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.section').forEach(s => s.style.display = '');
-  }
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const sections = document.querySelectorAll('.section');
 
-  function filterSection(cat, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.section').forEach(s => {
-      s.style.display = s.dataset.category === cat ? '' : 'none';
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cat = btn.dataset.cat;
+      sections.forEach(s => {
+        s.style.display = (cat === 'all' || s.dataset.category === cat) ? '' : 'none';
+      });
     });
-  }
+  });
 </script>
-
-</body>
-</html>
+</body></html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Resources Hub — 互動學習與工具目錄</title>
+  <title>資源入口樞紐 - 科技與生活百科</title>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -12,175 +12,67 @@
       --border: #2a2a3d;
       --accent: #7c6aff;
       --accent2: #a78bfa;
-      --text: #e8e8f0;
-      --muted: #8888aa;
-      --radius: 16px;
+      --text: #e2e2e9;
+      --muted: #94a3b8;
+      --radius: 12px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-      background: var(--bg);
+      background-color: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
     }
 
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
     header {
-      padding: 80px 24px 40px;
       text-align: center;
-      background: radial-gradient(circle at 50% -20%, rgba(124, 106, 255, 0.15), transparent 70%);
+      margin-bottom: 60px;
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    header p {
+    .subtitle {
       color: var(--muted);
       font-size: 1.1rem;
-      max-width: 600px;
-      margin: 0 auto;
     }
 
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 24px 100px;
-    }
-
-    .portal-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 24px;
-    }
-
-    .portal-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* 篩選器樣式 */
+    .filter-container {
       display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .portal-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      background: var(--surface2);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .portal-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; width: 4px; height: 100%;
-      background: var(--strip-color, var(--accent));
-      opacity: 0.8;
-    }
-
-    .card-icon-wrap {
-      width: 56px;
-      height: 56px;
-      background: rgba(124, 106, 255, 0.1);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
-      margin-bottom: 24px;
-    }
-
-    .card-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #fff;
-    }
-
-    .card-desc {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 24px;
-      flex-grow: 1;
-    }
-
-    .card-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-
-    .chip {
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-    }
-
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-
-    .card-count {
-      font-size: 0.8rem;
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    .card-cta {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--accent2);
-    }
-
-    footer {
-      text-align: center;
-      padding: 60px 24px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    footer a { color: var(--accent2); text-decoration: none; }
-
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 40px;
+      flex-wrap: wrap;
     }
 
     .filter-btn {
-      padding: 8px 20px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
       background: var(--surface);
+      border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 0.875rem;
-      font-family: inherit;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
     }
 
     .filter-btn:hover {
@@ -190,70 +82,153 @@
 
     .filter-btn.active {
       background: var(--accent);
+      color: white;
       border-color: var(--accent);
-      color: #fff;
+    }
+
+    /* 網格佈局 */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 25px;
+    }
+
+    /* 卡片樣式 */
+    .portal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .portal-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--strip-color, var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .portal-card:hover::before {
+      width: 8px;
+    }
+
+    .card-icon-wrap {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .card-body {
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
       font-weight: 600;
+      margin-bottom: 10px;
+      color: #fff;
     }
 
-    .portal-card.card-hidden {
-      display: none;
-    }
-
-    .no-results {
-      display: none;
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 80px 0;
+    .card-desc {
+      font-size: 0.95rem;
       color: var(--muted);
-      font-size: 1.1rem;
+      margin-bottom: 20px;
     }
 
-    .no-results.visible {
-      display: block;
+    .card-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
     }
 
-    @media (max-width: 640px) {
-      header { padding: 60px 20px 30px; }
-      .portal-grid { grid-template-columns: 1fr; }
-      .filter-bar { gap: 8px; }
-      .filter-btn { font-size: 0.8rem; padding: 6px 14px; }
+    .chip {
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-count {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .card-cta {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent2);
+    }
+
+    @media (max-width: 768px) {
+      .resource-grid {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>AI Resources Hub</h1>
-  <p>收集 AI 工具目錄、互動式學習工具與產業生態系導覽</p>
-</header>
+<div class="container">
+  <header>
+    <h1>資源入口樞紐</h1>
+    <p class="subtitle">彙整各項科技指南、產業分析與生活知識的導覽中心</p>
+  </header>
 
-<main>
-  <div class="filter-bar">
+  <div class="filter-container">
     <button class="filter-btn active" data-cat="all">全部</button>
-    <button class="filter-btn" data-cat="ai">🤖 AI 工具</button>
-    <button class="filter-btn" data-cat="space">🚀 宇宙探索</button>
-    <button class="filter-btn" data-cat="industry">🏭 產業生態系</button>
-    <button class="filter-btn" data-cat="dev">💻 開發工具</button>
-    <button class="filter-btn" data-cat="science">🔬 科學知識</button>
-    <button class="filter-btn" data-cat="nature">🐾 自然動物</button>
-    <button class="filter-btn" data-cat="life">🏙️ 生活財經</button>
-    <button class="filter-btn" data-cat="history">🏛️ 歷史文化</button>
+    <button class="filter-btn" data-cat="ai">人工智慧</button>
+    <button class="filter-btn" data-cat="industry">產業分析</button>
+    <button class="filter-btn" data-cat="science">科學知識</button>
+    <button class="filter-btn" data-cat="dev">開發與架構</button>
+    <button class="filter-btn" data-cat="travel">旅遊攻略</button>
+    <button class="filter-btn" data-cat="history">歷史人文</button>
   </div>
 
-  <div class="portal-grid">
+  <div class="resource-grid" id="resourceGrid">
 
     <!-- AI 服務入口 -->
     <a class="portal-card" href="ai-services.html" data-category="ai"
-       style="--strip-color: #ef4444;">
-      <div class="card-icon-wrap">🚀</div>
+       style="--strip-color: #0ea5e9;">
+      <div class="card-icon-wrap">🤖</div>
       <div class="card-body">
-        <div class="card-title">AI 服務入口</div>
+        <div class="card-title">AI 服務導覽頁</div>
         <div class="card-desc">
-          彙整全球頂尖 AI 服務，包含大型語言模型 (LLM)、圖像生成、影片創作及開發者工具，提供快速存取連結與分類導覽。
+          精選全球頂尖 AI 服務，涵蓋搜尋引擎、程式開發助手、圖像生成及生產力工具，助你快速掌握 AI 生態系。
         </div>
         <div class="card-chips">
-          <span class="chip">LLM</span>
-          <span class="chip">Image Gen</span>
+          <span class="chip">Perplexity</span>
+          <span class="chip">Claude</span>
           <span class="chip">Video AI</span>
           <span class="chip">Agents</span>
         </div>
@@ -286,6 +261,50 @@
       </div>
     </a>
 
+    <!-- SONiC 開源網路作業系統 -->
+    <a class="portal-card" href="sonic_nos_guide.html" data-category="dev"
+       style="--strip-color: #7c6aff;">
+      <div class="card-icon-wrap">☁️</div>
+      <div class="card-body">
+        <div class="card-title">SONiC 開源網路作業系統</div>
+        <div class="card-desc">
+          深入解析 Software for Open Networking in the Cloud (SONiC) 的容器化架構、Redis 狀態管理與 SAI 晶片抽象層，以及其在 AI 高速網路 (RoCEv2) 中的核心地位。
+        </div>
+        <div class="card-chips">
+          <span class="chip">RoCEv2</span>
+          <span class="chip">SAI</span>
+          <span class="chip">Redis DB</span>
+          <span class="chip">RDMA</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">底層架構 · 網路通信</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- Graphify 入門指南 -->
+    <a class="portal-card" href="graphify_guide.html" data-category="dev"
+       style="--strip-color: #a78bfa;">
+      <div class="card-icon-wrap">🕸️</div>
+      <div class="card-body">
+        <div class="card-title">Graphify 入門指南</div>
+        <div class="card-desc">
+          學習如何將整個程式碼庫轉換為可查詢的知識圖譜，大幅提升 AI 對大型專案的理解力並有效節省 Token。
+        </div>
+        <div class="card-chips">
+          <span class="chip">知識圖譜</span>
+          <span class="chip">Token 節省</span>
+          <span class="chip">Claude Code</span>
+          <span class="chip">架構分析</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">入門教學 · 核心功能</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
     <!-- 互動式元素週期表 -->
     <a class="portal-card" href="periodic_table.html" data-category="science"
        style="--strip-color: #10b981;">
@@ -293,1085 +312,915 @@
       <div class="card-body">
         <div class="card-title">互動元素週期表</div>
         <div class="card-desc">
-          探索化學世界的基石：即時篩選不同族群、查看詳細物理屬性、發現歷史及電子組態。支援互動式導覽與數據視覺化。
+          全網功能最豐富的週期表，整合元素性質、導電性、豐度與歷史背景，支援即時篩選與視覺化。
         </div>
         <div class="card-chips">
-          <span class="chip">化學</span>
-          <span class="chip">數據視覺化</span>
-          <span class="chip">互動教育</span>
+          <span class="chip">化學元素</span>
+          <span class="chip">物性分析</span>
+          <span class="chip">視覺化</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">118 元素 · 詳細資料</span>
+        <span class="card-count">118 元素 · 詳細數據</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- Vim Cheat Sheet -->
-    <a class="portal-card" href="vim_cheat_sheet.html" data-category="dev"
-       style="--strip-color: #4ade80;">
-      <div class="card-icon-wrap">⌨️</div>
+    <!-- AI 算力中心技術解析 -->
+    <a class="portal-card" href="ai-infrastructure.html" data-category="industry"
+       style="--strip-color: #f43f5e;">
+      <div class="card-icon-wrap">🏢</div>
       <div class="card-body">
-        <div class="card-title">Vim 指令速查表</div>
+        <div class="card-title">AI 算力中心技術解析</div>
         <div class="card-desc">
-          現代化的 Vim 指令參考手冊：支援即時搜尋、分類篩選（移動、編輯、視窗管理），幫助你快速掌握這款強大的文本編輯器。
+          從 H100 伺服器到算力中心架構，詳解散熱系統、電力配電及網路互聯技術。
         </div>
         <div class="card-chips">
-          <span class="chip">效率工具</span>
-          <span class="chip">即時搜尋</span>
-          <span class="chip">開發者必備</span>
+          <span class="chip">GPU Cluster</span>
+          <span class="chip">Liquid Cooling</span>
+          <span class="chip">InfiniBand</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">100+ 指令 · 分類清晰</span>
+        <span class="card-count">硬體架構 · 技術深度</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 5G 網路架構互動圖 -->
-    <a class="portal-card" href="5g_architecture.html" data-category="science"
-       style="--strip-color: #3b82f6;">
-      <div class="card-icon-wrap">📡</div>
-      <div class="card-body">
-        <div class="card-title">5G 網路架構互動圖</div>
-        <div class="card-desc">
-          詳解 5G 核心網 (5GC) 與 無線存取網 (RAN) 架構：包含 3GPP SBA 服務化架構、網路切片、CU/DU 分離與關鍵介面說明。
-        </div>
-        <div class="card-chips">
-          <span class="chip">5G Core</span>
-          <span class="chip">SBA</span>
-          <span class="chip">Network Slicing</span>
-          <span class="chip">CU/DU</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">15+ 網元 · 架構詳解</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- F1 2026 引擎結構 -->
-    <a class="portal-card" href="f1_engine_2026.html" data-category="science"
-       style="--strip-color: #ff3e3e;">
-      <div class="card-icon-wrap">🏎️</div>
-      <div class="card-body">
-        <div class="card-title">F1 2026 引擎結構</div>
-        <div class="card-desc">
-          F1 2026 新世代動力單元（Power Unit）互動架構圖，涵蓋內燃機（ICE）、MGU-K、渦輪增壓器（TC）與 100% 永續燃料轉型。
-        </div>
-        <div class="card-chips">
-          <span class="chip">Power Unit</span>
-          <span class="chip">MGU-K</span>
-          <span class="chip">100% 永續燃料</span>
-          <span class="chip">電氣化</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">350kW 電力 · 50:50 混合動力</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 太陽系互動圖 -->
-    <a class="portal-card" href="space/solar_system.html" data-category="space"
-       style="--strip-color: #fbbf24;">
-      <div class="card-icon-wrap">🪐</div>
-      <div class="card-body">
-        <div class="card-title">太陽系互動圖</div>
-        <div class="card-desc">
-          純 Canvas 2D 動態太陽系：太陽、八大行星、冥王星與小行星帶，可調整公轉速度、滾輪縮放，懸停星體查看詳細天文資料。
-        </div>
-        <div class="card-chips">
-          <span class="chip">行星軌道</span>
-          <span class="chip">動態公轉</span>
-          <span class="chip">天文資料</span>
-          <span class="chip">縮放互動</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">9 天體 · 含小行星帶</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 銀河系互動圖 -->
-    <a class="portal-card" href="space/galaxy.html" data-category="space"
-       style="--strip-color: #818cf8;">
-      <div class="card-icon-wrap">🌌</div>
-      <div class="card-body">
-        <div class="card-title">銀河系互動圖</div>
-        <div class="card-desc">
-          程序生成的棒旋星系視覺化：四條主旋臂、銀河核球、人馬座 A* 黑洞，可標記太陽系位置，支援縮放與旋轉速度調整。
-        </div>
-        <div class="card-chips">
-          <span class="chip">四大旋臂</span>
-          <span class="chip">銀河核球</span>
-          <span class="chip">太陽系定位</span>
-          <span class="chip">縮放互動</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">直徑 10 萬光年 · 億兆恆星</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 火箭與軌道物理 -->
-    <a class="portal-card" href="space/rocket_physics.html" data-category="space"
-       style="--strip-color: #fb923c;">
-      <div class="card-icon-wrap">🚀</div>
-      <div class="card-body">
-        <div class="card-title">火箭與軌道物理</div>
-        <div class="card-desc">
-          從起飛到星際航行的互動指南：涵蓋發射流程、重力轉向、第一至第三宇宙速度，以及引力助推等深空探測關鍵技術。
-        </div>
-        <div class="card-chips">
-          <span class="chip">發射流程</span>
-          <span class="chip">軌道力學</span>
-          <span class="chip">逃逸速度</span>
-          <span class="chip">引力彈弓</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 大章節 · 互動計算器</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 黑洞互動導覽 -->
-    <a class="portal-card" href="space/black_hole.html" data-category="space"
-       style="--strip-color: #7c6aff;">
-      <div class="card-icon-wrap">⚫</div>
-      <div class="card-body">
-        <div class="card-title">黑洞互動導覽</div>
-        <div class="card-desc">
-          探索宇宙中最極端的天體：從事件視界到奇點的結構剖析，以及時間膨脹、麵條化與霍金輻釋等奇特物理現象。
-        </div>
-        <div class="card-chips">
-          <span class="chip">事件視界</span>
-          <span class="chip">奇點</span>
-          <span class="chip">時間膨脹</span>
-          <span class="chip">霍金輻射</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 大章節 · 物理視覺化</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 太空梭構造導覽 -->
-    <a class="portal-card" href="space/space_shuttle.html" data-category="space"
-       style="--strip-color: #ffffff;">
-      <div class="card-icon-wrap">🛰️</div>
-      <div class="card-body">
-        <div class="card-title">太空梭構造導覽</div>
-        <div class="card-desc">
-          探索這項結合火箭、航天器與飛機特性的工程傑作：包含整體配置、軌道器構造、隔熱系統與飛行任務流程。
-        </div>
-        <div class="card-chips">
-          <span class="chip">整體配置</span>
-          <span class="chip">軌道器構造</span>
-          <span class="chip">隔熱系統</span>
-          <span class="chip">飛行任務</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 大章節 · 構造剖析</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- AI 基礎設施生態系 -->
-    <a class="portal-card" href="ai-infrastructure.html" data-category="ai"
-       style="--strip-color: #7c6aff;">
-      <div class="card-icon-wrap">🖧</div>
-      <div class="card-body">
-        <div class="card-title">AI 基礎設施生態系</div>
-        <div class="card-desc">
-          AI 伺服器（DGX / HGX / ODM）、AI 交換器（InfiniBand / Spectrum-X / Ethernet）、CPO 共封裝光學與 NVLink / UALink 互連技術的全景生態系導覽。
-        </div>
-        <div class="card-chips">
-          <span class="chip">AI Server</span>
-          <span class="chip">AI Switch</span>
-          <span class="chip">CPO 光學</span>
-          <span class="chip">NVLink / UALink</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">5 分類 · GPU / Switch / CPO / 互連</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- HBM 高頻寬記憶體 -->
+    <!-- HBM3e 記憶體指南 -->
     <a class="portal-card" href="hbm_memory.html" data-category="industry"
-       style="--strip-color: #a78bfa;">
-      <div class="card-icon-wrap">🧠</div>
+       style="--strip-color: #ec4899;">
+      <div class="card-icon-wrap">💾</div>
       <div class="card-body">
-        <div class="card-title">HBM 高頻寬記憶體</div>
+        <div class="card-title">HBM3e 記憶體指南</div>
         <div class="card-desc">
-          深解 HBM（High Bandwidth Memory）的 3D 堆疊原理、TSV 垂直互連與 CoWoS 封裝技術，並與 DDR5、GDDR6X 全方位比較頻寬、功耗與成本差異，涵蓋 HBM1 至 HBM4 世代演進。
+          解析 AI 時代的核心組件：高頻寬記憶體 (HBM) 的封裝技術、產業競爭格局與技術演進。
         </div>
         <div class="card-chips">
-          <span class="chip">3D Stacking</span>
-          <span class="chip">TSV</span>
-          <span class="chip">CoWoS</span>
-          <span class="chip">HBM3E / HBM4</span>
+          <span class="chip">HBM3e/HBM4</span>
+          <span class="chip">TSV 封裝</span>
+          <span class="chip">SK Hynix</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">6 分類 · AI 記憶體全解析</span>
+        <span class="card-count">核心組件 · 產業鏈</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 現代火箭構造與回收 -->
-    <a class="portal-card" href="space/modern_rockets.html" data-category="space"
-       style="--strip-color: #fb923c;">
-      <div class="card-icon-wrap">🚀</div>
+    <!-- 投資估值百科 -->
+    <a class="portal-card" href="stock-valuation.html" data-category="industry"
+       style="--strip-color: #eab308;">
+      <div class="card-icon-wrap">📈</div>
       <div class="card-body">
-        <div class="card-title">現代火箭構造與回收</div>
+        <div class="card-title">投資估值百科</div>
         <div class="card-desc">
-          深入了解現代火箭的模組化構造、垂直回收技術、飛行時序，以及不同燃料與噴嘴設計的科學奧秘。
+          解析 P/E, P/B, PEG 等各類估值模型，並針對不同產業特性（IC 設計、半導體、軟體）提供實戰評估建議。
         </div>
         <div class="card-chips">
-          <span class="chip">火箭構造</span>
-          <span class="chip">垂直回收</span>
-          <span class="chip">飛行程序</span>
-          <span class="chip">燃料與噴嘴</span>
+          <span class="chip">估值模型</span>
+          <span class="chip">產業特性</span>
+          <span class="chip">投資決策</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 大章節 · 技術詳解</span>
+        <span class="card-count">財務分析 · 實戰工具</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 航運產業生態系 -->
-    <a class="portal-card" href="shipping-industry.html" data-category="industry"
-       style="--strip-color: #3b82f6;">
-      <div class="card-icon-wrap">🚢</div>
-      <div class="card-body">
-        <div class="card-title">航運產業生態系</div>
-        <div class="card-desc">
-          探索全球航運業全景：包含貨主、船東、港口與貨代間的協作關係，詳解定期航線（Liner）與不定期航線（Tramp）的商業與獲利模式。
-        </div>
-        <div class="card-chips">
-          <span class="chip">產業生態系</span>
-          <span class="chip">獲利模型</span>
-          <span class="chip">商業模式</span>
-          <span class="chip">船舶分級</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 大章節 · 互動流程圖</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 電源與能源產業分析 -->
-    <a class="portal-card" href="power-industry.html" data-category="industry"
-       style="--strip-color: #fb923c;">
-      <div class="card-icon-wrap">⚡</div>
-      <div class="card-body">
-        <div class="card-title">電源與能源產業分析</div>
-        <div class="card-desc">
-          從全球電力結構轉型、台灣 2025 能源目標到 AI 伺服器電源供應鏈（PSU）與機架級電力分配技術的全景導覽。
-        </div>
-        <div class="card-chips">
-          <span class="chip">能源轉型</span>
-          <span class="chip">AI PSU</span>
-          <span class="chip">台達電 / 光寶科</span>
-          <span class="chip">儲能技術</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 大章節 · 產業供應鏈圖</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- EMS 電子代工產業生態系 -->
+    <!-- 電子產業生態系 -->
     <a class="portal-card" href="ems-industry.html" data-category="industry"
-       style="--strip-color: #10b981;">
+       style="--strip-color: #fb923c;">
       <div class="card-icon-wrap">🏭</div>
       <div class="card-body">
-        <div class="card-title">EMS 電子代工產業生態系</div>
+        <div class="card-title">電子產業生態系</div>
         <div class="card-desc">
-          從半導體、關鍵零組件到全球組裝樞紐，詳解電子製造服務業 (EMS) 的供應鏈協作、OEM/ODM 商業模式與全球領導大廠佈局。
+          拆解 OEM, ODM, EMS 與 JDM 商業模式，並探討全球電子製造供應鏈的動態。
         </div>
         <div class="card-chips">
-          <span class="chip">供應鏈上下游</span>
-          <span class="chip">OEM / ODM / EMS</span>
-          <span class="chip">獲利結構</span>
-          <span class="chip">全球大廠</span>
+          <span class="chip">OEM/ODM</span>
+          <span class="chip">供應鏈分析</span>
+          <span class="chip">電子製造</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 大章節 · 互動生態圖</span>
+        <span class="card-count">商業模式 · 全球化</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 台北捷運路網互動圖 -->
-    <a class="portal-card" href="taipei_mrt_map.html" data-category="life"
-       style="--strip-color: #0070bd;">
-      <div class="card-icon-wrap">🚇</div>
-      <div class="card-body">
-        <div class="card-title">台北捷運路網互動圖</div>
-        <div class="card-desc">
-          整合台北捷運營運中、興建中及規劃中路線的互動式地圖，涵蓋環狀線完整路網、萬大線及民生汐止線等未來規劃。
-        </div>
-        <div class="card-chips">
-          <span class="chip">互動地圖</span>
-          <span class="chip">未來規劃</span>
-          <span class="chip">環狀線</span>
-          <span class="chip">萬大線</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">131+ 站點 · 全路網導覽</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 半導體產業生態系 -->
+    <!-- 半導體產業鏈 -->
     <a class="portal-card" href="semiconductor-industry.html" data-category="industry"
-       style="--strip-color: #fbbf24;">
-      <div class="card-icon-wrap">💎</div>
+       style="--strip-color: #8b5cf6;">
+      <div class="card-icon-wrap">⏳</div>
       <div class="card-body">
-        <div class="card-title">半導體產業生態系</div>
+        <div class="card-title">半導體產業鏈</div>
         <div class="card-desc">
-          從 IC 設計、晶圓代工（台積電、聯電）到封裝測試的完整產業鏈導覽，詳解 EUV 微影、FinFET 製程與先進封裝技術。
+          從矽晶圓到封裝測試，全方位透視半導體上、中、下游的技術壁壘與代表性公司。
         </div>
         <div class="card-chips">
-          <span class="chip">IC Design</span>
-          <span class="chip">Foundry</span>
-          <span class="chip">Advanced Packaging</span>
-          <span class="chip">EUV</span>
+          <span class="chip">晶圓代工</span>
+          <span class="chip">IC 設計</span>
+          <span class="chip">OSAT</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 大章節 · 產業全景</span>
+        <span class="card-count">產業結構 · 技術地圖</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 散熱產業生態系 -->
+    <!-- 航運與物流百科 -->
+    <a class="portal-card" href="shipping-industry.html" data-category="industry"
+       style="--strip-color: #06b6d4;">
+      <div class="card-icon-wrap">🚢</div>
+      <div class="card-body">
+        <div class="card-title">航運與物流百科</div>
+        <div class="card-desc">
+          解析貨櫃航運、散裝航運、SCFI 指數，以及運價波動背後的經濟邏輯。
+        </div>
+        <div class="card-chips">
+          <span class="chip">貨櫃航運</span>
+          <span class="chip">SCFI</span>
+          <span class="chip">物流樞紐</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">全球貿易 · 物流百科</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 太陽能與再生能源 -->
+    <a class="portal-card" href="power-industry.html" data-category="industry"
+       style="--strip-color: #facc15;">
+      <div class="card-icon-wrap">☀️</div>
+      <div class="card-body">
+        <div class="card-title">太陽能與再生能源</div>
+        <div class="card-desc">
+          從多晶矽到模組，解析太陽能產業鏈的技術挑戰、儲能系統的關鍵角色與全球能源轉型現狀。
+        </div>
+        <div class="card-chips">
+          <span class="chip">太陽能板</span>
+          <span class="chip">儲能系統</span>
+          <span class="chip">再生能源</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">能源轉型 · 產業指南</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 散熱產業技術解析 -->
     <a class="portal-card" href="thermal-industry.html" data-category="industry"
-       style="--strip-color: #60c8ff;">
+       style="--strip-color: #38bdf8;">
       <div class="card-icon-wrap">❄️</div>
       <div class="card-body">
-        <div class="card-title">散熱產業生態系</div>
+        <div class="card-title">散熱產業技術解析</div>
         <div class="card-desc">
-          解析從氣冷到液冷的技術演進，涵蓋 3D VC、冷板液冷 (DLC)、CDU、分流管等關鍵組件，以及全球 AI 伺服器散熱供應鏈。
+          詳解氣冷、液冷、浸沒式散熱等核心技術，以及其在資料中心與高階電子產品中的應用。
         </div>
         <div class="card-chips">
-          <span class="chip">氣冷 / 3D VC</span>
-          <span class="chip">冷板液冷 (DLC)</span>
-          <span class="chip">CDU / Manifold</span>
-          <span class="chip">AI 伺服器供應鏈</span>
+          <span class="chip">3D VC</span>
+          <span class="chip">Cold Plate</span>
+          <span class="chip">浸沒式散熱</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 大章節 · 供應鏈地圖</span>
+        <span class="card-count">散熱技術 · 產業動態</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 恆星生命週期與分類 -->
-    <a class="portal-card" href="space/star_lifecycle.html" data-category="space"
-       style="--strip-color: #a78bfa;">
-      <div class="card-icon-wrap">⭐</div>
-      <div class="card-body">
-        <div class="card-title">恆星生命週期與分類</div>
-        <div class="card-desc">
-          探索恆星從星雲誕生到演化為矮星、中子星或黑洞的一生：包含 OBAFGKM 光譜分類、太陽的演化進程與夜空中的代表性恆星。
-        </div>
-        <div class="card-chips">
-          <span class="chip">生命週期</span>
-          <span class="chip">光譜分類</span>
-          <span class="chip">太陽演化</span>
-          <span class="chip">代表恆星</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 大章節 · 互動流程圖</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- tmux Cheat Sheet -->
-    <a class="portal-card" href="tmux_cheat_sheet.html" data-category="dev"
-       style="--strip-color: #60b0ff;">
-      <div class="card-icon-wrap">🐚</div>
-      <div class="card-body">
-        <div class="card-title">tmux 指令速查表</div>
-        <div class="card-desc">
-          終端複用器 tmux 常用指令：視窗管理、窗格切換、會話持久化，提升終端機操作效率。
-        </div>
-        <div class="card-chips">
-          <span class="chip">終端工具</span>
-          <span class="chip">Terminal</span>
-          <span class="chip">效率工具</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">4 分類 · 終端必備</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- USB HUB 架構解析 -->
-    <a class="portal-card" href="usb_hub_architecture.html" data-category="dev"
-       style="--strip-color: #22d3ee;">
-      <div class="card-icon-wrap">🔌</div>
-      <div class="card-body">
-        <div class="card-title">USB HUB 架構完整解析</div>
-        <div class="card-desc">
-          從電路架構、常用 IC（GL850G、VL812、FE1.1s）到頻寬機制與 Transaction Translator（TT）原理，再到 ODM 硬體開發流程與 Linux kernel hub.c 驅動解析。
-        </div>
-        <div class="card-chips">
-          <span class="chip">Hub Controller IC</span>
-          <span class="chip">Transaction Translator</span>
-          <span class="chip">SuperSpeed</span>
-          <span class="chip">硬體開發</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">6 分類 · 互動圖解</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- minicom Cheat Sheet -->
-    <a class="portal-card" href="minicom_cheat_sheet.html" data-category="dev"
-       style="--strip-color: #c080ff;">
-      <div class="card-icon-wrap">🔌</div>
-      <div class="card-body">
-        <div class="card-title">minicom 指令速查表</div>
-        <div class="card-desc">
-          序列埠通訊工具 minicom 快捷鍵與配置指南，適用於嵌入式開發與設備除錯。
-        </div>
-        <div class="card-chips">
-          <span class="chip">Serial Port</span>
-          <span class="chip">Embedded</span>
-          <span class="chip">Debug</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">3 分類 · 硬體開發</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 遺忘的科學 -->
-    <a class="portal-card" href="brain_forgetting.html" data-category="science"
-       style="--strip-color: #ef4444;">
-      <div class="card-icon-wrap">🧠</div>
-      <div class="card-body">
-        <div class="card-title">遺忘的科學</div>
-        <div class="card-desc">
-          探索人腦遺忘的規律與機制：從艾賓豪斯遺忘曲線到諷刺性過程理論，詳解為什麼我們能主動記憶卻無法主動遺忘。
-        </div>
-        <div class="card-chips">
-          <span class="chip">神經科學</span>
-          <span class="chip">心理學</span>
-          <span class="chip">白熊效應</span>
-          <span class="chip">間隔重複</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">3 大章節 · 互動原理圖</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- Linux Kernel 架構全覽 -->
+    <!-- Linux 核心架構指南 -->
     <a class="portal-card" href="linux_kernel_overview.html" data-category="dev"
-       style="--strip-color: #10b981;">
+       style="--strip-color: #fca5a5;">
       <div class="card-icon-wrap">🐧</div>
       <div class="card-body">
-        <div class="card-title">Linux Kernel 架構全覽</div>
+        <div class="card-title">Linux 核心架構指南</div>
         <div class="card-desc">
-          Linux 核心元件（排程器、記憶體管理、VFS、網路、eBPF）分層架構圖，子系統代號與維護者列表，當前研究熱點（Rust、PREEMPT_RT、CXL）以及 6.1–6.14 版本特色。
+          從進程管理到記憶體定址，解構 Linux Kernel 的運作機制與現代作業系統核心。
         </div>
         <div class="card-chips">
-          <span class="chip">核心架構</span>
-          <span class="chip">eBPF / Rust</span>
-          <span class="chip">研究熱點</span>
-          <span class="chip">版本演進</span>
+          <span class="chip">Kernel Arch</span>
+          <span class="chip">Interrupts</span>
+          <span class="chip">Memory</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">5 分類 · v6.1–6.14</span>
+        <span class="card-count">系統底層 · 開發必讀</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 海豚 -->
-    <a class="portal-card" href="dolphin.html" data-category="nature"
-       style="--strip-color: #22d3ee;">
-      <div class="card-icon-wrap">🐬</div>
+    <!-- PCIe Linux 驅動開發 -->
+    <a class="portal-card" href="pcie_linux_driver.html" data-category="dev"
+       style="--strip-color: #6366f1;">
+      <div class="card-icon-wrap">⚡</div>
       <div class="card-body">
-        <div class="card-title">海豚：海洋中的智慧精靈</div>
+        <div class="card-title">PCIe Linux 驅動開發</div>
         <div class="card-desc">
-          深入認識海豚的演化、社會習性、超強智能與聲吶溝通。涵蓋覓食策略、代表物種、台灣周邊分布及保育現況。
+          深入 PCIe 裝置初始化、DMA 記憶體管理與中斷處理機制，提供完整的 Linux 驅動開發實戰引導。
         </div>
         <div class="card-chips">
-          <span class="chip">物種概覽</span>
-          <span class="chip">習性行為</span>
-          <span class="chip">智能溝通</span>
-          <span class="chip">保育現況</span>
+          <span class="chip">PCIe 5.0/6.0</span>
+          <span class="chip">DMA</span>
+          <span class="chip">MSI-X</span>
+          <span class="chip">Kernel Dev</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">5 分類 · 互動知識頁</span>
+        <span class="card-count">底層驅動 · 硬體通訊</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 菲律賓鷹 -->
-    <a class="portal-card" href="philippine_eagle.html" data-category="nature"
-       style="--strip-color: #34d399;">
-      <div class="card-icon-wrap">🦅</div>
+    <!-- 現代電腦架構概覽 -->
+    <a class="portal-card" href="computer_overview.html" data-category="dev"
+       style="--strip-color: #6d28d9;">
+      <div class="card-icon-wrap">💻</div>
       <div class="card-body">
-        <div class="card-title">菲律賓鷹：森林之王</div>
+        <div class="card-title">現代電腦架構概覽</div>
         <div class="card-desc">
-          深入認識世界最強悍猛禽之一——菲律賓鷹（食猴鷹）。涵蓋形態圖解、獵食習性、生命週期、保育現況與趣味冷知識。
+          解構從馮·紐曼架構到現代異質運算的硬體設計，包含 CPU、GPU 與 NPU 的協作邏輯。
         </div>
         <div class="card-chips">
-          <span class="chip">物種概覽</span>
-          <span class="chip">習性行為</span>
-          <span class="chip">保育現況</span>
-          <span class="chip">極度瀕危</span>
+          <span class="chip">CPU Arch</span>
+          <span class="chip">Memory Hierarchy</span>
+          <span class="chip">Bus System</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 分類 · 互動知識頁</span>
+        <span class="card-count">硬體原理 · 電腦科學</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 鯨魚知識庫 -->
-    <a class="portal-card" href="whale_knowledge.html" data-category="nature"
-       style="--strip-color: #0ea5e9;">
-      <div class="card-icon-wrap">🐋</div>
+    <!-- USB Hub 系統架構 -->
+    <a class="portal-card" href="usb_hub_architecture.html" data-category="dev"
+       style="--strip-color: #2563eb;">
+      <div class="card-icon-wrap">🔌</div>
       <div class="card-body">
-        <div class="card-title">鯨魚世界：海洋巨獸</div>
+        <div class="card-title">USB Hub 系統架構</div>
         <div class="card-desc">
-          深入探索地球最大動物的奧秘——涵蓋鬚鯨與齒鯨分類、覓食習性、鯨歌溝通、萬里遷徙與保育現況。從藍鯨到虎鯨，完整鯨魚知識庫。
+          詳解 USB 協議層、Hub 階層架構與信號完整性考量，涵蓋 USB4 與電源傳輸 (PD) 技術。
         </div>
         <div class="card-chips">
-          <span class="chip">物種分類</span>
-          <span class="chip">習性行為</span>
-          <span class="chip">鯨歌溝通</span>
-          <span class="chip">保育現況</span>
+          <span class="chip">USB4 / PD</span>
+          <span class="chip">Signal Integrity</span>
+          <span class="chip">Protocol Stack</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">8 種類 · 驚人事實</span>
+        <span class="card-count">周邊介面 · 硬體設計</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 5G 系統架構解析 -->
+    <a class="portal-card" href="5g_architecture.html" data-category="dev"
+       style="--strip-color: #1d4ed8;">
+      <div class="card-icon-wrap">📡</div>
+      <div class="card-body">
+        <div class="card-title">5G 系統架構解析</div>
+        <div class="card-desc">
+          從端到端解構 5G 網路，包含 SA/NSA 組網、網路切片與 O-RAN 技術演進。
+        </div>
+        <div class="card-chips">
+          <span class="chip">O-RAN</span>
+          <span class="chip">Slicing</span>
+          <span class="chip">MIMO</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">通訊技術 · 未來網路</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- BBU/DU 基地台技術指南 -->
+    <a class="portal-card" href="bbu_guide.html" data-category="dev"
+       style="--strip-color: #3b82f6;">
+      <div class="card-icon-wrap">🗼</div>
+      <div class="card-body">
+        <div class="card-title">BBU/DU 基地台技術指南</div>
+        <div class="card-desc">
+          深入 4G/5G 基地台核心，探討基頻處理、資源調度與 Open-RAN 時代的軟硬體解耦趨勢。
+        </div>
+        <div class="card-chips">
+          <span class="chip">Baseband Unit</span>
+          <span class="chip">eCPRI</span>
+          <span class="chip">DU/CU</span>
+          <span class="chip">vRAN</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">電信設備 · 核心技術</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- SerDes 串列技術指南 -->
+    <a class="portal-card" href="serdes_guide.html" data-category="dev"
+       style="--strip-color: #4f46e5;">
+      <div class="card-icon-wrap">🚄</div>
+      <div class="card-body">
+        <div class="card-title">SerDes 串列技術指南</div>
+        <div class="card-desc">
+          解析高速通訊的核心技術：SerDes 的運作原理、等化技術 (EQ) 與未來 224G 演進。
+        </div>
+        <div class="card-chips">
+          <span class="chip">PAM4</span>
+          <span class="chip">Clock Recovery</span>
+          <span class="chip">224G SerDes</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">高速電路 · 通訊基礎</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- MAC & SerDes 通訊介面解析 -->
+    <a class="portal-card" href="mac_serdes.html" data-category="dev"
+       style="--strip-color: #6366f1;">
+      <div class="card-icon-wrap">🔗</div>
+      <div class="card-body">
+        <div class="card-title">MAC & SerDes 介面解析</div>
+        <div class="card-desc">
+          詳解資料連結層 (MAC) 與實體層 (SerDes) 之間的協作機制，包含 MII 家族與 400G/800G 以太網路協定。
+        </div>
+        <div class="card-chips">
+          <span class="chip">SGMII/QSGMII</span>
+          <span class="chip">PCS/PMA</span>
+          <span class="chip">Ethernet Mac</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">網路協定 · 硬體介面</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 建築工程知識庫 -->
+    <a class="portal-card" href="construction_guide.html" data-category="industry"
+       style="--strip-color: #94a3b8;">
+      <div class="card-icon-wrap">🏗️</div>
+      <div class="card-body">
+        <div class="card-title">建築工程知識庫</div>
+        <div class="card-desc">
+          從房屋興建流程、捷運施工工法到各類建築結構設計（RC/SRC/SC），提供完整的營建工程概覽。
+        </div>
+        <div class="card-chips">
+          <span class="chip">捷運工程</span>
+          <span class="chip">房屋建設</span>
+          <span class="chip">施工工法</span>
+          <span class="chip">營造流程</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">營建工程 · 基礎設施</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 鐵道與捷運知識 -->
+    <a class="portal-card" href="train_knowledge.html" data-category="science"
+       style="--strip-color: #3b82f6;">
+      <div class="card-icon-wrap">🚆</div>
+      <div class="card-body">
+        <div class="card-title">鐵道與捷運知識</div>
+        <div class="card-desc">
+          解析軌道運輸系統，包含號誌系統 (CBTC)、供電架構、轉向架技術與世界各地的捷運系統發展。
+        </div>
+        <div class="card-chips">
+          <span class="chip">CBTC</span>
+          <span class="chip">軌道力學</span>
+          <span class="chip">號誌系統</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">軌道運輸 · 號誌系統</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 城市軌道交通百科 -->
+    <a class="portal-card" href="metro_knowledge.html" data-category="science"
+       style="--strip-color: #60a5fa;">
+      <div class="card-icon-wrap">🚇</div>
+      <div class="card-body">
+        <div class="card-title">城市軌道交通百科</div>
+        <div class="card-desc">
+          深入城市地鐵與捷運系統，解析從路線規劃、車站設計到自動化運轉系統 (ATO) 的工程挑戰。
+        </div>
+        <div class="card-chips">
+          <span class="chip">ATO/ATP</span>
+          <span class="chip">隧道工程</span>
+          <span class="chip">城市規劃</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">地鐵工程 · 都市交通</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 台北捷運路網圖 -->
+    <a class="portal-card" href="taipei_mrt_map.html" data-category="travel"
+       style="--strip-color: #22c55e;">
+      <div class="card-icon-wrap">🗺️</div>
+      <div class="card-body">
+        <div class="card-title">互動式台北捷運路網圖</div>
+        <div class="card-desc">
+          全新設計的互動式路網圖，包含完整的轉乘資訊、站點座標與路線即時狀態，提供最佳導覽體驗。
+        </div>
+        <div class="card-chips">
+          <span class="chip">台北捷運</span>
+          <span class="chip">路線圖</span>
+          <span class="chip">SVG 互動</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">最新資訊 · 互動地圖</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 電動車知識庫 -->
+    <a class="portal-card" href="ev_knowledge.html" data-category="industry"
+       style="--strip-color: #10b981;">
+      <div class="card-icon-wrap">🚗</div>
+      <div class="card-body">
+        <div class="card-title">電動車知識庫</div>
+        <div class="card-desc">
+          全方位解析電動車技術，從三電系統（電池、電機、電控）到充電樁基礎設施與未來智駕趨勢。
+        </div>
+        <div class="card-chips">
+          <span class="chip">鋰電池</span>
+          <span class="chip">逆變器</span>
+          <span class="chip">充電協議</span>
+          <span class="chip">V2G</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">新能源車 · 核心技術</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 2026 F1 引擎技術指南 -->
+    <a class="portal-card" href="f1_engine_2026.html" data-category="science"
+       style="--strip-color: #ef4444;">
+      <div class="card-icon-wrap">🏎️</div>
+      <div class="card-body">
+        <div class="card-title">2026 F1 引擎技術指南</div>
+        <div class="card-desc">
+          解析 2026 年 F1 動力單元重大變革：移除 MGU-H、提升電能輸出與 100% 永續燃料的技術挑戰。
+        </div>
+        <div class="card-chips">
+          <span class="chip">Hybrid</span>
+          <span class="chip">MGU-K</span>
+          <span class="chip">Sustainable Fuel</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">賽車工程 · 未來技術</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 記憶體與存儲百科 -->
+    <a class="portal-card" href="memory_types.html" data-category="dev"
+       style="--strip-color: #8b5cf6;">
+      <div class="card-icon-wrap">📼</div>
+      <div class="card-body">
+        <div class="card-title">記憶體與存儲百科</div>
+        <div class="card-desc">
+          從 SRAM 到 NAND Flash，全方位解析各類半導體記憶體技術的物理特性、性能優劣與應用場景。
+        </div>
+        <div class="card-chips">
+          <span class="chip">DDR5</span>
+          <span class="chip">SRAM</span>
+          <span class="chip">NVMe SSD</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">硬體基礎 · 存儲技術</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 腦科學與遺忘機制 -->
+    <a class="portal-card" href="brain_forgetting.html" data-category="science"
+       style="--strip-color: #fb7185;">
+      <div class="card-icon-wrap">🧠</div>
+      <div class="card-body">
+        <div class="card-title">腦科學：遺忘的機制</div>
+        <div class="card-desc">
+          探討大腦如何清理冗餘記憶，從神經細胞的可塑性到心理學的遺忘曲線，揭開大腦運行的高效祕辛。
+        </div>
+        <div class="card-chips">
+          <span class="chip">神經元</span>
+          <span class="chip">LTP/LTD</span>
+          <span class="chip">遺忘曲線</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">生命科學 · 認知心理</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 胃食道逆流衛教指南 -->
+    <a class="portal-card" href="gerd_guide.html" data-category="science"
+       style="--strip-color: #fca5a5;">
+      <div class="card-icon-wrap">🤢</div>
+      <div class="card-body">
+        <div class="card-title">胃食道逆流衛教指南</div>
+        <div class="card-desc">
+          解析胃食道逆流 (GERD) 的成因、典型與非典型症狀、飲食建議與藥物治療方案。
+        </div>
+        <div class="card-chips">
+          <span class="chip">醫療保健</span>
+          <span class="chip">GERD</span>
+          <span class="chip">飲食控制</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">健康管理 · 生活醫療</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 動物眼睛與虹膜科學 -->
+    <a class="portal-card" href="animal_eyes_iris.html" data-category="science"
+       style="--strip-color: #fbbf24;">
+      <div class="card-icon-wrap">👁️</div>
+      <div class="card-body">
+        <div class="card-title">動物眼睛與虹膜科學</div>
+        <div class="card-desc">
+          全方位解析動物界各異的眼睛構造，從瞳孔形狀、視網膜細胞到驚人的色彩感知能力。
+        </div>
+        <div class="card-chips">
+          <span class="chip">生物演化</span>
+          <span class="chip">光學構造</span>
+          <span class="chip">色彩感知</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">生命科學 · 自然百科</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
     <!-- 恐龍百科 -->
-    <a class="portal-card" href="dinosaurs.html" data-category="nature"
-       style="--strip-color: #4ade80;">
-      <div class="card-icon-wrap">🦕</div>
+    <a class="portal-card" href="dinosaurs.html" data-category="science"
+       style="--strip-color: #059669;">
+      <div class="card-icon-wrap">🦖</div>
       <div class="card-body">
-        <div class="card-title">恐龍百科</div>
+        <div class="card-title">恐龍百科：史前巨獸</div>
         <div class="card-desc">
-          探索統治地球 1.65 億年的史前霸主：涵蓋三疊紀至白堊紀年代、分類系統、10 大代表物種圖鑑、習性行為、體型比較，以及 K-Pg 大滅絕事件。
+          橫跨三疊紀到白堊紀，探索暴龍、三角龍等標誌性恐龍的生態特徵與古生物學最新研究。
         </div>
         <div class="card-chips">
-          <span class="chip">中生代</span>
-          <span class="chip">物種圖鑑</span>
-          <span class="chip">習性行為</span>
-          <span class="chip">滅絕事件</span>
+          <span class="chip">古生物學</span>
+          <span class="chip">演化樹</span>
+          <span class="chip">地質年代</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">10 物種 · 7 大章節</span>
+        <span class="card-count">古生物 · 史前歷史</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 動物眼睛與虹膜 -->
-    <a class="portal-card" href="animal_eyes_iris.html" data-category="nature"
-       style="--strip-color: #4a9eff;">
-      <div class="card-icon-wrap">👁️</div>
+    <!-- 鯨魚世界百科 -->
+    <a class="portal-card" href="whale_knowledge.html" data-category="science"
+       style="--strip-color: #3b82f6;">
+      <div class="card-icon-wrap">🐋</div>
       <div class="card-body">
-        <div class="card-title">動物的眼睛與虹膜科學</div>
+        <div class="card-title">鯨魚世界百科</div>
         <div class="card-desc">
-          探索眼球構造、虹膜調光原理與顏色成因（瑞利散射、黑色素遺傳），以及貓的垂直縫隙、山羊的水平矩形等動物多樣瞳孔形態。
+          探索海洋巨靈：鯨魚的分類、演化歷程、回聲定位技術與海洋生態位。
         </div>
         <div class="card-chips">
-          <span class="chip">眼睛構造</span>
-          <span class="chip">虹膜原理</span>
-          <span class="chip">顏色遺傳</span>
-          <span class="chip">動物多樣性</span>
+          <span class="chip">海洋生物</span>
+          <span class="chip">演化史</span>
+          <span class="chip">保育科學</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 分類 · 互動知識頁</span>
+        <span class="card-count">海洋百科 · 生態保育</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 投資評價工具 -->
-    <a class="portal-card" href="stock-valuation.html" data-category="life"
-       style="--strip-color: #7c6aff;">
-      <div class="card-icon-wrap">📈</div>
+    <!-- 海豚百科 -->
+    <a class="portal-card" href="dolphin.html" data-category="science"
+       style="--strip-color: #60a5fa;">
+      <div class="card-icon-wrap">🐬</div>
       <div class="card-body">
-        <div class="card-title">投資評價工具</div>
+        <div class="card-title">海豚：海洋的高智商精靈</div>
         <div class="card-desc">
-          掌握本益比 (P/E)、股價淨值比 (P/B) 與 PEG 等核心估值指標。包含互動式本益比計算機，助你判斷股價合理性。
+          深入了解海豚的社交行為、複雜語言、回聲定位機制以及不同物種的生態習性。
         </div>
         <div class="card-chips">
-          <span class="chip">本益比</span>
-          <span class="chip">估值模型</span>
-          <span class="chip">財務分析</span>
-          <span class="chip">互動計算</span>
+          <span class="chip">智慧生物</span>
+          <span class="chip">社交行為</span>
+          <span class="chip">聲納系統</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">3 大模組 · 估值指南</span>
+        <span class="card-count">海洋生物 · 認知科學</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 胃食道逆流完整指南 -->
-    <a class="portal-card" href="gerd_guide.html" data-category="life"
-       style="--strip-color: #ef4444;">
-      <div class="card-icon-wrap">🤢</div>
+    <!-- 菲律賓鷹百科 -->
+    <a class="portal-card" href="philippine_eagle.html" data-category="science"
+       style="--strip-color: #d97706;">
+      <div class="card-icon-wrap">🦅</div>
       <div class="card-body">
-        <div class="card-title">胃食道逆流完整指南</div>
+        <div class="card-title">菲律賓鷹：熱帶雨林之王</div>
         <div class="card-desc">
-          深入了解 GERD 的成因、症狀識別、潛在後果，以及從生活調整到外科手術的完整治療策略與衛教影片。
+          探索全球最大且最稀有的鷹類：菲律賓鷹的生態特徵、繁育習性及所面臨的保育危機。
         </div>
         <div class="card-chips">
-          <span class="chip">GERD</span>
-          <span class="chip">消化系統</span>
-          <span class="chip">衛教指南</span>
-          <span class="chip">治療策略</span>
+          <span class="chip">猛禽</span>
+          <span class="chip">熱帶雨林</span>
+          <span class="chip">瀕危物種</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">6 大章節 · 衛教影片</span>
+        <span class="card-count">鳥類百科 · 保育現狀</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 英國歷史全覽 -->
-    <a class="portal-card" href="british_history.html" data-category="history"
-       style="--strip-color: #ef4444;">
-      <div class="card-icon-wrap">🏰</div>
+    <!-- 太空探索樞紐 -->
+    <a class="portal-card" href="space/solar_system.html" data-category="science"
+       style="--strip-color: #8b5cf6;">
+      <div class="card-icon-wrap">🚀</div>
       <div class="card-body">
-        <div class="card-title">英國歷史全覽</div>
+        <div class="card-title">太空探索與天文指南</div>
         <div class="card-desc">
-          從史前巨石陣到現代 Brexit，帶你快速掌握塑造世界的島國故事：羅馬統治、中世紀封建、都鐸王朝、工業革命、大英帝國，完整王室譜系。
+          從太陽系行星、恆星生命週期到黑洞物理學，與你一同探索浩瀚宇宙。
         </div>
         <div class="card-chips">
-          <span class="chip">世界史</span>
-          <span class="chip">王室譜系</span>
-          <span class="chip">互動時間軸</span>
-          <span class="chip">文化影響</span>
+          <span class="chip">太陽系</span>
+          <span class="chip">黑洞物理</span>
+          <span class="chip">恆星演化</span>
+          <span class="chip">火箭工程</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">8 大時代 · 完整王朝一覽</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 中國歷史全覽 -->
-    <a class="portal-card" href="chinese_history.html" data-category="history"
-       style="--strip-color: #ef4444;">
-      <div class="card-icon-wrap">🐉</div>
-      <div class="card-body">
-        <div class="card-title">中國歷史全覽</div>
-        <div class="card-desc">
-          從史前文明到現代中國，帶你縱覽夏商周、秦漢、唐宋、明清等各朝代興衰，詳解中華文明的政治演變、文化成就與歷史轉折。
-        </div>
-        <div class="card-chips">
-          <span class="chip">世界史</span>
-          <span class="chip">朝代更迭</span>
-          <span class="chip">互動時間軸</span>
-          <span class="chip">文化影響</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">數千年文明 · 完整朝代一覽</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 記憶體類型完整指南 -->
-    <a class="portal-card" href="memory_types.html" data-category="dev"
-       style="--strip-color: #a855f7;">
-      <div class="card-icon-wrap">🧠</div>
-      <div class="card-body">
-        <div class="card-title">記憶體類型完整指南</div>
-        <div class="card-desc">
-          從 SRAM 6T 單元到 DRAM 動態刷新、NOR Flash 原地執行、NAND Flash 蛇形位元線架構，到 eMMC 整合封裝，徹底理解各類記憶體的原理與應用場景。
-        </div>
-        <div class="card-chips">
-          <span class="chip">SRAM / DRAM</span>
-          <span class="chip">NOR / NAND Flash</span>
-          <span class="chip">eMMC / UFS</span>
-          <span class="chip">蛇模式</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">5 類型 · 互動示意圖</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 電腦全覽 -->
-    <a class="portal-card" href="computer_overview.html" data-category="dev"
-       style="--strip-color: #6366f1;">
-      <div class="card-icon-wrap">💻</div>
-      <div class="card-body">
-        <div class="card-title">電腦全覽</div>
-        <div class="card-desc">
-          從第一台機械計算機到量子運算，探索電腦的歷史演進、硬體組成（CPU、記憶體、儲存）、系統架構，與 AI 晶片等當代技術趨勢。
-        </div>
-        <div class="card-chips">
-          <span class="chip">電腦架構</span>
-          <span class="chip">硬體組成</span>
-          <span class="chip">歷史演進</span>
-          <span class="chip">量子運算</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">完整架構 · 技術趨勢</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 日本歷史全覽 -->
-    <a class="portal-card" href="japan_history.html" data-category="history"
-       style="--strip-color: #e11d48;">
-      <div class="card-icon-wrap">🗾</div>
-      <div class="card-body">
-        <div class="card-title">日本歷史全覽</div>
-        <div class="card-desc">
-          從繩文時代到現代，帶你走過大和朝廷、平安貴族文化、戰國武士時代、明治維新、二戰與戰後經濟奇蹟，完整日本歷史脈絡。
-        </div>
-        <div class="card-chips">
-          <span class="chip">世界史</span>
-          <span class="chip">武士時代</span>
-          <span class="chip">明治維新</span>
-          <span class="chip">互動時間軸</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">繩文至現代 · 完整時代一覽</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 捷運系統知識庫 -->
-    <a class="portal-card" href="metro_knowledge.html" data-category="life"
-       style="--strip-color: #0070bd;">
-      <div class="card-icon-wrap">🚇</div>
-      <div class="card-body">
-        <div class="card-title">捷運系統知識庫</div>
-        <div class="card-desc">
-          深入了解全球捷運系統的形式分類（地下/高架/輕軌）、技術規格、信號系統（CBTC/CTCS）、知名廠商（龐巴迪、西門子、川崎）與世界著名系統比較。
-        </div>
-        <div class="card-chips">
-          <span class="chip">系統分類</span>
-          <span class="chip">信號技術</span>
-          <span class="chip">全球比較</span>
-          <span class="chip">廠商生態</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">多種形式 · 全球系統</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- PCIe 與 Linux Driver -->
-    <a class="portal-card" href="pcie_linux_driver.html" data-category="dev"
-       style="--strip-color: #22d3ee;">
-      <div class="card-icon-wrap">🔧</div>
-      <div class="card-body">
-        <div class="card-title">PCIe 與 Linux Driver 完整指南</div>
-        <div class="card-desc">
-          深入解析 PCIe 匯流排架構（Gen 4/5/6）、TLP 封包結構、IOMMU/DMA、MSI-X 中斷，以及在 Linux kernel 中撰寫與除錯 PCIe 驅動程式的完整流程。
-        </div>
-        <div class="card-chips">
-          <span class="chip">PCIe Gen 4/5</span>
-          <span class="chip">Linux Driver</span>
-          <span class="chip">DMA / IOMMU</span>
-          <span class="chip">Kernel 開發</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">完整指南 · 驅動開發</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 俄羅斯歷史全覽 -->
-    <a class="portal-card" href="russian_history.html" data-category="history"
-       style="--strip-color: #dc2626;">
-      <div class="card-icon-wrap">🇷🇺</div>
-      <div class="card-body">
-        <div class="card-title">俄羅斯歷史全覽</div>
-        <div class="card-desc">
-          從基輔羅斯到現代俄羅斯：涵蓋蒙古入侵、沙皇帝國擴張、彼得大帝改革、布爾什維克革命、蘇聯冷戰，到蘇聯解體後的現代聯邦。
-        </div>
-        <div class="card-chips">
-          <span class="chip">世界史</span>
-          <span class="chip">沙皇時代</span>
-          <span class="chip">蘇聯冷戰</span>
-          <span class="chip">互動時間軸</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">千年歷史 · 帝國興衰</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- SerDes 完整實作指南 -->
-    <a class="portal-card" href="serdes_guide.html" data-category="dev"
-       style="--strip-color: #a855f7;">
-      <div class="card-icon-wrap">📶</div>
-      <div class="card-body">
-        <div class="card-title">SerDes 完整實作指南</div>
-        <div class="card-desc">
-          深入解析高速串列收發器（Serializer/Deserializer）架構：PLL/CDR、均衡器（CTLE/DFE）、眼圖分析，以及在 PCIe、Ethernet 與 112G PAM4 中的實際應用。
-        </div>
-        <div class="card-chips">
-          <span class="chip">SerDes 架構</span>
-          <span class="chip">PLL / CDR</span>
-          <span class="chip">PAM4</span>
-          <span class="chip">眼圖分析</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">完整指南 · 高速傳輸</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- MAC 晶片 × PHY × SerDes -->
-    <a class="portal-card" href="mac_serdes.html" data-category="dev"
-       style="--strip-color: #10b981;">
-      <div class="card-icon-wrap">🖧</div>
-      <div class="card-body">
-        <div class="card-title">MAC 晶片 × PHY × SerDes</div>
-        <div class="card-desc">
-          MAC 晶片是什麼？PHY 晶片又是什麼？從 OSI 第二層的幀封裝、MII/XGMII/CAUI-4 介面標準，到 PHY 內部的 SerDes 電路，完整解析 CPU → MAC → PHY → SerDes → 銅線/光纖的訊號鏈。
-        </div>
-        <div class="card-chips">
-          <span class="chip">MAC Layer 2</span>
-          <span class="chip">PHY 晶片</span>
-          <span class="chip">SerDes</span>
-          <span class="chip">XGMII / CAUI-4</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">訊號鏈全覽 · 以太網路</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 泰國歷史完整指南 -->
-    <a class="portal-card" href="thailand_history.html" data-category="history"
-       style="--strip-color: #fbbf24;">
-      <div class="card-icon-wrap">🇹🇭</div>
-      <div class="card-body">
-        <div class="card-title">泰國歷史完整指南</div>
-        <div class="card-desc">
-          從史前聚落到現代君主立憲：超過千年的素可泰、大城、卻克里王朝興衰、殖民時代的外交折衝、多次政變，到現代泰國的形成。
-        </div>
-        <div class="card-chips">
-          <span class="chip">世界史</span>
-          <span class="chip">王朝更迭</span>
-          <span class="chip">東南亞史</span>
-          <span class="chip">文化影響</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">千年文明 · 完整導覽</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 火車百科 -->
-    <a class="portal-card" href="train_knowledge.html" data-category="life"
-       style="--strip-color: #78716c;">
-      <div class="card-icon-wrap">🚆</div>
-      <div class="card-body">
-        <div class="card-title">火車百科</div>
-        <div class="card-desc">
-          探索鐵道世界的歷史與技術：從蒸汽機車到磁浮列車，涵蓋各種車型分類、軌距規格、推進技術、知名高鐵系統，以及全球鐵道產業生態。
-        </div>
-        <div class="card-chips">
-          <span class="chip">鐵道歷史</span>
-          <span class="chip">車型分類</span>
-          <span class="chip">高速鐵路</span>
-          <span class="chip">產業生態</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">完整百科 · 全球鐵道</span>
+        <span class="card-count">宇宙探索 · 天文百科</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
     <!-- 美國歷史全覽 -->
     <a class="portal-card" href="us_history_overview.html" data-category="history"
-       style="--strip-color: #3b82f6;">
+       style="--strip-color: #ef4444;">
       <div class="card-icon-wrap">🇺🇸</div>
       <div class="card-body">
         <div class="card-title">美國歷史全覽</div>
         <div class="card-desc">
-          從殖民地時代到超級強權：獨立戰爭、憲法建國、南北戰爭、兩次世界大戰、冷戰、民權運動，到 21 世紀的全球角色，完整美國歷史脈絡。
+          從獨立戰爭到冷戰時代，詳解美國歷史上的重大事件、憲政精神與政治版圖演變。
         </div>
         <div class="card-chips">
-          <span class="chip">世界史</span>
-          <span class="chip">獨立建國</span>
-          <span class="chip">冷戰霸權</span>
-          <span class="chip">互動時間軸</span>
+          <span class="chip">獨立戰爭</span>
+          <span class="chip">憲法精神</span>
+          <span class="chip">冷戰</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">250 年歷史 · 完整時代一覽</span>
+        <span class="card-count">大國歷史 · 政治演進</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 電動車圖解知識庫 -->
-    <a class="portal-card" href="ev_knowledge.html" data-category="science"
-       style="--strip-color: #10b981;">
-      <div class="card-icon-wrap">⚡</div>
+    <!-- 中國歷史全覽 -->
+    <a class="portal-card" href="chinese_history.html" data-category="history"
+       style="--strip-color: #dc2626;">
+      <div class="card-icon-wrap">🏮</div>
       <div class="card-body">
-        <div class="card-title">電動車圖解知識庫</div>
+        <div class="card-title">中國歷史全覽</div>
         <div class="card-desc">
-          深入解析電動車的完整架構：電力如何從電池流向馬達、電池包的細胞→模組→電池組層級構造、逆變器與驅動系統、12V 車上電氣分配，以及 AC/DC 充電與 V2G 技術。
+          橫跨五千年歷史，從先秦諸子、大秦帝國到民國時代，詳解歷代制度變革與文化成就。
         </div>
         <div class="card-chips">
-          <span class="chip">電池包構造</span>
-          <span class="chip">動力傳遞</span>
-          <span class="chip">充電系統</span>
-          <span class="chip">車上電氣</span>
+          <span class="chip">歷代王朝</span>
+          <span class="chip">制度演進</span>
+          <span class="chip">文化成就</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">5 大章節 · 互動圖解</span>
+        <span class="card-count">通史導覽 · 制度变遷</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 建築工程知識庫 -->
-    <a class="portal-card" href="construction_guide.html" data-category="life"
-       style="--strip-color: #f59e0b;">
-      <div class="card-icon-wrap">🏗️</div>
+    <!-- 英國歷史概論 -->
+    <a class="portal-card" href="british_history.html" data-category="history"
+       style="--strip-color: #1e40af;">
+      <div class="card-icon-wrap">🇬🇧</div>
       <div class="card-body">
-        <div class="card-title">建築工程知識庫</div>
+        <div class="card-title">英國歷史概論</div>
         <div class="card-desc">
-          深入解析捷運與房屋的建設流程與工法差異：潛盾工法（TBM）、明挖覆蓋法、RC / SRC / 鋼構 / CLT 木構造，從地質調查到竣工的完整工程知識。
+          從羅馬時期、都鐸王朝到日不落帝國，探索大不列顛如何影響現代法律、代議政治與工業革命。
         </div>
         <div class="card-chips">
-          <span class="chip">捷運建設</span>
-          <span class="chip">潛盾工法</span>
-          <span class="chip">RC / SRC / 鋼構</span>
-          <span class="chip">工法比較</span>
+          <span class="chip">大憲章</span>
+          <span class="chip">都鐸王朝</span>
+          <span class="chip">工業革命</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 大章節 · 工法全覽</span>
+        <span class="card-count">歐洲歷史 · 代議政治</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <!-- 成都旅遊知識庫 -->
-    <a class="portal-card" href="chengdu_travel_guide.html" data-category="life"
-       style="--strip-color: #f97316;">
+    <!-- 日本歷史縱覽 -->
+    <a class="portal-card" href="japan_history.html" data-category="history"
+       style="--strip-color: #f43f5e;">
+      <div class="card-icon-wrap">🎎</div>
+      <div class="card-body">
+        <div class="card-title">日本歷史縱覽</div>
+        <div class="card-desc">
+          從平安時代、戰國群雄到明治維新，解鎖日本武士精神與現代化的驚人演進。
+        </div>
+        <div class="card-chips">
+          <span class="chip">戰國時代</span>
+          <span class="chip">幕府制度</span>
+          <span class="chip">明治維新</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">東亞歷史 · 文化傳承</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 俄羅斯歷史概論 -->
+    <a class="portal-card" href="russian_history.html" data-category="history"
+       style="--strip-color: #3f6212;">
+      <div class="card-icon-wrap">🏰</div>
+      <div class="card-body">
+        <div class="card-title">俄羅斯歷史概論</div>
+        <div class="card-desc">
+          從留里克王朝、羅曼諾夫沙皇國到蘇聯與當代，探討橫跨歐亞的北方帝國興衰。
+        </div>
+        <div class="card-chips">
+          <span class="chip">沙皇俄國</span>
+          <span class="chip">十月革命</span>
+          <span class="chip">冷戰</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">歐亞歷史 · 帝國變遷</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 泰國歷史概論 -->
+    <a class="portal-card" href="thailand_history.html" data-category="history"
+       style="--strip-color: #0d9488;">
+      <div class="card-icon-wrap">🛕</div>
+      <div class="card-body">
+        <div class="card-title">泰國歷史概論</div>
+        <div class="card-desc">
+          探索暹羅王國的歷史演進，從素可泰、大城王朝到卻克里王朝，詳解泰國如何在東南亞維持獨立與轉型。
+        </div>
+        <div class="card-chips">
+          <span class="chip">暹羅王國</span>
+          <span class="chip">佛教文化</span>
+          <span class="chip">君主制</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">東南亞史 · 文化深度</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- 成都旅遊指南 -->
+    <a class="portal-card" href="chengdu_travel_guide.html" data-category="travel"
+       style="--strip-color: #ea580c;">
       <div class="card-icon-wrap">🐼</div>
       <div class="card-body">
-        <div class="card-title">成都旅遊知識庫</div>
+        <div class="card-title">成都旅遊指南</div>
         <div class="card-desc">
-          針對台灣旅客整理成都自由行重點，涵蓋必訪景點、美食清單、台灣出發交通方式、行前文件、預算與範例行程。
+          詳解天府之國：成都的景點規劃、地道美食、交通安排與五天四夜行程建議。
         </div>
         <div class="card-chips">
-          <span class="chip">台灣出發</span>
-          <span class="chip">交通攻略</span>
-          <span class="chip">熊貓基地</span>
-          <span class="chip">成都美食</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">景點 × 美食 × 行前準備</span>
-        <span class="card-cta">開始規劃 →</span>
-      </div>
-    </a>
-
-    <!-- BBU 電池備援單元 -->
-    <a class="portal-card" href="bbu_guide.html" data-category="dev"
-       style="--strip-color: #fbbf24;">
-      <div class="card-icon-wrap">🔋</div>
-      <div class="card-body">
-        <div class="card-title">BBU 電池備援單元</div>
-        <div class="card-desc">
-          深入解析 BBU（Battery Backup Unit）的運作原理：為何 DRAM 揮發性特性需要電池保護、Write-Back 快取的效能與風險、BBU 與傳統記憶體（DRAM/NAND）的關鍵差異，以及 FBWC、NVDIMM 等現代替代方案。
-        </div>
-        <div class="card-chips">
-          <span class="chip">Write-Back 快取</span>
-          <span class="chip">RAID 控制器</span>
-          <span class="chip">NVDIMM</span>
-          <span class="chip">FBWC</span>
-        </div>
-      </div>
-      <div class="card-footer">
-        <span class="card-count">7 大章節 · 互動圖解</span>
-        <span class="card-cta">進入 →</span>
-      </div>
-    </a>
-
-    <!-- 福建旅遊知識庫 -->
-    <a class="portal-card" href="fujian_travel_guide.html" data-category="life"
-       style="--strip-color: #06b6d4;">
-      <div class="card-icon-wrap">🧳</div>
-      <div class="card-body">
-        <div class="card-title">福建旅遊知識庫</div>
-        <div class="card-desc">
-          台灣旅客專用福建自由行整理：福州、廈門、泉州景點美食、台灣出發路線（直飛／小三通／轉機）、預算與範例行程。
-        </div>
-        <div class="card-chips">
-          <span class="chip">旅遊攻略</span>
-          <span class="chip">台灣出發</span>
-          <span class="chip">福建</span>
+          <span class="chip">大熊貓</span>
+          <span class="chip">川菜</span>
           <span class="chip">行程規劃</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">交通 + 景點 + 行前提醒</span>
+        <span class="card-count">自由行攻略 · 美食地圖</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
 
-    <div class="no-results" id="noResults">此分類目前沒有項目</div>
+    <!-- 福建旅遊指南 -->
+    <a class="portal-card" href="fujian_travel_guide.html" data-category="travel"
+       style="--strip-color: #0369a1;">
+      <div class="card-icon-wrap">🍵</div>
+      <div class="card-body">
+        <div class="card-title">福建旅遊指南</div>
+        <div class="card-desc">
+          涵蓋福州、廈門、泉州的深度導覽，提供預算規劃、交通指南與六天五夜經典行程。
+        </div>
+        <div class="card-chips">
+          <span class="chip">廈門鼓浪嶼</span>
+          <span class="chip">閩南文化</span>
+          <span class="chip">兩岸交通</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">自由行攻略 · 歷史古蹟</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- Vim 快速上手 -->
+    <a class="portal-card" href="vim_cheat_sheet.html" data-category="dev"
+       style="--strip-color: #16a34a;">
+      <div class="card-icon-wrap">⌨️</div>
+      <div class="card-body">
+        <div class="card-title">Vim 編輯器指南</div>
+        <div class="card-desc">
+          從零開始掌握編輯器之神：Vim 的三種模式、核心按鍵與高效開發技巧。
+        </div>
+        <div class="card-chips">
+          <span class="chip">文字編輯</span>
+          <span class="chip">開發效率</span>
+          <span class="chip">Linux 工具</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">實戰手冊 · 開發者利器</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- Tmux 指令手冊 -->
+    <a class="portal-card" href="tmux_cheat_sheet.html" data-category="dev"
+       style="--strip-color: #4ade80;">
+      <div class="card-icon-wrap">🔲</div>
+      <div class="card-body">
+        <div class="card-title">Tmux 命令手冊</div>
+        <div class="card-desc">
+          詳解終端機複用器 Tmux 的會話管理、視窗切割與快捷鍵配置，打造頂尖命令行環境。
+        </div>
+        <div class="card-chips">
+          <span class="chip">終端機</span>
+          <span class="chip">會話管理</span>
+          <span class="chip">開發環境</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">命令速查 · 生產力工具</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- Minicom 串口工具指南 -->
+    <a class="portal-card" href="minicom_cheat_sheet.html" data-category="dev"
+       style="--strip-color: #94a3b8;">
+      <div class="card-icon-wrap">📟</div>
+      <div class="card-body">
+        <div class="card-title">Minicom 串口工具指南</div>
+        <div class="card-desc">
+          嵌入式工程師必備：詳解 Minicom 串口通訊工具配置、登錄日誌錄製與硬體除錯技巧。
+        </div>
+        <div class="card-chips">
+          <span class="chip">UART</span>
+          <span class="chip">嵌入式開發</span>
+          <span class="chip">除錯工具</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">命令速查 · 硬體工程</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
   </div>
-</main>
+</div>
 
-<footer>
-  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 持續更新中</p>
-</footer>
-
+</body>
+</html>
 <script>
   const filterBtns = document.querySelectorAll('.filter-btn');
   const cards = document.querySelectorAll('.portal-card');
-  const noResults = document.getElementById('noResults');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1379,17 +1228,11 @@
       btn.classList.add('active');
 
       const cat = btn.dataset.cat;
-      let visibleCount = 0;
-
       cards.forEach(card => {
         const match = cat === 'all' || card.dataset.category === cat;
-        card.classList.toggle('card-hidden', !match);
-        if (match) visibleCount++;
+        card.style.display = match ? 'flex' : 'none';
       });
-
-      noResults.classList.toggle('visible', visibleCount === 0);
     });
   });
 </script>
-</body>
-</html>
+</body></html>
