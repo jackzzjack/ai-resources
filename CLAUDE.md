@@ -18,6 +18,7 @@
 |------|------|
 | `index.html` | 主入口頁，導覽至所有子頁面 |
 | `ai-services.html` | AI 服務快速連結頁 |
+| `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `periodic_table.html` | 互動式元素週期表（含詳細元素資料） |
 | `space/solar_system.html` | 太陽系互動視覺化（Canvas 2D，行星軌道 / 縮放 / 速度調整） |
 | `space/galaxy.html` | 銀河系互動視覺化（程序生成旋臂、核球、太陽系定位標記） |
