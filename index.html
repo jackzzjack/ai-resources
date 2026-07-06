@@ -167,7 +167,18 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .category-note {
+      color: var(--muted);
+      font-size: 0.9rem;
       margin-bottom: 40px;
+    }
+
+    .category-note strong {
+      color: var(--text);
+      font-weight: 600;
     }
 
     .filter-btn {
@@ -239,6 +250,9 @@
     <button class="filter-btn" data-cat="life">🏙️ 生活財經</button>
     <button class="filter-btn" data-cat="history">🏛️ 歷史文化</button>
   </div>
+  <p class="category-note" id="categoryNote">
+    <strong>全部</strong>：顯示所有資源；部分跨領域頁面會同時出現在多個分類中。
+  </p>
 
   <div class="portal-grid">
 
@@ -260,6 +274,50 @@
       </div>
       <div class="card-footer">
         <span class="card-count">30+ 服務 · 持續更新</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- SONiC 開源網路作業系統 -->
+    <a class="portal-card" href="sonic_nos_guide.html" data-category="dev"
+       style="--strip-color: #7c6aff;">
+      <div class="card-icon-wrap">☁️</div>
+      <div class="card-body">
+        <div class="card-title">SONiC 開源網路作業系統</div>
+        <div class="card-desc">
+          深入解析 Software for Open Networking in the Cloud (SONiC) 的容器化架構、Redis 狀態管理與 SAI 晶片抽象層，以及其在 AI 高速網路 (RoCEv2) 中的核心地位。
+        </div>
+        <div class="card-chips">
+          <span class="chip">NOS</span>
+          <span class="chip">SAI</span>
+          <span class="chip">Docker</span>
+          <span class="chip">AI Networking</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">4 大章節 · 互動圖解</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
+    <!-- Graphify 入門指南 -->
+    <a class="portal-card" href="graphify_guide.html" data-category="ai"
+       style="--strip-color: #7c6aff;">
+      <div class="card-icon-wrap">🕸️</div>
+      <div class="card-body">
+        <div class="card-title">Graphify 入門指南</div>
+        <div class="card-desc">
+          探索如何將整個程式碼庫轉換為 AI 可查詢的知識圖譜。大幅節省 Token 消耗並提升 AI 助手對大型專案的理解深度。
+        </div>
+        <div class="card-chips">
+          <span class="chip">知識圖譜</span>
+          <span class="chip">Token 節省</span>
+          <span class="chip">Claude Code</span>
+          <span class="chip">架構分析</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">入門教學 · 核心功能</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
@@ -307,7 +365,7 @@
     </a>
 
     <!-- 5G 網路架構互動圖 -->
-    <a class="portal-card" href="5g_architecture.html" data-category="science"
+    <a class="portal-card" href="5g_architecture.html" data-category="dev industry"
        style="--strip-color: #3b82f6;">
       <div class="card-icon-wrap">📡</div>
       <div class="card-body">
@@ -329,7 +387,7 @@
     </a>
 
     <!-- F1 2026 引擎結構 -->
-    <a class="portal-card" href="f1_engine_2026.html" data-category="science"
+    <a class="portal-card" href="f1_engine_2026.html" data-category="science industry"
        style="--strip-color: #ff3e3e;">
       <div class="card-icon-wrap">🏎️</div>
       <div class="card-body">
@@ -461,7 +519,7 @@
     </a>
 
     <!-- AI 基礎設施生態系 -->
-    <a class="portal-card" href="ai-infrastructure.html" data-category="ai"
+    <a class="portal-card" href="ai-infrastructure.html" data-category="ai industry"
        style="--strip-color: #7c6aff;">
       <div class="card-icon-wrap">🖧</div>
       <div class="card-body">
@@ -483,7 +541,7 @@
     </a>
 
     <!-- HBM 高頻寬記憶體 -->
-    <a class="portal-card" href="hbm_memory.html" data-category="industry"
+    <a class="portal-card" href="hbm_memory.html" data-category="industry dev"
        style="--strip-color: #a78bfa;">
       <div class="card-icon-wrap">🧠</div>
       <div class="card-body">
@@ -614,6 +672,28 @@
       </div>
     </a>
 
+    <!-- CPO 共封裝光學產業全景 -->
+    <a class="portal-card" href="cpo-industry.html" data-category="industry"
+       style="--strip-color: #7c6aff;">
+      <div class="card-icon-wrap">💡</div>
+      <div class="card-body">
+        <div class="card-title">CPO 共封裝光學產業全景</div>
+        <div class="card-desc">
+          深入解析共封裝光學 (CPO) 技術原理、產業鏈重構與關鍵玩家。探討 800G/1.6T 世代下，如何解決 AI 高速網路的功耗與訊號衰減危機。
+        </div>
+        <div class="card-chips">
+          <span class="chip">矽光子</span>
+          <span class="chip">800G / 1.6T</span>
+          <span class="chip">異質整合</span>
+          <span class="chip">能效優化</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-count">4 大章節 · 產業全景</span>
+        <span class="card-cta">進入 →</span>
+      </div>
+    </a>
+
     <!-- 半導體產業生態系 -->
     <a class="portal-card" href="semiconductor-industry.html" data-category="industry"
        style="--strip-color: #fbbf24;">
@@ -637,7 +717,7 @@
     </a>
 
     <!-- 散熱產業生態系 -->
-    <a class="portal-card" href="thermal-industry.html" data-category="industry"
+    <a class="portal-card" href="thermal-industry.html" data-category="industry dev"
        style="--strip-color: #60c8ff;">
       <div class="card-icon-wrap">❄️</div>
       <div class="card-body">
@@ -987,7 +1067,7 @@
     </a>
 
     <!-- 記憶體類型完整指南 -->
-    <a class="portal-card" href="memory_types.html" data-category="dev"
+    <a class="portal-card" href="memory_types.html" data-category="dev science"
        style="--strip-color: #a855f7;">
       <div class="card-icon-wrap">🧠</div>
       <div class="card-body">
@@ -1009,7 +1089,7 @@
     </a>
 
     <!-- 電腦全覽 -->
-    <a class="portal-card" href="computer_overview.html" data-category="dev"
+    <a class="portal-card" href="computer_overview.html" data-category="dev science"
        style="--strip-color: #6366f1;">
       <div class="card-icon-wrap">💻</div>
       <div class="card-body">
@@ -1053,7 +1133,7 @@
     </a>
 
     <!-- 捷運系統知識庫 -->
-    <a class="portal-card" href="metro_knowledge.html" data-category="life"
+    <a class="portal-card" href="metro_knowledge.html" data-category="life dev"
        style="--strip-color: #0070bd;">
       <div class="card-icon-wrap">🚇</div>
       <div class="card-body">
@@ -1185,7 +1265,7 @@
     </a>
 
     <!-- 火車百科 -->
-    <a class="portal-card" href="train_knowledge.html" data-category="life"
+    <a class="portal-card" href="train_knowledge.html" data-category="life history"
        style="--strip-color: #78716c;">
       <div class="card-icon-wrap">🚆</div>
       <div class="card-body">
@@ -1229,7 +1309,7 @@
     </a>
 
     <!-- 電動車圖解知識庫 -->
-    <a class="portal-card" href="ev_knowledge.html" data-category="science"
+    <a class="portal-card" href="ev_knowledge.html" data-category="science industry"
        style="--strip-color: #10b981;">
       <div class="card-icon-wrap">⚡</div>
       <div class="card-body">
@@ -1251,7 +1331,7 @@
     </a>
 
     <!-- 建築工程知識庫 -->
-    <a class="portal-card" href="construction_guide.html" data-category="life"
+    <a class="portal-card" href="construction_guide.html" data-category="life industry"
        style="--strip-color: #f59e0b;">
       <div class="card-icon-wrap">🏗️</div>
       <div class="card-body">
@@ -1295,7 +1375,7 @@
     </a>
 
     <!-- BBU 電池備援單元 -->
-    <a class="portal-card" href="bbu_guide.html" data-category="dev"
+    <a class="portal-card" href="bbu_guide.html" data-category="dev industry"
        style="--strip-color: #fbbf24;">
       <div class="card-icon-wrap">🔋</div>
       <div class="card-body">
@@ -1350,6 +1430,40 @@
   const filterBtns = document.querySelectorAll('.filter-btn');
   const cards = document.querySelectorAll('.portal-card');
   const noResults = document.getElementById('noResults');
+  const categoryNote = document.getElementById('categoryNote');
+  const categoryLabels = {
+    all: '全部',
+    ai: 'AI 工具',
+    space: '宇宙探索',
+    industry: '產業生態系',
+    dev: '開發與工程工具',
+    science: '科學與技術知識',
+    nature: '自然動物',
+    life: '生活財經',
+    history: '歷史文化'
+  };
+  const categoryDescriptions = {
+    all: '顯示所有資源；部分跨領域頁面會同時出現在多個分類中。',
+    ai: 'AI 服務、AI 開發輔助與 AI 基礎設施相關內容。',
+    space: '天文、火箭、太空載具與宇宙物理主題。',
+    industry: '供應鏈、產業生態、商業模式與工程應用內容。',
+    dev: '程式開發、系統、硬體介面、網路與工程實作工具。',
+    science: '自然科學、工程原理與可視化知識解說。',
+    nature: '動物、生態與生物知識頁面。',
+    life: '生活應用、交通、旅遊、健康與財經工具。',
+    history: '國家、文明、交通技術演進與文化脈絡。'
+  };
+
+  function getCardCategories(card) {
+    return (card.dataset.category || '').split(/\s+/).filter(Boolean);
+  }
+
+  function updateCategoryNote(cat, visibleCount) {
+    if (!categoryNote) return;
+    const label = categoryLabels[cat] || cat;
+    const desc = categoryDescriptions[cat] || '顯示符合此分類的資源。';
+    categoryNote.innerHTML = `<strong>${label}</strong>：${desc}（${visibleCount} 個項目）`;
+  }
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1360,14 +1474,18 @@
       let visibleCount = 0;
 
       cards.forEach(card => {
-        const match = cat === 'all' || card.dataset.category === cat;
+        const categories = getCardCategories(card);
+        const match = cat === 'all' || categories.includes(cat);
         card.classList.toggle('card-hidden', !match);
         if (match) visibleCount++;
       });
 
       noResults.classList.toggle('visible', visibleCount === 0);
+      updateCategoryNote(cat, visibleCount);
     });
   });
+
+  updateCategoryNote('all', cards.length);
 </script>
 </body>
 </html>

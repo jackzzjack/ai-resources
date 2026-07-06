@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPO 共封裝光學產業全景 — Co-Packaged Optics Ecosystem</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(124,106,255,0.2) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(124,106,255,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+      margin-right: 4px;
+      margin-bottom: 4px;
+      display: inline-block;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(124,106,255,0.04); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Diagram ── */
+    .arch-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 10px;
+    }
+    .arch-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .arch-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .arch-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+    .arch-connector {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin-top: 8px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 6px; bottom: 6px;
+      width: 2px; background: var(--border);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -28px; top: 5px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+    .tl-date {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>CPO 共封裝光學產業全景</h1>
+  <p>Co-Packaged Optics: AI 高速網路能效危機的終極解決方案</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="principle">💡 技術原理</div>
+    <div class="tab" data-tab="ecosystem">🌐 產業鏈佈局</div>
+    <div class="tab" data-tab="players">🏆 關鍵廠商</div>
+    <div class="tab" data-tab="roadmap">🚀 發展路線圖</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ── 技術原理 ── -->
+  <div class="tab-panel active" id="panel-principle">
+    <div class="section-heading">
+      <h2>為什麼需要 CPO？</h2>
+      <p>隨著 AI 模型規模呈指數級成長，資料中心內部的頻寬需求每兩年翻倍。傳統「可插拔光模組」在 800G 以上面臨嚴峻的功耗與訊號衰減挑戰。</p>
+    </div>
+
+    <div class="callout">
+      <h3>核心痛點</h3>
+      <ul>
+        <li><strong>功耗瓶頸：</strong> 可插拔模組的電氣訊號傳輸（SerDes）需消耗大量能量。在 1.6T 速率下，光學組件可能佔據交換機總功耗的 50%。</li>
+        <li><strong>訊號衰減：</strong> 高速電訊號在 PCB 走線上的損失隨頻率攀升，走線長度被限制在極短範圍內。</li>
+        <li><strong>密度極限：</strong> 交換機前面板的空間已無法容納更多可插拔連接埠。</li>
+      </ul>
+    </div>
+
+    <p class="arch-label">架構演進對比</p>
+    <div class="arch-diagram">
+      <div class="arch-label">1. 傳統可插拔 (Pluggable)</div>
+      <div class="arch-row">
+        <div class="arch-box">ASIC</div>
+        <div class="arch-connector">──⚡(15cm)──</div>
+        <div class="arch-box">光模組 (QSFP-DD)</div>
+        <div class="arch-connector">──🔆──</div>
+        <div class="arch-box">光纖</div>
+      </div>
+      <div style="height: 20px;"></div>
+      <div class="arch-label">2. 共封裝光學 (CPO)</div>
+      <div class="arch-row">
+        <div class="arch-box" style="border-color: var(--accent-green);">ASIC + 光引擎 (Same Package)</div>
+        <div class="arch-connector">──🔆(Direct)──</div>
+        <div class="arch-box">光纖連接器</div>
+        <div class="arch-connector">──🔆──</div>
+        <div class="arch-box">光纖</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 30px;">
+      <p class="arch-label">技術優勢</p>
+      <div class="card-grid">
+        <div class="icard" style="--card-color: var(--accent-green);">
+          <div class="icard-title">功耗降低 30-50%</div>
+          <div class="icard-desc">縮短 SerDes 走線，大幅減少電氣補償（DSP）所需的功耗。</div>
+        </div>
+        <div class="icard" style="--card-color: var(--accent-blue);">
+          <div class="icard-title">延遲降低</div>
+          <div class="icard-desc">簡化訊號處理流程，提供更接近光速的傳輸體驗。</div>
+        </div>
+        <div class="icard" style="--card-color: var(--accent-orange);">
+          <div class="icard-title">更高整合度</div>
+          <div class="icard-desc">支援 51.2T、102.4T 甚至更高的交換容量。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 產業鏈佈局 ── -->
+  <div class="tab-panel" id="panel-ecosystem">
+    <div class="section-heading">
+      <h2>CPO 產業供應鏈</h2>
+      <p>CPO 不僅是產品的更迭，更是整個光電產業鏈的重構，涉及半導體設計、封裝與光學組件的深度融合。</p>
+    </div>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>位置</th>
+            <th>關鍵組件 / 節點</th>
+            <th>核心技術</th>
+            <th>代表角色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: var(--accent-orange);">上游：材料與元件</td>
+            <td>雷射光源 (ELS)、矽光子晶片 (PIC)、光纖連接器 (MPO)</td>
+            <td>磷化銦 (InP) 雷射、矽光平台製程、光學封裝材料</td>
+            <td>Coherent, Lumentum, 信越化學</td>
+          </tr>
+          <tr>
+            <td style="color: var(--accent-blue);">中游：設計與整合</td>
+            <td>交換晶片 (ASIC)、光引擎 (OE)、矽光子設計</td>
+            <td>SerDes IP、光電異質整合封裝、矽光子電路設計</td>
+            <td>Broadcom, Marvell, Intel, Nvidia</td>
+          </tr>
+          <tr>
+            <td style="color: var(--accent-green);">下游：模組與系統</td>
+            <td>CPO 交換機、高速互連系統</td>
+            <td>系統散熱設計、NOS 軟體優化</td>
+            <td>Arista, Celestica, Cisco, ODM 廠</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top: 30px;">
+      <h3>產業鏈關鍵轉變</h3>
+      <p>在 CPO 時代，傳統的光模組廠商（如中際旭創、Finisar）面臨角色轉型。因為光引擎被直接整合進主晶片封裝，<strong>晶片廠商 (Broadcom/Marvell)</strong> 掌握了更多主導權，而 <strong>封測廠 (OSAT)</strong> 在異質整合中的地位也隨之提升。</p>
+    </div>
+  </div>
+
+  <!-- ── 關鍵廠商 ── -->
+  <div class="tab-panel" id="panel-players">
+    <div class="section-heading">
+      <h2>CPO 領域的領軍者</h2>
+      <p>目前 CPO 產業仍處於早期量產與技術競賽階段，美系晶片巨頭暫時領先。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Broadcom (博通)</div>
+            <div class="icard-vendor">Switch ASIC & CPO 整合</div>
+          </div>
+        </div>
+        <div class="icard-desc">推出 Tomahawk 5 CPO 版本，與 Intel 合作矽光引擎，是目前市場上進度最快的量產級解決方案。</div>
+        <div class="spec-chip">Tomahawk 5</div><div class="spec-chip">Bailly CPO</div>
+      </div>
+
+      <div class="icard" style="--card-color: #0071c5;">
+        <div class="icard-head">
+          <div class="icard-icon">💡</div>
+          <div>
+            <div class="icard-title">Intel</div>
+            <div class="icard-vendor">矽光子 (Silicon Photonics) 先驅</div>
+          </div>
+        </div>
+        <div class="icard-desc">擁有最成熟的矽光子製程平台，能將雷射直接整合於矽晶圓上（Integrated Laser），是 CPO 核心技術的關鍵供應商。</div>
+        <div class="spec-chip">Integrated Photonics</div>
+      </div>
+
+      <div class="icard" style="--card-color: #666699;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Marvell</div>
+            <div class="icard-vendor">Orion CPO 平台</div>
+          </div>
+        </div>
+        <div class="icard-desc">透過併購 Inphi 強勢進入光學領域，推出 Orion 平台整合交換晶片與 DSP，目標瞄準超大規模雲端供應商 (CSP)。</div>
+        <div class="spec-chip">Teralynx</div><div class="spec-chip">Orion</div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">🟢</div>
+          <div>
+            <div class="icard-title">Nvidia</div>
+            <div class="icard-vendor">NVLink & 下一代互連</div>
+          </div>
+        </div>
+        <div class="icard-desc">雖然目前仍以可插拔和銅纜 (NVLink Switch) 為主，但已公開表示將在未來的 Spectrum-X 系列引入 CPO 技術。</div>
+        <div class="spec-chip">Spectrum-X</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 發展路線圖 ── -->
+  <div class="tab-panel" id="panel-roadmap">
+    <div class="section-heading">
+      <h2>CPO 技術演進趨勢</h2>
+      <p>CPO 並非一蹴而就，而是沿著整合度由低到高的路徑發展。</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2022 - 2024 (當前)</div>
+        <div class="tl-title">NPO (Near-Packaged Optics) 與 早期 CPO</div>
+        <div class="tl-desc">光引擎放在 ASIC 旁邊但不在同一個封裝內。Broadcom 開始供應 51.2T CPO 樣機。CSP 廠商開始小規模部署測試。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2025 - 2027 (加速期)</div>
+        <div class="tl-title">800G / 1.6T CPO 大規模應用</div>
+        <div class="tl-desc">隨著交換容量達到 102.4T，可插拔模組將達到極限。CPO 成為 1.6T 每埠速率下的主要選擇。產業標準 (OIF/UEC) 趋於統一。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2028+ (未來)</div>
+        <div class="tl-title">Optical I/O Chiplet (晶片間光互連)</div>
+        <div class="tl-desc">光學 I/O 直接整合進 GPU 或 CPU 封裝。Ayar Labs、Lightmatter 等新創公司的技術走向主流。資料中心網路徹底轉變為「光互連網」。</div>
+      </div>
+    </div>
+
+    <div class="callout" style="border-left-color: var(--accent-orange); margin-top: 30px;">
+      <h3>面臨的挑戰</h3>
+      <p>儘管前景看好，但 CPO 仍需解決以下困難：</p>
+      <ul>
+        <li><strong>維修性：</strong> 光引擎損壞可能導致昂貴的交換晶片整顆報廢。</li>
+        <li><strong>散熱：</strong> 將發熱的光引擎放在 ASIC 旁邊，對冷卻技術（如液冷）提出更高要求。</li>
+        <li><strong>測試與良率：</strong> 複雜的異質封裝顯著增加了製造難度。</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容持續更新中</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
