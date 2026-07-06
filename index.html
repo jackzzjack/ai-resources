@@ -167,7 +167,18 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .category-note {
+      color: var(--muted);
+      font-size: 0.9rem;
       margin-bottom: 40px;
+    }
+
+    .category-note strong {
+      color: var(--text);
+      font-weight: 600;
     }
 
     .filter-btn {
@@ -239,6 +250,9 @@
     <button class="filter-btn" data-cat="life">🏙️ 生活財經</button>
     <button class="filter-btn" data-cat="history">🏛️ 歷史文化</button>
   </div>
+  <p class="category-note" id="categoryNote">
+    <strong>全部</strong>：顯示所有資源；部分跨領域頁面會同時出現在多個分類中。
+  </p>
 
   <div class="portal-grid">
 
@@ -351,7 +365,7 @@
     </a>
 
     <!-- 5G 網路架構互動圖 -->
-    <a class="portal-card" href="5g_architecture.html" data-category="science"
+    <a class="portal-card" href="5g_architecture.html" data-category="dev industry"
        style="--strip-color: #3b82f6;">
       <div class="card-icon-wrap">📡</div>
       <div class="card-body">
@@ -373,7 +387,7 @@
     </a>
 
     <!-- F1 2026 引擎結構 -->
-    <a class="portal-card" href="f1_engine_2026.html" data-category="science"
+    <a class="portal-card" href="f1_engine_2026.html" data-category="science industry"
        style="--strip-color: #ff3e3e;">
       <div class="card-icon-wrap">🏎️</div>
       <div class="card-body">
@@ -505,7 +519,7 @@
     </a>
 
     <!-- AI 基礎設施生態系 -->
-    <a class="portal-card" href="ai-infrastructure.html" data-category="ai"
+    <a class="portal-card" href="ai-infrastructure.html" data-category="ai industry"
        style="--strip-color: #7c6aff;">
       <div class="card-icon-wrap">🖧</div>
       <div class="card-body">
@@ -527,7 +541,7 @@
     </a>
 
     <!-- HBM 高頻寬記憶體 -->
-    <a class="portal-card" href="hbm_memory.html" data-category="industry"
+    <a class="portal-card" href="hbm_memory.html" data-category="industry dev"
        style="--strip-color: #a78bfa;">
       <div class="card-icon-wrap">🧠</div>
       <div class="card-body">
@@ -703,7 +717,7 @@
     </a>
 
     <!-- 散熱產業生態系 -->
-    <a class="portal-card" href="thermal-industry.html" data-category="industry"
+    <a class="portal-card" href="thermal-industry.html" data-category="industry dev"
        style="--strip-color: #60c8ff;">
       <div class="card-icon-wrap">❄️</div>
       <div class="card-body">
@@ -1053,7 +1067,7 @@
     </a>
 
     <!-- 記憶體類型完整指南 -->
-    <a class="portal-card" href="memory_types.html" data-category="dev"
+    <a class="portal-card" href="memory_types.html" data-category="dev science"
        style="--strip-color: #a855f7;">
       <div class="card-icon-wrap">🧠</div>
       <div class="card-body">
@@ -1075,7 +1089,7 @@
     </a>
 
     <!-- 電腦全覽 -->
-    <a class="portal-card" href="computer_overview.html" data-category="dev"
+    <a class="portal-card" href="computer_overview.html" data-category="dev science"
        style="--strip-color: #6366f1;">
       <div class="card-icon-wrap">💻</div>
       <div class="card-body">
@@ -1119,7 +1133,7 @@
     </a>
 
     <!-- 捷運系統知識庫 -->
-    <a class="portal-card" href="metro_knowledge.html" data-category="life"
+    <a class="portal-card" href="metro_knowledge.html" data-category="life dev"
        style="--strip-color: #0070bd;">
       <div class="card-icon-wrap">🚇</div>
       <div class="card-body">
@@ -1251,7 +1265,7 @@
     </a>
 
     <!-- 火車百科 -->
-    <a class="portal-card" href="train_knowledge.html" data-category="life"
+    <a class="portal-card" href="train_knowledge.html" data-category="life history"
        style="--strip-color: #78716c;">
       <div class="card-icon-wrap">🚆</div>
       <div class="card-body">
@@ -1295,7 +1309,7 @@
     </a>
 
     <!-- 電動車圖解知識庫 -->
-    <a class="portal-card" href="ev_knowledge.html" data-category="science"
+    <a class="portal-card" href="ev_knowledge.html" data-category="science industry"
        style="--strip-color: #10b981;">
       <div class="card-icon-wrap">⚡</div>
       <div class="card-body">
@@ -1317,7 +1331,7 @@
     </a>
 
     <!-- 建築工程知識庫 -->
-    <a class="portal-card" href="construction_guide.html" data-category="life"
+    <a class="portal-card" href="construction_guide.html" data-category="life industry"
        style="--strip-color: #f59e0b;">
       <div class="card-icon-wrap">🏗️</div>
       <div class="card-body">
@@ -1361,7 +1375,7 @@
     </a>
 
     <!-- BBU 電池備援單元 -->
-    <a class="portal-card" href="bbu_guide.html" data-category="dev"
+    <a class="portal-card" href="bbu_guide.html" data-category="dev industry"
        style="--strip-color: #fbbf24;">
       <div class="card-icon-wrap">🔋</div>
       <div class="card-body">
@@ -1416,6 +1430,40 @@
   const filterBtns = document.querySelectorAll('.filter-btn');
   const cards = document.querySelectorAll('.portal-card');
   const noResults = document.getElementById('noResults');
+  const categoryNote = document.getElementById('categoryNote');
+  const categoryLabels = {
+    all: '全部',
+    ai: 'AI 工具',
+    space: '宇宙探索',
+    industry: '產業生態系',
+    dev: '開發與工程工具',
+    science: '科學與技術知識',
+    nature: '自然動物',
+    life: '生活財經',
+    history: '歷史文化'
+  };
+  const categoryDescriptions = {
+    all: '顯示所有資源；部分跨領域頁面會同時出現在多個分類中。',
+    ai: 'AI 服務、AI 開發輔助與 AI 基礎設施相關內容。',
+    space: '天文、火箭、太空載具與宇宙物理主題。',
+    industry: '供應鏈、產業生態、商業模式與工程應用內容。',
+    dev: '程式開發、系統、硬體介面、網路與工程實作工具。',
+    science: '自然科學、工程原理與可視化知識解說。',
+    nature: '動物、生態與生物知識頁面。',
+    life: '生活應用、交通、旅遊、健康與財經工具。',
+    history: '國家、文明、交通技術演進與文化脈絡。'
+  };
+
+  function getCardCategories(card) {
+    return (card.dataset.category || '').split(/\s+/).filter(Boolean);
+  }
+
+  function updateCategoryNote(cat, visibleCount) {
+    if (!categoryNote) return;
+    const label = categoryLabels[cat] || cat;
+    const desc = categoryDescriptions[cat] || '顯示符合此分類的資源。';
+    categoryNote.innerHTML = `<strong>${label}</strong>：${desc}（${visibleCount} 個項目）`;
+  }
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1426,14 +1474,18 @@
       let visibleCount = 0;
 
       cards.forEach(card => {
-        const match = cat === 'all' || card.dataset.category === cat;
+        const categories = getCardCategories(card);
+        const match = cat === 'all' || categories.includes(cat);
         card.classList.toggle('card-hidden', !match);
         if (match) visibleCount++;
       });
 
       noResults.classList.toggle('visible', visibleCount === 0);
+      updateCategoryNote(cat, visibleCount);
     });
   });
+
+  updateCategoryNote('all', cards.length);
 </script>
 </body>
 </html>
