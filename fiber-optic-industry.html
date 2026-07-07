@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>光纖接入產業全景 — Fiber Optic Access Industry Ecosystem</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #7c6aff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(124,106,255,0.2) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(124,106,255,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(124,106,255,0.04); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Diagram ── */
+    .arch-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    .arch-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 800px;
+      justify-content: space-between;
+    }
+    .node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+    .node-box {
+      width: 120px;
+      padding: 16px 8px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .node-box:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .node-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .connector {
+      flex-grow: 1;
+      height: 2px;
+      background: var(--border);
+      position: relative;
+      margin-top: -20px; /* Align with node boxes */
+    }
+    .connector::after {
+      content: '▶';
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: var(--border);
+    }
+    .connector-text {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: var(--accent2);
+      white-space: nowrap;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>光纖接入產業全景</h1>
+  <p>從最後一哩路到全球骨幹：解構 PON、OLT、ONU 與光通訊生態系</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="arch">🏗️ 技術架構</div>
+    <div class="tab" data-tab="components">📦 核心設備</div>
+    <div class="tab" data-tab="protocol">🛠️ OMCI 協議</div>
+    <div class="tab" data-tab="backbone">🌐 骨幹對接</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ── 技術架構 ── -->
+  <div class="tab-panel active" id="panel-arch">
+    <div class="section-heading">
+      <h2>PON (無源光網路) 架構</h2>
+      <p>目前全球最主流的光纖接入技術，其核心在於「無源 (Passive)」，即在電信機房到用戶端之間不需要主動電源設備。</p>
+    </div>
+
+    <div class="arch-diagram">
+      <p class="arch-label">光纖接入訊號鏈 (FTTH)</p>
+      <div class="arch-flow">
+        <div class="node">
+          <div class="node-box" style="border-color: var(--accent-orange);">骨幹網路</div>
+          <div class="node-label">Core Network</div>
+        </div>
+        <div class="connector">
+          <div class="connector-text">IP / MPLS</div>
+        </div>
+        <div class="node">
+          <div class="node-box" style="border-color: var(--accent-blue);">OLT</div>
+          <div class="node-label">機房端設備</div>
+        </div>
+        <div class="connector">
+          <div class="connector-text">ODN (分光器)</div>
+        </div>
+        <div class="node">
+          <div class="node-box" style="border-color: var(--accent-green);">ONU / ONT</div>
+          <div class="node-label">用戶端接入</div>
+        </div>
+        <div class="connector">
+          <div class="connector-text">Ethernet / Wi-Fi</div>
+        </div>
+        <div class="node">
+          <div class="node-box">CPE</div>
+          <div class="node-label">終端設備 (Router)</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+      <div class="card-grid">
+        <div class="icard" style="--card-color: var(--accent-blue);">
+          <div class="icard-title">P2MP 點對多點</div>
+          <div class="icard-desc">一根光纖經過分光器 (Splitter) 可支撐 32/64/128 個用戶，大幅節省光纖資源。</div>
+        </div>
+        <div class="icard" style="--card-color: var(--accent-green);">
+          <div class="icard-title">下行廣播 / 上行 TDMA</div>
+          <div class="icard-desc">下行數據廣播給所有 ONU 並由其自行過濾；上行則採時分多址避免碰撞。</div>
+        </div>
+        <div class="icard" style="--card-color: var(--accent-teal);">
+          <div class="icard-title">世代演進</div>
+          <div class="icard-desc">從 GPON (2.5G) 演進至 XG-PON (10G) 以及未來的 25G/50G PON。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 核心設備 ── -->
+  <div class="tab-panel" id="panel-components">
+    <div class="section-heading">
+      <h2>光纖接入關鍵節點</h2>
+      <p>理解 OLT, ONU, CPE 在產業鏈中的定位與功能差異。</p>
+    </div>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>設備名稱</th>
+            <th>全稱</th>
+            <th>位置</th>
+            <th>核心功能</th>
+            <th>代表廠商</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: var(--accent-blue);"><strong>OLT</strong></td>
+            <td>Optical Line Terminal</td>
+            <td>電信機房 (CO)</td>
+            <td>管理所有 ONU、匯聚流量並上連至骨幹網。提供廣播、動態頻寬分配 (DBA)。</td>
+            <td>華為, 中興, 諾基亞, 烽火</td>
+          </tr>
+          <tr>
+            <td style="color: var(--accent-green);"><strong>ONU</strong></td>
+            <td>Optical Network Unit</td>
+            <td>用戶端 / 樓道</td>
+            <td>光電信號轉換、解調 OLT 下行訊號並回傳用戶數據。</td>
+            <td>合勤, 友訊, 烽火, 瑞昱 (晶片)</td>
+          </tr>
+          <tr>
+            <td style="color: var(--accent-teal);"><strong>ONT</strong></td>
+            <td>Optical Network Terminal</td>
+            <td>用戶家中</td>
+            <td>ONU 的特例，專指單用戶使用的終端，通常與數據機 (Modem) 同義。</td>
+            <td>TP-Link, 華碩, 中磊</td>
+          </tr>
+          <tr>
+            <td style="color: var(--accent-orange);"><strong>CPE</strong></td>
+            <td>Customer Premises Equipment</td>
+            <td>用戶端</td>
+            <td>泛指放置在用戶端的任何設備。通常指 ONU 後接的無線路由器或網頁。</td>
+            <td>D-Link, 網家, 智邦</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top: 32px;">
+      <h3>產業鏈分工</h3>
+      <p><strong>上游：</strong> 光通訊晶片（Broadcom, Realtek, Marvell）、雷射組件（Lumentum）。<br>
+      <strong>中游：</strong> 設備製造商（華為、中興、合勤、中磊）。<br>
+      <strong>下游：</strong> 電信運營商（中華電信、AT&T、中國電信）。</p>
+    </div>
+  </div>
+
+  <!-- ── OMCI 協議 ── -->
+  <div class="tab-panel" id="panel-protocol">
+    <div class="section-heading">
+      <h2>OMCI (ONU Management & Control Interface)</h2>
+      <p>它是 OLT 與 ONU 之間對話的「標準語言」，定義了如何遠程管理與配置用戶端設備。</p>
+    </div>
+
+    <div class="icard" style="margin-bottom: 24px;">
+      <div class="icard-title">為什麼需要 OMCI？</div>
+      <div class="icard-desc">
+        在 PON 系統中，OLT 需要控制數千個不同廠牌的 ONU。OMCI 提供了一個跨廠商的標準框架，讓運營商不需派人到現場，就能遠端設定 VLAN、QoS、軟體升級與故障診斷。
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard">
+        <div class="icard-title">ME (Managed Entity)</div>
+        <div class="icard-desc">OMCI 的核心概念。將 ONU 的功能（如連接埠、隊列）抽象化為「管理實體」。</div>
+      </div>
+      <div class="icard">
+        <div class="icard-title">MIB 數據庫</div>
+        <div class="icard-desc">OLT 會與 ONU 同步 MIB，以確保雙方對設備當前狀態的理解一致。</div>
+      </div>
+      <div class="icard">
+        <div class="icard-title">控制通道</div>
+        <div class="icard-desc">運行在 GEM (GPON Encapsulation Method) 幀中，不佔用用戶的上網頻寬。</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 30px; border-left-color: var(--accent-teal);">
+      <h3>OMCI 常見任務</h3>
+      <ul>
+        <li><strong>配置：</strong> 建立 T-CONT (傳輸容器) 與 GEM Port 的對應關係。</li>
+        <li><strong>監控：</strong> 讀取光功率、偵測光纖是否有非法入侵 (Rogue ONU)。</li>
+        <li><strong>維護：</strong> 執行遠端韌體更新 (Remote Firmware Image Upgrade)。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── 骨幹對接 ── -->
+  <div class="tab-panel" id="panel-backbone">
+    <div class="section-heading">
+      <h2>如何與骨幹網路對接？</h2>
+      <p>OLT 不僅僅是 PON 的控制中心，它也是接入網與城域網 (MAN) 之間的閘道。</p>
+    </div>
+
+    <div class="icard" style="margin-bottom: 30px; --card-color: var(--accent-blue);">
+      <div class="icard-head">
+        <div class="icard-icon">🖧</div>
+        <div>
+          <div class="icard-title">匯聚層與骨幹對接</div>
+          <div class="icard-desc">OLT 通常具備 10G / 40G / 100G 的上行鏈路 (Uplink)。</div>
+        </div>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--muted); padding-top: 10px;">
+        1. <strong>L2/L3 交換：</strong> OLT 將來自數千個用戶的乙太網幀進行標籤處理 (VLAN Tagging)。<br>
+        2. <strong>上行鏈路：</strong> 透過光纖連接到「匯聚交換機」或「BRAS (寬頻遠程接入伺服器)」。<br>
+        3. <strong>IP/MPLS 骨幹：</strong> 流量最終進入電信商的核心路由器，連結到全球網際網路 (Internet Backbone)。
+      </p>
+    </div>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>環節</th>
+            <th>傳輸媒介</th>
+            <th>典型協定</th>
+            <th>關鍵技術</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>接入段 (ONU → OLT)</td>
+            <td>單模光纖 (PON)</td>
+            <td>G.984 / G.987</td>
+            <td>光電轉換、DBA 頻寬調度</td>
+          </tr>
+          <tr>
+            <td>匯聚段 (OLT → AGG)</td>
+            <td>10G/100G 光纖</td>
+            <td>Ethernet / Link Aggregation</td>
+            <td>QinQ (雙層 VLAN)、流量整形</td>
+          </tr>
+          <tr>
+            <td>核心段 (AGG → Backbone)</td>
+            <td>DWDM 高速光網</td>
+            <td>IP / MPLS / SRv6</td>
+            <td>路由選擇、BGP 對接、大頻寬交換</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top: 30px;">
+      <h3>未來趨勢：SDN 化的 OLT</h3>
+      <p>現代電信架構趨向「雲化」，將 OLT 的控制平面分離（Whitebox OLT），利用軟體定義網路 (SDN) 統一管理，使網絡部署更靈活且成本更低。</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容持續更新中</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
