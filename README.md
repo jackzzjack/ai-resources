@@ -55,6 +55,7 @@
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis 狀態管理、SAI 晶片抽象層、RoCEv2 AI 網路） |
+| `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
 
 ---
 

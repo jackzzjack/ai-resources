@@ -51,6 +51,7 @@
 | `dinosaurs.html` | 恐龍百科互動知識頁 |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學知識頁 |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、SAI、AI 網路） |
+| `ac_principles.html` | 冷氣運作原理互動導覽頁 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
