@@ -127,3 +127,6 @@
 ## 授權
 
 本資源庫採用 [CC BY 4.0](LICENSE) 授權。
+## Resource Additions
+
+- [我的github目前應該有兩個feature branch尚未回到master, 嘗試看看幫我rebase到最新，以及看看有什麼需要修正的](docs/github-feature-branch-master-rebase.md)
