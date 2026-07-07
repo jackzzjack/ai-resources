@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>路由器產業全景 — Home · Enterprise · Carrier · Backbone Router Ecosystem</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --accent-purple: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(59,130,246,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 650px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+      margin-right: 4px;
+      margin-bottom: 4px;
+      display: inline-block;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(59,130,246,0.04); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Diagram ── */
+    .arch-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 10px;
+    }
+    .arch-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .arch-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .arch-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+    .arch-connector {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>路由器產業全景</h1>
+  <p>從家用、企業、電信到骨幹級：詳解路由器分類、產業鏈佈局與技術演進</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="classification">💡 分類與規格</div>
+    <div class="tab" data-tab="ecosystem">🌐 產業鏈佈局</div>
+    <div class="tab" data-tab="players">🏆 關鍵廠商</div>
+    <div class="tab" data-tab="trends">🚀 技術趨勢</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ── 分類與規格 ── -->
+  <div class="tab-panel active" id="panel-classification">
+    <div class="section-heading">
+      <h2>路由器層級分類</h2>
+      <p>根據應用場景、處理效能與可靠性要求，路由器通常分為四個主要級別。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">🏠</div>
+          <div>
+            <div class="icard-title">家用級 (Home/SOHO)</div>
+            <div class="icard-vendor">Consumer Router</div>
+          </div>
+        </div>
+        <div class="icard-desc">強調易用性、無線覆蓋 (Wi-Fi) 與外觀設計。支援 Mesh 組網、家長控制等功能。</div>
+        <div class="spec-chip">Wi-Fi 6/7</div><div class="spec-chip">Mesh</div><div class="spec-chip">APP 管理</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">企業級 (Enterprise)</div>
+            <div class="icard-vendor">Business Router</div>
+          </div>
+        </div>
+        <div class="icard-desc">重視安全性、VPN 效能與多使用者管理。通常具備 SD-WAN、防火牆與行為控管功能。</div>
+        <div class="spec-chip">SD-WAN</div><div class="spec-chip">IPsec VPN</div><div class="spec-chip">VLAN</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">📶</div>
+          <div>
+            <div class="icard-title">電信級 (Carrier/Edge)</div>
+            <div class="icard-vendor">Aggregation / BRAS</div>
+          </div>
+        </div>
+        <div class="icard-desc">用於 ISP 接取層與彙聚層，強調高可用性 (99.999%)、QoS 策略與大量使用者接入實力。</div>
+        <div class="spec-chip">MPLS</div><div class="spec-chip">BGP</div><div class="spec-chip">BRAS</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-purple);">
+        <div class="icard-head">
+          <div class="icard-icon">🌍</div>
+          <div>
+            <div class="icard-title">骨幹級 (Core/Backbone)</div>
+            <div class="icard-vendor">Core Router</div>
+          </div>
+        </div>
+        <div class="icard-desc">位於網路核心，處理驚人的數據流量 (Tbps 級)。具備正交中板、高效散熱與硬體轉發架構。</div>
+        <div class="spec-chip">400G/800G</div><div class="spec-chip">Tbps 容量</div><div class="spec-chip">多機框</div>
+      </div>
+    </div>
+
+    <div class="comp-table-wrap" style="margin-top: 30px;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>家用級</th>
+            <th>企業級</th>
+            <th>電信/骨幹級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>核心重點</td>
+            <td>無線覆蓋、價格</td>
+            <td>安全、管理、併發數</td>
+            <td>吞吐量、穩定、擴展性</td>
+          </tr>
+          <tr>
+            <td>轉發方式</td>
+            <td>CPU 軟轉發為主</td>
+            <td>CPU + 加速引擎</td>
+            <td>ASIC / NP 硬體轉發</td>
+          </tr>
+          <tr>
+            <td>連線數 (Session)</td>
+            <td>數百至數千</td>
+            <td>數萬至數十萬</td>
+            <td>數百萬至千萬級</td>
+          </tr>
+          <tr>
+            <td>可靠性要求</td>
+            <td>較低 (可重啟)</td>
+            <td>中高 (備援線路)</td>
+            <td>極高 (熱插拔、多主控)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 產業鏈佈局 ── -->
+  <div class="tab-panel" id="panel-ecosystem">
+    <div class="section-heading">
+      <h2>路由器供應鏈分析</h2>
+      <p>路由器產業是一個高度成熟且專業分工的體系。</p>
+    </div>
+
+    <div class="callout">
+      <h3>上游：核心元組件</h3>
+      <ul>
+        <li><strong>處理器與交換晶片：</strong> Broadcom, Marvell, Qualcomm, Intel, Realtek, MediaTek。</li>
+        <li><strong>光通訊組件：</strong> Coherent (II-VI), Lumentum, 旭創科技。</li>
+        <li><strong>記憶體與儲存：</strong> Samsung, Micron, SK Hynix。</li>
+      </ul>
+    </div>
+
+    <div class="callout" style="border-left-color: var(--accent-orange);">
+      <h3>中游：品牌商與 OEM/ODM</h3>
+      <ul>
+        <li><strong>國際大廠：</strong> Cisco, Juniper, Nokia, HPE/Aruba, Huawei, ZTE。</li>
+        <li><strong>消費與中低端：</strong> TP-Link, Netgear, ASUS, Linksys, D-Link。</li>
+        <li><strong>代工夥伴：</strong> 鴻海 (Foxconn), 緯創 (Wistron), 中磊 (Sercomm), 智易 (Arcadyan)。</li>
+      </ul>
+    </div>
+
+    <div class="callout" style="border-left-color: var(--accent-green);">
+      <h3>下游：應用市場</h3>
+      <ul>
+        <li><strong>雲端與電信：</strong> Amazon, Google, Microsoft, 中華電信, AT&T。</li>
+        <li><strong>政府與企業：</strong> 各型企業辦公室、學校、醫院。</li>
+        <li><strong>消費市場：</strong> 個人家庭用戶。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── 關鍵廠商 ── -->
+  <div class="tab-panel" id="panel-players">
+    <div class="section-heading">
+      <h2>路由器產業領導者</h2>
+      <p>不同層級的市場由不同的巨頭主導。</p>
+    </div>
+
+    <p class="arch-label">電信與骨幹級巨頭</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #00b3e3;">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">Cisco (思科)</div>
+            <div class="icard-vendor">全球網路設備霸主</div>
+          </div>
+        </div>
+        <div class="icard-desc">擁有從 ISR 到 NCS/CRS 的完整產品線，其 IOS 系統是產業標準。近年積極轉向訂閱制軟體服務。</div>
+        <div class="spec-chip">ASR 9000</div><div class="spec-chip">NCS 5500</div>
+      </div>
+
+      <div class="icard" style="--card-color: #722c83;">
+        <div class="icard-head">
+          <div class="icard-icon">⚙️</div>
+          <div>
+            <div class="icard-title">Juniper (瞻博網路)</div>
+            <div class="icard-vendor">高效能路由專家</div>
+          </div>
+        </div>
+        <div class="icard-desc">以 Junos 作業系統聞名，在 ISP 與資料中心市場具備極強競爭力。已被 HPE 併購以強化 AI 網路。</div>
+        <div class="spec-chip">MX 系列</div><div class="spec-chip">PTX 系列</div>
+      </div>
+
+      <div class="icard" style="--card-color: #eb1923;">
+        <div class="icard-head">
+          <div class="icard-icon">📡</div>
+          <div>
+            <div class="icard-title">Huawei (華為)</div>
+            <div class="icard-vendor">電信市場強大勢力</div>
+          </div>
+        </div>
+        <div class="icard-desc">在亞非與部分歐洲電信市場擁有極高市佔，自主研發晶片能力極強 (Solar 系列)。</div>
+        <div class="spec-chip">NetEngine</div>
+      </div>
+    </div>
+
+    <p class="arch-label" style="margin-top: 30px;">家用與 SOHO 市場領導者</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #00a4e4;">
+        <div class="icard-head">
+          <div class="icard-icon">🏠</div>
+          <div>
+            <div class="icard-title">TP-Link</div>
+            <div class="icard-vendor">全球家用市佔第一</div>
+          </div>
+        </div>
+        <div class="icard-desc">以極高性價比統治全球家用路由器市場，產品線極廣，從入門到高端 Wi-Fi 7 均有覆蓋。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #000000;">
+        <div class="icard-head">
+          <div class="icard-icon">💻</div>
+          <div>
+            <div class="icard-title">ASUS (華碩)</div>
+            <div class="icard-vendor">電競與高端路由器領導者</div>
+          </div>
+        </div>
+        <div class="icard-desc">其 ROG 系列在玩家圈擁有極高聲譽，固件功能強大 (ASUSWRT)，並支援豐富的 Mesh 擴充性。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 技術趨勢 ── -->
+  <div class="tab-panel" id="panel-trends">
+    <div class="section-heading">
+      <h2>路由器技術演進與未來</h2>
+      <p>網路需求正向著更高頻寬、更低延遲與更智慧的管理方向發展。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-title">Wi-Fi 7 (802.11be)</div>
+        <div class="icard-desc">引入 320MHz 頻寬、4096-QAM 與 MLO (多重鏈路運作)，最高速率理論可達 46Gbps。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-purple);">
+        <div class="icard-title">400G / 800G 乙太網路</div>
+        <div class="icard-desc">骨幹級路由器正全面轉向 400G 埠，並積極研發 800G，以應對 AI 與大數據帶來的流量爆發。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-title">SD-WAN 與雲原生</div>
+        <div class="icard-desc">軟體定義廣域網將路由功能從硬體解耦，支援更靈活的流量調度與雲端集中管理。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-title">SONiC 與開放網路</div>
+        <div class="icard-desc">白牌路由器與開源網路作業系統 (NOS) 興起，讓大型雲端商能更自主地控制網路硬體。</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 30px;">
+      <h3>關鍵趨勢：AI 驅動的網路 (AIOps)</h3>
+      <p>路由器不再僅是轉發包的「笨盒子」。現代企業級與電信級路由器開始整合 AI 引擎，用於<strong>預測性維護</strong>、<strong>異常流量檢測</strong>與<strong>自動化路徑優化</strong>，實現真正的「自癒網路」。</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容持續更新中</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
