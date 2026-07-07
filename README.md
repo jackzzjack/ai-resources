@@ -50,6 +50,7 @@
 | `thailand_history.html` | 泰國歷史完整指南（史前文明、五大王朝、泰緬戰爭、近現代史、關鍵人物） |
 | `chinese_history.html` | 中國歷史全覽（史前到現代、歷代王朝卡片、重大事件、關鍵人物、文化成就、王朝速查表） |
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
+| switch-industry.html | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |

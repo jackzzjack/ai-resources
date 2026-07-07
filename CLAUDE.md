@@ -50,6 +50,7 @@
 | `dinosaurs.html` | 恐龍百科互動知識頁 |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學知識頁 |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、SAI、AI 網路） |
+| `switch-industry.html` | 網路交換器產業全景（資料中心與企業市場、ASIC 晶片、台廠供應鏈、800G/1.6T 與 CPO 趨勢） |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例

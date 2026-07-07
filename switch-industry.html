@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>網路交換器 (Switch) 產業全景 — Data Center · Campus · ASIC · NOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --accent-green: #4ade80;
+      --accent-blue: #60c8ff;
+      --accent-orange: #fb923c;
+      --accent-teal: #2dd4bf;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(59,130,246,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent2); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 650px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    /* ── Category label ── */
+    .cat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      margin-top: 40px;
+    }
+    .cat-label:first-of-type { margin-top: 0; }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card-grid.wide { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-vendor {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .icard-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-chip {
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(59,130,246,0.04); }
+    .comp-table td.muted { color: var(--muted); }
+    .comp-table td.hi { color: var(--accent2); font-weight: 500; }
+    .comp-table td.green { color: var(--accent-green); }
+    .comp-table td.blue { color: var(--accent-blue); }
+    .comp-table td.orange { color: var(--accent-orange); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent2);
+    }
+    .callout p, .callout li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .callout ul { padding-left: 18px; }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin-top: 8px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: var(--border);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+    .tl-date {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>網路交換器 (Switch) 產業全景</h1>
+  <p>從雲端資料中心到企業園區，詳解網路基礎設施的關鍵晶片、系統架構與技術演進</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="market">🌐 產業概覽</div>
+    <div class="tab" data-tab="tech">💾 關鍵技術</div>
+    <div class="tab" data-tab="players">🏗️ 供應鏈大廠</div>
+    <div class="tab" data-tab="trends">🚀 未來趨勢</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 產業概覽
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-market">
+    <div class="section-heading">
+      <h2>網路交換器市場細分</h2>
+      <p>交換器是現代網路的心臟，依據應用場景的不同，其技術需求與市場邏輯有顯著差異。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">☁️</div>
+          <div>
+            <div class="icard-title">資料中心交換器 (DC Switch)</div>
+            <div class="icard-vendor">技術最前端 / 高頻寬</div>
+          </div>
+        </div>
+        <div class="icard-desc">供應大型雲端服務商 (CSP)。強調極高吞吐量 (400G/800G)、超低延遲與可擴展性。AI 興起帶動了對高密度、無損網路的需求。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">400G / 800G / 1.6T</span>
+          <span class="spec-chip">RDMA / RoCE</span>
+          <span class="spec-chip">Spine-Leaf 架構</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">企業/園區交換器 (Campus Switch)</div>
+            <div class="icard-vendor">功能導向 / PoE</div>
+          </div>
+        </div>
+        <div class="icard-desc">用於辦公大樓、學校等環境。強調豐富的軟體功能、安全管控、乙太網路供電 (PoE) 以及與無線 AP 的協同工作。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">1G / 2.5G / 10G</span>
+          <span class="spec-chip">PoE / PoE++</span>
+          <span class="spec-chip">Layer 2 / Layer 3</span>
+        </div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">📡</div>
+          <div>
+            <div class="icard-title">邊緣/工業交換器 (Edge / Industrial)</div>
+            <div class="icard-vendor">環境適應 / 強固</div>
+          </div>
+        </div>
+        <div class="icard-desc">部署於戶外、工廠或電信基站邊緣。具備寬溫工作能力、防塵防水設計以及高可靠性的備援機制。</div>
+        <div class="icard-specs">
+          <span class="spec-chip">寬溫設計</span>
+          <span class="spec-chip">DIN-Rail 安裝</span>
+          <span class="spec-chip">Redundancy Ring</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">網路架構演進：從三層到兩層</p>
+    <div class="callout">
+      <h3>傳統三層架構 vs. 現代 Spine-Leaf</h3>
+      <p>過去資料中心常用 <strong>Access-Aggregation-Core</strong> 三層架構，但隨著「東西向流量」(伺服器間通訊) 增加，現代改採 <strong>Spine-Leaf</strong> 二層架構：</p>
+      <ul>
+        <li><strong>Leaf (葉交換器)：</strong> 每個 Leaf 都連接到所有 Spine。負責連接伺服器與存儲。</li>
+        <li><strong>Spine (脊交換器)：</strong> 核心骨幹，負責在 Leaf 之間高速轉發流量。</li>
+        <li><strong>優點：</strong> 低延遲、頻寬均勻、易於橫向擴展 (Scale-out)。</li>
+      </ul>
+    </div>
+  </div><!-- /panel-market -->
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 關鍵技術
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-tech">
+    <div class="section-heading">
+      <h2>核心技術指標與組件</h2>
+      <p>交換器的性能指標主要由交換晶片 (ASIC) 與實體層介面決定。</p>
+    </div>
+
+    <p class="cat-label">關鍵硬體技術</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-head">
+          <div class="icard-icon">💎</div>
+          <div>
+            <div class="icard-title">Switch ASIC (交換晶片)</div>
+            <div class="icard-vendor">交換器的「大腦」</div>
+          </div>
+        </div>
+        <div class="icard-desc">決定了交換器的總容量 (如 12.8T, 25.6T, 51.2T)。內含封包解析引擎、緩衝記憶體 (Buffer) 與轉發表。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-teal);">
+        <div class="icard-head">
+          <div class="icard-icon">📶</div>
+          <div>
+            <div class="icard-title">SerDes (序列化/解序列化)</div>
+            <div class="icard-vendor">訊號傳輸門戶</div>
+          </div>
+        </div>
+        <div class="icard-desc">決定了單一通道的速度。目前主流為 112G PAM4，下一代朝向 224G 演進，是達成 800G/1.6T 的關鍵。</div>
+      </div>
+
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Packet Buffer</div>
+            <div class="icard-vendor">流量調節器</div>
+          </div>
+        </div>
+        <div class="icard-desc">處理網路擁塞的關鍵。分為 On-chip (SRAM) 或高階的外部 HBM 擴充，對 AI 訓練所需的大量突發流量至關重要。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="cat-label">速度世代演進表</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>世代</th>
+            <th>ASIC 總頻寬</th>
+            <th>SerDes 速率</th>
+            <th>單埠最大速度</th>
+            <th>主流年份</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>100G 世代</td>
+            <td>12.8 Tbps</td>
+            <td>25G NRZ</td>
+            <td>100G</td>
+            <td>2016 - 2020</td>
+          </tr>
+          <tr>
+            <td class="hi">400G 世代</td>
+            <td>25.6 Tbps</td>
+            <td>56G PAM4</td>
+            <td>400G</td>
+            <td>2021 - 2023</td>
+          </tr>
+          <tr>
+            <td class="hi green">800G 世代</td>
+            <td>51.2 Tbps</td>
+            <td>112G PAM4</td>
+            <td>800G</td>
+            <td>2024 - 2025</td>
+          </tr>
+          <tr>
+            <td class="orange">1.6T 世代</td>
+            <td>102.4 Tbps</td>
+            <td>224G PAM4</td>
+            <td>1.6T</td>
+            <td>2026+ 預計</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /panel-tech -->
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 供應鏈大廠
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-players">
+    <div class="section-heading">
+      <h2>交換器產業供應鏈與領導大廠</h2>
+      <p>交換器產業由上游晶片廠、中游代工廠與下游品牌商組成。台灣在代工環節佔據全球領先地位。</p>
+    </div>
+
+    <p class="cat-label">上游：交換晶片 (ASIC) 三巨頭</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #cc0000;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Broadcom (博通)</div>
+            <div class="icard-vendor">全球霸主</div>
+          </div>
+        </div>
+        <div class="icard-desc">Tomahawk 系列主導資料中心，Trident 系列主導企業市場。市佔率超過 60%，是產業的技術標竿。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #666699;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">Marvell (美滿電子)</div>
+            <div class="icard-vendor">強力競爭者</div>
+          </div>
+        </div>
+        <div class="icard-desc">收購 Innovium 後強化了 Teralynx 系列，專注於雲端資料中心與汽車乙太網路晶片。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #76b900;">
+        <div class="icard-head">
+          <div class="icard-icon">💾</div>
+          <div>
+            <div class="icard-title">NVIDIA (Mellanox)</div>
+            <div class="icard-vendor">AI 網路專家</div>
+          </div>
+        </div>
+        <div class="icard-desc">以 InfiniBand 及 Spectrum 系列交換晶片聞名，強調與 GPU 的深度協作與無損傳輸。</div>
+      </div>
+    </div>
+
+    <p class="cat-label">中下游：品牌商與代工廠商</p>
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #00a8e0;">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">Arista Networks</div>
+            <div class="icard-vendor">雲端交換器領航者</div>
+          </div>
+        </div>
+        <div class="icard-desc">專注於軟體定義網路 (SDN)，EOS 系統極具競爭力，是 Meta、Microsoft 的主要供應商。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #1ba0d7;">
+        <div class="icard-head">
+          <div class="icard-icon">🏢</div>
+          <div>
+            <div class="icard-title">Cisco (思科)</div>
+            <div class="icard-vendor">企業網路龍頭</div>
+          </div>
+        </div>
+        <div class="icard-desc">全球最大的網路設備商，近期也透過 Silicon One 晶片重返高速交換晶片競爭場。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #10b981;">
+        <div class="icard-head">
+          <div class="icard-icon">🏭</div>
+          <div>
+            <div class="icard-title">智邦 (Accton)</div>
+            <div class="icard-vendor">全球交換器代工王</div>
+          </div>
+        </div>
+        <div class="icard-desc">台灣廠商，全球最大白牌交換器 ODM。深度參與 OCP 開源專案，服務全球頂尖 CSP。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="callout blue">
+      <h3>台灣供應鏈的優勢</h3>
+      <p>除了<strong>智邦</strong>以外，<strong>廣達、明泰、智易、鴻海</strong>等台灣廠商在交換器設計、組裝與 SMT 產線上擁有極高效率，全球 80% 以上的資料中心交換器由台廠代工製造。</p>
+    </div>
+  </div><!-- /panel-players -->
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 未來趨勢
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-trends">
+    <div class="section-heading">
+      <h2>下一代技術趨勢：AI 與 開放化</h2>
+      <p>AI 的爆发與能源效率的要求正在根本性地改變交換器的設計。</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">白牌化與開放 NOS</div>
+        <div class="tl-title">Whitebox & SONiC</div>
+        <div class="tl-desc">CSP 為了擺脫品牌廠綁定，採購白牌交換器並搭載開源網路作業系統 <strong>SONiC</strong>。這使得硬體與軟體解耦 (Disaggregation) 成為主流。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">光電整合升級</div>
+        <div class="tl-title">LPO & CPO</div>
+        <div class="tl-desc">為了降低 800G 以上的功耗，<strong>LPO (線性驅動可插拔光學)</strong> 與 <strong>CPO (共封裝光學)</strong> 正在崛起。後者直接將光引擎與交換晶片封裝在一起，大幅節省能耗。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">AI 專用網路</div>
+        <div class="tl-title">UEC (Ultra Ethernet Consortium)</div>
+        <div class="tl-desc">由 AMD、Broadcom、Cisco、Intel、Meta 等組成。旨在改造乙太網路，使其具備 InfiniBand 的低延遲特性，專為 AI 訓練優化。</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="callout orange">
+      <h3>核心觀察：能效比 (Performance per Watt)</h3>
+      <p>隨著資料中心電力吃緊，下一代交換器的競爭核心不在於誰能做到最快，而在於誰能以最低的每 bit 功耗完成數據傳輸。這也是為什麼液冷 (Liquid Cooling) 技術也開始應用於高階交換器機架的原因。</p>
+    </div>
+  </div><!-- /panel-trends -->
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 內容僅供教育與參考使用 · 資料截至 2025 年</p>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
