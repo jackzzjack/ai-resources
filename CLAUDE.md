@@ -42,6 +42,7 @@
 | `hbm_memory.html` | HBM 高頻寬記憶體完整解析（3D 堆疊、TSV、CoWoS、世代演進、vs 傳統記憶體比較） |
 | `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
 | `ems-industry.html` | EMS 電子代工產業生態系導覽 |
+| `router-industry.html` | 路由器產業全景（家用、企業、電信、骨幹級分類與供應鏈） |
 | `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈、關鍵廠商） |
 | `fiber-optic-industry.html` | 光纖接入產業全景（PON 架構、OLT/ONU、OMCI 協議、骨幹對接） |
 | `shipping-industry.html` | 航運產業生態系與商業模式導覽 |
