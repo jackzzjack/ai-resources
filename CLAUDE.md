@@ -34,6 +34,7 @@
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
 | `5g_architecture.html` | 5G 網路架構互動圖（SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、永續燃料） |
+| `f1_driver_knowledge.html` | F1 車手體能要求與價值全解析 |
 | `ai-infrastructure.html` | AI 基礎設施生態系（伺服器、交換器、CPO、NVLink） |
 | `power-industry.html` | 電源與能源產業分析頁面 |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
