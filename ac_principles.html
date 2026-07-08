@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>冷氣運作原理 — 冷凍循環 · 變頻技術 · 能效解析</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --surface3: #22223a;
+      --border: #2a2a3d;
+      --accent: #60c8ff;
+      --accent2: #a78bfa;
+      --accent-green: #4ade80;
+      --accent-blue: #3b82f6;
+      --accent-orange: #fb923c;
+      --accent-red: #f87171;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 36px;
+      text-align: center;
+      background: radial-gradient(ellipse 90% 60% at 50% -5%, rgba(96,200,255,0.15) 0%, transparent 65%);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+    header h1 {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-inline: auto;
+      line-height: 1.65;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex-shrink: 0;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      margin-bottom: 28px;
+    }
+    .section-heading h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      max-width: 700px;
+    }
+
+    /* ── Info card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Info card ── */
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .icard:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(96,200,255,0.1);
+    }
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-color, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .icard-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .icard-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .icard-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .icard-desc {
+      font-size: 0.855rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Comparison table ── */
+    .comp-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      background: var(--surface2);
+      color: var(--accent);
+      font-weight: 600;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(96,200,255,0.04); }
+
+    /* ── Callout box ── */
+    .callout {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+    .callout h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+    .callout p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── SVG Diagram ── */
+    .diagram-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .diag-node {
+      fill: var(--surface2);
+      stroke: var(--border);
+      stroke-width: 2;
+    }
+    .diag-node.hot { stroke: var(--accent-red); }
+    .diag-node.cold { stroke: var(--accent-blue); }
+    .diag-text {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      text-anchor: middle;
+    }
+    .diag-subtext {
+      fill: var(--muted);
+      font-size: 11px;
+      text-anchor: middle;
+    }
+    .flow-line {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .flow-hot { stroke: var(--accent-red); stroke-dasharray: 8 4; animation: flow 5s linear infinite; }
+    .flow-cold { stroke: var(--accent-blue); stroke-dasharray: 8 4; animation: flow 5s linear infinite reverse; }
+
+    @keyframes flow {
+      to { stroke-dashoffset: -48; }
+    }
+
+    .stage-card {
+      border-left: 4px solid var(--accent);
+      background: var(--surface2);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .stage-title {
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .stage-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← 返回資源入口</a>
+  <h1>冷氣運作原理</h1>
+  <p>探索「搬運熱量」的科學：從冷凍循環四大階段到現代變頻節能技術</p>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="cycle">🔄 冷凍循環</div>
+    <div class="tab" data-tab="components">🛠️ 核心組件</div>
+    <div class="tab" data-tab="inverter">📉 變頻與定頻</div>
+    <div class="tab" data-tab="efficiency">🌱 節能與能效</div>
+  </div>
+</div>
+
+<main id="mainContent">
+
+  <!-- ════════════════════════════════════════
+       TAB 1 : 冷凍循環
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-cycle">
+    <div class="section-heading">
+      <h2>冷凍循環 (Refrigeration Cycle)</h2>
+      <p>冷氣並非「製造冷氣」，而是利用冷媒的物理特性，將室內的熱量「搬運」到室外。</p>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="600" height="400" viewBox="0 0 600 400">
+        <!-- Lines -->
+        <!-- 壓縮機 -> 冷凝器 (高溫高壓氣體) -->
+        <path d="M 300 320 L 500 320 L 500 120" class="flow-line flow-hot" />
+        <!-- 冷凝器 -> 膨脹閥 (中溫高壓液體) -->
+        <path d="M 500 80 L 300 80" class="flow-line flow-hot" style="stroke: var(--accent-orange);" />
+        <!-- 膨脹閥 -> 蒸發器 (低溫低壓液體/氣體混合) -->
+        <path d="M 100 80 L 100 280" class="flow-line flow-cold" />
+        <!-- 蒸發器 -> 壓縮機 (低溫低壓氣體) -->
+        <path d="M 100 320 L 220 320" class="flow-line flow-cold" />
+
+        <!-- Nodes -->
+        <!-- 壓縮機 -->
+        <rect x="220" y="280" width="160" height="80" rx="10" class="diag-node" />
+        <text x="300" y="315" class="diag-text">1. 壓縮機</text>
+        <text x="300" y="335" class="diag-subtext">Compressor (升壓升溫)</text>
+
+        <!-- 冷凝器 -->
+        <rect x="420" y="40" width="160" height="80" rx="10" class="diag-node hot" />
+        <text x="500" y="75" class="diag-text">2. 冷凝器</text>
+        <text x="500" y="95" class="diag-subtext">Condenser (散熱液化)</text>
+
+        <!-- 膨脹閥 -->
+        <rect x="140" y="40" width="120" height="80" rx="10" class="diag-node" />
+        <text x="200" y="75" class="diag-text">3. 膨脹閥</text>
+        <text x="200" y="95" class="diag-subtext">Expansion Valve (降壓)</text>
+
+        <!-- 蒸發器 -->
+        <rect x="20" y="280" width="160" height="80" rx="10" class="diag-node cold" />
+        <text x="100" y="315" class="diag-text">4. 蒸發器</text>
+        <text x="100" y="335" class="diag-subtext">Evaporator (吸熱氣化)</text>
+
+        <!-- Annotations -->
+        <text x="520" y="220" class="diag-subtext" style="fill: var(--accent-red);">高壓區</text>
+        <text x="80" y="200" class="diag-subtext" style="fill: var(--accent-blue);">低壓區</text>
+      </svg>
+    </div>
+
+    <div class="stage-card">
+      <div class="stage-title">1. 壓縮階段 (Compression)</div>
+      <div class="stage-desc">壓縮機將低溫低壓的氣態冷媒壓縮成「高溫高壓」的氣態冷媒，這是循環的動力來源。</div>
+    </div>
+    <div class="stage-card">
+      <div class="stage-title">2. 冷凝階段 (Condensation)</div>
+      <div class="stage-desc">高溫冷媒流經室外機的冷凝器，透過風扇散熱，冷媒從氣態轉變為「中溫高壓」的液態。</div>
+    </div>
+    <div class="stage-card">
+      <div class="stage-title">3. 膨脹階段 (Expansion)</div>
+      <div class="stage-desc">液態冷媒通過狹窄的膨脹閥或毛細管，壓力驟降，冷媒變成「低溫低壓」的液氣混合態。</div>
+    </div>
+    <div class="stage-card">
+      <div class="stage-title">4. 蒸發階段 (Evaporation)</div>
+      <div class="stage-desc">低溫冷媒在室內機蒸發器中吸收空氣熱量，從液態蒸發為「氣態」，使室內空氣變涼。</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 2 : 核心組件
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-components">
+    <div class="section-heading">
+      <h2>冷氣機核心組件</h2>
+      <p>每一台冷氣都由數個關鍵硬體構成，共同完成冷凍循環。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: #f87171;">
+        <div class="icard-head">
+          <div class="icard-icon">🌀</div>
+          <div>
+            <div class="icard-title">壓縮機 (Compressor)</div>
+          </div>
+        </div>
+        <div class="icard-desc">冷氣的心臟，負責驅動冷媒循環。現代機種多採用轉子式 (Rotary) 或渦卷式 (Scroll) 壓縮機。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #60c8ff;">
+        <div class="icard-head">
+          <div class="icard-icon">🧬</div>
+          <div>
+            <div class="icard-title">冷媒 (Refrigerant)</div>
+          </div>
+        </div>
+        <div class="icard-desc">搬運熱量的介質。目前主流為 R32 (較環保) 或 R410A，具備低沸點、高潛熱的特性。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #fb923c;">
+        <div class="icard-head">
+          <div class="icard-icon">📏</div>
+          <div>
+            <div class="icard-title">電子膨脹閥 (EEV)</div>
+          </div>
+        </div>
+        <div class="icard-desc">變頻冷氣的核心，能精準控制冷媒流量，根據室內負載調整冷量輸出。</div>
+      </div>
+
+      <div class="icard" style="--card-color: #4ade80;">
+        <div class="icard-head">
+          <div class="icard-icon">📡</div>
+          <div>
+            <div class="icard-title">控制板 (Control PCB)</div>
+          </div>
+        </div>
+        <div class="icard-desc">冷氣的大腦，監測多個溫度感測器，計算並發出指令控制壓縮機轉速與風扇。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 3 : 變頻與定頻
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-inverter">
+    <div class="section-heading">
+      <h2>變頻 (Inverter) vs 定頻 (Non-Inverter)</h2>
+      <p>變頻技術是現代冷氣節能的關鍵，透過調整電力頻率來控制壓縮機速度。</p>
+    </div>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>定頻冷氣</th>
+            <th>變頻冷氣</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>運作方式</td>
+            <td>只有「開」跟「關」，全速運轉或停止</td>
+            <td>可調整轉速，根據溫度需求精確調整</td>
+          </tr>
+          <tr>
+            <td>溫度控制</td>
+            <td>波動大，忽冷忽熱</td>
+            <td>穩定，恆溫舒適感佳</td>
+          </tr>
+          <tr>
+            <td>啟動電流</td>
+            <td>啟動時電流極高，頻繁開關耗電</td>
+            <td>低頻啟動，減少對電網衝擊</td>
+          </tr>
+          <tr>
+            <td>節能效率</td>
+            <td>較差，長時間開啟更顯費電</td>
+            <td class="green">極佳，達恆溫後以低功率維持</td>
+          </tr>
+          <tr>
+            <td>噪音</td>
+            <td>啟動與停機聲明顯</td>
+            <td>運轉平順，低頻時極靜音</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <h3>為什麼變頻比較省電？</h3>
+      <p>定頻冷氣就像是開車只有「地板油」和「熄火」兩個檔位；而變頻冷氣則有「油門」可以控制。當室內達到設定溫度後，變頻冷氣會降速運轉以維持溫度，避免了定頻冷氣最耗電的「頻繁重新啟動」過程。</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TAB 4 : 節能與能效
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-efficiency">
+    <div class="section-heading">
+      <h2>節能指標與 CSPF</h2>
+      <p>了解如何選購省電的冷氣，以及冷房能力數據的意義。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard">
+        <div class="icard-title">CSPF (冷氣季節性能因數)</div>
+        <p class="icard-desc" style="margin-top: 8px;">CSPF = (季節總冷房負載 / 季節總消耗電量)。數值越高，代表越省電。</p>
+      </div>
+      <div class="icard">
+        <div class="icard-title">能源效率分級標示</div>
+        <p class="icard-desc" style="margin-top: 8px;">政府規定的強制性標示，1 級最省電，5 級最耗電。1 級比 5 級可能節省超過 30% 電力。</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="callout">
+      <h3>冷氣省電小貼士</h3>
+      <ul>
+        <li><strong>定期清洗濾網：</strong> 濾網積塵會增加進氣阻力，導致能效大幅下降。</li>
+        <li><strong>搭配循環扇：</strong> 協助空氣對流，縮短室內溫度均勻所需的時間。</li>
+        <li><strong>合適的冷房能力：</strong> 依照坪數選擇（一般 1 坪約需 500kcal/hr）。買太小會導致壓縮機始終全速運轉。</li>
+        <li><strong>避免頻繁開關：</strong> 如果只是離開 10-20 分鐘，建議調高溫度而非關機。</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 持續更新中</p>
+</footer>
+
+<script>
+  function switchTab(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + tabId));
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+</script>
+
+</body>
+</html>

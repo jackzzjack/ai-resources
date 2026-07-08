@@ -19,6 +19,8 @@
 | `index.html` | 主入口頁，導覽至所有子頁面 |
 | `ai-services.html` | AI 服務快速連結頁 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
+| `ai-models.html` | AI 模型指南（主流 LLM 特色、OpenRouter、挑選建議） |
+
 | `periodic_table.html` | 互動式元素週期表（含詳細元素資料） |
 | `space/solar_system.html` | 太陽系互動視覺化（Canvas 2D，行星軌道 / 縮放 / 速度調整） |
 | `space/galaxy.html` | 銀河系互動視覺化（程序生成旋臂、核球、太陽系定位標記） |
@@ -32,6 +34,7 @@
 | `minicom_cheat_sheet.html` | minicom 指令速查表 |
 | `5g_architecture.html` | 5G 網路架構互動圖（SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、永續燃料） |
+| `f1_driver_knowledge.html` | F1 車手體能要求與價值全解析 |
 | `ai-infrastructure.html` | AI 基礎設施生態系（伺服器、交換器、CPO、NVLink） |
 | `power-industry.html` | 電源與能源產業分析頁面 |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
@@ -39,6 +42,8 @@
 | `hbm_memory.html` | HBM 高頻寬記憶體完整解析（3D 堆疊、TSV、CoWoS、世代演進、vs 傳統記憶體比較） |
 | `thermal-industry.html` | 散熱產業生態系（氣冷/液冷技術、AI 伺服器解熱、供應鏈廠商） |
 | `ems-industry.html` | EMS 電子代工產業生態系導覽 |
+| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈、關鍵廠商） |
+| `switch-industry.html` | 網路交換器產業全景（資料中心與企業市場、ASIC 晶片、台廠供應鏈、800G/1.6T 與 CPO 趨勢） |
 | `shipping-industry.html` | 航運產業生態系與商業模式導覽 |
 | `stock-valuation.html` | 投資評價工具（本益比、估值模型、成長性分析） |
 | `gerd_guide.html` | 胃食道逆流完整指南（成因、症狀、治療策略） |
@@ -50,7 +55,7 @@
 | `dinosaurs.html` | 恐龍百科互動知識頁 |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學知識頁 |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、SAI、AI 網路） |
-| `switch-industry.html` | 網路交換器產業全景（資料中心與企業市場、ASIC 晶片、台廠供應鏈、800G/1.6T 與 CPO 趨勢） |
+| `ac_principles.html` | 冷氣運作原理互動導覽頁 |
 | `README.md` | 專案說明與 AI 工具目錄清單 |
 
 ## 開發慣例
