@@ -10,6 +10,8 @@
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
+| `context_windows.html` | Context Window 上下文視窗圖解（AI 工作桌心智模型、上下文流動、長文件管理） |
+| `token_explained.html` | Token 入門圖解（tokenizer 切分、成本與上下文預算、prompt 實務建議） |
 
 | `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
