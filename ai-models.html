@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 模型指南 — OpenAI · Anthropic · OpenRouter</title>
+  <title>AI 模型指南 2026 — OpenAI · Anthropic · OpenRouter</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -231,6 +231,14 @@
       color: var(--muted);
     }
 
+    .source-note {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .source-note a { color: var(--accent2); }
+
     footer {
       text-align: center;
       padding: 40px 24px;
@@ -245,8 +253,8 @@
 
 <header>
   <a class="back-link" href="index.html">← 返回資源入口</a>
-  <h1>AI 模型指南</h1>
-  <p>探索主流大型語言模型（LLM）的特色、規格與挑選建議，含 OpenRouter 整合方案介紹。</p>
+  <h1>AI 模型指南 2026</h1>
+  <p>探索主流大型語言模型（LLM）的最新家族、規格與挑選建議，含 OpenRouter 整合方案介紹。</p>
 </header>
 
 <div class="tabs-wrap">
@@ -263,8 +271,8 @@
   <!-- 模組家族 -->
   <div class="tab-panel active" id="panel-families">
     <div class="section-heading">
-      <h2>主流 AI 模組家族</h2>
-      <p>目前市場上由科技巨頭與新創公司主導的幾大模組系列，各有其擅長的領域。</p>
+      <h2>主流 AI 模型家族</h2>
+      <p>依 OpenRouter 模型清單與各供應商公開資訊整理。模型更新很快，實際可用性與價格請以供應商頁面為準。</p>
     </div>
 
     <div class="card-grid">
@@ -273,12 +281,12 @@
         <div class="icard-head">
           <div class="icard-title">OpenAI (GPT 系列)</div>
         </div>
-        <div class="icard-desc">最具代表性的模型，綜合能力最強，生態系最完整。</div>
+        <div class="icard-desc">最具代表性的模型供應商，涵蓋旗艦聊天、多模態、程式碼與推理模型，生態系最完整。</div>
         <div class="icard-specs">
-          <span class="spec-chip hi">GPT-4o</span>
-          <span class="spec-chip hi">o1 (推理模型)</span>
+          <span class="spec-chip hi">GPT-5.5 / GPT-5.5 Pro</span>
+          <span class="spec-chip hi">GPT-5.3 Codex</span>
           <span class="spec-chip">多模態</span>
-          <span class="spec-chip">最強 API 支持</span>
+          <span class="spec-chip">超長 Context</span>
         </div>
       </div>
 
@@ -287,11 +295,12 @@
         <div class="icard-head">
           <div class="icard-title">Anthropic (Claude 系列)</div>
         </div>
-        <div class="icard-desc">以文字風格自然、邏輯細膩著稱，程式碼能力極強，深受開發者喜愛。</div>
+        <div class="icard-desc">以文字風格自然、長文理解與程式碼能力著稱，適合開發、寫作與需要安全邊界的企業場景。</div>
         <div class="icard-specs">
-          <span class="spec-chip hi">Claude 3.5 Sonnet</span>
-          <span class="spec-chip hi">Claude 3.5 Haiku</span>
-          <span class="spec-chip">超長 Context</span>
+          <span class="spec-chip hi">Claude Sonnet 5</span>
+          <span class="spec-chip hi">Claude Fable 5</span>
+          <span class="spec-chip hi">Claude Opus 4.8</span>
+          <span class="spec-chip">長 Context</span>
           <span class="spec-chip">視覺理解</span>
         </div>
       </div>
@@ -301,11 +310,11 @@
         <div class="icard-head">
           <div class="icard-title">Google (Gemini 系列)</div>
         </div>
-        <div class="icard-desc">擁有最長的上下文窗口（Context Window），深度整合 Google 生態系。</div>
+        <div class="icard-desc">持續主打超長上下文、原生多模態與 Google 生態整合，適合大型文件、影片與搜尋輔助工作流。</div>
         <div class="icard-specs">
-          <span class="spec-chip hi">Gemini 1.5 Pro</span>
-          <span class="spec-chip hi">Gemini 1.5 Flash</span>
-          <span class="spec-chip">2M 上下文</span>
+          <span class="spec-chip hi">Gemini 3.5 Flash</span>
+          <span class="spec-chip hi">Gemini 3.1 Pro Preview</span>
+          <span class="spec-chip">1M+ 上下文</span>
           <span class="spec-chip">原生多模態</span>
         </div>
       </div>
@@ -315,12 +324,12 @@
         <div class="icard-head">
           <div class="icard-title">Meta (Llama 系列)</div>
         </div>
-        <div class="icard-desc">開源模組的領導者，可用於本地部署，性能接近閉源頂尖模組。</div>
+        <div class="icard-desc">開放權重模型的重要代表，可用於本地與私有化部署，適合成本敏感與資料主權要求高的團隊。</div>
         <div class="icard-specs">
-          <span class="spec-chip hi">Llama 3.1</span>
-          <span class="spec-chip hi">Llama 3.2 (視覺)</span>
+          <span class="spec-chip hi">Llama 4 Maverick</span>
+          <span class="spec-chip hi">Llama 4 Scout</span>
           <span class="spec-chip">開源 / 本地部署</span>
-          <span class="spec-chip">社群支持廣</span>
+          <span class="spec-chip">超長 Context</span>
         </div>
       </div>
 
@@ -329,11 +338,11 @@
         <div class="icard-head">
           <div class="icard-title">DeepSeek (深度求索)</div>
         </div>
-        <div class="icard-desc">來自中國的高性價比模組，程式碼與數學推理能力驚人，性價比極高。</div>
+        <div class="icard-desc">高性價比模型家族，程式碼、數學與一般助理任務表現亮眼，常作為低成本部署與路由備援選項。</div>
         <div class="icard-specs">
-          <span class="spec-chip hi">DeepSeek-V3</span>
-          <span class="spec-chip hi">DeepSeek-R1 (推理)</span>
-          <span class="spec-chip">極低成本</span>
+          <span class="spec-chip hi">DeepSeek V4 Pro</span>
+          <span class="spec-chip hi">DeepSeek V4 Flash</span>
+          <span class="spec-chip">高性價比</span>
           <span class="spec-chip">程式碼專家</span>
         </div>
       </div>
@@ -344,27 +353,43 @@
           <div class="icard-icon">🌪️</div>
           <div class="icard-title">Mistral AI</div>
         </div>
-        <div class="icard-desc">法國 AI 領頭羊，以輕量、高效、開放著稱，適合歐洲企業。</div>
+        <div class="icard-desc">法國 AI 領頭羊，以高效、開放與企業部署彈性著稱，適合歐洲資料合規與多語系場景。</div>
         <div class="icard-specs">
-          <span class="spec-chip hi">Mistral Large 2</span>
-          <span class="spec-chip hi">Pixtral (視覺)</span>
-          <span class="spec-chip">高效推理</span>
+          <span class="spec-chip hi">Mistral Large 3</span>
+          <span class="spec-chip hi">Mistral Medium 3.5</span>
+          <span class="spec-chip">高效推理 / Coding</span>
           <span class="spec-chip">歐洲主權 AI</span>
         </div>
       </div>
+
+      <!-- MiniMax -->
+      <div class="icard" style="--card-color: #2dd4bf;">
+        <div class="icard-head">
+          <div class="icard-title">MiniMax</div>
+        </div>
+        <div class="icard-desc">長上下文與多模態能力進展快速，適合需要百萬級 context、代理式工作流或中文內容處理的應用。</div>
+        <div class="icard-specs">
+          <span class="spec-chip hi">MiniMax M3</span>
+          <span class="spec-chip hi">MiniMax M2.7</span>
+          <span class="spec-chip">1M+ 上下文</span>
+          <span class="spec-chip">中文友善</span>
+        </div>
+      </div>
     </div>
+
+    <p class="source-note">資料校對：OpenRouter 模型清單（2026-07-08 擷取）。模型命名、供應與價格可能隨時調整。</p>
   </div>
 
   <!-- OpenRouter -->
   <div class="tab-panel" id="panel-openrouter">
     <div class="section-heading">
       <h2>OpenRouter：模型聚合平台</h2>
-      <p>OpenRouter 是一個統一的 API 閘道，讓你可以透過單一介面存取幾乎所有主流的 AI 模型。</p>
+      <p>OpenRouter 是一個統一的 API 閘道，讓你可以透過單一介面存取多家供應商與開放模型。</p>
     </div>
 
     <div class="callout" style="--accent: var(--accent-blue);">
       <h3>為什麼使用 OpenRouter？</h3>
-      <p>傳統上，如果你想同時使用 GPT-4、Claude 3.5 和 Llama 3，你需要分別向 OpenAI、Anthropic 和 Meta (或雲端供應商) 申請 API Key。OpenRouter 解決了這個痛點。</p>
+      <p>傳統上，如果你想同時使用 GPT-5.5、Claude Sonnet 5、MiniMax M3 和 Llama 4，你需要分別向 OpenAI、Anthropic、MiniMax、Meta 或雲端供應商申請 API Key。OpenRouter 解決了這個痛點。</p>
     </div>
 
     <div class="card-grid">
@@ -372,7 +397,7 @@
         <div class="icard-head">
           <div class="icard-title">統一 API</div>
         </div>
-        <div class="icard-desc">使用單一 API Key 即可調用超過 100 種模型，無需維護多個帳戶。</div>
+        <div class="icard-desc">使用單一 API Key 即可調用數百種模型，無需維護多個帳戶。</div>
       </div>
       <div class="icard" style="--card-color: var(--accent-green);">
         <div class="icard-head">
@@ -411,7 +436,7 @@
           <tr>
             <td>模型覆蓋</td>
             <td>僅限該廠商</td>
-            <td class="hi">涵蓋 OpenAI, Anthropic, Google, Meta, DeepSeek 等</td>
+            <td class="hi">涵蓋 OpenAI, Anthropic, Google, Meta, DeepSeek, MiniMax 等</td>
           </tr>
           <tr>
             <td>延遲</td>
@@ -426,8 +451,8 @@
   <!-- 綜合比較 -->
   <div class="tab-panel" id="panel-comparison">
     <div class="section-heading">
-      <h2>頂尖模型綜合比較 (2024–2025)</h2>
-      <p>根據各項評測指標與實際體驗，對當前最強模型進行橫向對比。</p>
+      <h2>頂尖模型綜合比較 (2026)</h2>
+      <p>以下以公開模型清單、上下文長度與常見使用情境整理，方便快速挑選；星等為相對定位而非絕對評測分數。</p>
     </div>
 
     <div class="comp-table-wrap">
@@ -444,43 +469,51 @@
         </thead>
         <tbody>
           <tr>
-            <td class="hi">GPT-4o</td>
+            <td class="hi">GPT-5.5 / GPT-5.5 Pro</td>
             <td>⭐⭐⭐⭐⭐</td>
             <td>⭐⭐⭐⭐⭐</td>
             <td>⭐⭐⭐⭐</td>
-            <td>128k</td>
-            <td>全能型、語音與多模態</td>
+            <td>約 1M</td>
+            <td>全能助理、多模態、複雜任務</td>
           </tr>
           <tr>
-            <td class="hi">Claude 3.5 Sonnet</td>
+            <td class="hi">Claude Sonnet 5</td>
             <td>⭐⭐⭐⭐⭐</td>
             <td>⭐⭐⭐⭐⭐⭐</td>
             <td>⭐⭐⭐⭐⭐</td>
-            <td>200k</td>
+            <td>約 1M</td>
             <td>寫程式、細膩文案、長文分析</td>
           </tr>
           <tr>
-            <td class="hi">Gemini 1.5 Pro</td>
-            <td>⭐⭐⭐⭐</td>
-            <td>⭐⭐⭐⭐</td>
-            <td>⭐⭐⭐⭐</td>
-            <td class="hi">2,000k</td>
-            <td>超長文件分析、Google 生態整合</td>
+            <td class="hi">Claude Fable 5 / Opus 4.8</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐⭐</td>
+            <td>約 1M</td>
+            <td>高品質寫作、策略分析、長上下文</td>
           </tr>
           <tr>
-            <td class="hi">o1 (OpenAI)</td>
-            <td class="hi">⭐⭐⭐⭐⭐⭐</td>
-            <td>⭐⭐⭐⭐⭐</td>
-            <td>⭐⭐⭐</td>
-            <td>128k</td>
-            <td>數學、物理、極限邏輯推理</td>
+            <td class="hi">Gemini 3.5 Flash</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐</td>
+            <td class="hi">約 1M</td>
+            <td>高速多模態、長文件、Google 生態整合</td>
           </tr>
           <tr>
-            <td class="hi">DeepSeek-V3</td>
+            <td class="hi">MiniMax M3</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td class="hi">約 1M</td>
+            <td>中文、長上下文、代理式任務</td>
+          </tr>
+          <tr>
+            <td class="hi">DeepSeek V4 Pro / Flash</td>
             <td>⭐⭐⭐⭐⭐</td>
             <td>⭐⭐⭐⭐⭐</td>
             <td>⭐⭐⭐</td>
-            <td>128k</td>
+            <td>約 1M</td>
             <td>高性價比、程式碼輔助</td>
           </tr>
         </tbody>
@@ -492,25 +525,25 @@
   <div class="tab-panel" id="panel-guide">
     <div class="section-heading">
       <h2>我該選哪一個模型？</h2>
-      <p>根據你的具體使用情境，我們給出以下建議：</p>
+      <p>根據你的具體使用情境，我們給出以下建議；若經由 OpenRouter 使用，建議同時設定備援模型與成本上限。</p>
     </div>
 
     <div class="card-grid">
       <div class="icard" style="--card-color: #10a37f;">
         <div class="icard-head"><div class="icard-title">日常全能助理</div></div>
-        <div class="icard-desc">首選 <strong>GPT-4o</strong>。回答速度快，多模態能力強，且 ChatGPT App 體驗極佳。</div>
+        <div class="icard-desc">首選 <strong>GPT-5.5</strong> 或 <strong>GPT Chat Latest</strong>。適合需要穩定綜合能力、多模態與大型任務拆解的日常工作流。</div>
       </div>
       <div class="icard" style="--card-color: #d97757;">
         <div class="icard-head"><div class="icard-title">程式開發 / 重度寫作</div></div>
-        <div class="icard-desc">首選 <strong>Claude 3.5 Sonnet</strong>。它是目前公認最強的 coding 助手，語氣也最像人類。</div>
+        <div class="icard-desc">首選 <strong>Claude Sonnet 5</strong>。需要更重的長文策略、創意寫作或高品質輸出時，可改用 <strong>Claude Fable 5</strong> 或 <strong>Claude Opus 4.8</strong>。</div>
       </div>
       <div class="icard" style="--card-color: #4285f4;">
         <div class="icard-head"><div class="icard-title">超長文件 / 論文分析</div></div>
-        <div class="icard-desc">首選 <strong>Gemini 1.5 Pro</strong>。你可以把一整本書或一小時的影片丟給它，它能精準回答細節。</div>
+        <div class="icard-desc">首選 <strong>Gemini 3.5 Flash</strong> 或 <strong>Gemini 3.1 Pro Preview</strong>。適合大量文件、影片與 Google 生態整合。</div>
       </div>
       <div class="icard" style="--card-color: #6156d3;">
         <div class="icard-head"><div class="icard-title">開發預算有限</div></div>
-        <div class="icard-desc">首選 <strong>DeepSeek-V3</strong>。能力接近 GPT-4o，但 API 價格僅為其幾十分之一。</div>
+        <div class="icard-desc">首選 <strong>DeepSeek V4 Flash</strong> 或 <strong>MiniMax M3</strong>。前者適合高性價比程式碼與推理，後者適合中文與長上下文代理任務。</div>
       </div>
     </div>
   </div>
