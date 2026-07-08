@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 車手體能要求與價值全解析</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #ff3e3e;
+      --accent2: #ff8080;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --radius: 16px;
+
+      --color-physique: #ef4444;
+      --color-value: #f59e0b;
+      --color-work: #3b82f6;
+      --color-training: #10b981;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 64px 24px 40px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,62,62,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text); border-color: var(--accent); background: rgba(255,62,62,0.1); }
+    .nav-link.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    main {
+      flex: 1;
+      padding: 40px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tab-container {
+      margin-bottom: 48px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section Styles */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 6px;
+      height: 32px;
+      background: var(--section-color, var(--accent));
+      border-radius: 3px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .icard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .icard:hover {
+      border-color: var(--section-color);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .icard .icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .icard h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .icard p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .stat-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--section-color);
+    }
+
+    /* Callout */
+    .callout {
+      background: rgba(255,62,62,0.05);
+      border-left: 4px solid var(--accent);
+      padding: 24px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 40px 0;
+    }
+
+    .callout h4 {
+      color: var(--accent2);
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      header { padding: 48px 20px; }
+      .nav-bar { padding: 12px; gap: 4px; }
+      .nav-link { padding: 6px 12px; font-size: 0.8rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>F1 車手體能要求與價值全解析</h1>
+  <p>為什麼他們能領千萬美金年薪？揭秘世界最頂尖 20 位賽車手的生理極限、日常工作與商業價值。</p>
+</header>
+
+<nav class="nav-bar">
+  <a class="nav-link active" href="#" data-tab="physique">體能要求</a>
+  <a class="nav-link" href="#" data-tab="value">車手價值</a>
+  <a class="nav-link" href="#" data-tab="work">日常工作</a>
+  <a class="nav-link" href="#" data-tab="training">訓練方法</a>
+  <a class="nav-link" href="index.html">← 返回首頁</a>
+</nav>
+
+<main>
+  <!-- 1. 體能要求 -->
+  <section id="physique" class="tab-content active" style="--section-color: var(--color-physique)">
+    <h2 class="section-title">生理極限與挑戰</h2>
+    <div class="grid">
+      <div class="icard">
+        <span class="icon">🏎️</span>
+        <div class="stat-badge">5G+ 重力加速度</div>
+        <h3>強大的頸部負荷</h3>
+        <p>在高速彎道中，車手需承受超過 5G 的側向重力。這意味著車手的頭部（連同安全帽約 6-7 公斤）會感受到超過 30 公斤的拉力。如果頸部不夠強壯，車手甚至無法保持視線水平。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">💓</span>
+        <div class="stat-badge">170-190 BPM</div>
+        <h3>高強度心肺耐力</h3>
+        <p>在一場約兩小時的比賽中，車手的心跳常維持在每分鐘 170 至 190 次。這相當於跑了一場馬拉松，但車手是在極高壓力、狹窄空間且必須保持精密操作的情況下完成。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">🔥</span>
+        <div class="stat-badge">損失 2-4kg 體重</div>
+        <h3>脫水與熱壓力</h3>
+        <p>賽車座艙內的溫度可高達 50°C。穿著防火賽車服的車手在一場比賽中會流失 2 到 4 公升的水分，嚴重脫水會直接影響判斷力與反應速度。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">👁️</span>
+        <div class="stat-badge">< 200ms</div>
+        <h3>極致反應速度</h3>
+        <p>在時速 300 公里下，賽車每秒前進約 83 公尺。車手必須在極短時間內對前方狀況做出反應。通常 F1 車手的反應時間都低於 200 毫秒，遠快於常人。</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>💡 為什麼這很困難？</h4>
+      <p>想像一下，你在烤箱裡維持伏地挺身的姿勢，同時有人在旁邊不斷推你的頭，而你還必須在 iPad 上玩極高難度的節奏遊戲，且不能出任何錯——這就是 F1 比賽的寫照。</p>
+    </div>
+  </section>
+
+  <!-- 2. 車手價值 -->
+  <section id="value" class="tab-content" style="--section-color: var(--color-value)">
+    <h2 class="section-title">為什麼值得高薪？</h2>
+    <div class="grid">
+      <div class="icard">
+        <span class="icon">💎</span>
+        <h3>極端的稀缺性</h3>
+        <p>全世界只有 20 個 F1 正賽席次，比進入外太空的人還要少。這種頂端人才的競爭極其慘烈，只有最強的 0.0001% 才能站在這個舞台上。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">📊</span>
+        <h3>「生物感測器」功能</h3>
+        <p>頂級車手能清晰感知賽車 0.1% 的變化並反饋給工程師。這種精確的技術開發能力能決定一台車的研發方向，甚至價值數億美金的研發成本能否轉化為成績。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">🎯</span>
+        <h3>毫秒間的穩定性</h3>
+        <p>在一圈幾公里的賽道上，頂級車手能連續 50 圈將單圈時間誤差控制在 0.1 秒內。這種極限下的心理素質與一致性，是普通賽車手無法跨越的鴻溝。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">📢</span>
+        <h3>龐大的商業價值</h3>
+        <p>F1 車手是車隊及其背後贊助商（如賓士、法拉利、Red Bull）的品牌大使。一位巨星級車手能帶來龐大的流量與贊助金，遠超其薪資水平。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 日常工作 -->
+  <section id="work" class="tab-content" style="--section-color: var(--color-work)">
+    <h2 class="section-title">車手的日常工作</h2>
+    <div class="grid">
+      <div class="icard">
+        <span class="icon">🖥️</span>
+        <h3>模擬器開發</h3>
+        <p>非比賽週末，車手常待在工廠的數百萬美金模擬器中，測試新零件的設置或為下一場比賽預演。這不僅是練習，更是賽車研發的關鍵環節。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">📋</span>
+        <h3>技術會議 (Briefings)</h3>
+        <p>與數十位工程師討論數據、輪胎策略、燃油管理等。車手必須具備極強的邏輯思考與數據分析能力，才能與頂尖工程師溝通。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">📸</span>
+        <h3>公關與商業活動</h3>
+        <p>出席贊助商活動、媒體採訪、拍攝廣告。作為車隊的門面，車手必須花費大量時間在行銷活動上，這是合約中極其重要的一部分。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">👟</span>
+        <h3>賽道勘查 (Track Walk)</h3>
+        <p>比賽週四，車手與工程師會親自走完賽道，檢查路緣石高度、瀝青磨損狀況。即便開過千百次，依然不放過任何微小細節。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 訓練方法 -->
+  <section id="training" class="tab-content" style="--section-color: var(--color-training)">
+    <h2 class="section-title">平常如何訓練？</h2>
+    <div class="grid">
+      <div class="icard">
+        <span class="icon">⛓️</span>
+        <h3>頸部特化訓練</h3>
+        <p>使用重力帶、抗阻力器材或特製安全帽，在側向受力下維持頭部姿勢。車手的脖子通常比一般人粗壯許多，這是為了對抗高 G 力。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">🚴</span>
+        <h3>高容量心肺訓練</h3>
+        <p>單車（如 Bottas）、跑步或長途游泳，以建立強大的耐乳酸能力。強大的心肺功能讓車手在比賽末期依然能保持冷靜與精確。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">🛑</span>
+        <h3>反應力與手眼協調</h3>
+        <p>使用反應燈（Reaction Lights）進行快速拍擊訓練，或是透過雜耍球、專門的視覺追蹤設備來強化反應與週邊視覺。</p>
+      </div>
+      <div class="icard">
+        <span class="icon">💪</span>
+        <h3>核心與核心肌群</h3>
+        <p>由於駕駛艙空間狹窄且踩煞車需要超過 100 公斤的踏板壓力，車手需要極強的核心穩定性與下肢爆發力，同時又要控制體重。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>資料參考：F1 官方技術說明、車手訪談、運動生理學研究 | <a href="index.html">返回首頁</a></p>
+</footer>
+
+<script>
+  document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tabId = link.getAttribute('data-tab');
+
+      // Update nav links
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+
+      // Smooth scroll to top of main content on mobile
+      if (window.innerWidth < 768) {
+        window.scrollTo({ top: document.querySelector('main').offsetTop - 60, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>

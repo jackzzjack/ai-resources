@@ -10,6 +10,8 @@
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
+| `context_windows.html` | Context Window 上下文視窗圖解（AI 工作桌心智模型、上下文流動、長文件管理） |
+| `token_explained.html` | Token 入門圖解（tokenizer 切分、成本與上下文預算、prompt 實務建議） |
 
 | `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
@@ -24,6 +26,7 @@
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
+| `f1_driver_knowledge.html` | F1 車手體能要求與價值（體能要求、價值分析、日常工作、訓練方法） |
 | `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
 | `power-industry.html` | 電源與能源產業分析（全球電力趨勢、台灣能源結構、AI 伺服器電源 PSU 供應鏈） |
 | `thermal-industry.html` | 散熱產業生態系（3D VC、冷板液冷 DLC、CDU、全球 AI 伺服器散熱供應鏈） |
