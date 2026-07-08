@@ -44,6 +44,7 @@
 | `ems-industry.html` | EMS 電子代工產業生態系導覽 |
 | `router-industry.html` | 路由器產業全景（家用、企業、電信、骨幹級分類與供應鏈） |
 | `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈、關鍵廠商） |
+| `fiber-optic-industry.html` | 光纖接入產業全景（PON 架構、OLT/ONU、OMCI 協議、骨幹對接） |
 | `shipping-industry.html` | 航運產業生態系與商業模式導覽 |
 | `stock-valuation.html` | 投資評價工具（本益比、估值模型、成長性分析） |
 | `gerd_guide.html` | 胃食道逆流完整指南（成因、症狀、治療策略） |
