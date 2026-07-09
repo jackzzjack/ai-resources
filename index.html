@@ -58,8 +58,9 @@
 
     .portal-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
       gap: 24px;
+      align-items: stretch;
     }
 
     .portal-card {
@@ -72,6 +73,8 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
+      min-width: 0;
+      height: 100%;
       position: relative;
       overflow: hidden;
     }
@@ -108,6 +111,7 @@
       font-weight: 700;
       margin-bottom: 12px;
       color: #fff;
+      overflow-wrap: anywhere;
     }
 
     .card-desc {
@@ -115,6 +119,7 @@
       font-size: 0.95rem;
       margin-bottom: 24px;
       flex-grow: 1;
+      overflow-wrap: break-word;
     }
 
     .card-chips {
@@ -131,6 +136,8 @@
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--muted);
+      max-width: 100%;
+      overflow-wrap: anywhere;
     }
 
     .card-footer {
@@ -225,7 +232,9 @@
 
     @media (max-width: 640px) {
       header { padding: 60px 20px 30px; }
+      main { padding: 32px 16px 80px; }
       .portal-grid { grid-template-columns: 1fr; }
+      .portal-card { padding: 24px; }
       .filter-bar { gap: 8px; }
       .filter-btn { font-size: 0.8rem; padding: 6px 14px; }
     }
