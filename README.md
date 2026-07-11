@@ -40,7 +40,7 @@
 | `ems-industry.html` | EMS 電子代工產業生態系（供應鏈上下游、OEM/ODM 模式、全球領導大廠） |
 | `shipping-industry.html` | 航運產業生態系（定期與不定期航線模式、全球供應鏈協作、船舶分級） |
 | `stock-valuation.html` | 投資評價工具（本益比計算機、回本年限視覺化、不同產業估值邏輯） |
-| `us-broker-choice.html` | IBKR、嘉信、Firstrade 美股券商新手圖解（資金路徑、比較表、選擇流程與互動情境篩選） |
+| `us-broker-choice.html` | IBKR、嘉信、Firstrade 美股券商新手圖解（資金路徑、IBKR 入金心智模型、定期定額規劃、比較表與互動情境篩選） |
 | `covered_call_guide.html` | Covered Call 備兌買權新手圖解（持股與買權關係、指派流程、風險對照與互動情境試算） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 | `metro_knowledge.html` | 捷運系統知識庫（形式分類、技術規格、信號系統、知名廠商、世界著名系統） |
