@@ -42,7 +42,7 @@
 | `metro_knowledge.html` | 捷運系統知識庫（形式分類、技術規格、信號系統、知名廠商、世界著名系統） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 | `router-industry.html` | 路由器產業全景（家用、企業、電信、骨幹級分類、供應鏈與技術趨勢） |
-| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖） |
+| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖）; EML laser/CPO difference |
 | `switch-industry.html` | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
 | `fiber-optic-industry.html` | 光纖接入產業全景（PON 技術原理、OLT/ONU 設備、PLOAM／OMCI、T-CONT、GEM、常見 ME 與骨幹網對接） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |

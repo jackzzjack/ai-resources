@@ -367,6 +367,7 @@
 <div class="tabs-wrap">
   <div class="tabs">
     <div class="tab active" data-tab="principle">💡 技術原理</div>
+    <div class="tab" data-tab="eml">EML &amp; CPO</div>
     <div class="tab" data-tab="ecosystem">🌐 產業鏈佈局</div>
     <div class="tab" data-tab="players">🏆 關鍵廠商</div>
     <div class="tab" data-tab="roadmap">🚀 發展路線圖</div>
@@ -432,6 +433,16 @@
   </div>
 
   <!-- ── 產業鏈佈局 ── -->
+  <div class="tab-panel" id="panel-eml">
+    <div class="section-heading"><h2>EML and CPO: different layers of the same optical link</h2><p><strong>EML is not CPO.</strong> EML creates and modulates light; CPO places the optical engine next to the switch ASIC. They complement each other, but solve different problems.</p></div>
+    <div class="callout" style="border-left-color:var(--accent-green)"><h3>Beginner mental model: the lamp and the floor plan</h3><p><strong>EML is a fast lamp with a shutter:</strong> a laser emits light and an electro-absorption modulator encodes data onto it. <strong>CPO is the floor plan:</strong> it moves the optical engine beside the ASIC so high-speed electrical traces become very short.</p></div>
+    <p class="arch-label">Where EML and CPO sit in the link</p>
+    <div class="arch-diagram"><div class="arch-row"><div class="arch-box">Switch ASIC<br><small>data / SerDes</small></div><div class="arch-connector">-- electric --</div><div class="arch-box" style="border-color:var(--accent-orange)">Driver</div><div class="arch-connector">-- electric --</div><div class="arch-box" style="border-color:var(--accent-green)">EML<br><small>laser + modulator</small></div><div class="arch-connector">-- light --</div><div class="arch-box">Fibre</div></div><p style="text-align:center;color:var(--text-muted);margin:20px 0 0">CPO shortens the electrical section; EML is one possible light-source/modulation implementation.</p></div>
+    <div style="margin-top:30px"><p class="arch-label">Role cards: do not mix up the names</p><div class="card-grid"><div class="icard" style="--card-color:var(--accent-green)"><div class="icard-title">EML: Electro-absorption Modulated Laser</div><div class="icard-desc">Usually integrates a DFB laser and an electro-absorption modulator. Voltage changes absorption to turn continuous light into a high-speed data signal; it is common in high-speed pluggable optics.</div></div><div class="icard" style="--card-color:var(--accent-blue)"><div class="icard-title">CPO: Co-Packaged Optics</div><div class="icard-desc">A packaging and interconnect architecture that keeps the optical engine close to the switch ASIC, reducing electrical loss, power and board-area pressure.</div></div><div class="icard" style="--card-color:var(--accent-orange)"><div class="icard-title">Optical engine / PIC</div><div class="icard-desc">The optical conversion subsystem in a CPO design. It can use multiple laser strategies, including external laser sources and silicon photonics; it is not synonymous with one EML.</div></div></div></div>
+    <div class="comp-table-wrap" style="margin-top:30px"><table class="comp-table"><thead><tr><th>Question</th><th>EML answer</th><th>CPO answer</th></tr></thead><tbody><tr><td>What layer?</td><td>Light source and high-speed optical modulation</td><td>Packaging, interconnect and system architecture</td></tr><tr><td>Direct benefit?</td><td>Converts electrical data into fibre-ready light</td><td>Reduces the ASIC-to-optics electrical path, loss and power</td></tr><tr><td>Must they be paired?</td><td>No; EML can be used in pluggable modules</td><td>No; CPO can use several source/modulation designs</td></tr><tr><td>Common misconception</td><td>EML is CPO</td><td>CPO is a laser</td></tr></tbody></table></div>
+    <div class="callout" style="margin-top:30px;border-left-color:var(--accent-orange)"><h3>How to choose the right lens</h3><p>For questions about putting 100G, 400G or 800G data onto fibre, start with EML, silicon photonics and modulation. For questions about switch power or signal-integrity limits, start with CPO, NPO, packaging and cooling. A product can involve both without making the terms interchangeable.</p></div>
+  </div>
+
   <div class="tab-panel" id="panel-ecosystem">
     <div class="section-heading">
       <h2>CPO 產業供應鏈</h2>
