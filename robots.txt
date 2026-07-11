@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jackzzjack.github.io/ai-resources/sitemap.xml
