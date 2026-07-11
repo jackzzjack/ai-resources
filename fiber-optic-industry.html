@@ -508,6 +508,77 @@
         <li><strong>維護：</strong> 執行遠端韌體更新 (Remote Firmware Image Upgrade)。</li>
       </ul>
     </div>
+
+    <div class="section-heading" style="margin-top: 44px;">
+      <h2>把 ONU 開機、頻寬與服務串起來</h2>
+      <p>先分清兩條「管理路」：PLOAM 負責讓 ONU 接上 PON 並能正常傳送；OMCI 則在 ONU 可用後，把網路服務映射到實際的埠與佇列。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="icard" style="--card-color: var(--accent-orange);">
+        <div class="icard-title">PLOAM：實體層的 OAM 訊息</div>
+        <div class="icard-desc">Physical Layer Operations, Administration and Maintenance。OLT 與 ONU 用它處理序號／ONU-ID、測距、啟用、停用與上行傳送授權等接入控制；它不是用來設定使用者 VLAN 的通用管理介面。</div>
+      </div>
+      <div class="icard" style="--card-color: var(--accent-blue);">
+        <div class="icard-title">G.984.4：GPON 時代的 OMCI</div>
+        <div class="icard-desc">ITU-T G.984.4 定義 GPON 的 ONT management and control interface：OLT 透過標準化訊息讀取 MIB、建立或刪除 ME，並配置 ONU 的服務行為。</div>
+      </div>
+      <div class="icard" style="--card-color: var(--accent-green);">
+        <div class="icard-title">G.988：通用的 ONU 管理模型</div>
+        <div class="icard-desc">ITU-T G.988 將 OMCI 的訊息、MIB 與大量 Managed Entity（ME）模型化，讓不同 PON 世代與設備可用共同語言描述功能；實際支援集合仍要看 ONU 與 OLT 的能力。</div>
+      </div>
+    </div>
+
+    <div class="arch-diagram" style="margin-top: 30px;">
+      <p class="arch-label">從「被接上」到「可以上網」的兩層控制流程</p>
+      <div class="arch-flow">
+        <div class="node"><div class="node-box" style="border-color: var(--accent-orange);">1. 探測</div><div class="node-label">ONU 回報序號</div></div>
+        <div class="connector"><div class="connector-text">PLOAM</div></div>
+        <div class="node"><div class="node-box" style="border-color: var(--accent-blue);">2. 啟用</div><div class="node-label">ONU-ID、測距、授權</div></div>
+        <div class="connector"><div class="connector-text">DBA / Alloc-ID</div></div>
+        <div class="node"><div class="node-box" style="border-color: var(--accent-teal);">3. 配服務</div><div class="node-label">OMCI 建立 ME 關係</div></div>
+        <div class="connector"><div class="connector-text">GEM / VLAN</div></div>
+        <div class="node"><div class="node-box" style="border-color: var(--accent-green);">4. 交付</div><div class="node-label">UNI 埠提供數據服務</div></div>
+      </div>
+    </div>
+
+    <div class="section-heading" style="margin-top: 44px;">
+      <h2>T-CONT：上行頻寬的「預約座位」</h2>
+      <p>在 PON 的上行方向，多台 ONU 共用同一條光纖，不能同時說話。T-CONT 是 ONU 內代表一組上行流量／排程需求的容器，OLT 依其 Alloc-ID 與 DBA 規則發放可傳送的時槽。</p>
+    </div>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead><tr><th>名詞</th><th>你可以這樣想</th><th>與服務的關係</th></tr></thead>
+        <tbody>
+          <tr><td><strong>T-CONT</strong></td><td>ONU 內的一個上行頻寬容器／排程對象</td><td>可承載不同 QoS 需求的流量，並由 OLT 以 DBA 分配上行時槽。</td></tr>
+          <tr><td><strong>Alloc-ID</strong></td><td>OLT 辨識並授權該 T-CONT 的號碼</td><td>ONU 依收到的授權，在指定時槽上行傳送，避免與其他 ONU 碰撞。</td></tr>
+          <tr><td><strong>GEM Port</strong></td><td>把使用者流量封裝／分流的邏輯通道</td><td>通常把 Ethernet、語音或其他服務流量對應至適合的 T-CONT，再送往 PON。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-heading" style="margin-top: 44px;">
+      <h2>常見 ME：把 ONU 變成可配置的元件圖</h2>
+      <p>ME 不是封包格式，而是 OLT 與 ONU 共同理解的「物件」。OLT 透過建立、設定與讀取這些物件，把端口、VLAN、GEM 與上行頻寬接成一條服務鏈。</p>
+    </div>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead><tr><th>ME</th><th>代表什麼</th><th>在服務鏈中的角色</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ANI-G</strong></td><td>Access Network Interface — G</td><td>描述 ONU 面向 ODN／PON 的網路側介面，例如光學與 PON 狀態；可把它想成 ONU 的「光纖入口」。</td></tr>
+          <tr><td><strong>UNI-G</strong></td><td>User Network Interface — G</td><td>描述使用者側介面的共通能力，是 ONU 對室內網路服務的抽象入口。</td></tr>
+          <tr><td><strong>PPTP Ethernet UNI</strong></td><td>Physical Path Termination Point Ethernet UNI</td><td>對應一個實體 Ethernet 用戶埠；速率、雙工與埠狀態等可在此層被管理。</td></tr>
+          <tr><td><strong>VEIP</strong></td><td>Virtual Ethernet Interface Point</td><td>虛擬乙太網介面，常用於沒有直接對應單一實體埠、或由 ONU 內部轉送的服務模型。</td></tr>
+          <tr><td><strong>ME 74</strong></td><td>GEM Interworking Termination Point</td><td>服務互通節點：把 GEM 流量接到橋接、UNI 或其他上層處理模型，協助完成「PON 封包 → 使用者服務」的映射。</td></tr>
+          <tr><td><strong>ME 171</strong></td><td>Extended VLAN Tagging Operation Configuration Data</td><td>擴充 VLAN 標籤規則；用來描述進出 UNI 的 tag 加、刪、改與過濾等行為，是多服務／多 VLAN 情境的常見配置點。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top: 30px; border-left-color: var(--accent-orange);">
+      <h3>常見誤解：OMCI 不是「一條指令直接開通網路」</h3>
+      <p>真正的服務通常是一串 ME 關係：先有 ANI-G 與 PON 側狀態，再建立 T-CONT／GEM 的上行與封裝關係，接著以 ME 74 串接服務，最後在 PPTP Ethernet UNI 或 VEIP 以 VLAN 規則交付給用戶。不同廠商的 MIB 支援度與互通細節可能不同，因此現場整合仍需比對設備能力與驗證結果。</p>
+    </div>
   </div>
 
   <!-- ── 骨幹對接 ── -->

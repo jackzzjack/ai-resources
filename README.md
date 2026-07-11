@@ -44,7 +44,7 @@
 | `router-industry.html` | 路由器產業全景（家用、企業、電信、骨幹級分類、供應鏈與技術趨勢） |
 | `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖） |
 | `switch-industry.html` | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
-| `fiber-optic-industry.html` | 光纖接入產業全景（PON 技術原理、OLT/ONU 設備、OMCI 協議、骨幹網對接） |
+| `fiber-optic-industry.html` | 光纖接入產業全景（PON 技術原理、OLT/ONU 設備、PLOAM／OMCI、T-CONT、GEM、常見 ME 與骨幹網對接） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
 | `linux_kernel_overview.html` | Linux Kernel 架構全覽（元件分層圖、子系統代號、研究熱點、v6.1–6.14 版本特色） |
 | `philippine_eagle.html` | 菲律賓鷹互動知識頁（物種概覽、習性行為、保育現況、趣味知識） |
