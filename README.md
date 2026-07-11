@@ -39,6 +39,7 @@
 | `ems-industry.html` | EMS 電子代工產業生態系（供應鏈上下游、OEM/ODM 模式、全球領導大廠） |
 | `shipping-industry.html` | 航運產業生態系（定期與不定期航線模式、全球供應鏈協作、船舶分級） |
 | `stock-valuation.html` | 投資評價工具（本益比計算機、回本年限視覺化、不同產業估值邏輯） |
+| `covered_call_guide.html` | Covered Call 備兌買權新手圖解（持股與買權關係、指派流程、風險對照與互動情境試算） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 | `metro_knowledge.html` | 捷運系統知識庫（形式分類、技術規格、信號系統、知名廠商、世界著名系統） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
