@@ -28,6 +28,7 @@
 | `typhoon_structure.html` | 拆解颱風的結構，並說明颱風生成的原因（從海溫、水氣、科氏力到眼牆，拆解颱風如何長大） |
 | `car_architecture.html` | 拆解汽車的架構（把汽車看成能源、控制、底盤與乘員安全的整合系統） |
 | `smartphone_architecture.html` | 拆解手機的架構（從 SoC、螢幕、電池、相機到通訊模組理解手機） |
+| `makefile_assignment_guide.html` | Makefile 賦值語法圖解（=、:=、?=、+= 的展開時機、覆寫規則、CFLAGS 實作模式與互動選擇器） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
