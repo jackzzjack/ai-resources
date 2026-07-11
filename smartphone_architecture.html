@@ -1,4 +1,127 @@
-<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>拆解手機的架構｜AI Resources</title><style>
-:root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;--accent:#22c55e;--text:#e8e8f0;--muted:#9ca3af;--radius:18px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% -10%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 35%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif;line-height:1.7}a{color:inherit}header{padding:80px 24px 48px;text-align:center}.badge{display:inline-flex;gap:8px;align-items:center;border:1px solid color-mix(in srgb,var(--accent) 60%,var(--border));background:color-mix(in srgb,var(--accent) 12%,transparent);padding:8px 14px;border-radius:999px;color:#fff}h1{font-size:clamp(2.2rem,6vw,4.8rem);line-height:1.05;margin:22px auto 18px;max-width:980px;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}header p{max-width:760px;margin:0 auto;color:var(--muted);font-size:1.2rem}nav{position:sticky;top:0;z-index:5;background:rgba(10,10,15,.86);backdrop-filter:blur(12px);border-block:1px solid var(--border);display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:12px}nav a{text-decoration:none;color:var(--muted);padding:8px 12px;border-radius:999px}nav a:hover{background:var(--surface2);color:#fff}main{max-width:1120px;margin:0 auto;padding:44px 24px 90px}section{margin:0 0 48px}h2{font-size:1.8rem;margin:0 0 18px}.hero-map,.panel{background:linear-gradient(180deg,var(--surface),#0f0f17);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:0 18px 50px rgba(0,0,0,.25)}.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:20px}.step{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:20px;min-height:120px}.step span{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#050507;font-weight:800;margin-bottom:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px}.card h3{margin:0 0 10px;color:#fff}.card p{margin:0;color:var(--muted)}table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:16px}th,td{border:1px solid var(--border);padding:14px;text-align:left;vertical-align:top}th{background:var(--surface2);color:#fff}td{background:rgba(19,19,26,.65);color:var(--muted)}.callouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.callout{border-left:4px solid var(--accent);background:var(--surface);border-radius:14px;padding:18px}.back{display:inline-block;margin:24px 0;color:var(--muted);text-decoration:none}@media(max-width:700px){header{padding-top:54px}}
-</style>  <script defer src="analytics-consent.js"></script>
-</head><body><header><div class="badge"><span>📱</span><span>互動知識頁</span></div><h1>拆解手機的架構</h1><p>從 SoC、螢幕、電池、相機到通訊模組理解手機</p></header><nav><a href="#model">一眼看懂</a><a href="#parts">元件拆解</a><a href="#flow">流程</a><a href="#compare">對照表</a><a href="#faq">新手提醒</a></nav><main><a class="back" href="index.html">← 回到首頁</a><section id="model"><h2>一眼看懂</h2><div class="hero-map"><p>你可以把「拆解手機的架構」想成一個由多個條件與元件共同運作的系統：先辨認核心角色，再看能量、資訊或因果如何流動，最後用結果判斷整體狀態。</p><div class="flow"><div class="step"><span>1</span><p>使用者互動</p></div><div class="step"><span>2</span><p>SoC 運算</p></div><div class="step"><span>3</span><p>記憶體與儲存</p></div><div class="step"><span>4</span><p>感測與相機</p></div><div class="step"><span>5</span><p>通訊與電源</p></div></div></div></section><section id="parts"><h2>角色與關係</h2><div class="grid"><article class="card"><h3>SoC</h3><p>CPU/GPU/NPU/ISP/Modem 等功能高度整合。</p></article><article class="card"><h3>顯示與觸控</h3><p>螢幕輸出與觸控輸入構成人機介面。</p></article><article class="card"><h3>電池與 PMIC</h3><p>提供穩定電源並管理充電與功耗。</p></article><article class="card"><h3>射頻系統</h3><p>天線、RF 前端與基頻負責 4G/5G/Wi‑Fi。</p></article></div></section><section id="flow"><h2>流程圖：從起點到結果</h2><div class="panel"><ol><li>使用者互動</li><li>SoC 運算</li><li>記憶體與儲存</li><li>感測與相機</li><li>通訊與電源</li></ol></div></section><section id="compare"><h2>新手對照表</h2><table><tr><th>常見疑問</th><th>建議理解</th></tr><tr><td>這是一個單一物件嗎？</td><td>多半不是。更好的學習方式是拆成結構、流程、條件與結果四層。</td></tr><tr><td>先背名詞有用嗎？</td><td>先建立圖像化心智模型，再回頭記名詞，會更容易連起來。</td></tr><tr><td>最容易誤解哪裡？</td><td>把結果當成原因、或忽略尺度與條件限制，是最常見的誤解。</td></tr></table></section><section id="faq"><h2>先懂這個</h2><div class="callouts"><div class="callout"><strong>你可以這樣想</strong><p>先問「誰提供能量／資訊？誰負責轉換？最後輸出什麼？」</p></div><div class="callout"><strong>常見誤解</strong><p>不要只記單點名詞；要把每個名詞放回系統位置。</p></div><div class="callout"><strong>閱讀順序</strong><p>先看總覽，再看元件卡片，最後用流程與表格檢查理解。</p></div></div></section></main></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="以資料、電力與無線訊號三條路徑認識智慧型手機的硬體架構。">
+  <title>手機內部如何協作｜AI Resources</title>
+  <style>
+    :root { --bg:#090b12; --surface:#121725; --surface-hi:#1a2132; --line:#2d3850; --ink:#edf2ff; --muted:#aab6cf; --lime:#a8e84a; --blue:#68b6ff; --pink:#f59bc9; --amber:#ffc56b; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:linear-gradient(145deg,#121934 0%,var(--bg) 38%,#0c111d 100%); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif; line-height:1.72; }
+    a { color:inherit; }
+    .wrap { width:min(1180px,calc(100% - 40px)); margin:auto; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; padding:22px 0; font-size:.94rem; color:var(--muted); }
+    .topbar a { text-decoration:none; }
+    .topbar a:hover { color:var(--lime); }
+    .tag { border:1px solid rgba(168,232,74,.55); color:var(--lime); border-radius:999px; padding:4px 11px; font-size:.8rem; letter-spacing:.08em; }
+    header { padding:55px 0 66px; overflow:hidden; position:relative; }
+    header::after { content:""; position:absolute; width:560px; height:560px; right:-230px; top:-260px; border:1px solid rgba(104,182,255,.24); border-radius:50%; box-shadow:0 0 0 45px rgba(104,182,255,.04),0 0 0 120px rgba(104,182,255,.025); }
+    .hero { display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center; position:relative; z-index:1; }
+    h1 { font-size:clamp(2.7rem,7vw,5.8rem); letter-spacing:-.065em; line-height:.98; margin:16px 0 24px; max-width:760px; }
+    .lede { color:var(--muted); font-size:1.16rem; max-width:650px; margin:0; }
+    .hero-note { border-left:3px solid var(--lime); padding:13px 0 13px 18px; margin-top:28px; color:#d6e1f6; }
+    .phone { border:9px solid #2b354a; border-radius:38px; height:390px; max-width:250px; margin:auto; background:linear-gradient(150deg,#273a63,#11182c 38%,#0a0e18); box-shadow:20px 26px 55px rgba(0,0,0,.46),inset 0 0 50px rgba(104,182,255,.15); position:relative; overflow:hidden; }
+    .phone::before { content:""; position:absolute; width:86px; height:18px; background:#070a10; border-radius:0 0 15px 15px; left:calc(50% - 43px); top:0; }
+    .screen-lines { position:absolute; inset:55px 25px; display:grid; align-content:space-between; }
+    .screen-lines i { display:block; height:8px; border-radius:10px; background:linear-gradient(90deg,var(--lime),var(--blue)); opacity:.85; } .screen-lines i:nth-child(2){width:73%;background:var(--pink)} .screen-lines i:nth-child(3){width:90%;background:var(--amber)} .screen-lines i:nth-child(4){width:58%;background:var(--blue)}
+    .section-nav { position:sticky; top:0; z-index:5; border-block:1px solid var(--line); background:rgba(9,11,18,.87); backdrop-filter:blur(16px); }
+    .section-nav .wrap { display:flex; gap:5px; overflow:auto; padding:10px 0; }
+    .section-nav a { text-decoration:none; white-space:nowrap; padding:7px 12px; color:var(--muted); border-radius:7px; font-size:.92rem; } .section-nav a:hover { background:var(--surface-hi); color:var(--ink); }
+    main { padding:72px 0 110px; }
+    section { margin-bottom:88px; scroll-margin-top:65px; }
+    .eyebrow { color:var(--lime); text-transform:uppercase; letter-spacing:.14em; font-size:.78rem; font-weight:700; }
+    h2 { font-size:clamp(1.85rem,4vw,3rem); letter-spacing:-.04em; line-height:1.13; margin:8px 0 17px; }
+    h3 { line-height:1.25; margin:0 0 9px; font-size:1.13rem; }
+    .intro { max-width:760px; color:var(--muted); margin:0 0 30px; }
+    .system { display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:14px; align-items:stretch; }
+    .lane { border:1px solid var(--line); background:rgba(18,23,37,.82); border-radius:18px; padding:23px; }
+    .lane h3 { display:flex; align-items:center; gap:9px; } .dot{width:11px;height:11px;border-radius:50%;display:inline-block}.data .dot{background:var(--blue);box-shadow:0 0 16px var(--blue)}.power .dot{background:var(--amber);box-shadow:0 0 16px var(--amber)}.radio .dot{background:var(--pink);box-shadow:0 0 16px var(--pink)}
+    .lane p { color:var(--muted); font-size:.95rem; margin:0; }
+    .hub { display:grid; align-content:center; text-align:center; min-height:250px; border:1px solid rgba(168,232,74,.55); border-radius:20px; background:radial-gradient(circle,rgba(168,232,74,.18),transparent 64%),var(--surface); padding:25px; }
+    .hub strong { font-size:1.8rem; color:var(--lime); } .hub span { color:var(--muted); font-size:.92rem; }
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .card { padding:22px; border:1px solid var(--line); border-radius:14px; background:var(--surface); transition:transform .2s,border-color .2s; }
+    .card:hover { transform:translateY(-4px); border-color:var(--blue); } .card p{margin:0;color:var(--muted);font-size:.94rem}.num{font-variant-numeric:tabular-nums;color:var(--lime);font-weight:800;font-size:.85rem;letter-spacing:.08em;margin-bottom:14px}
+    .split { display:grid; grid-template-columns:.8fr 1.2fr; gap:34px; align-items:start; }
+    .timeline { border-left:1px solid var(--line); padding-left:28px; }
+    .event { position:relative; padding:0 0 26px; }.event::before{content:"";position:absolute;width:12px;height:12px;border:3px solid var(--bg);background:var(--blue);border-radius:50%;left:-35px;top:7px}.event:nth-child(2)::before{background:var(--lime)}.event:nth-child(3)::before{background:var(--pink)}.event p{color:var(--muted);margin:7px 0 0}
+    .thermal { padding:30px; border:1px solid var(--line); border-radius:18px; background:linear-gradient(135deg,#171b2a,#0e1320); }.thermal > p{color:var(--muted)}
+    .heat-path { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:26px; }.heat-path span{border-radius:999px;padding:8px 12px;background:#252d42;font-size:.9rem}.heat-path b{color:var(--amber)}
+    table { border-collapse:collapse; width:100%; border:1px solid var(--line); overflow:hidden; border-radius:14px; background:var(--surface); } th,td{text-align:left;padding:16px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--lime);font-size:.86rem;letter-spacing:.05em}td{color:var(--muted)}tr:last-child td{border-bottom:0}
+    .footer { border-top:1px solid var(--line); padding:28px 0 52px; color:var(--muted); font-size:.9rem; }
+    @media(max-width:800px){.hero,.split{grid-template-columns:1fr}.phone{height:260px;width:170px}.hero{gap:22px}.system{grid-template-columns:1fr}.hub{min-height:150px}.cards{grid-template-columns:repeat(2,1fr)}header{padding-top:30px}main{padding-top:50px}}
+    @media(max-width:480px){.wrap{width:min(100% - 28px,1180px)}.cards{grid-template-columns:1fr}th,td{padding:12px;font-size:.88rem}.topbar{font-size:.82rem}}
+  </style>
+  <script defer src="analytics-consent.js"></script>
+</head>
+<body>
+  <header class="wrap">
+    <div class="topbar"><a href="index.html">← AI Resources</a><span class="tag">硬體系統導覽</span></div>
+    <div class="hero">
+      <div>
+        <p class="eyebrow">inside a smartphone</p>
+        <h1>一支手機，三條同時運轉的路徑</h1>
+        <p class="lede">畫面上的一次點擊，背後同時牽動運算資料、供電調度與無線收發。從訊號抵達天線開始，循著三條路徑走過手機內部，硬體分工會變得具體。</p>
+        <p class="hero-note">手機不是把零件塞進機殼；它是一個在體積、熱量、耗電與訊號干擾之間持續協調的系統。</p>
+      </div>
+      <div class="phone" aria-label="抽象化手機示意圖"><div class="screen-lines"><i></i><i></i><i></i><i></i></div></div>
+    </div>
+  </header>
+  <nav class="section-nav"><div class="wrap"><a href="#three-paths">三條路徑</a><a href="#silicon">晶片群像</a><a href="#camera">按下快門之後</a><a href="#energy">電力與熱</a><a href="#tradeoffs">設計取捨</a></div></nav>
+  <main class="wrap">
+    <section id="three-paths">
+      <p class="eyebrow">01 / system map</p><h2>資料、能量與電波在同一塊主板交會</h2>
+      <p class="intro">同一個應用程式看似只在螢幕上活動，實際上會跨過記憶體、儲存、網路與電源管理。以下三個視角可用來追蹤大多數手機功能。</p>
+      <div class="system">
+        <article class="lane data"><h3><i class="dot"></i>資料路徑</h3><p>觸控、相機或網路帶來的資料，經由 SoC 的 CPU、GPU、NPU 與 ISP 處理，再送往記憶體、螢幕或儲存。</p></article>
+        <div class="hub"><strong>SoC</strong><span>把通用運算、圖形、AI、影像與連線控制整合在一起的調度中心</span></div>
+        <article class="lane power"><h3><i class="dot"></i>電力路徑</h3><p>電池輸出的直流電先由 PMIC 轉成不同電壓；它會隨負載調整供電，避免每個模組都以最高功耗運作。</p></article>
+        <article class="lane radio"><h3><i class="dot"></i>無線路徑</h3><p>基地台或 Wi‑Fi 的訊號由天線接收，通過濾波、放大與收發器，最後由數據機解碼成可用資料。</p></article>
+        <article class="lane"><h3><i class="dot" style="background:var(--lime)"></i>人機路徑</h3><p>觸控層、顯示驅動、震動馬達、揚聲器與感測器，將數位結果轉回可看、可聽、可感受的回饋。</p></article>
+        <article class="lane"><h3><i class="dot" style="background:#b8a5ff"></i>機構路徑</h3><p>中框、散熱材料、鏡頭模組與天線淨空區，決定零件能否在狹小空間裡維持可靠的運作條件。</p></article>
+      </div>
+    </section>
+    <section id="silicon">
+      <p class="eyebrow">02 / silicon crew</p><h2>晶片不是單一大腦，而是一組專長各異的工作群</h2>
+      <div class="cards">
+        <article class="card"><div class="num">CPU</div><h3>處理決策與系統工作</h3><p>執行作業系統、應用程式邏輯與排程；高效能核心與省電核心會因情境切換。</p></article>
+        <article class="card"><div class="num">GPU</div><h3>把介面畫成畫面</h3><p>負責 2D/3D 圖形與影像合成，讓動畫、遊戲與高更新率螢幕保持流暢。</p></article>
+        <article class="card"><div class="num">NPU</div><h3>加速在地 AI</h3><p>以較低功耗執行影像辨識、語音處理或生成式功能，減少把每件事送上雲端的需求。</p></article>
+        <article class="card"><div class="num">ISP</div><h3>把感光資料變成照片</h3><p>處理對焦、降噪、HDR、白平衡與多鏡頭融合，是相機畫質的重要一環。</p></article>
+      </div>
+    </section>
+    <section id="camera">
+      <p class="eyebrow">03 / a photo is a pipeline</p><h2>快門按下的一瞬間，影像穿越了一條專用生產線</h2>
+      <div class="split">
+        <div><p class="intro">相機規格不只看畫素。鏡頭收光、感光元件讀取速度、ISP 演算法、記憶體頻寬與儲存延遲，都會影響最後一張照片。</p><div class="thermal"><h3>為什麼夜拍常需要停一下？</h3><p>低光源下，系統可能連拍多張不同曝光的影像，暫存在記憶體後交給 ISP 對齊、降噪與合成。這是光學、感測與運算一起換取亮度與細節的結果。</p></div></div>
+        <div class="timeline">
+          <article class="event"><h3>光線與鏡頭</h3><p>鏡組控制焦距與進光；光學防手震在曝光時抵銷手部晃動。</p></article>
+          <article class="event"><h3>感光元件與 ADC</h3><p>像素把光轉為電荷，類比數位轉換器將其讀成原始影像資料。</p></article>
+          <article class="event"><h3>ISP 與記憶體</h3><p>大量像素資料先在高速記憶體周轉，再完成去馬賽克、HDR 與色彩調校。</p></article>
+          <article class="event"><h3>編碼與保存</h3><p>處理好的影像壓縮為 HEIF、JPEG 或影片格式，寫入快閃儲存體。</p></article>
+        </div>
+      </div>
+    </section>
+    <section id="energy">
+      <p class="eyebrow">04 / energy budget</p><h2>續航力是一份即時更新的能源預算</h2>
+      <p class="intro">電池容量只是起點。螢幕亮度、行動網路訊號、遊戲負載與背景同步都在爭取功耗額度；PMIC 與系統排程的任務是讓必要的地方先拿到電。</p>
+      <div class="thermal"><h3>熱從哪裡來，又往哪裡去？</h3><p>高負載的 SoC、充電電路與螢幕會產熱。石墨片、均熱板或金屬中框將熱擴散到更大的面積；當溫度仍過高，系統會降頻，這是為了保護電池與晶片。</p><div class="heat-path"><span>SoC / 充電 IC</span><b>→</b><span>導熱介面材料</span><b>→</b><span>石墨或均熱板</span><b>→</b><span>中框與外殼</span></div></div>
+    </section>
+    <section id="tradeoffs">
+      <p class="eyebrow">05 / design trade-offs</p><h2>每一項規格，都在跟其他條件協商</h2>
+      <table>
+        <thead><tr><th>設計選擇</th><th>帶來的好處</th><th>可能付出的代價</th></tr></thead>
+        <tbody>
+          <tr><td>更大感光元件</td><td>低光表現與動態範圍通常更好</td><td>鏡頭模組更厚，內部空間更緊張</td></tr>
+          <tr><td>高更新率螢幕</td><td>捲動與操作更即時、畫面更平滑</td><td>顯示與 GPU 耗電提高，需靠動態更新率平衡</td></tr>
+          <tr><td>更快充電</td><td>縮短補電等待時間</td><td>充電路徑與散熱設計更複雜，也要照顧電池壽命</td></tr>
+          <tr><td>更多天線頻段</td><td>改善跨地區連線與多種無線協定支援</td><td>需要保留天線淨空區，與金屬機構、相機位置互相牽制</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap">AI Resources · 以系統角度理解日常科技</div></footer>
+</body>
+</html>
