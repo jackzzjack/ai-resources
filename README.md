@@ -78,6 +78,13 @@
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis 狀態管理、SAI 晶片抽象層、RoCEv2 AI 網路） |
 | `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
 
+| `aircraft-attitude.html` | 飛機的姿態：客機與戰機如何在三條軸上飛行（新手友善互動知識導覽） |
+| `dehumidifier-principles.html` | 除濕機的原理：把水氣留在機器裡（新手友善互動知識導覽） |
+| `why-we-dream.html` | 做夢的原因：睡著的大腦仍在整理世界（新手友善互動知識導覽） |
+| `classical-music-types.html` | 古典音樂的類型：從巴洛克到當代的聆聽地圖（新手友善互動知識導覽） |
+| `jazz-types.html` | Jazz 的類型：沿著一棵會聽的爵士樹探索（新手友善互動知識導覽） |
+| `gpt-5-6-guide.html` | GPT-5.6：把 AI 協作變成可驗收的工作流程（新手友善互動知識導覽） |
+
 ---
 
 ## AI 工具目錄
