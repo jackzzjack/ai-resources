@@ -7,6 +7,7 @@
 | 檔案 | 說明 |
 |------|------|
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
+| `knowledge-map.html` | 互動式知識地圖：以可篩選、可縮放的關係圖串連 Linux、SONiC、AI 基礎設施、半導體與 AI 工作流 |
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
