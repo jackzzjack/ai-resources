@@ -92,6 +92,7 @@
 | `classical-music-types.html` | 古典音樂的類型：從巴洛克到當代的聆聽地圖（新手友善互動知識導覽） |
 | `jazz-types.html` | Jazz 的類型：沿著一棵會聽的爵士樹探索（新手友善互動知識導覽） |
 | `gpt-5-6-guide.html` | GPT-5.6：把 AI 協作變成可驗收的工作流程（新手友善互動知識導覽） |
+| `threejs_guide.html` | Three.js 入門圖解（瀏覽器 3D 的場景、相機、網格、渲染器與最小程式範例） |
 
 ---
 
