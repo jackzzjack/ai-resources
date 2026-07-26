@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="用組裝線視角理解 Crosstool-NG：從 host 工具、binutils、bootstrap compiler、libc 到 sysroot 與 target-prefixed tools。">
+  <title>Crosstool-NG 圖解：組裝一條可重現的 Cross Toolchain</title>
+  <style>
+    :root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;--accent:#7c6aff;--accent2:#a78bfa;--green:#4ade80;--orange:#fb923c;--blue:#60c8ff;--text:#e8e8f0;--muted:#9898b5;--radius:16px}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+    header{padding:58px 22px 42px;text-align:center;background:radial-gradient(ellipse at 50% -10%,rgba(124,106,255,.25),transparent 66%);border-bottom:1px solid var(--border)}
+    .back{color:var(--muted);text-decoration:none;font-size:.9rem}.back:hover{color:var(--accent2)}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.15;margin:20px auto 15px;max-width:960px;background:linear-gradient(120deg,#fff 35%,var(--accent2));-webkit-background-clip:text;color:transparent}.lead{color:var(--muted);max-width:760px;margin:auto}.chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:22px}.chip{padding:4px 11px;border:1px solid var(--border);border-radius:999px;color:var(--accent2);font-size:.78rem;background:rgba(124,106,255,.08)}
+    nav{position:sticky;top:0;z-index:5;display:flex;gap:5px;overflow:auto;padding:10px max(18px,calc((100% - 1060px)/2));background:rgba(10,10,15,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}nav a{color:var(--muted);text-decoration:none;white-space:nowrap;padding:7px 11px;border-radius:8px;font-size:.88rem}nav a:hover{background:var(--surface2);color:#fff}
+    main{max-width:1060px;margin:auto;padding:42px 22px 90px}.eyebrow{color:var(--accent2);font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}h2{font-size:clamp(1.55rem,3vw,2.2rem);line-height:1.25;margin:6px 0 12px}h3{margin-top:0}.intro{color:var(--muted);max-width:800px;margin-bottom:26px}
+    .assembly{position:relative;display:grid;grid-template-columns:repeat(6,minmax(125px,1fr));gap:12px;overflow-x:auto;padding:22px;background:linear-gradient(135deg,#151526,#101018);border:1px solid var(--border);border-radius:var(--radius)}.assembly:after{content:"→";position:absolute;left:3%;right:3%;top:50%;color:rgba(167,139,250,.45);font-size:2rem;letter-spacing:4.9vw;z-index:0;white-space:nowrap}.station{z-index:1;min-height:140px;padding:15px;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:0 8px 22px rgba(0,0,0,.2)}.station b{display:block;color:#fff}.station small{color:var(--muted);display:block;margin-top:7px}.station .num{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;background:var(--accent);font-size:.78rem;margin-bottom:10px}
+    .callout{padding:20px 22px;margin:26px 0;border-left:4px solid var(--orange);border-radius:0 12px 12px 0;background:rgba(251,146,60,.08)}.callout b{color:#fed7aa}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:25px 0 45px}.card{padding:22px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}.card p{color:var(--muted);margin-bottom:0}.card code,.terminal code{color:#c4b5fd}.terminal{padding:20px 22px;background:#08080d;border:1px solid #29263c;border-radius:12px;overflow:auto;line-height:1.9}.prompt{color:var(--green)}
+    .checklist{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:24px 0}.fault{appearance:none;text-align:left;cursor:pointer;padding:17px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;transition:.2s}.fault:hover,.fault.active{border-color:var(--accent);background:#201d36}.fault strong{display:block;color:var(--accent2);font-size:.95rem}.fault span{display:block;color:var(--muted);font-size:.82rem;margin-top:5px}.diagnosis{min-height:136px;padding:24px;border:1px solid rgba(96,200,255,.35);border-radius:var(--radius);background:linear-gradient(135deg,rgba(96,200,255,.10),rgba(124,106,255,.08))}.diagnosis h3{color:var(--blue)}.diagnosis p{margin:0;color:var(--text)}
+    .compare{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--border);border-radius:var(--radius);margin:22px 0 46px}.compare th,.compare td{padding:15px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}.compare th{background:var(--surface2);color:var(--accent2)}.compare tr:last-child td{border-bottom:0}.compare td{color:var(--muted)}.compare td:first-child{color:var(--text);font-weight:600}
+    .route{display:grid;grid-template-columns:130px 1fr;gap:0 22px;position:relative;margin:25px 0 45px}.route:before{content:"";position:absolute;left:64px;top:17px;bottom:17px;width:2px;background:linear-gradient(var(--accent),var(--green))}.route .step{display:contents}.dot{z-index:1;width:34px;height:34px;display:grid;place-items:center;margin:0 auto;background:var(--surface2);border:2px solid var(--accent);border-radius:50%;color:var(--accent2);font-weight:700}.route article{padding:0 0 25px}.route article p{margin:4px 0 0;color:var(--muted)}
+    footer{text-align:center;color:var(--muted);border-top:1px solid var(--border);padding:32px 20px}a{color:var(--accent2)}@media(max-width:760px){.grid{grid-template-columns:1fr}.checklist{grid-template-columns:1fr 1fr}.assembly{grid-template-columns:repeat(6,150px)}.route{grid-template-columns:70px 1fr}.route:before{left:34px}}@media(max-width:430px){.checklist{grid-template-columns:1fr}.compare{font-size:.86rem}.compare th,.compare td{padding:10px}}
+  </style>
+  <script defer src="analytics-consent.js"></script>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html">← 回到 AI Resources Hub</a>
+  <h1>Crosstool-NG：把 Cross Toolchain<br>看成一條組裝線</h1>
+  <p class="lead">它不是「另一個 GCC」；它是把 binutils、編譯器、C library、kernel headers 與 sysroot 的建置順序，收斂成一份可重現設定。</p>
+  <div class="chips"><span class="chip">Embedded Linux</span><span class="chip">SDK</span><span class="chip">sysroot</span><span class="chip">可重現建置</span></div>
+</header>
+<nav aria-label="頁面導覽"><a href="#line">組裝線</a><a href="#console">錯誤控制台</a><a href="#route">最小路線</a><a href="#choice">何時該用</a></nav>
+<main>
+  <section id="line">
+    <div class="eyebrow">先懂這個</div><h2>Toolchain 是一套「一起工作的供應鏈」</h2>
+    <p class="intro">當 target 是 ARM、RISC-V 或其他裝置時，host 電腦上的工具不能直接替 target 產生正確的 binary。Cross toolchain 的工作，是把每個零件組成同一個 target contract。</p>
+    <div class="assembly" aria-label="Cross toolchain 組裝流程">
+      <div class="station"><span class="num">1</span><b>Host tools</b><small>在你的 PC 上執行的 make、compiler、依賴工具</small></div>
+      <div class="station"><span class="num">2</span><b>binutils</b><small>assembler、linker 等目標格式工具</small></div>
+      <div class="station"><span class="num">3</span><b>Bootstrap GCC</b><small>先能編譯最小 target 元件的 compiler</small></div>
+      <div class="station"><span class="num">4</span><b>Headers + libc</b><small>kernel UAPI headers 與 C runtime 的邊界</small></div>
+      <div class="station"><span class="num">5</span><b>Final GCC</b><small>連到正確 libc 的完整 compiler</small></div>
+      <div class="station"><span class="num">6</span><b>SDK / sysroot</b><small><code>TARGET-gcc</code>、headers、libraries 的成套出口</small></div>
+    </div>
+    <aside class="callout"><b>你可以這樣想：</b>sysroot 像目標系統的「替身根目錄」。編譯時要找的 headers 與 libraries，都必須來自同一套替身；把 host 的 <code>/usr/include</code> 偷渡進去，就像把另一條組裝線的零件混進產品。</aside>
+  </section>
+
+  <section id="console">
+    <div class="eyebrow">互動控制台</div><h2>不要重跑 build，先替錯誤分類</h2><p class="intro">點選 build log 裡最像的訊號；控制台會顯示第一個該驗證的 contract。這不是自動修復器，而是縮小搜尋範圍的導航儀。</p>
+    <div class="checklist" id="fault-console">
+      <button class="fault active" data-key="host"><strong>Host dependency</strong><span>找不到 host 工具、版本或 library</span></button>
+      <button class="fault" data-key="tuple"><strong>Target tuple</strong><span>prefix、architecture、ABI 對不上</span></button>
+      <button class="fault" data-key="headers"><strong>Kernel headers</strong><span>UAPI headers 不可用或版本衝突</span></button>
+      <button class="fault" data-key="sysroot"><strong>sysroot / libc</strong><span>link、loader、C library ABI 問題</span></button>
+    </div>
+    <div class="diagnosis" id="diagnosis" aria-live="polite"><h3>Host dependency：先看建置機</h3><p>確認所需工具與開發套件是否在 host 上可執行，並把 host OS、ct-ng 版本與完整 log 一起保存；這類錯誤通常還沒走到 target 的 ABI 問題。</p></div>
+  </section>
+
+  <section id="route">
+    <div class="eyebrow">最小學習路線</div><h2>從 sample 出發，而不是從空白設定開始</h2>
+    <div class="terminal"><code><span class="prompt">$</span> ct-ng list-samples<br><span class="prompt">$</span> ct-ng &lt;接近的-target-sample&gt;<br><span class="prompt">$</span> ct-ng menuconfig<br><span class="prompt">$</span> ct-ng build</code></div>
+    <div class="route">
+      <div class="step"><div class="dot">1</div><article><h3>選接近的 target</h3><p>先讓 sample 決定大多數相容組合；它是可閱讀的起點，不是盲目複製的答案。</p></article></div>
+      <div class="step"><div class="dot">2</div><article><h3>鎖定三個名字</h3><p>architecture、target tuple、libc。之後 compiler prefix、sysroot 與 linker flags 都要回到這三者驗證。</p></article></div>
+      <div class="step"><div class="dot">3</div><article><h3>把產物當成一組</h3><p>使用 target-prefixed compiler 時，同時確認它指向的 sysroot；「compiler 能跑」不代表產物能在 target 執行。</p></article></div>
+      <div class="step"><div class="dot">4</div><article><h3>留下可重現證據</h3><p>保存 <code>.config</code>、版本、host OS、log，並放進 container 或 CI，讓這條組裝線不只在一台工程師電腦上成立。</p></article></div>
+    </div>
+  </section>
+
+  <section id="choice">
+    <div class="eyebrow">決策地圖</div><h2>它仍有位置，但不必是每個專案的起點</h2>
+    <table class="compare"><thead><tr><th>情境</th><th>優先做法</th><th>理由</th></tr></thead><tbody>
+      <tr><td>研究 toolchain 組成、特殊 target / libc 組合</td><td>考慮 Crosstool-NG</td><td>能看見並控制完整組裝順序，適合建立獨立 SDK。</td></tr>
+      <tr><td>既有 BSP、vendor SDK</td><td>遵從專案 canonical toolchain</td><td>供應商通常已把 ABI、patch 與測試矩陣綁在一起。</td></tr>
+      <tr><td>產品使用 Yocto 或 Buildroot</td><td>先沿用既有系統</td><td>它們已把 toolchain 納入整體 image 與 package 流程。</td></tr>
+      <tr><td>CI / container build 已提供 compiler</td><td>先重現官方環境</td><td>避免自行生成 SDK 後，造成環境與 release contract 分叉。</td></tr>
+    </tbody></table>
+    <aside class="callout"><b>常見誤解：</b>「時代的眼淚」不等於沒有價值。它描述的是工作流被更高層工具封裝了；ABI、headers、sysroot 與 patch maintenance 這些底層契約仍然在，只是藏在別人的自動化裡。</aside>
+  </section>
+</main>
+<footer>把 toolchain 想成組裝線：每個零件都要有一致的 target contract，產物才會走到正確的裝置上。</footer>
+<script>
+  const messages={host:['Host dependency：先看建置機','確認所需工具與開發套件是否在 host 上可執行，並把 host OS、ct-ng 版本與完整 log 一起保存；這類錯誤通常還沒走到 target 的 ABI 問題。'],tuple:['Target tuple：先追同一個名字','檢查 compiler prefix、architecture、ABI 與 configure triplet 是否一致。例如 compiler、sysroot 與 linker flags 必須指向同一個 target contract。'],headers:['Kernel headers：先辨認 API 邊界','確認選用的是 target 所需的 kernel UAPI headers，而不是 host 的 headers。headers 是 libc 與 userspace 看見 kernel 介面的約定。'],sysroot:['sysroot / libc：先看成套出口','確認 compiler 實際採用的 sysroot、libc 與 dynamic loader；不要讓 include 或 library search path 混入 host 的 /usr。']};
+  const consoleEl=document.getElementById('fault-console'),out=document.getElementById('diagnosis');
+  consoleEl.addEventListener('click',e=>{const button=e.target.closest('.fault');if(!button)return;consoleEl.querySelectorAll('.fault').forEach(x=>x.classList.toggle('active',x===button));const [title,text]=messages[button.dataset.key];out.innerHTML=`<h3>${title}</h3><p>${text}</p>`;});
+</script>
+</body></html>
