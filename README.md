@@ -15,7 +15,6 @@
 | `mcp_guide.html` | MCP 入門圖解（AI 如何以共同協定安全連接工具、資料與外部服務） |
 | `context_windows.html` | Context Window 上下文視窗圖解（AI 工作桌心智模型、上下文流動、長文件管理） |
 | `token_explained.html` | Token 入門圖解（tokenizer 切分、成本與上下文預算、prompt 實務建議） |
-
 | `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
@@ -54,7 +53,7 @@
 | `metro_knowledge.html` | 捷運系統知識庫（形式分類、技術規格、信號系統、知名廠商、世界著名系統） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 | `router-industry.html` | 路由器產業全景（家用、企業、電信、骨幹級分類、供應鏈與技術趨勢） |
-| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖）; EML laser/CPO difference |
+| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖，以及 EML Laser 與 CPO 的差異） |
 | `switch-industry.html` | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
 | `fiber-optic-industry.html` | 光纖接入產業全景（PON 技術原理、OLT/ONU 設備、PLOAM／OMCI、T-CONT、GEM、常見 ME 與骨幹網對接） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
@@ -79,13 +78,11 @@
 | `thailand_history.html` | 泰國歷史完整指南（史前文明、五大王朝、泰緬戰爭、近現代史、關鍵人物） |
 | `chinese_history.html` | 中國歷史全覽（史前到現代、歷代王朝卡片、重大事件、關鍵人物、文化成就、王朝速查表） |
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
-| switch-industry.html | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis 狀態管理、SAI 晶片抽象層、RoCEv2 AI 網路） |
 | `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
-
 | `aircraft-attitude.html` | 飛機的姿態：客機與戰機如何在三條軸上飛行（新手友善互動知識導覽） |
 | `dehumidifier-principles.html` | 除濕機的原理：把水氣留在機器裡（新手友善互動知識導覽） |
 | `why-we-dream.html` | 做夢的原因：睡著的大腦仍在整理世界（新手友善互動知識導覽） |
