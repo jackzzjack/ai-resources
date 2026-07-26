@@ -40,7 +40,10 @@
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
 | `f1_driver_knowledge.html` | F1 車手體能要求與價值（體能要求、價值分析、日常工作、訓練方法） |
 | `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
+| `hbm_memory.html` | HBM 高頻寬記憶體完整解析（3D 堆疊、TSV 垂直互連、CoWoS 封裝、HBM1 至 HBM4 世代演進，以及與 DDR5、GDDR6X 的比較） |
+| `memory_types.html` | 記憶體類型完整指南（SRAM、DRAM、NOR Flash、NAND Flash、eMMC／UFS 的原理與應用場景） |
 | `power-industry.html` | 電源與能源產業分析（全球電力趨勢、台灣能源結構、AI 伺服器電源 PSU 供應鏈） |
+| `bbu_guide.html` | BBU 電池備援單元完整指南（Write-Back 快取、RAID 控制器、DRAM 資料保護，以及 FBWC、NVDIMM 等替代方案） |
 | `thermal-industry.html` | 散熱產業生態系（3D VC、冷板液冷 DLC、CDU、全球 AI 伺服器散熱供應鏈） |
 | `ems-industry.html` | EMS 電子代工產業生態系（供應鏈上下游、OEM/ODM 模式、全球領導大廠） |
 | `shipping-industry.html` | 航運產業生態系（定期與不定期航線模式、全球供應鏈協作、船舶分級） |
@@ -64,6 +67,7 @@
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學（眼球構造、虹膜調光機制、顏色成因與遺傳、動物瞳孔多樣性） |
 | `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
 | `serdes_guide.html` | SerDes 完整實作指南（序列化器/解序列化器原理、NRZ/PAM4 調變、等化器、CDR、訊號完整性、實作清單） |
+| `mac_serdes.html` | MAC 晶片 × PHY × SerDes 完整導覽（乙太網路幀封裝、MII／XGMII／CAUI-4 介面，以及 CPU 至銅線／光纖的訊號鏈） |
 | `usb_hub_architecture.html` | USB HUB 架構完整解析（常用 IC、Transaction Translator、頻寬機制、ODM 硬體開發流程） |
 | `usb_flash_drive_guide.html` | USB 隨身碟挑選圖解（容量、讀寫速度、USB-A／USB-C 接頭、相容性與 3-2-1 備份觀念） |
 | `pcie_linux_driver.html` | PCIe 與 Linux Driver 完整指南（協定分層、Gen 1~6 規格演進、拓撲架構、TLP 封包、Linux 子系統、Driver 驅動流程、核心 API、裝置與 Driver 對照表、偵錯工具） |
@@ -71,6 +75,7 @@
 | `japan_history.html` | 日本歷史全覽（繩文・彌生・古墳・飛鳥・奈良・平安・鎌倉・戰國・江戶・明治維新・二戰・現代） |
 | `us_history_overview.html` | 美國歷史全覽（8 大時代、大事年表、關鍵人物、核心概念、重要戰爭） |
 | `russian_history.html` | 俄羅斯歷史全覽（基輔羅斯、沙皇國、帝俄、蘇聯、現代俄羅斯，含重要人物與名詞解釋） |
+| `british_history.html` | 英國歷史全覽（從史前巨石陣、羅馬統治與都鐸王朝，到工業革命、大英帝國與現代 Brexit） |
 | `thailand_history.html` | 泰國歷史完整指南（史前文明、五大王朝、泰緬戰爭、近現代史、關鍵人物） |
 | `chinese_history.html` | 中國歷史全覽（史前到現代、歷代王朝卡片、重大事件、關鍵人物、文化成就、王朝速查表） |
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
