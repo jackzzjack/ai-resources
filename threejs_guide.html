@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Three.js 入門圖解：了解瀏覽器 3D 的場景、相機、物件、燈光與渲染器。">
+  <title>Three.js 入門圖解 — 瀏覽器 3D 的起點</title>
+  <style>
+    :root { --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c28; --border:#2a2a3d; --accent:#7c6aff; --accent2:#a78bfa; --cyan:#41d9ff; --text:#e8e8f0; --muted:#9a9ab4; --radius:18px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif; line-height:1.65; }
+    a { color:var(--accent2); }
+    .wrap { width:min(1120px,calc(100% - 40px)); margin:auto; }
+    nav { display:flex; justify-content:space-between; align-items:center; padding:22px 0; font-size:.92rem; }
+    nav a { color:var(--text); text-decoration:none; } .brand { font-weight:800; letter-spacing:.04em; } .home { color:var(--muted); }
+    .hero { position:relative; overflow:hidden; padding:66px 0 76px; background:radial-gradient(circle at 75% 45%,rgba(65,217,255,.14),transparent 30%),radial-gradient(circle at 25% 15%,rgba(124,106,255,.22),transparent 34%); }
+    .hero-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:36px; align-items:center; }
+    .eyebrow { display:inline-flex; border:1px solid rgba(167,139,250,.38); border-radius:99px; color:var(--accent2); padding:5px 12px; font-size:.82rem; letter-spacing:.04em; }
+    h1 { font-size:clamp(2.45rem,6vw,5.2rem); line-height:1.03; letter-spacing:-.055em; margin:16px 0 18px; }
+    h1 span { color:var(--cyan); } .lead { max-width:620px; color:var(--muted); font-size:1.1rem; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; } .button { padding:11px 17px; border-radius:10px; background:var(--accent); color:#fff; text-decoration:none; font-weight:700; } .button.secondary { background:transparent; border:1px solid var(--border); color:var(--text); }
+    .stage { min-height:330px; display:grid; place-items:center; perspective:850px; }
+    .cube { width:164px; height:164px; position:relative; transform-style:preserve-3d; animation:spin 13s linear infinite; }
+    .face { position:absolute; inset:0; display:grid; place-items:center; border:1px solid rgba(65,217,255,.7); background:linear-gradient(135deg,rgba(124,106,255,.3),rgba(65,217,255,.1)); color:#dffaff; box-shadow:inset 0 0 32px rgba(65,217,255,.12); font-weight:800; letter-spacing:.1em; }
+    .front { transform:translateZ(82px); }.back { transform:rotateY(180deg) translateZ(82px); }.right { transform:rotateY(90deg) translateZ(82px); }.left { transform:rotateY(-90deg) translateZ(82px); }.top { transform:rotateX(90deg) translateZ(82px); }.bottom { transform:rotateX(-90deg) translateZ(82px); }
+    @keyframes spin { to { transform:rotateX(360deg) rotateY(360deg); } }
+    main { padding:70px 0 92px; } section { margin-bottom:72px; } h2 { font-size:clamp(1.7rem,3vw,2.45rem); letter-spacing:-.035em; margin:0 0 12px; } .section-lead { color:var(--muted); max-width:760px; margin:0 0 27px; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }.card,.panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; }.card h3 { margin:10px 0 8px; font-size:1.1rem; }.card p,.panel p { margin:0; color:var(--muted); font-size:.95rem; }.icon { font-size:1.55rem; }.tag { display:inline-block; padding:3px 9px; border-radius:99px; background:rgba(124,106,255,.14); color:var(--accent2); font-size:.75rem; }
+    .pipeline { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; align-items:center; }.node { min-height:130px; display:flex; flex-direction:column; justify-content:center; padding:17px; border-radius:14px; border:1px solid var(--border); background:var(--surface); }.node strong { font-size:1.03rem; }.node span { color:var(--muted); font-size:.84rem; margin-top:4px; }.arrow { text-align:center; color:var(--cyan); font-size:1.4rem; }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:20px; }.code { overflow:auto; padding:23px; border-radius:var(--radius); background:#090a12; border:1px solid #292847; color:#d9e9ff; font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre; }.code .comment { color:#7f8a9c; }.code .key { color:#c8a8ff; }.code .value { color:#78e4ff; }
+    .checklist { list-style:none; padding:0; margin:14px 0 0; }.checklist li { padding:11px 0 11px 26px; border-bottom:1px solid var(--border); position:relative; }.checklist li::before { content:"→"; color:var(--cyan); position:absolute; left:0; }.checklist li:last-child { border:0; }
+    .resources { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }.resource { padding:20px; border:1px solid var(--border); border-radius:14px; background:var(--surface); text-decoration:none; color:var(--text); transition:.2s; }.resource:hover { transform:translateY(-3px); border-color:var(--accent); background:var(--surface2); }.resource small { display:block; color:var(--muted); margin-top:5px; }
+    .note { border-left:3px solid var(--cyan); padding:13px 17px; background:rgba(65,217,255,.06); color:var(--muted); border-radius:0 10px 10px 0; font-size:.92rem; }
+    footer { padding:35px 20px; border-top:1px solid var(--border); text-align:center; color:var(--muted); font-size:.88rem; }
+    @media (max-width:800px) { .hero-grid,.split { grid-template-columns:1fr; }.stage { min-height:230px; }.cards { grid-template-columns:1fr 1fr; }.pipeline { grid-template-columns:1fr; }.arrow { transform:rotate(90deg); }.resources { grid-template-columns:1fr 1fr; } }
+    @media (max-width:520px) { .wrap { width:min(100% - 28px,1120px); }.hero { padding-top:35px; }.cards,.resources { grid-template-columns:1fr; }.cube { transform:scale(.78); }.face { font-size:.85rem; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }.cube { animation:none; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <nav><a class="brand" href="index.html">AI RESOURCES</a><a class="home" href="index.html">← 回資源入口</a></nav>
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">JAVASCRIPT 3D LIBRARY</span>
+          <h1>讓網頁擁有<br><span>第三個維度。</span></h1>
+          <p class="lead">Three.js 是一套 JavaScript 3D 函式庫。它把 WebGL／WebGPU 的底層圖形能力整理成場景、相機、網格與燈光，讓你能在瀏覽器中建立互動式 3D 體驗。</p>
+          <div class="actions"><a class="button" href="https://threejs.org/" target="_blank" rel="noopener">前往 threejs.org ↗</a><a class="button secondary" href="#start">從第一個場景開始</a></div>
+        </div>
+        <div class="stage" aria-label="旋轉的 Three.js 概念立方體"><div class="cube"><div class="face front">SCENE</div><div class="face back">CAMERA</div><div class="face right">MESH</div><div class="face left">LIGHT</div><div class="face top">RENDER</div><div class="face bottom">WEB</div></div></div>
+      </div>
+    </div>
+  </header>
+  <main class="wrap">
+    <section>
+      <h2>它替你處理了什麼？</h2>
+      <p class="section-lead">瀏覽器原生已能以 WebGL 或 WebGPU 繪圖，但 API 偏低階。Three.js 提供一致的物件模型與大量現成工具，讓重心回到作品本身。</p>
+      <div class="cards">
+        <article class="card"><div class="icon">🧊</div><h3>3D 場景管理</h3><p>以物件樹組織模型、群組、材質與動畫，不必自己處理每一個頂點與矩陣。</p></article>
+        <article class="card"><div class="icon">💡</div><h3>光影與材質</h3><p>從基本光源到 PBR 材質、陰影、環境貼圖，建立更有空間感的畫面。</p></article>
+        <article class="card"><div class="icon">🕹️</div><h3>互動與擴充</h3><p>常用的 OrbitControls、GLTFLoader、後製效果與 WebXR 支援都能作為 addons 加入。</p></article>
+      </div>
+    </section>
+    <section>
+      <h2>一個畫面如何被畫出來？</h2>
+      <p class="section-lead">這五個角色是理解 Three.js 最好的心智模型：把物件放入舞台，用攝影機決定視角，最後交給渲染器輸出到 canvas。</p>
+      <div class="pipeline">
+        <div class="node"><strong>1. Scene</strong><span>整個 3D 世界的容器</span></div><div class="arrow">→</div>
+        <div class="node"><strong>2. Mesh</strong><span>幾何形狀 + 材質</span></div><div class="arrow">→</div>
+        <div class="node"><strong>3. Camera</strong><span>觀看世界的位置與角度</span></div><div class="arrow">→</div>
+        <div class="node"><strong>4. Renderer</strong><span>把場景算成螢幕像素</span></div><div class="arrow">→</div>
+        <div class="node"><strong>5. Canvas</strong><span>顯示在網頁上的結果</span></div>
+      </div>
+    </section>
+    <section id="start">
+      <h2>最小可運作範例</h2>
+      <p class="section-lead">以下程式建立一顆旋轉立方體。將它放進 HTML 檔後，以本機伺服器開啟；ES module 通常不適合直接用 <code>file://</code> 瀏覽。</p>
+      <div class="split">
+        <pre class="code"><span class="comment">// 以 CDN 載入 Three.js</span>
+<span class="key">import</span> * <span class="key">as</span> THREE <span class="key">from</span> <span class="value">'https://cdn.jsdelivr.net/npm/three@0.180/build/three.module.js'</span>;
+
+<span class="key">const</span> scene = <span class="key">new</span> THREE.Scene();
+<span class="key">const</span> camera = <span class="key">new</span> THREE.PerspectiveCamera(<span class="value">75</span>, innerWidth / innerHeight, <span class="value">0.1</span>, <span class="value">100</span>);
+<span class="key">const</span> renderer = <span class="key">new</span> THREE.WebGLRenderer({ antialias: <span class="key">true</span> });
+
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);</pre>
+        <div class="panel"><span class="tag">關鍵觀念</span><h3>Geometry + Material = Mesh</h3><p>Geometry 描述「形狀」，Material 描述「表面如何與光互動」。兩者合成 Mesh，才成為場景中可被繪製的物件。</p><ul class="checklist"><li>相機預設在原點，物件要移開或相機要後退。</li><li>每次畫面更新都要呼叫 <code>renderer.render(scene, camera)</code>。</li><li>動畫使用 <code>requestAnimationFrame</code>，每幀調整物件後重繪。</li></ul></div>
+      </div>
+      <p class="note">實務上請固定相容的版本；官方文件與 addons 的 import 路徑也應使用同一個 Three.js release。</p>
+    </section>
+    <section>
+      <h2>從零到作品的學習路徑</h2>
+      <div class="cards">
+        <article class="card"><span class="tag">第一步</span><h3>幾何與相機</h3><p>做出 cube、sphere，理解座標軸、PerspectiveCamera 與 renderer 的關係。</p></article>
+        <article class="card"><span class="tag">第二步</span><h3>材質、光源、控制器</h3><p>加入 MeshStandardMaterial、環境光與 OrbitControls，開始用「看起來對」的方式調整畫面。</p></article>
+        <article class="card"><span class="tag">第三步</span><h3>模型、效能與互動</h3><p>以 GLTFLoader 載入 glTF，練習 raycasting 點擊互動，並留意像素比、模型面數與貼圖大小。</p></article>
+      </div>
+    </section>
+    <section>
+      <h2>官方入口</h2>
+      <p class="section-lead">Three.js 官網同時提供文件、範例、編輯器與社群入口；遇到問題時，先用官方範例確認概念，通常最快。</p>
+      <div class="resources">
+        <a class="resource" href="https://threejs.org/docs/" target="_blank" rel="noopener"><strong>Documentation ↗</strong><small>API 與 addons 參考文件</small></a>
+        <a class="resource" href="https://threejs.org/examples/" target="_blank" rel="noopener"><strong>Examples ↗</strong><small>可直接執行的效果範例</small></a>
+        <a class="resource" href="https://threejs.org/manual/" target="_blank" rel="noopener"><strong>Manual ↗</strong><small>概念導向的入門教學</small></a>
+        <a class="resource" href="https://github.com/mrdoob/three.js" target="_blank" rel="noopener"><strong>GitHub ↗</strong><small>原始碼、版本與 issue</small></a>
+      </div>
+    </section>
+  </main>
+  <footer>Three.js 為開源專案；本頁為學習導覽，非官方文件。資料入口：<a href="https://threejs.org/" target="_blank" rel="noopener">threejs.org</a></footer>
+</body>
+</html>

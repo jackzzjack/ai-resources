@@ -11,11 +11,11 @@
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
+| `ai-native.html` | AI Native 工作方式導覽：理解其理念、人機協作迴圈、落地五步法與流程自評 |
 | `hermes_agents_guide.html` | Hermes Agents 入門圖解（模型、工具、脈絡、技能專章、執行流程與聊天 AI 對照） |
 | `mcp_guide.html` | MCP 入門圖解（AI 如何以共同協定安全連接工具、資料與外部服務） |
 | `context_windows.html` | Context Window 上下文視窗圖解（AI 工作桌心智模型、上下文流動、長文件管理） |
 | `token_explained.html` | Token 入門圖解（tokenizer 切分、成本與上下文預算、prompt 實務建議） |
-
 | `periodic_table.html` | 互動式元素週期表，含熔點、沸點、密度、發現年份等資料 |
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
@@ -35,58 +35,67 @@
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
+| `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表 |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
 | `f1_driver_knowledge.html` | F1 車手體能要求與價值（體能要求、價值分析、日常工作、訓練方法） |
 | `ai-infrastructure.html` | AI 基礎設施生態系（AI 伺服器、AI 交換器、CPO 共封裝光學、NVLink / UALink 互連技術） |
+| `hbm_memory.html` | HBM 高頻寬記憶體完整解析（3D 堆疊、TSV 垂直互連、CoWoS 封裝、HBM1 至 HBM4 世代演進，以及與 DDR5、GDDR6X 的比較） |
+| `memory_types.html` | 記憶體類型完整指南（SRAM、DRAM、NOR Flash、NAND Flash、eMMC／UFS 的原理與應用場景） |
 | `power-industry.html` | 電源與能源產業分析（全球電力趨勢、台灣能源結構、AI 伺服器電源 PSU 供應鏈） |
+| `bbu_guide.html` | BBU 電池備援單元完整指南（Write-Back 快取、RAID 控制器、DRAM 資料保護，以及 FBWC、NVDIMM 等替代方案） |
 | `thermal-industry.html` | 散熱產業生態系（3D VC、冷板液冷 DLC、CDU、全球 AI 伺服器散熱供應鏈） |
 | `ems-industry.html` | EMS 電子代工產業生態系（供應鏈上下游、OEM/ODM 模式、全球領導大廠） |
 | `shipping-industry.html` | 航運產業生態系（定期與不定期航線模式、全球供應鏈協作、船舶分級） |
 | `stock-valuation.html` | 投資評價工具（本益比計算機、回本年限視覺化、不同產業估值邏輯） |
+| `one-person-company.html` | 一人公司導覽（定義、核心理念、營運系統與 90 天行動計畫） |
 | `us-broker-choice.html` | IBKR、嘉信、Firstrade 美股券商新手圖解（資金路徑、IBKR 入金心智模型、定期定額規劃、比較表與互動情境篩選） |
 | `covered_call_guide.html` | Covered Call 備兌買權新手圖解（持股與買權關係、指派流程、風險對照與互動情境試算） |
 | `taipei_mrt_map.html` | 台北捷運路網互動圖（包含營運中、興建中與規劃中路線） |
 | `metro_knowledge.html` | 捷運系統知識庫（形式分類、技術規格、信號系統、知名廠商、世界著名系統） |
 | `semiconductor-industry.html` | 半導體產業生態系與製造流程（IC 設計、晶圓代工、封裝測試、設備與材料供應鏈） |
 | `router-industry.html` | 路由器產業全景（家用、企業、電信、骨幹級分類、供應鏈與技術趨勢） |
-| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖）; EML laser/CPO difference |
+| `cpo-industry.html` | CPO 共封裝光學產業全景（技術原理、產業鏈重構、關鍵廠商、發展路線圖，以及 EML Laser 與 CPO 的差異） |
 | `switch-industry.html` | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
 | `fiber-optic-industry.html` | 光纖接入產業全景（PON 技術原理、OLT/ONU 設備、PLOAM／OMCI、T-CONT、GEM、常見 ME 與骨幹網對接） |
 | `brain_forgetting.html` | 人腦遺忘原理互動圖（艾賓豪斯曲線、神經機制、白熊效應） |
 | `linux_kernel_overview.html` | Linux Kernel 架構全覽（元件分層圖、子系統代號、研究熱點、v6.1–6.14 版本特色） |
 | `philippine_eagle.html` | 菲律賓鷹互動知識頁（物種概覽、習性行為、保育現況、趣味知識） |
 | `whale_knowledge.html` | 鯨魚世界互動知識頁（鬚鯨 vs 齒鯨、習性行為、鯨歌溝通、遷徙路線、保育現況） |
+| `sperm_whale.html` | 抹香鯨互動知識頁（最大齒鯨、深潛覓食、回聲定位、母系社會、喀答聲與保育議題） |
 | `dolphin.html` | 海豚互動知識頁（物種概覽、習性行為、智能溝通、主要物種、保育現況） |
 | `dinosaurs.html` | 恐龍百科互動知識頁（地質年代、分類系統、10 大物種圖鑑、習性行為、體型比較、K-Pg 滅絕事件） |
 | `gerd_guide.html` | 胃食道逆流完整指南（GERD 成因、症狀辨別、潛在後果、治療策略、衛教影片嵌入） |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學（眼球構造、虹膜調光機制、顏色成因與遺傳、動物瞳孔多樣性） |
 | `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
 | `serdes_guide.html` | SerDes 完整實作指南（序列化器/解序列化器原理、NRZ/PAM4 調變、等化器、CDR、訊號完整性、實作清單） |
+| `mac_serdes.html` | MAC 晶片 × PHY × SerDes 完整導覽（乙太網路幀封裝、MII／XGMII／CAUI-4 介面，以及 CPU 至銅線／光纖的訊號鏈） |
 | `usb_hub_architecture.html` | USB HUB 架構完整解析（常用 IC、Transaction Translator、頻寬機制、ODM 硬體開發流程） |
 | `usb_flash_drive_guide.html` | USB 隨身碟挑選圖解（容量、讀寫速度、USB-A／USB-C 接頭、相容性與 3-2-1 備份觀念） |
 | `pcie_linux_driver.html` | PCIe 與 Linux Driver 完整指南（協定分層、Gen 1~6 規格演進、拓撲架構、TLP 封包、Linux 子系統、Driver 驅動流程、核心 API、裝置與 Driver 對照表、偵錯工具） |
 | `train_knowledge.html` | 火車百科（歷史演進、種類解析、速度紀錄、主要車型規格數據、全球出口國與未來趨勢） |
 | `japan_history.html` | 日本歷史全覽（繩文・彌生・古墳・飛鳥・奈良・平安・鎌倉・戰國・江戶・明治維新・二戰・現代） |
+| `dutch_republic.html` | 荷蘭共和國重點導覽（尼德蘭七省聯合共和國、獨立歷程、七省邦聯、荷蘭黃金時代與歷史遺產） |
 | `us_history_overview.html` | 美國歷史全覽（8 大時代、大事年表、關鍵人物、核心概念、重要戰爭） |
 | `russian_history.html` | 俄羅斯歷史全覽（基輔羅斯、沙皇國、帝俄、蘇聯、現代俄羅斯，含重要人物與名詞解釋） |
+| `british_history.html` | 英國歷史全覽（從史前巨石陣、羅馬統治與都鐸王朝，到工業革命、大英帝國與現代 Brexit） |
 | `thailand_history.html` | 泰國歷史完整指南（史前文明、五大王朝、泰緬戰爭、近現代史、關鍵人物） |
 | `chinese_history.html` | 中國歷史全覽（史前到現代、歷代王朝卡片、重大事件、關鍵人物、文化成就、王朝速查表） |
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
-| switch-industry.html | 網路交換器產業生態系（市場細分、關鍵技術 ASIC/SerDes、全球與台灣供應鏈、CPO/UEC 未來趨勢） |
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis 狀態管理、SAI 晶片抽象層、RoCEv2 AI 網路） |
 | `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
-
 | `aircraft-attitude.html` | 飛機的姿態：客機與戰機如何在三條軸上飛行（新手友善互動知識導覽） |
 | `dehumidifier-principles.html` | 除濕機的原理：把水氣留在機器裡（新手友善互動知識導覽） |
 | `why-we-dream.html` | 做夢的原因：睡著的大腦仍在整理世界（新手友善互動知識導覽） |
 | `classical-music-types.html` | 古典音樂的類型：從巴洛克到當代的聆聽地圖（新手友善互動知識導覽） |
 | `jazz-types.html` | Jazz 的類型：沿著一棵會聽的爵士樹探索（新手友善互動知識導覽） |
 | `gpt-5-6-guide.html` | GPT-5.6：把 AI 協作變成可驗收的工作流程（新手友善互動知識導覽） |
+| `threejs_guide.html` | Three.js 入門圖解（瀏覽器 3D 的場景、相機、網格、渲染器與最小程式範例） |
+| `touchdesigner_guide.html` | TouchDesigner 入門圖解（節點式即時視覺、五種 OP、聲音反應 patch 與學習路線） |
 
 ---
 

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="抹香鯨互動知識頁：認識最大齒鯨的巨頭、深潛、回聲定位、母系社會與保育議題。" />
+  <title>抹香鯨：深海的聲納獵人</title>
+  <style>
+    :root { --bg:#07111d; --surface:#0e1d2d; --surface2:#122940; --line:#24435c; --text:#ecf7ff; --muted:#9cb5c8; --blue:#42c5f5; --teal:#49e0c1; --gold:#ffd36e; --danger:#ff8d8d; --radius:18px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif; line-height:1.7; }
+    header { padding:76px 24px 52px; text-align:center; overflow:hidden; position:relative; background:radial-gradient(ellipse at 50% -25%,#1b6385 0%,transparent 58%),linear-gradient(180deg,#0b2a41 0%,var(--bg) 92%); border-bottom:1px solid var(--line); }
+    header::before { content:""; position:absolute; inset:0; opacity:.36; background-image:radial-gradient(circle at 15% 30%,#bff4ff 0 1px,transparent 1.5px),radial-gradient(circle at 82% 20%,#bff4ff 0 1px,transparent 1.5px); background-size:54px 54px,73px 73px; }
+    header > * { position:relative; }
+    .eyebrow { color:var(--teal); font-size:.85rem; font-weight:700; letter-spacing:.15em; }
+    h1 { margin:10px 0 8px; font-size:clamp(2.15rem,6vw,4rem); line-height:1.12; letter-spacing:.04em; }
+    .latin { color:var(--blue); font-family:Georgia,serif; font-size:1.05rem; font-style:italic; }
+    .lead { max-width:700px; margin:20px auto 0; color:#d2e7f4; font-size:1.08rem; }
+    nav { position:sticky; top:0; z-index:10; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; padding:12px 16px; background:rgba(7,17,29,.92); border-bottom:1px solid var(--line); backdrop-filter:blur(12px); }
+    nav a { color:var(--muted); text-decoration:none; font-size:.88rem; border:1px solid transparent; border-radius:999px; padding:5px 12px; }
+    nav a:hover { color:var(--blue); border-color:var(--line); background:var(--surface); }
+    main { width:min(1080px,calc(100% - 40px)); margin:auto; padding:52px 0 76px; }
+    section { scroll-margin-top:72px; margin-bottom:58px; }
+    h2 { margin:0 0 22px; font-size:clamp(1.5rem,3vw,2rem); color:#fff; }
+    h2 span { color:var(--blue); margin-right:.38em; }
+    h3 { margin:0 0 7px; font-size:1.08rem; }
+    p { margin:0 0 14px; }
+    .intro { font-size:1.08rem; color:#d5e8f4; max-width:850px; }
+    .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .card, .panel { background:linear-gradient(145deg,rgba(18,41,64,.94),rgba(10,26,42,.94)); border:1px solid var(--line); border-radius:var(--radius); }
+    .stat { padding:20px; min-height:152px; }
+    .stat .value { color:var(--blue); font-size:1.55rem; font-weight:800; line-height:1.1; }
+    .stat .label { color:var(--text); font-weight:700; margin-top:9px; }
+    .stat small { color:var(--muted); display:block; margin-top:3px; line-height:1.45; }
+    .feature { display:grid; grid-template-columns:1.05fr .95fr; gap:20px; }
+    .panel { padding:25px; }
+    .anatomy { position:relative; min-height:360px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:linear-gradient(160deg,#0e3a55,#071724); }
+    .whale { position:relative; width:83%; height:130px; background:linear-gradient(180deg,#7791a2,#344957); border-radius:54% 27% 35% 45%; transform:rotate(-3deg); box-shadow:inset -18px -16px 0 rgba(0,0,0,.15); }
+    .whale::before { content:""; position:absolute; right:-8%; top:35%; width:27%; height:49%; background:#405663; clip-path:polygon(0 47%,100% 0,83% 48%,100% 100%); }
+    .whale::after { content:""; position:absolute; left:8%; top:29%; width:11px; height:11px; border-radius:50%; background:#051018; box-shadow:0 0 0 4px rgba(255,255,255,.35); }
+    .callout { position:absolute; color:var(--text); font-size:.82rem; font-weight:700; background:rgba(7,17,29,.82); border:1px solid #4e90ad; border-radius:8px; padding:4px 9px; }
+    .c1 { left:9%; top:16%; } .c2 { left:38%; bottom:15%; } .c3 { right:6%; top:23%; }
+    .facts { display:grid; gap:13px; }
+    .fact { padding:14px 15px; background:rgba(66,197,245,.07); border-left:3px solid var(--blue); border-radius:0 10px 10px 0; }
+    .fact strong { color:var(--blue); }
+    .dive { padding:28px; overflow:hidden; background:linear-gradient(180deg,#0c4b72 0%,#092e50 21%,#071b34 56%,#030914 100%); }
+    .dive-track { position:relative; height:390px; max-width:580px; margin:auto; border-left:2px dashed rgba(255,255,255,.36); }
+    .depth { position:absolute; left:17px; color:#b6d7e7; font-size:.82rem; } .d0 {top:-12px}.d500{top:25%}.d1000{top:50%}.d2000{top:90%}
+    .dive-whale { position:absolute; left:38%; top:12%; font-size:3.6rem; transform:rotate(84deg); filter:drop-shadow(0 8px 8px #000); }
+    .prey { position:absolute; left:55%; bottom:8%; font-size:2rem; }
+    .dive-note { position:absolute; left:27%; width:65%; color:#d8f2ff; font-size:.93rem; } .n1{top:24%}.n2{top:52%}.n3{bottom:5%}
+    .timeline { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+    .step { padding:21px; position:relative; }
+    .step-number { color:var(--teal); font-size:.8rem; font-weight:800; letter-spacing:.12em; }
+    .step p { color:var(--muted); font-size:.93rem; margin:6px 0 0; }
+    .social { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .coda { padding:25px; }
+    .signal { display:flex; gap:8px; align-items:center; min-height:58px; margin:10px 0 15px; }
+    .click { width:11px; background:var(--teal); border-radius:99px; box-shadow:0 0 13px rgba(73,224,193,.6); } .click:nth-child(1){height:20px}.click:nth-child(2){height:42px}.click:nth-child(3){height:18px}.click:nth-child(4){height:42px}.click:nth-child(5){height:18px}
+    .quote { color:#cce5ef; font-size:1.06rem; border-left:4px solid var(--gold); padding:9px 0 9px 17px; }
+    .threats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .threat { padding:21px; } .threat .icon { font-size:1.7rem; } .threat p { color:var(--muted); font-size:.92rem; margin:5px 0 0; }
+    .status { margin-top:18px; padding:18px 21px; border-radius:12px; color:#feeec3; background:rgba(255,211,110,.1); border:1px solid rgba(255,211,110,.3); }
+    .sources { font-size:.9rem; color:var(--muted); }
+    .sources li { margin:8px 0; } .sources a { color:var(--blue); }
+    footer { padding:28px; color:var(--muted); text-align:center; border-top:1px solid var(--line); background:#06101b; font-size:.88rem; }
+    @media (max-width:760px) { .grid{grid-template-columns:repeat(2,1fr)} .feature,.social{grid-template-columns:1fr} .timeline,.threats{grid-template-columns:1fr} header{padding-top:56px} main{width:min(100% - 28px,1080px)} .anatomy{min-height:280px} }
+    @media (max-width:430px) { .grid{grid-template-columns:1fr} nav{justify-content:flex-start} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">最大的齒鯨・深海哺乳動物</div>
+    <h1>抹香鯨</h1>
+    <div class="latin">Physeter macrocephalus</div>
+    <p class="lead">牠用聲音看見黑暗，以巨大頭部聚焦回聲；每一次下潛，都是進入人類難以抵達的深海世界。</p>
+  </header>
+  <nav aria-label="頁面導覽"><a href="#overview">認識牠</a><a href="#dive">深潛與覓食</a><a href="#social">聲音與社會</a><a href="#conservation">保育</a><a href="#sources">資料來源</a></nav>
+  <main>
+    <section id="overview">
+      <h2><span>01</span>牠是什麼樣的鯨？</h2>
+      <p class="intro">抹香鯨是現存最大的齒鯨，也是最大型的有牙掠食者。牠們分布於全球深海，雌鯨與幼鯨常生活在熱帶、亞熱帶的母系群體中；成年雄鯨則會向高緯度海域移動。若看到低矮、向左前方傾斜的噴氣，可能就是牠浮出水面的身影。</p>
+      <div class="grid" style="margin-top:22px">
+        <article class="card stat"><div class="value">最大齒鯨</div><div class="label">體型冠軍</div><small>成年雄鯨通常比雌鯨大得多。</small></article>
+        <article class="card stat"><div class="value">15–18 m</div><div class="label">雄鯨常見體長</div><small>雌鯨約 9–12 公尺，性別差異顯著。</small></article>
+        <article class="card stat"><div class="value">~1/3</div><div class="label">身長是頭部</div><small>巨大的頭部容納發聲相關構造。</small></article>
+        <article class="card stat"><div class="value">易危 VU</div><div class="label">IUCN 全球評估</div><small>捕鯨停止後，族群仍在恢復。</small></article>
+      </div>
+    </section>
+
+    <section>
+      <h2><span>02</span>一眼辨認：巨頭、左偏噴氣、下顎牙齒</h2>
+      <div class="feature">
+        <div class="panel anatomy" role="img" aria-label="抹香鯨外型示意圖">
+          <div class="whale"></div><span class="callout c1">巨大的方形頭部</span><span class="callout c2">短小背鰭與皮膚皺褶</span><span class="callout c3">三角形尾鰭</span>
+        </div>
+        <div class="facts">
+          <div class="fact"><strong>噴氣是辨識線索。</strong>牠可用來呼吸的噴氣孔偏在頭部左前方，噴氣通常向左前方傾斜。</div>
+          <div class="fact"><strong>牙齒主要在下顎。</strong>圓錐形牙齒多位於細長的下顎；覓食時常以吸入方式捕捉獵物。</div>
+          <div class="fact"><strong>「抹香」來自鯨腦油。</strong>頭內的鯨腦油（spermaceti）曾是捕鯨業重要目標；現在更重要的理解是它和發聲、聚焦聲音有關。</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dive">
+      <h2><span>03</span>把深海變成獵場</h2>
+      <div class="panel dive">
+        <div class="dive-track">
+          <span class="depth d0">海面 0 m</span><span class="depth d500">500 m</span><span class="depth d1000">1,000 m</span><span class="depth d2000">2,000 m+</span>
+          <div class="dive-whale">🐋</div><div class="prey">🦑</div>
+          <div class="dive-note n1"><strong>下潛</strong><br>以強大的尾鰭快速進入深水。</div>
+          <div class="dive-note n2"><strong>搜尋</strong><br>以回聲定位的 clicks 探測獵物與環境。</div>
+          <div class="dive-note n3"><strong>覓食</strong><br>深海魷魚是重要食物，也會吃魚類與其他深海動物。</div>
+        </div>
+      </div>
+      <div class="timeline" style="margin-top:16px">
+        <article class="card step"><div class="step-number">ROUTINE DIVE</div><h3>平常就是深潛</h3><p>常見覓食潛水可達約 600 公尺（2,000 英尺），持續約 45 分鐘；個體和環境不同，紀錄也會更深、更久。</p></article>
+        <article class="card step"><div class="step-number">ECHOLOCATION</div><h3>用 clicks「看」黑暗</h3><p>牠發出有方向性的喀答聲，再分析回音，協助在無光的深海尋找獵物。</p></article>
+        <article class="card step"><div class="step-number">SURFACE RECOVERY</div><h3>浮上海面換氣</h3><p>長潛後會在海面休息、呼吸數分鐘；這段時間也可能增加與船隻相遇的風險。</p></article>
+      </div>
+    </section>
+
+    <section id="social">
+      <h2><span>04</span>不只是潛水者，也是有文化的社會動物</h2>
+      <div class="social">
+        <article class="panel coda">
+          <div class="eyebrow">CODAS・社交喀答聲</div>
+          <div class="signal" aria-label="五個喀答聲的波形示意"><i class="click"></i><i class="click"></i><i class="click"></i><i class="click"></i><i class="click"></i></div>
+          <p>覓食時的 clicks 和社交用的 <em>codas</em> 不同。不同母系社群會使用各自偏好的 coda 組合，研究者將這種可由社會學習傳遞的差異視為鯨類文化的重要例子。</p>
+        </article>
+        <article class="panel">
+          <div class="eyebrow">FAMILY・母系群體</div>
+          <p class="quote">雌鯨、幼鯨與年輕雄鯨會形成穩定的家族單位；成熟雄鯨多半離開出生群，往較高緯度活動。</p>
+          <p style="color:var(--muted);font-size:.93rem">這種長期親屬關係與聲音傳統，讓保護工作不只是在計算個體數，也必須理解群體之間的連結。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="conservation">
+      <h2><span>05</span>捕鯨之後，威脅仍在</h2>
+      <p class="intro">19 至 20 世紀的商業捕鯨曾讓抹香鯨族群大幅下降。雖然商業捕鯨已不再是主要威脅，緩慢繁殖的物種要恢復仍需很長時間；今天的風險多來自人類海上活動。</p>
+      <div class="threats" style="margin-top:21px">
+        <article class="card threat"><div class="icon">🚢</div><h3>船隻碰撞</h3><p>浮在海面休息和換氣時，可能與高速或繁忙航線上的船隻相遇。</p></article>
+        <article class="card threat"><div class="icon">🎣</div><h3>漁具纏繞</h3><p>繩索、網具可能造成受傷、影響覓食，甚至死亡。</p></article>
+        <article class="card threat"><div class="icon">📢</div><h3>海洋噪音</h3><p>牠高度依賴聲音覓食與溝通；人為噪音會壓縮可交流與感知的空間。</p></article>
+      </div>
+      <div class="status"><strong>保育狀態要分尺度閱讀：</strong>全球 IUCN 紅色名錄將抹香鯨列為「易危」（VU）；美國水域的管理保護狀態可能更嚴格。物種分布橫跨多國與公海，因此減少噪音、漁業混獲、海洋廢棄物與船撞都需要跨域合作。</div>
+    </section>
+
+    <section id="sources">
+      <h2><span>資料</span>來源與延伸閱讀</h2>
+      <ul class="sources">
+        <li><a href="https://zh.wikipedia.org/wiki/%E6%8A%B9%E9%A6%99%E9%AF%A8" target="_blank" rel="noopener">中文維基百科：抹香鯨</a>（使用者提供之主題起點；物種分類、外型、台灣海域與歷史概述）</li>
+        <li><a href="https://www.fisheries.noaa.gov/species/sperm-whale" target="_blank" rel="noopener">NOAA Fisheries：Sperm Whale</a>（分布、體型、潛水、食性、威脅與美國保護狀態）</li>
+        <li><a href="https://www.fisheries.noaa.gov/feature-story/sperm-whales-revealing-mysteries-deep" target="_blank" rel="noopener">NOAA Fisheries：Revealing the Mysteries of the Deep</a>（深潛、回聲定位與歷史捕鯨脈絡）</li>
+        <li><a href="https://www.iucnredlist.org/species/41755/50381361" target="_blank" rel="noopener">IUCN Red List：Physeter macrocephalus</a>（全球保育評估）</li>
+      </ul>
+    </section>
+  </main>
+  <footer>抹香鯨專題・資料查核：2026-07-26・請以原始研究與保育機構最新資料為準</footer>
+</body>
+</html>

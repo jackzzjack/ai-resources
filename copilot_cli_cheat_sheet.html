@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Copilot CLI Cheat Sheet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GitHub Copilot CLI command and keyboard shortcut reference.">
+<link rel="canonical" href="https://jackzzjack.github.io/ai-resources/copilot_cli_cheat_sheet.html">
+<script defer src="analytics-consent.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #7c6aff;
+    --accent2: #a78bfa;
+    --text: #e8e8f0;
+    --muted: #9999b4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background: radial-gradient(circle at 50% -20%, rgba(124, 106, 255, .2), transparent 46%), var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+    line-height: 1.5;
+  }
+  header {
+    position: relative;
+    padding: 68px 24px 36px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .back-link {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    color: var(--muted);
+    font-size: .9rem;
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--accent2); }
+  h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    letter-spacing: -.03em;
+  }
+  .subtitle { margin: 10px auto 0; color: var(--muted); max-width: 680px; }
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 285px), 1fr));
+    gap: 18px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 72px;
+    align-items: start;
+  }
+  .section {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    transition: border-color .2s, transform .2s, background .2s;
+  }
+  .section:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-2px); }
+  .section h2 {
+    margin: 0;
+    padding: 14px 18px;
+    color: var(--accent2);
+    font-size: .94rem;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--border);
+    background: rgba(124, 106, 255, .08);
+  }
+  .item { display: flex; align-items: baseline; gap: 10px; padding: 7px 18px; }
+  .item:nth-child(even) { background: rgba(255, 255, 255, .018); }
+  .key, .paths {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    overflow-wrap: anywhere;
+  }
+  .key {
+    flex: 0 0 auto;
+    max-width: 55%;
+    padding: 2px 7px;
+    color: #d9d2ff;
+    font-size: .82rem;
+    font-weight: 650;
+    line-height: 1.35;
+    border: 1px solid rgba(167, 139, 250, .28);
+    border-radius: 5px;
+    background: rgba(124, 106, 255, .12);
+  }
+  .desc { color: var(--muted); font-size: .88rem; }
+  .paths { margin: 14px 18px 18px; color: var(--muted); font-size: .8rem; white-space: pre-wrap; word-break: break-word; }
+  footer { padding: 24px; color: var(--muted); font-size: .82rem; text-align: center; border-top: 1px solid var(--border); }
+  footer a { color: var(--accent2); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @media (max-width: 560px) {
+    header { padding-top: 74px; }
+    .columns { padding: 20px 14px 48px; grid-template-columns: 1fr; }
+    .item { align-items: flex-start; flex-direction: column; gap: 5px; }
+    .key { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a class="back-link" href="index.html">← 返回入口</a>
+  <h1>🚀 GitHub Copilot CLI — Cheat Sheet</h1>
+</header>
+<main class="columns">
+
+  <div class="section">
+    <h2>Global</h2>
+    <div class="item"><span class="key">/help</span><span class="desc">show full help</span></div>
+    <div class="item"><span class="key">?</span><span class="desc">show quick help</span></div>
+    <div class="item"><span class="key">/</span><span class="desc">commands</span></div>
+    <div class="item"><span class="key">@</span><span class="desc">mention files</span></div>
+    <div class="item"><span class="key">#</span><span class="desc">mention issues/PRs</span></div>
+    <div class="item"><span class="key">!</span><span class="desc">execute shell command</span></div>
+    <div class="item"><span class="key">shift+tab</span><span class="desc">switch modes</span></div>
+    <div class="item"><span class="key">ctrl+s</span><span class="desc">stash/pop prompt</span></div>
+    <div class="item"><span class="key">ctrl+q</span><span class="desc">enqueue prompt</span></div>
+    <div class="item"><span class="key">ctrl+r</span><span class="desc">reverse search history</span></div>
+    <div class="item"><span class="key">ctrl+o</span><span class="desc">toggle all timeline</span></div>
+    <div class="item"><span class="key">ctrl+c</span><span class="desc">cancel</span></div>
+    <div class="item"><span class="key">ctrl+c×2</span><span class="desc">exit</span></div>
+    <div class="item"><span class="key">esc esc</span><span class="desc">clear/interrupt/stop/rewind</span></div>
+    <div class="item"><span class="key">ctrl+d</span><span class="desc">shutdown</span></div>
+    <div class="item"><span class="key">ctrl+z</span><span class="desc">suspend</span></div>
+    <div class="item"><span class="key">ctrl+l</span><span class="desc">clear screen</span></div>
+    <div class="item"><span class="key">ctrl+t</span><span class="desc">toggle reasoning display</span></div>
+    <div class="item"><span class="key">ctrl+x→b</span><span class="desc">move task to background</span></div>
+    <div class="item"><span class="key">ctrl+x→o</span><span class="desc">open recent link</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Input</h2>
+    <div class="item"><span class="key">ctrl+a</span><span class="desc">line start</span></div>
+    <div class="item"><span class="key">ctrl+e</span><span class="desc">line end</span></div>
+    <div class="item"><span class="key">ctrl+h</span><span class="desc">delete prev char</span></div>
+    <div class="item"><span class="key">ctrl+w</span><span class="desc">delete prev word</span></div>
+    <div class="item"><span class="key">ctrl+u</span><span class="desc">delete to line start</span></div>
+    <div class="item"><span class="key">ctrl+k</span><span class="desc">delete to line end</span></div>
+    <div class="item"><span class="key">meta+←/→</span><span class="desc">move cursor by word</span></div>
+    <div class="item"><span class="key">shift+enter</span><span class="desc">insert newline</span></div>
+    <div class="item"><span class="key">ctrl+g</span><span class="desc">edit prompt in $EDITOR</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Agent Environment</h2>
+    <div class="item"><span class="key">/init</span><span class="desc">init instructions for repo</span></div>
+    <div class="item"><span class="key">/agent</span><span class="desc">browse/select agents</span></div>
+    <div class="item"><span class="key">/skills</span><span class="desc">manage skills</span></div>
+    <div class="item"><span class="key">/mcp</span><span class="desc">manage MCP servers</span></div>
+    <div class="item"><span class="key">/plugin</span><span class="desc">manage plugins</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Agents / Subagents</h2>
+    <div class="item"><span class="key">/model</span><span class="desc">select AI model</span></div>
+    <div class="item"><span class="key">/delegate</span><span class="desc">send session, create PR</span></div>
+    <div class="item"><span class="key">/fleet</span><span class="desc">parallel subagent mode</span></div>
+    <div class="item"><span class="key">/autopilot</span><span class="desc">toggle autopilot</span></div>
+    <div class="item"><span class="key">/tasks</span><span class="desc">view/manage tasks</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Code</h2>
+    <div class="item"><span class="key">/ide</span><span class="desc">connect IDE workspace</span></div>
+    <div class="item"><span class="key">/diff</span><span class="desc">review changes</span></div>
+    <div class="item"><span class="key">/pr</span><span class="desc">operate on PRs</span></div>
+    <div class="item"><span class="key">/review</span><span class="desc">run code review agent</span></div>
+    <div class="item"><span class="key">/security-review</span><span class="desc">analyze vulnerabilities</span></div>
+    <div class="item"><span class="key">/rubber-duck</span><span class="desc">independent critique</span></div>
+    <div class="item"><span class="key">/lsp</span><span class="desc">manage language server</span></div>
+    <div class="item"><span class="key">/terminal-setup</span><span class="desc">multiline input support</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Permissions</h2>
+    <div class="item"><span class="key">/allow-all</span><span class="desc">enable all permissions</span></div>
+    <div class="item"><span class="key">/add-dir</span><span class="desc">add allowed directory</span></div>
+    <div class="item"><span class="key">/list-dirs</span><span class="desc">show allowed dirs</span></div>
+    <div class="item"><span class="key">/cwd</span><span class="desc">change/show working dir</span></div>
+    <div class="item"><span class="key">/reset-allowed-tools</span><span class="desc">reset allowed tools</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Session</h2>
+    <div class="item"><span class="key">/resume</span><span class="desc">switch session</span></div>
+    <div class="item"><span class="key">/rename</span><span class="desc">rename session</span></div>
+    <div class="item"><span class="key">/context</span><span class="desc">show token usage</span></div>
+    <div class="item"><span class="key">/usage</span><span class="desc">usage metrics</span></div>
+    <div class="item"><span class="key">/session</span><span class="desc">manage sessions</span></div>
+    <div class="item"><span class="key">/compact</span><span class="desc">summarize history</span></div>
+    <div class="item"><span class="key">/share</span><span class="desc">share session/report</span></div>
+    <div class="item"><span class="key">/remote</span><span class="desc">toggle remote control</span></div>
+    <div class="item"><span class="key">/copy</span><span class="desc">copy last response</span></div>
+    <div class="item"><span class="key">/rewind</span><span class="desc">rewind last turn</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Help</h2>
+    <div class="item"><span class="key">/help</span><span class="desc">show help</span></div>
+    <div class="item"><span class="key">/changelog</span><span class="desc">display changelog</span></div>
+    <div class="item"><span class="key">/feedback</span><span class="desc">provide feedback</span></div>
+    <div class="item"><span class="key">/diagnose</span><span class="desc">analyze session log</span></div>
+    <div class="item"><span class="key">/theme</span><span class="desc">view/set color mode</span></div>
+    <div class="item"><span class="key">/statusline</span><span class="desc">configure status line</span></div>
+    <div class="item"><span class="key">/footer</span><span class="desc">configure footer</span></div>
+    <div class="item"><span class="key">/update</span><span class="desc">update CLI</span></div>
+    <div class="item"><span class="key">/version</span><span class="desc">version info</span></div>
+    <div class="item"><span class="key">/experimental</span><span class="desc">experimental features</span></div>
+    <div class="item"><span class="key">/memory</span><span class="desc">memory status/toggle</span></div>
+    <div class="item"><span class="key">/clear</span><span class="desc">abandon session</span></div>
+    <div class="item"><span class="key">/instructions</span><span class="desc">toggle instruction files</span></div>
+    <div class="item"><span class="key">/app</span><span class="desc">Copilot desktop app</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Other Commands</h2>
+    <div class="item"><span class="key">/ask</span><span class="desc">quick side question</span></div>
+    <div class="item"><span class="key">/chronicle</span><span class="desc">session history tools</span></div>
+    <div class="item"><span class="key">/env</span><span class="desc">show loaded environment</span></div>
+    <div class="item"><span class="key">/exit</span><span class="desc">exit the CLI</span></div>
+    <div class="item"><span class="key">/keep-alive</span><span class="desc">prevent system sleep</span></div>
+    <div class="item"><span class="key">/limits</span><span class="desc">view/edit session limits</span></div>
+    <div class="item"><span class="key">/login</span><span class="desc">log in</span></div>
+    <div class="item"><span class="key">/logout</span><span class="desc">log out</span></div>
+    <div class="item"><span class="key">/new</span><span class="desc">start new conversation</span></div>
+    <div class="item"><span class="key">/plan</span><span class="desc">create implementation plan</span></div>
+    <div class="item"><span class="key">/refine</span><span class="desc">rewrite rough prompt</span></div>
+    <div class="item"><span class="key">/research</span><span class="desc">deep research investigation</span></div>
+    <div class="item"><span class="key">/restart</span><span class="desc">restart CLI, keep session</span></div>
+    <div class="item"><span class="key">/search</span><span class="desc">search timeline</span></div>
+    <div class="item"><span class="key">/settings</span><span class="desc">open settings UI</span></div>
+    <div class="item"><span class="key">/subagents</span><span class="desc">configure subagent models</span></div>
+    <div class="item"><span class="key">/user</span><span class="desc">manage GitHub user list</span></div>
+    <div class="item"><span class="key">/voice</span><span class="desc">voice/dictation mode</span></div>
+  </div>
+
+  <div class="section">
+    <h2>Instruction File Locations</h2>
+    <div class="paths">CLAUDE.md (git root & cwd)
+GEMINI.md (git root & cwd)
+AGENTS.md (git root & cwd)
+.github/instructions/**/*.instructions.md
+.github/copilot-instructions.md
+$HOME/.copilot/copilot-instructions.md
+$HOME/.copilot/instructions/**/*.instructions.md
+COPILOT_CUSTOM_INSTRUCTIONS_DIRS (env var)</div>
+  </div>
+
+</main>
+<footer>GitHub Copilot CLI v1.0.74 — Ask "What can you do?" or visit docs.github.com/copilot/how-tos/use-copilot-agents/use-copilot-cli</footer>
+</body>
+</html>
