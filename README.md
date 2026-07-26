@@ -11,6 +11,7 @@
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
+| `ai-native.html` | AI Native 工作方式導覽：理解其理念、人機協作迴圈、落地五步法與流程自評 |
 | `hermes_agents_guide.html` | Hermes Agents 入門圖解（模型、工具、脈絡、技能專章、執行流程與聊天 AI 對照） |
 | `mcp_guide.html` | MCP 入門圖解（AI 如何以共同協定安全連接工具、資料與外部服務） |
 | `context_windows.html` | Context Window 上下文視窗圖解（AI 工作桌心智模型、上下文流動、長文件管理） |

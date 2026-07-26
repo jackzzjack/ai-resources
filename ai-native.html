@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Native 是什麼？從理念、工作系統到可驗證的落地方法，理解如何讓 AI 成為團隊的能力層。">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://jackzzjack.github.io/ai-resources/ai-native.html">
+  <meta property="og:title" content="AI Native：把 AI 變成工作系統的一部分">
+  <meta property="og:description" content="不只是導入工具，而是重新設計人、AI、資料與驗證如何一起完成工作。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jackzzjack.github.io/ai-resources/ai-native.html">
+  <meta property="og:locale" content="zh_TW">
+  <title>AI Native：把 AI 變成工作系統的一部分</title>
+  <style>
+    :root { --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c28; --border:#2a2a3d; --accent:#7c6aff; --accent2:#a78bfa; --cyan:#45d5ff; --green:#4ade80; --amber:#fbbf24; --red:#fb7185; --text:#e8e8f0; --muted:#9595b5; --radius:18px; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif; line-height:1.65; overflow-x:hidden; }
+    .hero { min-height:600px; position:relative; isolation:isolate; padding:28px 24px 90px; background:radial-gradient(circle at 17% 15%,rgba(124,106,255,.28),transparent 32%),radial-gradient(circle at 84% 22%,rgba(69,213,255,.16),transparent 28%),linear-gradient(180deg,#10101e 0%,var(--bg) 85%); }
+    .hero::after { content:""; position:absolute; z-index:-1; inset:0; opacity:.34; background-image:linear-gradient(rgba(167,139,250,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(167,139,250,.12) 1px,transparent 1px); background-size:52px 52px; mask-image:linear-gradient(#000 10%,transparent 85%); }
+    .nav, main { max-width:1120px; margin:auto; }
+    .nav { display:flex; justify-content:space-between; align-items:center; gap:20px; }
+    .back { color:var(--muted); text-decoration:none; font-size:.92rem; transition:color .2s; }
+    .back:hover { color:#fff; }
+    .nav-label { color:var(--accent2); font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; }
+    .hero-content { max-width:870px; margin:106px auto 0; text-align:center; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(167,139,250,.36); border-radius:999px; padding:7px 14px; background:rgba(124,106,255,.1); color:#d9d2ff; font-weight:700; font-size:.84rem; }
+    h1 { font-size:clamp(2.65rem,7vw,5.6rem); letter-spacing:-.065em; line-height:1.03; margin:23px 0; background:linear-gradient(120deg,#fff 20%,#dcd4ff 55%,#75dfff); -webkit-background-clip:text; color:transparent; }
+    .lead { color:#c1c1d5; font-size:clamp(1.08rem,2.3vw,1.35rem); max-width:715px; margin:auto; }
+    .hero-note { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:34px; }
+    .hero-note span { background:rgba(19,19,26,.72); border:1px solid var(--border); border-radius:8px; padding:8px 13px; color:var(--muted); font-size:.88rem; }
+    main { padding:0 24px 105px; }
+    section { padding-top:92px; scroll-margin-top:20px; }
+    .section-kicker { color:var(--accent2); font-size:.78rem; letter-spacing:.12em; font-weight:800; text-transform:uppercase; }
+    h2 { font-size:clamp(1.85rem,4vw,3rem); letter-spacing:-.04em; line-height:1.15; margin:8px 0 16px; }
+    .section-intro { color:var(--muted); max-width:760px; font-size:1.05rem; }
+    .definition { display:grid; grid-template-columns:1.15fr .85fr; gap:24px; margin-top:32px; }
+    .definition-main, .compare, .principle, .step, .checklist, .prompt-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); }
+    .definition-main { padding:34px; position:relative; overflow:hidden; }
+    .definition-main::before { content:"AI"; position:absolute; right:20px; top:-35px; color:rgba(167,139,250,.08); font-size:10rem; font-weight:800; letter-spacing:-.1em; }
+    .definition-main p { position:relative; font-size:1.32rem; line-height:1.5; }
+    .definition-main strong { color:#d9d2ff; }
+    .definition-main small { display:block; position:relative; color:var(--muted); margin-top:21px; }
+    .compare { display:grid; overflow:hidden; }
+    .compare-row { padding:22px 24px; border-bottom:1px solid var(--border); }
+    .compare-row:last-child { border:0; }
+    .compare-label { color:var(--muted); font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:4px; }
+    .compare strong { font-size:1.04rem; }
+    .compare .old { color:#f0a8b3; } .compare .new { color:#9cf1be; }
+    .principle-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:30px; }
+    .principle { padding:25px; min-height:225px; }
+    .principle .num { color:var(--accent2); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.82rem; }
+    .principle h3 { margin:19px 0 9px; font-size:1.15rem; } .principle p { color:var(--muted); font-size:.94rem; }
+    .loop { margin-top:32px; padding:32px; border:1px solid var(--border); border-radius:var(--radius); background:linear-gradient(135deg,rgba(124,106,255,.1),rgba(69,213,255,.05)); }
+    .loop-title { font-weight:750; font-size:1.1rem; margin-bottom:24px; }
+    .loop-track { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; position:relative; }
+    .loop-item { min-height:146px; padding:18px; border-radius:14px; background:rgba(10,10,15,.6); border:1px solid rgba(167,139,250,.22); }
+    .loop-icon { font-size:1.55rem; } .loop-item h3 { font-size:1rem; margin:9px 0 4px; } .loop-item p { color:var(--muted); font-size:.82rem; line-height:1.5; }
+    .implementation { display:grid; grid-template-columns:.72fr 1.28fr; gap:28px; margin-top:32px; }
+    .sticky-note { height:max-content; padding:25px; border-left:3px solid var(--cyan); background:rgba(69,213,255,.06); border-radius:0 14px 14px 0; color:#cbd9e0; }
+    .sticky-note strong { display:block; color:var(--cyan); margin-bottom:7px; }
+    .steps { display:grid; gap:13px; }
+    .step { padding:22px; display:grid; grid-template-columns:45px 1fr; gap:16px; transition:border-color .2s,transform .2s; }
+    .step:hover { border-color:var(--accent); transform:translateX(4px); }
+    .step-no { width:36px; height:36px; border-radius:50%; display:grid; place-items:center; background:rgba(124,106,255,.18); color:#d9d2ff; font-weight:800; }
+    .step h3 { font-size:1.08rem; margin:2px 0 5px; } .step p { color:var(--muted); font-size:.94rem; }
+    .step .example { display:inline-block; margin-top:10px; color:#d3cbff; font-size:.82rem; background:rgba(124,106,255,.11); border-radius:6px; padding:4px 8px; }
+    .lab { margin-top:32px; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--surface); }
+    .lab-head { padding:25px 28px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:start; gap:16px; }
+    .lab-head p { color:var(--muted); font-size:.92rem; margin-top:4px; } .lab-head span { color:var(--green); font-size:.8rem; white-space:nowrap; }
+    .lab-body { display:grid; grid-template-columns:1fr 1fr; }
+    .checklist { border:0; border-radius:0; padding:24px 28px; background:transparent; }
+    .checklist + .checklist { border-left:1px solid var(--border); }
+    .checklist h3 { font-size:1rem; margin-bottom:12px; }
+    label { display:flex; gap:10px; align-items:flex-start; color:var(--muted); font-size:.92rem; cursor:pointer; padding:8px 0; }
+    input { accent-color:var(--accent); margin-top:5px; }
+    .score { margin:0 28px 28px; padding:17px 18px; border-radius:12px; background:#0d0d14; display:flex; justify-content:space-between; gap:16px; align-items:center; }
+    .score strong { color:var(--accent2); font-size:1.15rem; } .score span { color:var(--muted); font-size:.87rem; text-align:right; }
+    .mistakes { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:31px; }
+    .mistake { padding:24px; border-radius:14px; border:1px solid var(--border); background:var(--surface); }
+    .mistake .bad { color:var(--red); font-size:.83rem; font-weight:800; } .mistake .better { color:var(--green); font-size:.83rem; font-weight:800; margin-top:15px; }
+    .mistake p { color:var(--muted); margin-top:3px; font-size:.93rem; }
+    .closing { margin-top:92px; padding:45px 32px; text-align:center; border:1px solid rgba(167,139,250,.32); border-radius:var(--radius); background:radial-gradient(circle at top,rgba(124,106,255,.2),transparent 65%),var(--surface); }
+    .closing h2 { max-width:650px; margin:10px auto 15px; }.closing p { max-width:650px; margin:auto; color:var(--muted); }.closing a { display:inline-block; margin-top:25px; color:#fff; background:var(--accent); border-radius:10px; padding:10px 17px; text-decoration:none; font-weight:700; }
+    footer { border-top:1px solid var(--border); color:var(--muted); text-align:center; padding:34px 20px; font-size:.86rem; }
+    @media (max-width:800px) { .definition,.implementation,.lab-body { grid-template-columns:1fr; }.principle-grid { grid-template-columns:1fr; }.loop-track { grid-template-columns:repeat(2,1fr); }.checklist + .checklist { border-left:0; border-top:1px solid var(--border); }.hero-content { margin-top:78px; }.hero { min-height:540px; }.mistakes { grid-template-columns:1fr; } }
+    @media (max-width:500px) { .hero,main { padding-left:18px; padding-right:18px; }.hero { padding-top:22px; }.nav-label { display:none; }.definition-main,.loop,.lab-head { padding:23px; }.loop-track { grid-template-columns:1fr; }.score { margin:0 20px 20px; align-items:flex-start; flex-direction:column; }.score span { text-align:left; }.checklist { padding:20px; } section { padding-top:70px; } }
+  </style>
+  <script defer src="analytics-consent.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav"><a class="back" href="index.html">← 返回資源入口</a><span class="nav-label">AI 工作方式導覽</span></nav>
+    <div class="hero-content">
+      <div class="eyebrow">✦ 不只是使用 AI</div>
+      <h1>AI Native<br>是重新設計工作系統</h1>
+      <p class="lead">當 AI 不再只是偶爾打開的工具，而成為每段工作流程的能力層，人就能把注意力放回判斷、品味與責任。</p>
+      <div class="hero-note"><span>人保有決策權</span><span>AI 擴大產能</span><span>流程內建驗證</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="meaning">
+      <div class="section-kicker">01 · 定義</div>
+      <h2>AI Native，不是「原本的流程 + 一個聊天視窗」</h2>
+      <p class="section-intro">它是一種由 AI 的能力與限制出發，重新安排人、知識、工具與驗證機制的工作方式。重點不在採購哪一個模型，而在工作能否因此變得更快學習、更容易協作，且仍然值得信任。</p>
+      <div class="definition">
+        <article class="definition-main"><p><strong>AI Native 的核心：</strong>把 AI 當作可被編排、可被檢查、可持續改善的能力，而不是一次性的答案機器。</p><small>它可以參與理解、草擬、執行、測試、整理與回顧；每一步都有清楚的輸入、輸出與責任歸屬。</small></article>
+        <div class="compare">
+          <div class="compare-row"><span class="compare-label old">工具導入</span><strong>「哪一個 AI 最好用？」</strong></div>
+          <div class="compare-row"><span class="compare-label new">AI Native</span><strong>「哪段工作最值得重設？」</strong></div>
+          <div class="compare-row"><span class="compare-label old">成功標準</span><strong>生成得很快、看起來合理</strong></div>
+          <div class="compare-row"><span class="compare-label new">成功標準</span><strong>交付可驗收、知識會累積</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="principles">
+      <div class="section-kicker">02 · 理念</div>
+      <h2>三個設計原則</h2>
+      <div class="principle-grid">
+        <article class="principle"><div class="num">PRINCIPLE 01</div><h3>先設計任務，再挑模型</h3><p>把模糊的「幫我做」拆成目標、背景、限制、交付格式與驗收條件。模型能力會變，清楚的任務介面能留下來。</p></article>
+        <article class="principle"><div class="num">PRINCIPLE 02</div><h3>讓人做高槓桿判斷</h3><p>AI 擅長擴張選項、處理重複與整理脈絡；人負責決定方向、取捨、風險，以及對結果負責。</p></article>
+        <article class="principle"><div class="num">PRINCIPLE 03</div><h3>把信任做進流程</h3><p>重要輸出必須能追溯來源、被測試或被審閱。越能自動執行，越需要明確的權限邊界與停損點。</p></article>
+      </div>
+      <div class="loop">
+        <div class="loop-title">一個健康的 AI Native 工作迴圈</div>
+        <div class="loop-track">
+          <div class="loop-item"><div class="loop-icon">◎</div><h3>定義</h3><p>目標、限制、成功條件</p></div>
+          <div class="loop-item"><div class="loop-icon">⌕</div><h3>提供脈絡</h3><p>可信資料、範例、工具</p></div>
+          <div class="loop-item"><div class="loop-icon">✦</div><h3>協作產出</h3><p>讓 AI 草擬、分析或執行</p></div>
+          <div class="loop-item"><div class="loop-icon">✓</div><h3>驗證</h3><p>測試、比對、人工審閱</p></div>
+          <div class="loop-item"><div class="loop-icon">↻</div><h3>沉澱</h3><p>把有效做法變成資產</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="implementation">
+      <div class="section-kicker">03 · 實現</div>
+      <h2>從一條工作流程開始，不要從全公司口號開始</h2>
+      <p class="section-intro">挑一個頻繁、可衡量、風險可控的流程，做出第一個可驗證的閉環。以下是實用的五步法。</p>
+      <div class="implementation">
+        <aside class="sticky-note"><strong>最好的起點</strong>選擇每週都會重複、需要整理或比對資訊、且有明確「做對」定義的工作。例如：客服摘要、研究初稿、程式碼檢查、會議行動項目。</aside>
+        <div class="steps">
+          <article class="step"><div class="step-no">1</div><div><h3>量出現在的摩擦</h3><p>記錄耗時、返工次數、等待時間與錯誤型態；不要只問「感覺有沒有變快」。</p><span class="example">例：每週 12 小時用在整理客戶訪談</span></div></article>
+          <article class="step"><div class="step-no">2</div><div><h3>定義任務契約</h3><p>明定輸入資料、輸出格式、不可逾越的規則與驗收方式，讓人與 AI 對「完成」有相同理解。</p><span class="example">例：每項結論須連回原始訪談片段</span></div></article>
+          <article class="step"><div class="step-no">3</div><div><h3>接上正確的脈絡與工具</h3><p>讓 AI 取得必要且最小的資料；可查資料庫、檔案或 API，但權限要隨任務縮小。</p><span class="example">例：只讀取已核准的產品知識庫</span></div></article>
+          <article class="step"><div class="step-no">4</div><div><h3>把驗證放在交付前</h3><p>以測試、規則檢查、來源比對或人工覆核關卡阻止錯誤流出；高風險行動必須保留人工批准。</p><span class="example">例：送出前自動檢查敏感資訊與引用來源</span></div></article>
+          <article class="step"><div class="step-no">5</div><div><h3>將有效做法產品化</h3><p>把好提示、範例、資料選取方式與檢查清單放進共用模板，並持續根據失敗案例改善。</p><span class="example">例：每週回顧 5 個被退回的輸出</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="readiness">
+      <div class="section-kicker">04 · 自我檢查</div>
+      <h2>你的流程準備好了嗎？</h2>
+      <p class="section-intro">勾選你已具備的條件。這不是成熟度排名，而是找出下一個最值得補上的缺口。</p>
+      <div class="lab">
+        <div class="lab-head"><div><h3>AI Native 最小可行閉環</h3><p>每勾一項，代表流程多了一層可複製、可相信的基礎。</p></div><span id="status">尚未開始</span></div>
+        <div class="lab-body">
+          <div class="checklist"><h3>任務與脈絡</h3><label><input class="readiness" type="checkbox">這項工作有清楚的完成條件</label><label><input class="readiness" type="checkbox">輸入資料有可信來源與更新方式</label><label><input class="readiness" type="checkbox">團隊知道哪些資料不能交給 AI</label></div>
+          <div class="checklist"><h3>驗證與學習</h3><label><input class="readiness" type="checkbox">輸出有測試、規則或人工審閱</label><label><input class="readiness" type="checkbox">高風險行動需要人批准</label><label><input class="readiness" type="checkbox">失敗案例會回流成模板或規範</label></div>
+        </div>
+        <div class="score"><strong id="score">0 / 6</strong><span id="advice">先選一件小而重複的工作，寫下它的完成條件。</span></div>
+      </div>
+    </section>
+
+    <section id="pitfalls">
+      <div class="section-kicker">05 · 常見誤解</div>
+      <h2>不是越自動化，就越 AI Native</h2>
+      <div class="mistakes">
+        <article class="mistake"><div class="bad">常見做法：只蒐集 Prompt</div><p>提示詞很有用，但若缺少資料、工具、驗收與責任界線，成果無法穩定複製。</p><div class="better">更好的方向：設計可重複的任務契約</div><p>讓提示成為流程中的一個元件，而非唯一的魔法。</p></article>
+        <article class="mistake"><div class="bad">常見做法：追求全自動代理人</div><p>把未釐清的流程自動化，只會更快地放大混亂與風險。</p><div class="better">更好的方向：逐段授權、逐段驗證</div><p>從低風險、可回復的工作開始，逐步擴張 AI 的行動範圍。</p></article>
+        <article class="mistake"><div class="bad">常見做法：用輸出量衡量成效</div><p>更多文字、更多程式碼不等於更多價值；也可能代表更多審閱成本。</p><div class="better">更好的方向：衡量交付品質與迴圈速度</div><p>關注從需求到被驗收的時間、錯誤率，以及知識是否留下來。</p></article>
+        <article class="mistake"><div class="bad">常見做法：把 AI 當成權威</div><p>模型可以很流暢地犯錯，也沒有你的情境責任。</p><div class="better">更好的方向：把 AI 當成高產能協作者</div><p>要求依據、交叉檢查，最後由理解情境的人做決定。</p></article>
+      </div>
+    </section>
+
+    <section class="closing"><div class="section-kicker">開始的問題</div><h2>哪一段工作，最值得讓人與 AI 一起重新設計？</h2><p>從一個可驗證的小閉環開始。當流程、脈絡與驗證都變得清楚，AI 才會真正變成組織可累積的能力。</p><a href="#implementation">查看五步落地法 ↑</a></section>
+  </main>
+  <footer>AI Resources · AI Native 導覽 · 以人類判斷與可驗證流程為中心</footer>
+  <script>
+    const boxes = document.querySelectorAll('.readiness');
+    const score = document.getElementById('score'), advice = document.getElementById('advice'), status = document.getElementById('status');
+    function updateReadiness() {
+      const count = [...boxes].filter(box => box.checked).length;
+      score.textContent = `${count} / ${boxes.length}`;
+      if (count === 0) { status.textContent = '尚未開始'; advice.textContent = '先選一件小而重複的工作，寫下它的完成條件。'; }
+      else if (count < 3) { status.textContent = '正在打底'; advice.textContent = '下一步：補齊可信資料來源，避免讓 AI 在模糊脈絡中猜測。'; }
+      else if (count < 6) { status.textContent = '可開始試行'; advice.textContent = '下一步：把驗證關卡設在輸出離開團隊之前。'; }
+      else { status.textContent = '閉環已具雛形'; advice.textContent = '下一步：選一項指標，持續從失敗案例迭代模板與規範。'; }
+    }
+    boxes.forEach(box => box.addEventListener('change', updateReadiness));
+  </script>
+</body>
+</html>
