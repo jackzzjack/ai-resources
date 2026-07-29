@@ -33,6 +33,7 @@
 | `makefile_assignment_guide.html` | Makefile 賦值語法圖解（=、:=、?=、+= 的展開時機、覆寫規則、CFLAGS 實作模式與互動選擇器） |
 | `crosstool_ng_guide.html` | Crosstool-NG Cross Toolchain 組裝線圖解（host tools、binutils、bootstrap GCC、libc、sysroot、target-prefixed tools 與互動錯誤分類控制台） |
 | `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（64-bit flags、partition entry 位元地圖、boot contract、A/B slot 流程與互動契約控制台） |
+| `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
