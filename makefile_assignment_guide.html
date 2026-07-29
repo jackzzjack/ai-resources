@@ -1,31 +1,110 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Makefile 賦值語法圖解：=、:=、?=、+= 怎麼選</title><style>
-:root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;--accent:#7c6aff;--accent2:#a78bfa;--green:#34d399;--orange:#fbbf24;--text:#e8e8f0;--muted:#aaaac0}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent2)}header{padding:76px 24px 42px;text-align:center;background:radial-gradient(circle at 50% -15%,#40318a88,transparent 58%)}.eyebrow,.chip{display:inline-block;border:1px solid #7c6aff77;border-radius:999px;padding:4px 11px;color:var(--accent2);font-size:.82rem}.eyebrow{margin-bottom:16px}h1{font-size:clamp(2.1rem,5vw,4.1rem);line-height:1.12;margin:0 auto 16px;max-width:850px}.lead{max-width:720px;margin:auto;color:var(--muted);font-size:1.12rem}.shell{max-width:1120px;margin:auto;padding:0 24px 80px}.nav{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow:auto;padding:12px 0;background:#0a0a0fee;border-bottom:1px solid var(--border)}.nav a{white-space:nowrap;text-decoration:none;color:var(--muted);border:1px solid var(--border);padding:6px 11px;border-radius:999px;font-size:.88rem}.nav a:hover{color:#fff;border-color:var(--accent)}section{scroll-margin-top:64px;padding:42px 0;border-bottom:1px solid var(--border)}h2{font-size:1.7rem;margin:0 0 10px}h3{margin:0 0 8px}.muted{color:var(--muted)}.hero-map,.grid{display:grid;gap:16px}.hero-map{grid-template-columns:repeat(4,1fr);margin-top:28px}.node,.card,.callout{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px}.node{text-align:center;position:relative}.node b{display:block;font-family:ui-monospace,monospace;color:#fff;font-size:1.35rem}.node small{color:var(--muted)}.node:not(:last-child):after{content:'→';position:absolute;right:-14px;top:38%;color:var(--accent2);font-size:1.5rem}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.code{background:#08080d;border:1px solid #29283c;border-radius:10px;padding:13px;overflow:auto;color:#d9d7ff;font:.92rem/1.65 ui-monospace,monospace}.code em{color:#8888aa;font-style:normal}.callout{border-left:4px solid var(--accent);margin-top:20px}.callout.warn{border-left-color:var(--orange)}.callout.good{border-left-color:var(--green)}table{width:100%;border-collapse:collapse;margin-top:16px;background:var(--surface)}th,td{text-align:left;padding:13px;border-bottom:1px solid var(--border);vertical-align:top}th{color:var(--accent2);background:var(--surface2)}td code{color:#d8d5ff}.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}.step{padding:17px;background:var(--surface);border-top:3px solid var(--accent);border-radius:12px}.step b{color:var(--accent2);display:block;margin-bottom:7px}.choice{cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 15px;margin:8px 0;width:100%;text-align:left;font:inherit}.choice:hover,.choice.selected{border-color:var(--accent);background:#24213b}.answers{display:none;margin-top:16px}.answers.show{display:block}.answer{padding:14px;background:#171628;border-radius:10px}.footer{text-align:center;padding:34px;color:var(--muted)}@media(max-width:720px){.hero-map,.timeline{grid-template-columns:1fr 1fr}.node:not(:last-child):after{display:none}.grid{grid-template-columns:1fr}}@media(max-width:440px){.hero-map,.timeline{grid-template-columns:1fr}h1{font-size:2.25rem}}</style></head><body>
-<header><span class="eyebrow">Linux · GNU Make · 新手圖解</span><h1>Makefile 賦值語法：<br>=、:=、?=、+= 到底差在哪？</h1><p class="lead">先別把它當成四種「等號」。它們是在決定：<strong>何時展開變數、能否被覆寫、以及是否接在原值後面</strong>。</p></header>
-<main class="shell"><nav class="nav"><a href="#mental-model">一眼看懂</a><a href="#operators">四種運算子</a><a href="#flow">展開時機</a><a href="#compare">對照表</a><a href="#choose">選擇器</a><a href="#patterns">實作模式</a></nav>
-<section id="mental-model"><h2>一眼看懂：變數像「食譜卡」或「已備好的食材」</h2><p class="muted">Make 會在讀取 Makefile 與執行 recipe 的不同時間點處理文字。關鍵不是值長什麼樣，而是它<strong>何時</strong>被取用。</p><div class="hero-map"><div class="node"><b>=</b><small>先記下食譜<br>用到才展開</small></div><div class="node"><b>:=</b><small>現在就備料<br>立刻固定</small></div><div class="node"><b>?=</b><small>沒有才填入<br>提供預設值</small></div><div class="node"><b>+=</b><small>在原食譜後<br>繼續追加</small></div></div><div class="callout good"><strong>先懂這個：</strong><code>$(VAR)</code> 是取用變數的寫法；<code>$(shell date)</code>、<code>$(wildcard *.c)</code> 這類函式何時被展開，會直接改變結果與效能。</div></section>
-<section id="operators"><h2>四位角色與各自的任務</h2><div class="grid"><article class="card"><h3><code>=</code> 遞迴展開（recursive）</h3><p>把右側原封成「規則」保存；每次取用時才展開。適合希望後續變數變動也能反映的情境。</p><pre class="code">BASE = hello
-MSG = $(BASE) world
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Makefile 設定控制台：賦值、include 與覆蓋順序</title>
+  <style>
+    :root { --bg:#090a10; --surface:#11131d; --surface-2:#191c2a; --line:#2b3043; --ink:#ecf0ff; --muted:#a8b0c7; --violet:#8b7bff; --cyan:#52d8ff; --green:#61e0a3; --amber:#ffc966; --red:#ff8c98; }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; background:radial-gradient(circle at 75% 0,#27255b 0,transparent 30%),var(--bg); color:var(--ink); font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    a { color:var(--cyan); } code,pre { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; } header { max-width:1180px; margin:auto; padding:82px 24px 42px; } .eyebrow,.badge { display:inline-block; border:1px solid #8b7bff77; border-radius:999px; padding:4px 11px; color:#c9c2ff; font-size:.82rem; letter-spacing:.04em; } h1 { max-width:940px; margin:15px 0; font-size:clamp(2.35rem,6vw,5.2rem); line-height:1.05; letter-spacing:-.05em; } .lead { max-width:760px; color:var(--muted); font-size:1.14rem; } .shell { max-width:1180px; margin:auto; padding:0 24px 84px; } .nav { position:sticky; top:0; z-index:10; display:flex; overflow:auto; gap:8px; padding:12px 0; background:#090a10ee; backdrop-filter:blur(12px); border-bottom:1px solid var(--line); } .nav a { flex:0 0 auto; text-decoration:none; color:var(--muted); border:1px solid var(--line); padding:6px 11px; border-radius:999px; font-size:.87rem; } .nav a:hover { color:var(--ink); border-color:var(--violet); }
+    section { padding:58px 0; border-bottom:1px solid var(--line); scroll-margin-top:62px; } h2 { margin:0 0 10px; font-size:clamp(1.75rem,3vw,2.55rem); line-height:1.2; } h3 { margin:0 0 8px; } .muted { color:var(--muted); } .console { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; margin-top:28px; } .panel,.card,.callout,.layer { background:linear-gradient(145deg,#151827,#10121c); border:1px solid var(--line); border-radius:18px; padding:22px; } .panel-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; } .signal { width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 14px var(--green); } .meter { display:grid; gap:11px; } .meter-row { display:grid; grid-template-columns:112px 1fr auto; align-items:center; gap:10px; font-size:.9rem; } .bar { height:8px; background:#080911; border-radius:99px; overflow:hidden; } .bar i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,var(--cyan),var(--violet)); } .question { color:var(--amber); font-weight:700; } .terminal { min-height:228px; padding:18px; overflow:auto; background:#070810; border:1px solid #262b40; border-radius:13px; color:#dce5ff; white-space:pre-wrap; } .terminal .dim { color:#808aa6; } .terminal .ok { color:var(--green); } .terminal .warn { color:var(--amber); }
+    .layers { display:grid; gap:11px; margin-top:24px; } .layer { display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:14px; padding:17px; } .layer b { width:35px; height:35px; display:grid; place-items:center; border-radius:10px; background:#202440; color:var(--cyan); } .layer strong { display:block; } .layer small { color:var(--muted); } .layer .tag { color:var(--amber); font: .82rem ui-monospace,monospace; } .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:25px; } .flow-step { position:relative; min-height:140px; padding:17px; background:var(--surface); border:1px solid var(--line); border-radius:16px; } .flow-step:not(:last-child)::after { content:"→"; position:absolute; right:-19px; top:45%; z-index:1; color:var(--violet); font-size:1.5rem; } .flow-step span { color:var(--cyan); font-family:ui-monospace,monospace; } .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:24px; } .card p { color:var(--muted); } .card pre { margin:13px 0 0; padding:13px; overflow:auto; border-radius:10px; background:#080911; border:1px solid #282d43; color:#dfe6ff; } .callout { margin-top:18px; border-left:4px solid var(--cyan); } .callout.warn { border-left-color:var(--amber); } .callout strong { color:#fff; }
+    table { width:100%; margin-top:24px; border-collapse:collapse; overflow:hidden; border:1px solid var(--line); border-radius:14px; } th,td { padding:13px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); } th { background:#1a1d2d; color:var(--cyan); } td { color:var(--muted); } tr:last-child td { border-bottom:0; } .simulator { display:grid; grid-template-columns:.85fr 1.15fr; gap:18px; margin-top:25px; } .scenario { width:100%; cursor:pointer; margin:0 0 10px; padding:15px; text-align:left; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:13px; font:inherit; } .scenario:hover,.scenario.active { border-color:var(--violet); background:#1d2040; } .scenario small { display:block; color:var(--muted); margin-top:3px; } .result { min-height:275px; padding:20px; background:#080911; border:1px solid #303651; border-radius:16px; } .result h3 { color:var(--green); } .checklist { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:24px; } .check { padding:17px; border-radius:14px; background:var(--surface); border:1px solid var(--line); } .check b { color:var(--amber); display:block; font-size:1.35rem; } footer { max-width:1180px; margin:auto; padding:32px 24px 52px; color:var(--muted); } @media(max-width:760px){ .console,.simulator{grid-template-columns:1fr}.flow,.checklist{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.flow-step:not(:last-child)::after{content:"↓";right:47%;top:auto;bottom:-22px}.meter-row{grid-template-columns:92px 1fr auto}.layer{grid-template-columns:38px 1fr}.layer .tag{grid-column:2} }
+  </style>
+</head>
+<body>
+<header>
+  <span class="eyebrow">GNU Make · Linux · 設定控制台</span>
+  <h1>Makefile 的值，<br>到底是誰最後說了算？</h1>
+  <p class="lead">Makefile 難的常不是 target，而是設定像多個控制室依序接手：<strong>賦值何時展開、include 何時載入、命令列何時覆蓋</strong>。這頁把它變成一台可追蹤訊號來源的控制台。</p>
+</header>
+<main class="shell">
+  <nav class="nav" aria-label="頁面導覽"><a href="#control-room">控制台</a><a href="#operators">賦值時鐘</a><a href="#load-order">載入走廊</a><a href="#priority">優先權</a><a href="#simulator">設定模擬器</a><a href="#debug">除錯儀表</a></nav>
+
+  <section id="control-room">
+    <h2>一眼看懂：Makefile 是「設定訊號控制台」</h2>
+    <p class="muted">每一份設定都不是孤立的。先有讀檔順序，再有變數的展開方式，最後才由較高優先權的來源決定結果。</p>
+    <div class="console">
+      <article class="panel"><div class="panel-title"><strong>訊號路徑</strong><span class="signal" aria-label="正常"></span></div><div class="meter"><div class="meter-row"><code>defaults.mk</code><div class="bar"><i style="width:38%"></i></div><span>預設</span></div><div class="meter-row"><code>platform.mk</code><div class="bar"><i style="width:62%"></i></div><span>平台</span></div><div class="meter-row"><code>local.mk</code><div class="bar"><i style="width:80%"></i></div><span>本機</span></div><div class="meter-row"><code>make VAR=…</code><div class="bar"><i style="width:100%"></i></div><span>命令列</span></div></div><p class="question">問題不是「哪個檔案有 CFLAGS？」而是「最終值的每一段從哪裡來？」</p></article>
+      <article class="panel"><div class="panel-title"><strong>最小心智模型</strong><span class="badge">讀取 → 展開 → 選勝者</span></div><pre class="terminal"><span class="dim">$ make print-config</span>
+<span class="ok">LOAD</span> defaults.mk → platform.mk → local.mk
+<span class="ok">FLAVOR</span> CFLAGS = simple
+<span class="ok">ORIGIN</span> CFLAGS = command line
+<span class="warn">FINAL</span> CFLAGS = -Wall -O2 -g</pre></article>
+    </div>
+    <aside class="callout"><strong>先懂這個：</strong><code>include</code> 是把另一份 Makefile 的內容插進目前讀取的位置，不是建立獨立命名空間。它像把另一張設定單放到同一本資料夾裡，後面的行仍然看得到前面的變數。</aside>
+  </section>
+
+  <section id="operators">
+    <h2>賦值時鐘：四種寫法在不同時刻按下快門</h2>
+    <div class="flow"><article class="flow-step"><span>=</span><h3>延後拍照</h3><p class="muted">保存右側文字；每次取用才展開。後續變數改動會影響結果。</p></article><article class="flow-step"><span>:=</span><h3>立刻定格</h3><p class="muted">讀到這行就展開一次。適合快取 <code>shell</code>、<code>wildcard</code>。</p></article><article class="flow-step"><span>?=</span><h3>缺席才補位</h3><p class="muted">只在未定義時提供預設，讓使用者或上游仍能指定。</p></article><article class="flow-step"><span>+=</span><h3>接上訊號</h3><p class="muted">追加內容，並保留原變數原本的 recursive / simple 特性。</p></article></div>
+    <div class="grid"><article class="card"><h3>同一段文字，兩個時間點</h3><pre>BASE = hello
+LATE = $(BASE) world
+NOW := $(BASE) world
 BASE = hi
-<em># $(MSG) → hi world</em></pre></article><article class="card"><h3><code>:=</code> 立即展開（simple）</h3><p>讀到這行立刻計算右側，結果固定。適合昂貴函式或你要明確保留當下值的情境。</p><pre class="code">BASE = hello
-MSG := $(BASE) world
-BASE = hi
-<em># $(MSG) → hello world</em></pre></article><article class="card"><h3><code>?=</code> 條件預設值</h3><p>只有變數「尚未定義」才賦值；命令列或環境先給的值會保留。</p><pre class="code">CC ?= gcc
-<em># make CC=clang 不會覆蓋 clang</em></pre></article><article class="card"><h3><code>+=</code> 追加內容</h3><p>接在既有值後方；會保留原變數的展開特性。常用來累積 flags、來源檔或路徑。</p><pre class="code">CFLAGS := -Wall
-CFLAGS += -O2
-<em># -Wall -O2</em></pre></article></div></section>
-<section id="flow"><h2>流程圖：同一份字串，兩種不同的取值時機</h2><div class="timeline"><div class="step"><b>1. 讀檔</b>Make 由上到下讀取賦值。</div><div class="step"><b>2. 遇到 <code>=</code></b>保存右側文字，暫不完全計算。</div><div class="step"><b>3. 遇到 <code>:=</code></b>立刻展開右側並保存結果。</div><div class="step"><b>4. 用到變數</b><code>=</code> 此刻才計算；<code>:=</code> 直接取固定值。</div></div><div class="callout warn"><strong>常見誤解：</strong><code>=</code> 不是「普通等號」、<code>:=</code> 不是「更強的等號」。兩者最重要的差異是展開時間。若右側有 <code>$(shell ...)</code>，使用 <code>=</code> 可能讓命令在每次取用時重跑。</div></section>
-<section id="compare"><h2>快速對照：選錯時通常會發生什麼？</h2><table><thead><tr><th>語法</th><th>何時展開右側</th><th>覆寫規則</th><th>典型用途</th></tr></thead><tbody><tr><td><code>VAR = value</code></td><td>每次使用 VAR 時</td><td>後面的賦值可改變依賴結果</td><td>依賴其他會變的變數</td></tr><tr><td><code>VAR := value</code></td><td>讀到這一行時</td><td>保留當下計算值</td><td>快取 <code>wildcard</code> / <code>shell</code> 結果</td></tr><tr><td><code>VAR ?= value</code></td><td>只有未定義才設定</td><td>尊重命令列、環境或先前設定</td><td>可調整的預設 compiler / flags</td></tr><tr><td><code>VAR += value</code></td><td>依 VAR 原本風格</td><td>追加，不是取代</td><td>累積 <code>CFLAGS</code>、<code>SRCS</code></td></tr></tbody></table></section>
-<section id="choose"><h2>互動選擇器：你現在應該用哪一個？</h2><p class="muted">點選最像你的需求；這是快速心智模型，不取代專案的既有慣例。</p><button class="choice" data-answer="default">我想提供預設值，但讓使用者能用 <code>make VAR=...</code> 覆寫</button><button class="choice" data-answer="now">右側有 <code>$(shell ...)</code> 或 <code>$(wildcard ...)</code>，我只想算一次</button><button class="choice" data-answer="later">我希望它隨其他變數之後的變更而重新解讀</button><button class="choice" data-answer="append">我只想把一個選項接到既有 flags / sources 後面</button><div class="answers" id="answers"><div class="answer" id="answerText"></div></div></section>
-<section id="patterns"><h2>可直接帶走的 Makefile 模式</h2><div class="grid"><article class="card"><h3>預設編譯器與可追加旗標</h3><pre class="code">CC ?= gcc
+# LATE → hi world
+# NOW  → hello world</pre></article><article class="card"><h3>可覆寫的安全預設</h3><pre>CC ?= gcc
 CFLAGS := -Wall -Wextra
 CFLAGS += -O2
+# make CC=clang
+# CC 不被覆蓋，CFLAGS 仍累積</pre></article></div>
+    <aside class="callout warn"><strong>常見誤解：</strong><code>?=</code> 不是「永遠最低優先權」的魔法；它只是當下發現變數未定義才賦值。要判斷最終來源，請用 <code>$(origin VAR)</code>，不要靠猜。</aside>
+  </section>
 
-app: main.c
-	$(CC) $(CFLAGS) $&lt; -o $@</pre><p class="muted">使用者可以 <code>make CC=clang</code>；專案仍保有基本警告與最佳化。</p></article><article class="card"><h3>收集來源檔：算一次就好</h3><pre class="code">SRC := $(wildcard src/*.c)
-OBJ := $(SRC:.c=.o)
+  <section id="load-order">
+    <h2>載入走廊：include 不是隔離，是把設定排成一條隊</h2>
+    <p class="muted">把專案拆成多個檔案很合理；關鍵是讓讀者一眼看出「誰先提供預設、誰可做平台調整、誰只留在本機」。</p>
+    <div class="layers"><article class="layer"><b>1</b><div><strong>defaults.mk</strong><small>專案可提交的保守預設，例如警告旗標、預設工具。</small></div><span class="tag">CFLAGS ?= -Wall</span></article><article class="layer"><b>2</b><div><strong>platform.mk</strong><small>依 OS、架構或 toolchain 做明確調整。</small></div><span class="tag">CFLAGS += -march=…</span></article><article class="layer"><b>3</b><div><strong>local.mk</strong><small>開發者本機覆寫；通常不提交，必須是 optional。</small></div><span class="tag">-include local.mk</span></article><article class="layer"><b>4</b><div><strong>rules.mk</strong><small>最後載入規則；它會看見前面已決定的設定。</small></div><span class="tag">include rules.mk</span></article></div>
+    <div class="grid"><article class="card"><h3><code>include</code>：檔案應存在</h3><p>讀不到通常就是錯誤。用在專案必要的共用規則與預設設定，能及早發現 checkout 不完整或路徑拼錯。</p><pre>include config/defaults.mk
+include config/platform.mk
+include rules.mk</pre></article><article class="card"><h3><code>-include</code>：本機可選</h3><p>讀不到時繼續。常用於每人不同的 <code>local.mk</code> 或自動產生的 dependency 檔。</p><pre>-include local.mk
+-include $(DEPS)
 
-app: $(OBJ)
-	$(CC) $^ -o $@</pre><p class="muted">用 <code>:=</code> 將檔案清單固定在 Make 讀檔階段，閱讀與除錯較直覺。</p></article></div><div class="callout"><strong>你可以這樣想：</strong>先問「這個值需要晚點才知道嗎？」需要，就考慮 <code>=</code>；不需要而且想穩定、少算幾次，就用 <code>:=</code>。接著再問是否為預設（<code>?=</code>）或追加（<code>+=</code>）。</div></section>
-<section><h2>新手練習順序</h2><ol><li>先在最小 Makefile 中改動 <code>BASE</code>，觀察 <code>=</code> 與 <code>:=</code> 的輸出。</li><li>把 <code>CC ?= gcc</code> 以 <code>make CC=clang</code> 執行一次。</li><li>用 <code>+=</code> 增加 <code>-g</code>，確認原有旗標沒有消失。</li><li>最後才把 <code>wildcard</code>、pattern rule 與自動變數 <code>$@</code>、<code>$&lt;</code> 串起來。</li></ol></section></main><footer class="footer">AI Resources · Makefile 賦值語法圖解 · <a href="index.html">回到資源首頁</a></footer>
-<script>const tips={default:'建議使用 <code>?=</code>：它只在變數尚未定義時給預設值，因此命令列、環境或上游 Makefile 的設定都能優先。',now:'建議使用 <code>:=</code>：右側會在讀檔時只展開一次，避免同一個 <code>shell</code> 或 <code>wildcard</code> 在多處取用時反覆運作。',later:'建議使用 <code>=</code>：它延後展開，因此取用時會看到其他變數後續賦值後的狀態；注意這也可能讓除錯較不直覺。',append:'建議使用 <code>+=</code>：它專門追加內容。請先確認原變數是用 <code>=</code> 或 <code>:=</code> 定義，因為追加後會保留原本的展開特性。'};document.querySelectorAll('.choice').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');document.getElementById('answerText').innerHTML=tips[button.dataset.answer];document.getElementById('answers').classList.add('show');}));</script></body></html>
+# local.mk 不應意外變成必需品</pre></article></div>
+  </section>
+
+  <section id="priority">
+    <h2>優先權不是單純的「最後一行贏」</h2>
+    <p class="muted">檔案內的讀取順序很重要，但設定還可能來自命令列、環境與 <code>override</code>。把來源與目的分開，才不會把維護策略寫成偶然結果。</p>
+    <table><thead><tr><th>來源</th><th>適合用來做什麼</th><th>除錯時問的問題</th></tr></thead><tbody><tr><td><code>defaults.mk</code></td><td>可攜、可提交的專案基準</td><td>這是預設還是硬性政策？</td></tr><tr><td>後續 <code>include</code></td><td>平台或產品線的明確差異</td><td>它是在預設之後載入嗎？</td></tr><tr><td>命令列 <code>make VAR=x</code></td><td>一次性實驗、CI 參數、使用者選擇</td><td><code>origin</code> 是否顯示 command line？</td></tr><tr><td><code>override</code></td><td>少數必須壓過命令列的專案政策</td><td>為什麼使用者不能改？能否改成明確開關？</td></tr></tbody></table>
+    <aside class="callout"><strong>你可以這樣想：</strong>讀檔順序決定「有哪些候選值」；賦值型態決定「何時算」；來源優先權決定「誰能蓋過誰」。三件事混在一起時，Makefile 才會看起來像魔法。</aside>
+  </section>
+
+  <section id="simulator">
+    <h2>設定模擬器：點一個情境，看最終值如何被組裝</h2>
+    <p class="muted">這不是通用按鈕：它把同一個 <code>CFLAGS</code> 在 include、local override 與命令列三種情境的載入證據攤開。</p>
+    <div class="simulator"><div><button class="scenario active" data-case="base"><strong>基礎專案</strong><small>只有 defaults 與 platform</small></button><button class="scenario" data-case="local"><strong>本機除錯</strong><small>optional local.mk 追加 -g</small></button><button class="scenario" data-case="cli"><strong>CI 命令列</strong><small>make CFLAGS='-O0 -g3'</small></button><button class="scenario" data-case="override"><strong>強制政策</strong><small>rules.mk 使用 override</small></button></div><article class="result" id="config-result" aria-live="polite"></article></div>
+  </section>
+
+  <section id="debug">
+    <h2>除錯儀表：別只印值，也印它的身世</h2>
+    <div class="grid"><article class="card"><h3>三個最有用的探針</h3><pre>$(info CFLAGS=$(CFLAGS))
+$(info origin=$(origin CFLAGS))
+$(info flavor=$(flavor CFLAGS))
+
+print-config:
+	@true</pre><p>把它放在載入鏈之後，或做成明確的 <code>make print-config</code> target；你會同時看見值、來源與展開型態。</p></article><article class="card"><h3>新手導讀順序</h3><ol><li>先比較 <code>=</code> 與 <code>:=</code> 的時間差。</li><li>再讓 <code>?=</code> 與命令列相遇。</li><li>接著把設定拆成 defaults / platform / local 三層。</li><li>最後才處理 <code>override</code> 與環境變數政策。</li></ol></article></div>
+    <div class="checklist"><article class="check"><b>01</b><strong>載入可讀</strong><p class="muted">把 include 順序集中在入口，避免設定散落。</p></article><article class="check"><b>02</b><strong>覆寫有意圖</strong><p class="muted">本機、CI、平台差異各有專屬入口。</p></article><article class="check"><b>03</b><strong>最終可觀測</strong><p class="muted">提供 print-config，而不是讓人搜索整個 repo。</p></article></div>
+    <aside class="callout warn"><strong>收束：</strong>把 Makefile 想成控制台，不是堆滿等號的文字檔。當每個設定都能回答「何時展開、何時載入、誰最後覆蓋」，你就能從猜測回到可驗證的建置行為。</aside>
+  </section>
+</main>
+<footer>AI Resources · Makefile 設定控制台 · <a href="index.html">回到資源首頁</a></footer>
+<script>
+  const cases = {
+    base: { title: '基礎專案：兩份提交設定依序入列', lines: ['LOAD defaults.mk  →  CFLAGS ?= -Wall', 'LOAD platform.mk  →  CFLAGS += -O2', 'ORIGIN CFLAGS    →  file', 'FLAVOR CFLAGS    →  recursive', 'FINAL CFLAGS     →  -Wall -O2'] },
+    local: { title: '本機除錯：optional 設定只追加自己的需求', lines: ['LOAD defaults.mk  →  CFLAGS ?= -Wall', 'LOAD platform.mk  →  CFLAGS += -O2', 'LOAD local.mk     →  CFLAGS += -g', 'ORIGIN CFLAGS    →  file', 'FINAL CFLAGS     →  -Wall -O2 -g'] },
+    cli: { title: 'CI 命令列：使用者明確提供完整值', lines: ['LOAD defaults.mk  →  CFLAGS ?= -Wall', 'LOAD platform.mk  →  CFLAGS += -O2', 'INPUT make CFLAGS="-O0 -g3"', 'ORIGIN CFLAGS    →  command line', 'FINAL CFLAGS     →  -O0 -g3'] },
+    override: { title: '強制政策：只有有意識地使用 override 才壓過命令列', lines: ['INPUT make CFLAGS="-O0 -g3"', 'LOAD rules.mk     →  override CFLAGS += -DSECURE_BUILD', 'ORIGIN CFLAGS    →  override', 'FINAL CFLAGS     →  -O0 -g3 -DSECURE_BUILD', 'NOTE              →  請在文件說明這個不可覆寫的理由'] }
+  };
+  const output = document.getElementById('config-result');
+  function simulateConfig(key) {
+    const view = cases[key];
+    output.innerHTML = '<h3>' + view.title + '</h3><pre class="terminal">' + view.lines.map((line, i) => (i === view.lines.length - 1 ? '<span class="ok">' : '<span class="dim">') + line + '</span>').join('\n') + '</pre>';
+    document.querySelectorAll('.scenario').forEach(button => button.classList.toggle('active', button.dataset.case === key));
+  }
+  document.querySelectorAll('.scenario').forEach(button => button.addEventListener('click', () => simulateConfig(button.dataset.case)));
+  simulateConfig('base');
+</script>
+</body>
+</html>
