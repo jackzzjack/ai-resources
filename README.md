@@ -88,6 +88,7 @@
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis、SAI、RoCEv2 AI 網路，以及 operator / developer / admin 的角色登入與救援路徑） |
+| `kiwifruit_journey.html` | 什麼是獼猴桃：從藤上到餐桌（果實剖面、採收後成熟旅程、品種比較與選果時鐘） |
 | `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
 | `aircraft-attitude.html` | 飛機的姿態：客機與戰機如何在三條軸上飛行（新手友善互動知識導覽） |
 | `dehumidifier-principles.html` | 除濕機的原理：把水氣留在機器裡（新手友善互動知識導覽） |
