@@ -49,6 +49,9 @@
     letter-spacing: -.03em;
   }
   .subtitle { margin: 10px auto 0; color: var(--muted); max-width: 680px; }
+  .source-note { margin: 14px 0 0; font-size: .9rem; }
+  .source-note a { color: var(--accent2); text-decoration: none; }
+  .source-note a:hover { text-decoration: underline; }
   .columns {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 285px), 1fr));
@@ -110,6 +113,8 @@
 <header>
   <a class="back-link" href="index.html">← 返回入口</a>
   <h1>🚀 GitHub Copilot CLI — Cheat Sheet</h1>
+  <p class="subtitle">延伸內容：新增進階代理、工作樹、排程、隱私與外掛管理等新版 CLI 指令參考。</p>
+  <p class="source-note"><a href="https://jackzzjack.github.io/ghcp-cli-cheatsheet/" target="_blank" rel="noopener">開啟完整互動式參考頁 →</a></p>
 </header>
 <main class="columns">
 
@@ -241,6 +246,22 @@
     <div class="item"><span class="key">/subagents</span><span class="desc">configure subagent models</span></div>
     <div class="item"><span class="key">/user</span><span class="desc">manage GitHub user list</span></div>
     <div class="item"><span class="key">/voice</span><span class="desc">voice/dictation mode</span></div>
+  </div>
+
+  <div class="section">
+    <h2>新版進階功能</h2>
+    <div class="item"><span class="key">/branch、/fork</span><span class="desc">建立目前儲存庫的 GitHub fork；兩者為同義指令。</span></div>
+    <div class="item"><span class="key">/worktree [TASK]</span><span class="desc">建立平行開發用 Git worktree，保留目前未提交的變更。</span></div>
+    <div class="item"><span class="key">/move [TASK]</span><span class="desc">建立新的 worktree，並將未提交的進行中變更一併帶入。</span></div>
+    <div class="item"><span class="key">/every、/loop</span><span class="desc">依固定間隔或 cron 排程重複執行提示；需要 experimental mode。</span></div>
+    <div class="item"><span class="key">/after [DELAY]</span><span class="desc">在指定延遲後執行一次提示；需要 experimental mode。</span></div>
+    <div class="item"><span class="key">/chronicle</span><span class="desc">檢視工作階段歷史、產生 standup、搜尋內容與取得用量建議；需要 experimental mode。</span></div>
+    <div class="item"><span class="key">/sidekicks</span><span class="desc">列出、啟用、移除或檢視協作中的專門 AI sidekick agents。</span></div>
+    <div class="item"><span class="key">/autopilot、/goal</span><span class="desc">鎖定本次工作階段的具體目標，讓代理持續專注直到完成或變更目標。</span></div>
+    <div class="item"><span class="key">/streamer-mode</span><span class="desc">開啟或關閉終端輸出中的敏感值遮罩，例如 API key、token 與憑證。</span></div>
+    <div class="item"><span class="key">/voice [on|off|devices]</span><span class="desc">啟用語音輸入、關閉語音輸入，或選擇麥克風裝置。</span></div>
+    <div class="item"><span class="key">/mcp registry</span><span class="desc">瀏覽 MCP registry，並安裝新的 MCP server。</span></div>
+    <div class="item"><span class="key">/plugin、/skills</span><span class="desc">管理可安裝的外掛與自訂技能，並在異動後重新載入。</span></div>
   </div>
 
   <div class="section">
