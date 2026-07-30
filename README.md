@@ -30,9 +30,10 @@
 | `typhoon_structure.html` | 拆解颱風的結構，並說明颱風生成的原因（從海溫、水氣、科氏力到眼牆，拆解颱風如何長大） |
 | `car_architecture.html` | 拆解汽車的架構（把汽車看成能源、控制、底盤與乘員安全的整合系統） |
 | `smartphone_architecture.html` | 拆解手機的架構（從 SoC、螢幕、電池、相機到通訊模組理解手機） |
-| `makefile_assignment_guide.html` | Makefile 賦值語法圖解（=、:=、?=、+= 的展開時機、覆寫規則、CFLAGS 實作模式與互動選擇器） |
+| `makefile_assignment_guide.html` | Makefile 設定控制台（=、:=、?=、+= 的展開時機、include 載入走廊、命令列／override 覆寫關係、CFLAGS 設定模擬器與除錯儀表） |
 | `crosstool_ng_guide.html` | Crosstool-NG Cross Toolchain 組裝線圖解（host tools、binutils、bootstrap GCC、libc、sysroot、target-prefixed tools 與互動錯誤分類控制台） |
 | `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（64-bit flags、partition entry 位元地圖、boot contract、A/B slot 流程與互動契約控制台） |
+| `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
@@ -87,7 +88,11 @@
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
-| `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis 狀態管理、SAI 晶片抽象層、RoCEv2 AI 網路） |
+| `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis、SAI、RoCEv2 AI 網路，以及 operator / developer / admin 的角色登入與救援路徑） |
+| `linux_dd_io_control.html` | Linux `dd` I/O 控制室（iflag / oflag / conv 資料路徑、sync 與 fsync 對照、互動旗標控制台） |
+| `linux_user_switch.html` | Linux 切換使用者的身分通行證（su / su - / sudo -iu 的登入環境、授權與驗證步驟） |
+| `script_vs_tee.html` | Linux script 與 tee 錄音室（命令輸出分流、終端 session 錄製、權限寫檔情境互動比較） |
+| `kiwifruit_journey.html` | 什麼是獼猴桃：從藤上到餐桌（果實剖面、採收後成熟旅程、品種比較與選果時鐘） |
 | `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
 | `aircraft-attitude.html` | 飛機的姿態：客機與戰機如何在三條軸上飛行（新手友善互動知識導覽） |
 | `dehumidifier-principles.html` | 除濕機的原理：把水氣留在機器裡（新手友善互動知識導覽） |

@@ -220,6 +220,18 @@
     tr:last-child td { border-bottom: none; }
     .check { color: var(--accent-green); font-weight: bold; }
 
+    /* ── Role-aware login console ── */
+    .login-console { background: linear-gradient(135deg, #13131a, #17152a); border: 1px solid var(--accent); border-radius: var(--radius); padding: 26px; margin: 20px 0 32px; }
+    .login-track { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; margin: 22px 0; }
+    .login-stop { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+    .login-stop strong { display:block; color:#fff; margin-bottom:4px; }
+    .login-arrow { color: var(--accent2); font-size: 1.5rem; }
+    .role-buttons { display:flex; flex-wrap:wrap; gap:10px; }
+    .role-button { appearance:none; cursor:pointer; background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:999px; padding:9px 14px; font:inherit; }
+    .role-button:hover,.role-button.active { border-color:var(--accent-green); color:var(--accent-green); }
+    .role-result { min-height:112px; background:#090910; border:1px dashed var(--border); border-radius:12px; padding:18px; margin-top:16px; }
+    .role-result .prompt { color:var(--accent-green); font-family:ui-monospace,SFMono-Regular,Consolas,monospace; margin-top:10px; }
+
     footer {
       text-align: center;
       padding: 40px 24px;
@@ -232,6 +244,8 @@
     @media (max-width: 768px) {
       header h1 { font-size: 2rem; }
       .grid { grid-template-columns: 1fr; }
+      .login-track { grid-template-columns: 1fr; }
+      .login-arrow { transform: rotate(90deg); text-align:center; }
     }
   </style>
   <script defer src="analytics-consent.js"></script>
@@ -262,6 +276,7 @@
     <div class="tab active" data-tab="overview">📖 概覽</div>
     <div class="tab" data-tab="architecture">🏗️ 架構設計</div>
     <div class="tab" data-tab="ai">🧠 AI 網路特性</div>
+    <div class="tab" data-tab="login">🪪 角色登入</div>
     <div class="tab" data-tab="ecosystem">🌐 生態系</div>
   </div>
 </div>
@@ -490,6 +505,45 @@
     </div>
   </div>
 
+  <!-- Role-aware login: a distinct entry-hall learning path -->
+  <div class="tab-panel" id="panel-login">
+    <div class="section-heading">
+      <h2>登入後，先看見適合角色的工作台</h2>
+      <p>把登入入口想成機房的「分流大廳」：帳號驗證只回答你是誰；角色與政策才決定第一個工作情境。目標不是把 Linux shell 藏起來，而是避免每個人一登入就站在同一個高風險入口。</p>
+    </div>
+
+    <div class="login-console" id="role-login-console">
+      <div class="login-track" aria-label="角色登入流程">
+        <div class="login-stop"><strong>1. SSH 登入</strong><span>驗證身分與金鑰</span></div><div class="login-arrow">→</div>
+        <div class="login-stop"><strong>2. 帳號 / group</strong><span>套用 RBAC 與 sudo policy</span></div><div class="login-arrow">→</div>
+        <div class="login-stop"><strong>3. 起始工作台</strong><span>CLI、shell 或救援流程</span></div>
+      </div>
+      <h3>試著選一個角色</h3>
+      <p style="color:var(--muted);margin:6px 0 14px;">這個小型模擬器只改變畫面中的入口決策；實作時仍須依你的 SONiC 版本、帳號系統與資安政策驗證。</p>
+      <div class="role-buttons" role="group" aria-label="選擇登入角色">
+        <button class="role-button active" type="button" data-role="operator">操作員 operator</button>
+        <button class="role-button" type="button" data-role="developer">開發者 developer</button>
+        <button class="role-button" type="button" data-role="admin">管理員 admin</button>
+      </div>
+      <div class="role-result" id="role-result" aria-live="polite"></div>
+    </div>
+
+    <div class="callout" style="border-color:var(--accent-green);"><h3>先懂這個：入口不是授權本身</h3><p>把操作員導到 SONiC CLI，並不會自動讓權限安全；真正的邊界仍是帳號、群組、sudoers、RBAC、命令審計與變更流程。wrapper 只負責讓「預設工作情境」變得清楚。</p></div>
+
+    <div class="table-wrap"><table><thead><tr><th>角色</th><th>建議預設入口</th><th>應保留的邊界</th><th>驗收重點</th></tr></thead><tbody>
+      <tr><td>operator</td><td>受控的 SONiC CLI wrapper</td><td>僅授與日常 show / config 所需能力</td><td>互動 SSH、遠端命令與審計 log</td></tr>
+      <tr><td>developer</td><td>login shell + 開發工具</td><td>環境可重現；不可假設擁有 root</td><td>HOME、PATH、容器與 build 行為</td></tr>
+      <tr><td>admin</td><td>管理 shell / break-glass</td><td>限縮誰能使用、何時使用並留下紀錄</td><td>console 救援、sudo 與 network recovery</td></tr>
+    </tbody></table></div>
+
+    <div class="grid">
+      <div class="icard"><div class="icard-icon">🧭</div><div class="icard-title">先分流，再最小授權</div><div class="icard-desc">用 group 或集中身分系統決定角色；wrapper 依角色啟動工作台；每個高權限動作仍回到 RBAC / sudo policy。不要把「直接進 CLI」誤當成安全控制。</div></div>
+      <div class="icard"><div class="icard-icon">🛟</div><div class="icard-title">救援路徑要先設計</div><div class="icard-desc">強制 shell 若沒有授權且可稽核的 escape path，事故時可能反而阻礙維護。把誰能取得 shell、透過什麼 console、如何記錄，放進變更前的演練清單。</div></div>
+      <div class="icard"><div class="icard-icon">🤖</div><div class="icard-title">不要傷到非互動工作</div><div class="icard-desc">automation、scp / SFTP、service account 與 <code>ssh host command</code> 不應被互動 wrapper 意外攔截。以是否為 interactive TTY 與明確帳號 policy 區分，而不是只改個人 <code>.bashrc</code>。</div></div>
+    </div>
+    <div class="callout" style="border-color:var(--accent-orange);"><h3>部署前的四格演練</h3><p><strong>登入：</strong>operator、developer、admin 是否到正確入口？　<strong>自動化：</strong>remote command 與檔案傳輸是否仍可用？　<strong>升權：</strong>sudo / break-glass 是否按政策留痕？　<strong>救援：</strong>console 與 network recovery 是否不依賴已故障的入口？</p></div>
+  </div>
+
 </main>
 
 <footer>
@@ -514,6 +568,20 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+
+  const roleViews = {
+    operator: { title: 'operator → SONiC CLI 工作台', text: '只把日常網路操作帶到一致入口；真正可執行的命令仍要受 RBAC 與 sudo policy 控制。', prompt: 'operator@switch:~$ sonic-cli' },
+    developer: { title: 'developer → Linux login shell', text: '保留開發、除錯與工具鏈情境，但使用個人帳號與最小權限；不因為進 shell 就等於取得管理權。', prompt: 'developer@switch:~$ bash -l' },
+    admin: { title: 'admin → 受稽核的管理 / break-glass 路徑', text: '只在政策允許時進入；需清楚的授權、記錄與退出流程。把救援能力設計成例外流程，而不是所有人的預設。', prompt: 'admin@switch:~$ sudo -i  # policy-gated' }
+  };
+  const roleResult = document.getElementById('role-result');
+  function setLoginRole(role) {
+    const view = roleViews[role];
+    roleResult.innerHTML = '<strong>' + view.title + '</strong><p style="color:var(--muted);margin:6px 0 0;">' + view.text + '</p><div class="prompt">' + view.prompt + '</div>';
+    document.querySelectorAll('.role-button').forEach(button => button.classList.toggle('active', button.dataset.role === role));
+  }
+  document.querySelectorAll('.role-button').forEach(button => button.addEventListener('click', () => setLoginRole(button.dataset.role)));
+  setLoginRole('operator');
 </script>
 
 </body>
