@@ -36,6 +36,7 @@
 | `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
+| `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
 | `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表 |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
