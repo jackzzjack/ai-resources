@@ -65,6 +65,9 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
     .nav-link {
@@ -168,6 +171,40 @@
       border-radius: 0 8px 8px 0;
     }
 
+    /* SpaceX mission control: a decision console rather than another card catalog. */
+    #spacex-lab { scroll-margin-top: 90px; }
+    .mission-console { background: radial-gradient(circle at 78% 10%, rgba(251,146,60,.18), transparent 30%), linear-gradient(145deg, #151522, #0d1019); border: 1px solid #42405a; border-radius: 20px; padding: 26px; }
+    .console-kicker { color: #fbbf24; letter-spacing: .12em; font-size: .78rem; font-weight: 700; }
+    .mission-console h2 { margin: 8px 0; font-size: clamp(1.55rem, 3vw, 2.35rem); }
+    .console-lead { color: var(--muted); line-height: 1.7; max-width: 780px; }
+    .mission-switches { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0 18px; }
+    .mission-switch { border: 1px solid #4a4864; border-radius: 999px; background: #1a1b2a; color: var(--muted); cursor: pointer; padding: 9px 15px; font-size: .9rem; }
+    .mission-switch.active { border-color: #f59e0b; background: #3a2a13; color: #ffe3a1; }
+    .mission-display { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(250px, .75fr); gap: 18px; align-items: stretch; }
+    .flight-window { position: relative; min-height: 290px; overflow: hidden; border: 1px solid #3e4058; border-radius: 14px; background: linear-gradient(180deg, #080b17 0%, #111b2d 72%, #252a36 73%, #17191f 100%); padding: 22px; }
+    .flight-window::before { content: ''; position: absolute; inset: 0; opacity: .35; background-image: radial-gradient(#e9ecff 1px, transparent 1px); background-size: 33px 33px; }
+    .flight-window > * { position: relative; }
+    .flight-path { display: flex; align-items: center; gap: 7px; margin: 28px 0 20px; }
+    .flight-node { min-width: 74px; padding: 9px 8px; border-radius: 9px; text-align: center; background: #20243a; border: 1px solid #4b5276; font-size: .78rem; color: #dfe6ff; }
+    .flight-arrow { flex: 1; min-width: 18px; height: 2px; background: linear-gradient(90deg, #f59e0b, #a78bfa); position: relative; }
+    .flight-arrow::after { content: '›'; position: absolute; right: -2px; top: -14px; color: #fbbf24; font-size: 1.5rem; }
+    .console-note { margin: 0; color: #c3c8de; line-height: 1.65; }
+    .telemetry { border: 1px solid #3e4058; border-radius: 14px; background: rgba(16,18,31,.9); padding: 20px; }
+    .telemetry h3 { margin: 0 0 12px; color: #fbbf24; }
+    .telemetry dl { margin: 0; display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: .88rem; }
+    .telemetry dt { color: var(--muted); }
+    .telemetry dd { margin: 0; color: #eef0ff; }
+    .mission-timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 22px 0; }
+    .mission-step { padding: 14px; border-top: 3px solid #f59e0b; background: rgba(255,255,255,.035); min-height: 135px; }
+    .mission-step strong { display:block; margin-bottom: 7px; color: #ffe3a1; font-size:.88rem; }
+    .mission-step span { color:var(--muted); font-size:.82rem; line-height:1.55; }
+    .spacex-callout { padding: 16px 18px; border-left: 4px solid #60a5fa; background: rgba(59,130,246,.10); border-radius: 0 10px 10px 0; color: #dce9ff; line-height: 1.7; }
+    .spacex-table { width:100%; border-collapse: collapse; margin-top: 20px; font-size:.9rem; overflow:hidden; border:1px solid #3e4058; border-radius:12px; }
+    .spacex-table th, .spacex-table td { padding: 13px; text-align:left; vertical-align:top; border-bottom:1px solid #34364c; }
+    .spacex-table th { background:#20233a; color:#ffe3a1; }
+    .spacex-table td { color:#c7c9d8; }
+    .spacex-table tr:last-child td { border-bottom:0; }
+
     footer {
       text-align: center;
       padding: 24px;
@@ -179,6 +216,10 @@
     @media (max-width: 768px) {
       .tabs { flex-wrap: wrap; }
       .tab-btn { flex: 1 1 40%; text-align: center; }
+      .mission-display { grid-template-columns: 1fr; }
+      .mission-timeline { grid-template-columns: 1fr; }
+      .mission-step { min-height: 0; }
+      .spacex-table { display: block; overflow-x: auto; }
     }
   </style>
   <script defer src="../analytics-consent.js"></script>
@@ -209,6 +250,7 @@
   <a class="nav-link" href="space_shuttle.html">太空梭構造</a>
   <a class="nav-link" href="star_lifecycle.html">恆星生命週期</a>
   <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
+  <a class="nav-link" href="#spacex-lab" onclick="openSpacexMissionConsole()">SpaceX 任務台</a>
 </nav>
 
 <main>
@@ -217,6 +259,7 @@
     <button class="tab-btn" onclick="switchTab(this, 'reuse')">2. 回收原理</button>
     <button class="tab-btn" onclick="switchTab(this, 'sequence')">3. 飛行程序</button>
     <button class="tab-btn" onclick="switchTab(this, 'propellant')">4. 燃料與噴嘴</button>
+    <button id="spacex-tab-button" class="tab-btn" onclick="switchTab(this, 'spacex')">5. SpaceX 任務台</button>
   </div>
 
   <!-- Tab: Structure -->
@@ -404,6 +447,59 @@
     </div>
   </div>
 
+  <!-- Tab: SpaceX Mission Console -->
+  <section id="spacex-lab" class="tab-panel" aria-labelledby="spacex-title">
+    <div class="mission-console">
+      <span class="console-kicker">SPACEX · 任務控制台</span>
+      <h2 id="spacex-title">同樣向上飛，任務尺度為何完全不同？</h2>
+      <p class="console-lead">獵鷹九號與 Starship 不是單純的「小火箭／大火箭」關係。前者是把衛星與人員送入近地軌道的成熟可回收運輸系統；後者則瞄準更大酬載、在軌補給與深空任務的全可重複使用架構。點選任務，讓控制台切換它要解決的工程問題。</p>
+
+      <div class="mission-switches" role="group" aria-label="選擇火箭任務">
+        <button class="mission-switch active" data-mission="falcon" onclick="selectSpacexMission('falcon', this)">獵鷹九號：軌道接駁</button>
+        <button class="mission-switch" data-mission="starship" onclick="selectSpacexMission('starship', this)">Starship V3：深空系統</button>
+      </div>
+
+      <div class="mission-display">
+        <div class="flight-window" aria-live="polite">
+          <p class="console-kicker" id="mission-mode">近地軌道運輸</p>
+          <div class="flight-path" id="mission-path">
+            <div class="flight-node">地面</div><div class="flight-arrow"></div><div class="flight-node">第一節分離</div><div class="flight-arrow"></div><div class="flight-node">近地軌道</div><div class="flight-arrow"></div><div class="flight-node">一節回收</div>
+          </div>
+          <p class="console-note" id="mission-narrative">Falcon 9 的關鍵是把一級火箭從「用完即棄」改為可控制重返、著陸與再次整備；二級則繼續把酬載送到指定軌道。它將大量重複的近地發射工作做成可週轉的運輸節奏。</p>
+        </div>
+        <aside class="telemetry">
+          <h3 id="mission-name">Falcon 9 任務讀值</h3>
+          <dl>
+            <dt>核心問題</dt><dd id="mission-question">如何降低頻繁入軌的硬體成本？</dd>
+            <dt>推進劑</dt><dd id="mission-propellant">RP-1 航太煤油＋液態氧</dd>
+            <dt>回收焦點</dt><dd id="mission-reuse">可回收第一節；二級依任務消耗</dd>
+            <dt>讀者提示</dt><dd id="mission-tip">回收不是「倒飛回家」一件事，而是一連串姿態、進入與著陸點火。</dd>
+          </dl>
+        </aside>
+      </div>
+
+      <div class="mission-timeline" aria-label="從任務需求到回收或深空補給的流程">
+        <div class="mission-step"><strong>01｜先選任務</strong><span>衛星佈署、載人輪替，或需要大量貨物的深空運輸？</span></div>
+        <div class="mission-step"><strong>02｜離開地球</strong><span>兩者都用多節架構把地面推力轉成軌道速度。</span></div>
+        <div class="mission-step"><strong>03｜把硬體留住</strong><span>回收設計要預留推進劑與熱、結構、導航餘裕。</span></div>
+        <div class="mission-step"><strong>04｜延伸能力</strong><span>Falcon 9 著重週轉；Starship 構想把補給與再入能力往更大尺度推進。</span></div>
+        <div class="mission-step"><strong>05｜回到系統</strong><span>火箭本身只是鏈條一段；酬載、地面站、補給與任務規畫同樣關鍵。</span></div>
+      </div>
+
+      <div class="spacex-callout"><strong>先懂這個：</strong>「V3」可視為 Starship 設計迭代的版本標記，而不是一組永遠固定的公開規格。研發中的飛行器、引擎與任務配置會隨測試及任務需求調整；理解它時，先抓住系統目標——大型、兩級、完全可重複使用與可在軌補給——比背數字更可靠。</div>
+
+      <table class="spacex-table">
+        <thead><tr><th>問題視角</th><th>獵鷹九號（Falcon 9）</th><th>Starship V3／Starship 架構</th></tr></thead>
+        <tbody>
+          <tr><td>主要任務圖像</td><td>把衛星、貨運或載人任務可靠地送往近地軌道與延伸目的地。</td><td>把更大量的酬載與推進劑帶入軌道，支撐月球、火星或其他深空任務的系統需求。</td></tr>
+          <tr><td>可重複使用重點</td><td>第一節垂直著陸後整備再飛，是其運輸節奏的核心。</td><td>目標是讓助推器與上級太空船都能反覆使用；這使再入、熱防護、捕獲／著陸與周轉都成為關鍵挑戰。</td></tr>
+          <tr><td>燃料選擇</td><td>以 RP-1／液態氧的成熟工程體系支撐高頻發射。</td><td>以甲烷／液態氧為核心；除了推進，也與大規模重複使用及未來原位資源利用的討論相連。</td></tr>
+          <tr><td>最容易誤解處</td><td>不是每一段都會回收；回收與任務軌道、酬載需求互相取捨。</td><td>不是已完成的「火星巴士」；它是一套仍在測試與演化、需由多項技術共同兌現的任務架構。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -414,8 +510,42 @@
   function switchTab(btn, name) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
+    document.getElementById('tab-' + name)?.classList.add('active');
+    if (name === 'spacex') document.getElementById('spacex-lab').classList.add('active');
     btn.classList.add('active');
+  }
+
+  const spacexMissionData = {
+    falcon: {
+      mode: '近地軌道運輸', name: 'Falcon 9 任務讀值',
+      path: ['地面', '第一節分離', '近地軌道', '一節回收'],
+      narrative: 'Falcon 9 的關鍵是把一級火箭從「用完即棄」改為可控制重返、著陸與再次整備；二級則繼續把酬載送到指定軌道。它將大量重複的近地發射工作做成可週轉的運輸節奏。',
+      question: '如何降低頻繁入軌的硬體成本？', propellant: 'RP-1 航太煤油＋液態氧',
+      reuse: '可回收第一節；二級依任務消耗', tip: '回收不是「倒飛回家」一件事，而是一連串姿態、進入與著陸點火。'
+    },
+    starship: {
+      mode: '在軌補給到深空轉移', name: 'Starship V3 任務讀值',
+      path: ['地面', '低軌停泊', '在軌補給', '月球／火星'],
+      narrative: 'Starship 架構把問題往系統層級推進：若要帶更大量貨物走得更遠，必須先把推進劑、太空船、再入能力與多次飛行串成一條供應鏈。V3 指涉設計持續迭代的方向，而不是任務能力已固定不變的保證。',
+      question: '如何把大量酬載與補給延伸到深空？', propellant: '甲烷＋液態氧',
+      reuse: '目標為助推器與上級太空船皆可重複使用', tip: '深空任務的瓶頸不只推力；在軌補給、熱防護、周轉與任務可靠度必須一起成立。'
+    }
+  };
+  function selectSpacexMission(key, button) {
+    const data = spacexMissionData[key];
+    document.querySelectorAll('.mission-switch').forEach(b => b.classList.remove('active'));
+    button.classList.add('active');
+    document.getElementById('mission-mode').textContent = data.mode;
+    document.getElementById('mission-name').textContent = data.name;
+    document.getElementById('mission-narrative').textContent = data.narrative;
+    document.getElementById('mission-question').textContent = data.question;
+    document.getElementById('mission-propellant').textContent = data.propellant;
+    document.getElementById('mission-reuse').textContent = data.reuse;
+    document.getElementById('mission-tip').textContent = data.tip;
+    document.getElementById('mission-path').innerHTML = data.path.map((step, index) => `<div class="flight-node">${step}</div>${index < data.path.length - 1 ? '<div class="flight-arrow"></div>' : ''}`).join('');
+  }
+  function openSpacexMissionConsole() {
+    switchTab(document.getElementById('spacex-tab-button'), 'spacex');
   }
 </script>
 
