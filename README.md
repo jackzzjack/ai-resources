@@ -20,7 +20,7 @@
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
-| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收技術、飛行程序、燃料與噴嘴設計） |
+| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收技術、飛行程序、燃料與噴嘴設計，以及 Falcon 9／Starship V3 互動任務控制台） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
