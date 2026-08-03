@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>什麼是 coproc？Bash 協同程序圖解</title>
+  <meta name="description" content="用流程圖、可執行範例與陷阱對照，理解 Bash coproc 如何在背景啟動雙向溝通的協同程序。">
+  <style>
+    :root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;--accent:#7c6aff;--accent2:#a78bfa;--green:#67e8b6;--orange:#fbbf24;--text:#e8e8f0;--muted:#aaaac0}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;line-height:1.7}
+    header{text-align:center;padding:68px 20px 42px;background:radial-gradient(ellipse at 50% -10%,#44358d99,transparent 67%)}
+    h1{font-size:clamp(2rem,5vw,3.4rem);margin:12px 0;background:linear-gradient(100deg,#fff,var(--accent2));color:transparent;background-clip:text} h2{font-size:1.5rem;margin:0 0 16px} h3{margin:0 0 7px;font-size:1.05rem}
+    .lead{max-width:760px;margin:auto;color:var(--muted);font-size:1.08rem}.badge{display:inline-block;border:1px solid #7c6aff88;color:var(--accent2);padding:3px 11px;border-radius:24px;font-size:.8rem;letter-spacing:.04em}
+    .nav{position:sticky;top:0;z-index:3;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:11px;background:#13131af2;border-block:1px solid var(--border)}.nav a{color:var(--muted);text-decoration:none;padding:4px 11px;border-radius:18px}.nav a:hover{color:#fff;background:var(--surface2)}
+    main{max-width:1100px;margin:auto;padding:38px 20px 76px}section{margin-bottom:52px;scroll-margin-top:65px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}.card,.callout,.code,.step{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}.card p,.callout{margin:0;color:var(--muted)}
+    .flow{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:12px;overflow-x:auto}.step{min-height:143px}.step b{display:block;color:var(--accent2);font-size:.78rem;letter-spacing:.06em;margin-bottom:8px}.arrow{color:var(--accent2);font-size:1.4rem;text-align:center;align-self:center}
+    .code{font:14px/1.72 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;border-left:3px solid var(--accent);overflow:auto;color:#e5e7eb}.code .comment{color:#8b8ba8}.code strong{color:var(--green);font-weight:inherit} code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#c4b5fd}
+    table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}th{background:var(--surface2);color:var(--accent2)}tr:last-child td{border-bottom:0}
+    .demo{background:linear-gradient(145deg,#17172a,#101018);border:1px solid #5549a0;border-radius:16px;padding:22px}.demo-head{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.button{border:1px solid var(--accent);background:var(--accent);color:white;border-radius:9px;padding:9px 14px;font:inherit;cursor:pointer}.button:hover{background:#6755d5}.terminal{margin-top:16px;background:#07070b;border:1px solid var(--border);border-radius:10px;padding:15px;min-height:134px;font:14px/1.65 ui-monospace,monospace;color:#d1d5db;white-space:pre-wrap}.prompt{color:var(--green)}.warn{border-left:3px solid var(--orange)}.checklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.checklist div{padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--muted)}footer{text-align:center;padding:38px 20px;border-top:1px solid var(--border);color:var(--muted)}
+    @media(max-width:720px){.flow{grid-template-columns:minmax(230px,1fr)}.arrow{display:none}main{padding-inline:16px}header{padding-top:54px}}
+  </style>
+</head>
+<body>
+<header>
+  <span class="badge">BASH · PROCESS CONTROL</span>
+  <h1><code>coproc</code>：可對話的背景程序</h1>
+  <p class="lead">把長時間執行的命令放到背景，還能透過雙向管線持續傳送工作與接收結果；這就是 Bash 的協同程序（coprocess）。</p>
+</header>
+<nav class="nav"><a href="#definition">定義</a><a href="#flow">運作流程</a><a href="#example">程式範例</a><a href="#pitfalls">常見陷阱</a><a href="#verify">如何驗證</a></nav>
+<main>
+  <section id="definition">
+    <h2>先抓住心智模型：背景工作者 + 兩條管線</h2>
+    <div class="grid">
+      <article class="card"><h3>一般背景命令</h3><p><code>command &amp;</code> 讓命令在背景跑，但父 shell 通常不會再與它持續對話。</p></article>
+      <article class="card"><h3><code>coproc</code></h3><p>Bash 在背景啟動命令，並建立一條「送入」管線與一條「讀回」管線。</p></article>
+      <article class="card"><h3>適合什麼情況？</h3><p>重複交給同一個程式處理資料、想避免每筆工作都重新啟動程序時特別有用。</p></article>
+      <article class="card"><h3>不是執行緒</h3><p>它是另一個 OS 程序；共享的是檔案描述元與管線，不是 Bash 變數記憶體。</p></article>
+    </div>
+    <div class="callout" style="margin-top:16px"><b>一句話：</b><code>coproc</code> 是 Bash 提供的「可寫入、也可讀取」背景子程序介面。它是 Bash 功能，請用 <code>bash script.sh</code>，不要預設由 <code>sh</code> 執行。</div>
+  </section>
+
+  <section id="flow">
+    <h2>資料怎麼走？</h2>
+    <div class="flow">
+      <div class="step"><b>01 START</b><code>coproc WORKER { ...; }</code><br>建立背景子程序並記下 PID。</div>
+      <div class="step"><b>02 WRITE</b><code>printf ... &gt;&amp;"${WORKER[1]}"</code><br>父 shell 從寫入端把資料交給工作者。</div>
+      <div class="step"><b>03 PROCESS</b>工作者從標準輸入讀資料、計算，再輸出結果。</div>
+      <div class="step"><b>04 READ + WAIT</b><code>read ... &lt;&amp;"${WORKER[0]}"</code><br>父 shell 接收結果，最後以 <code>wait</code> 收尾。</div>
+    </div>
+    <div class="code" style="margin-top:16px"><span class="comment"># 命名協同程序時，Bash 會建立陣列 WORKER：</span>
+WORKER[0]  <span class="comment"># 讀取工作者 stdout 的檔案描述元</span>
+WORKER[1]  <span class="comment"># 寫入工作者 stdin 的檔案描述元</span>
+WORKER_PID <span class="comment"># 工作者的 PID（可用 wait 等待）</span></div>
+  </section>
+
+  <section id="example">
+    <h2>可執行範例：把數字交給背景工作者平方</h2>
+    <p class="lead" style="text-align:left;margin:0 0 16px">工作者逐行讀數字、算平方並回傳；父 shell 傳入兩筆資料，再讀取兩筆結果。</p>
+    <div class="code">#!/usr/bin/env bash
+set -euo pipefail
+
+coproc SQUARE { 
+  while IFS= read -r number; do
+    <strong>printf '%s\n' "$((number * number))"</strong>
+  done
+}
+
+<span class="comment"># 傳兩筆工作；[1] 是通往工作者 stdin 的寫入端</span>
+printf '%s\n' 7 12 &gt;&amp;"${SQUARE[1]}"
+
+<span class="comment"># [0] 是從工作者 stdout 讀回的讀取端</span>
+read -r first  &lt;&amp;"${SQUARE[0]}"
+read -r second &lt;&amp;"${SQUARE[0]}"
+printf '結果：%s、%s\n' "$first" "$second"
+
+<span class="comment"># 關閉輸入，讓 while 讀到 EOF 後結束，再回收子程序</span>
+exec {SQUARE[1]}&gt;&amp;-
+wait "$SQUARE_PID"</div>
+    <div class="demo" style="margin-top:18px">
+      <div class="demo-head"><div><h3>互動輸出預覽</h3><p style="margin:0;color:var(--muted)">此處模擬範例的輸出順序；實際驗證請依下一節執行腳本。</p></div><button class="button" id="runDemo">顯示執行結果</button></div>
+      <div class="terminal" id="terminal"><span class="prompt">$</span> bash coproc-demo.sh</div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><b>緩衝提醒：</b>若工作者是 Python、grep 或其他程式，輸出可能被緩衝，讓讀取端看似卡住。可改為讓工作者每次輸出後 flush，或在適當情境使用其 line-buffered / unbuffered 選項。</div>
+  </section>
+
+  <section id="pitfalls">
+    <h2>常見陷阱與改法</h2>
+    <table><thead><tr><th>現象</th><th>原因</th><th>建議</th></tr></thead><tbody>
+      <tr><td><code>sh script.sh</code> 報語法錯</td><td><code>coproc</code> 與陣列檔案描述元是 Bash 特性。</td><td>使用 shebang <code>#!/usr/bin/env bash</code>，並以 <code>bash script.sh</code> 執行。</td></tr>
+      <tr><td><code>read</code> 一直等待</td><td>工作者尚未輸出、輸出被緩衝，或雙方都在等對方。</td><td>設計明確的每筆請求／每筆回應協定；必要時使用 <code>read -t 5</code> 設逾時。</td></tr>
+      <tr><td>工作者永遠不結束</td><td>寫入端仍開著，工作者的 <code>read</code> 還沒看到 EOF。</td><td>送完資料後關閉寫入端，再 <code>wait "$NAME_PID"</code>。</td></tr>
+      <tr><td>變數沒有被子程序更新</td><td>協同程序是子程序，變數空間與父 shell 分離。</td><td>把結果寫到 stdout，父 shell 再用 <code>read</code> 接收。</td></tr>
+      <tr><td>只需要一筆輸入就用了 coproc</td><td>建立與同步成本不一定划算。</td><td>單次工作優先考慮命令替換、管線或一般背景命令。</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="verify">
+    <h2>驗證方式：確認資料真的往返、程序真的結束</h2>
+    <div class="checklist">
+      <div>□ 將範例存成 <code>coproc-demo.sh</code>，執行 <code>bash -n coproc-demo.sh</code> 檢查語法。</div>
+      <div>□ 執行 <code>bash coproc-demo.sh</code>；預期看到 <code>結果：49、144</code>。</div>
+      <div>□ 暫時加入 <code>echo "$SQUARE_PID"</code>，用 <code>ps -p PID</code> 觀察背景程序。</div>
+      <div>□ 測試異常輸入與逾時；確認腳本不會無限制卡住，且能清楚回報失敗。</div>
+    </div>
+    <div class="callout" style="margin-top:16px"><b>何時該用？</b>當你要長時間保留一個互動式命令、持續交辦多筆工作，又能定義清楚的輸入／輸出界線時，<code>coproc</code> 是實用工具；否則，較簡單的 pipe 或函式通常更容易維護。</div>
+  </section>
+</main>
+<footer>AI Resources · Bash <code>coproc</code> 協同程序圖解</footer>
+<script>
+  document.getElementById('runDemo').addEventListener('click', () => {
+    const terminal = document.getElementById('terminal');
+    terminal.innerHTML = '<span class="prompt">$</span> bash coproc-demo.sh\n結果：49、144\n<span class="prompt">$</span> echo $?\n0';
+  });
+</script>
+</body>
+</html>

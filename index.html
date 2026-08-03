@@ -863,17 +863,17 @@
       <div class="card-body">
         <div class="card-title">現代火箭構造與回收</div>
         <div class="card-desc">
-          深入了解現代火箭的模組化構造、垂直回收技術、飛行時序，以及不同燃料與噴嘴設計的科學奧秘。
+          從火箭構造、垂直回收與飛行時序出發，新增 SpaceX 任務控制台：互動比較獵鷹九號的軌道接駁與 Starship V3 的深空系統目標。
         </div>
         <div class="card-chips">
           <span class="chip">火箭構造</span>
           <span class="chip">垂直回收</span>
-          <span class="chip">飛行程序</span>
-          <span class="chip">燃料與噴嘴</span>
+          <span class="chip">Falcon 9</span>
+          <span class="chip">Starship V3</span>
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-count">4 大章節 · 技術詳解</span>
+        <span class="card-count">5 大章節 · SpaceX 任務台</span>
         <span class="card-cta">進入 →</span>
       </div>
     </a>
@@ -1130,6 +1130,18 @@
         <div class="card-chips"><span class="chip">Bash</span><span class="chip">Shell Script</span><span class="chip">條件判斷</span></div>
       </div>
       <div class="card-footer"><span class="card-count">5 大主題 · 互動速查</span><span class="card-cta">進入 →</span></div>
+    </a>
+
+    <!-- Bash coproc Guide -->
+    <a class="portal-card" href="coproc_guide.html" data-category="dev"
+       style="--strip-color: #67e8b6;">
+      <div class="card-icon-wrap">⚙️</div>
+      <div class="card-body">
+        <div class="card-title">什麼是 coproc？Bash 協同程序圖解</div>
+        <div class="card-desc">用雙向管線流程、可執行範例與陷阱對照，理解 Bash 如何在背景啟動可持續對話的工作者程序。</div>
+        <div class="card-chips"><span class="chip">Bash</span><span class="chip">Process Control</span><span class="chip">Pipe</span></div>
+      </div>
+      <div class="card-footer"><span class="card-count">5 大主題 · 互動預覽</span><span class="card-cta">進入 →</span></div>
     </a>
 
     <!-- tmux Cheat Sheet -->
@@ -1954,6 +1966,13 @@
     </a>
 
     <div class="no-results" id="noResults">此分類目前沒有項目</div>
+
+    <!-- Unix process API learning guides -->
+    <a class="portal-card" href="fork_guide.html" data-category="dev" style="--strip-color: #7c6aff;"><div class="card-icon-wrap">⑂</div><div class="card-body"><div class="card-title">什麼是 fork()？</div><div class="card-desc">從一個程序分岔出 parent 與 child：用回傳值、PID、waitpid 與 zombie 的心智模型讀懂 Linux process creation。</div><div class="card-chips"><span class="chip">Linux</span><span class="chip">C</span><span class="chip">Process</span></div></div><div class="card-footer"><span class="card-count">分岔 · PID · 回收</span><span class="card-cta">進入 →</span></div></a>
+    <a class="portal-card" href="execlp_guide.html" data-category="dev" style="--strip-color: #67d8ff;"><div class="card-icon-wrap">⇢</div><div class="card-body"><div class="card-title">什麼是 execlp()？</div><div class="card-desc">理解 child 如何換上一個新程式：PATH 尋找、參數列、成功不回傳，以及 fork + exec 的標準搭配。</div><div class="card-chips"><span class="chip">Linux</span><span class="chip">C</span><span class="chip">exec</span></div></div><div class="card-footer"><span class="card-count">替換程式 · PATH · wait</span><span class="card-cta">進入 →</span></div></a>
+    <a class="portal-card" href="dup2_guide.html" data-category="dev" style="--strip-color: #67e8b6;"><div class="card-icon-wrap">⇄</div><div class="card-body"><div class="card-title">什麼是 dup2()？</div><div class="card-desc">把資料流接到正確插座：從 stdin/stdout/stderr、檔案描述元到 shell 重導向與 pipe 的實作核心。</div><div class="card-chips"><span class="chip">Linux</span><span class="chip">C</span><span class="chip">File Descriptor</span></div></div><div class="card-footer"><span class="card-count">FD · 重導向 · close</span><span class="card-cta">進入 →</span></div></a>
+    <a class="portal-card" href="select_guide.html" data-category="dev" style="--strip-color: #fbbf24;"><div class="card-icon-wrap">◉</div><div class="card-body"><div class="card-title">什麼是 select()？</div><div class="card-desc">一次等待多個 I/O 事件：掌握 fd_set、timeout、ready FD 與 select 在 event loop 裡的角色。</div><div class="card-chips"><span class="chip">Linux</span><span class="chip">C</span><span class="chip">I/O Multiplexing</span></div></div><div class="card-footer"><span class="card-count">等待 · timeout · event loop</span><span class="card-cta">進入 →</span></div></a>
+    <a class="portal-card" href="pipe_guide.html" data-category="dev" style="--strip-color: #fb923c;"><div class="card-icon-wrap">↦</div><div class="card-body"><div class="card-title">什麼是 pipe()？</div><div class="card-desc">讓一個程序的輸出成為另一個程序的輸入：認識 read/write end、EOF、buffer 與 parent-child IPC。</div><div class="card-chips"><span class="chip">Linux</span><span class="chip">C</span><span class="chip">IPC</span></div></div><div class="card-footer"><span class="card-count">串流 · EOF · IPC</span><span class="card-cta">進入 →</span></div></a>
 
     <!-- Pipeline card: linux-dd-io-control -->
     <a class="portal-card" href="linux_dd_io_control.html" data-category="dev" style="--strip-color: #4de0c2;"><div class="card-icon-wrap">💾</div><div class="card-body"><div class="card-title">Linux dd：I/O 控制室</div><div class="card-desc">把 if=、iflag=、conv= 與 oflag= 放上同一條資料搬運帶；用互動控制台分清 sync、fsync 與 fullblock 的工作位置。</div><div class="card-chips"><span class="chip">Linux</span><span class="chip">dd</span><span class="chip">Storage</span></div></div><div class="card-footer"><span class="card-count">資料路徑 · 互動控制台</span><span class="card-cta">進入 →</span></div></a>

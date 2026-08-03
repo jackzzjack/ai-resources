@@ -20,7 +20,7 @@
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
-| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收技術、飛行程序、燃料與噴嘴設計） |
+| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收技術、飛行程序、燃料與噴嘴設計，以及 Falcon 9／Starship V3 互動任務控制台） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
@@ -36,6 +36,7 @@
 | `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
+| `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
 | `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表 |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
@@ -92,6 +93,11 @@
 | `linux_dd_io_control.html` | Linux `dd` I/O 控制室（iflag / oflag / conv 資料路徑、sync 與 fsync 對照、互動旗標控制台） |
 | `linux_user_switch.html` | Linux 切換使用者的身分通行證（su / su - / sudo -iu 的登入環境、授權與驗證步驟） |
 | `script_vs_tee.html` | Linux script 與 tee 錄音室（命令輸出分流、終端 session 錄製、權限寫檔情境互動比較） |
+| `fork_guide.html` | fork() 新手圖解（parent/child 分岔、PID、waitpid 與 zombie process） |
+| `execlp_guide.html` | execlp() 新手圖解（PATH 搜尋、參數列、fork + exec 程序替換） |
+| `dup2_guide.html` | dup2() 新手圖解（檔案描述元、stdin/stdout/stderr、重導向與 pipe） |
+| `select_guide.html` | select() 新手圖解（fd_set、timeout、I/O multiplexing 與 event loop） |
+| `pipe_guide.html` | pipe() 新手圖解（parent-child IPC、讀寫端、EOF 與資料流） |
 | `kiwifruit_journey.html` | 什麼是獼猴桃：從藤上到餐桌（果實剖面、採收後成熟旅程、品種比較與選果時鐘） |
 | `ac_principles.html` | 冷氣運作原理（冷凍循環四大階段、核心組件、變頻技術、CSPF 節能指標） |
 | `aircraft-attitude.html` | 飛機的姿態：客機與戰機如何在三條軸上飛行（新手友善互動知識導覽） |
