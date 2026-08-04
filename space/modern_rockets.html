@@ -205,6 +205,32 @@
     .spacex-table td { color:#c7c9d8; }
     .spacex-table tr:last-child td { border-bottom:0; }
 
+    /* Programme atlas: a destination map, not a second generic card grid. */
+    #spacex-program-map { scroll-margin-top: 90px; margin-top: 34px; }
+    .atlas-shell { overflow: hidden; border: 1px solid #35415d; border-radius: 22px; background: radial-gradient(circle at 72% 25%, rgba(45,212,191,.15), transparent 22%), radial-gradient(circle at 20% 78%, rgba(124,106,255,.2), transparent 26%), #0c1020; }
+    .atlas-header { padding: 28px 28px 16px; }
+    .atlas-kicker { color: #5eead4; font-size: .78rem; letter-spacing: .13em; font-weight: 800; }
+    .atlas-header h2 { margin: 8px 0; font-size: clamp(1.5rem, 3vw, 2.25rem); }
+    .atlas-header p { max-width: 780px; color: var(--muted); }
+    .orbit-stage { position: relative; min-height: 330px; margin: 0 28px; border: 1px solid #34415b; border-radius: 16px; background: radial-gradient(circle at 50% 50%, #29365b 0 4px, transparent 5px), repeating-radial-gradient(ellipse at 50% 50%, transparent 0 48px, rgba(125,154,214,.24) 49px 50px, transparent 51px 83px), #080d1b; overflow: hidden; }
+    .orbit-stage::before { content: ''; position:absolute; inset:0; opacity:.28; background-image:radial-gradient(#dbeafe 1px, transparent 1px); background-size:32px 32px; }
+    .orbit-sun, .orbit-earth, .orbit-mars, .orbit-moon, .orbit-sat { position:absolute; z-index:1; border-radius:50%; box-shadow:0 0 16px currentColor; }
+    .orbit-sun { left:calc(50% - 14px); top:calc(50% - 14px); width:28px; height:28px; background:#fbbf24; color:#fbbf24; }
+    .orbit-earth { left:59%; top:42%; width:22px; height:22px; background:#38bdf8; color:#38bdf8; }
+    .orbit-moon { left:68%; top:35%; width:9px; height:9px; background:#d8dee9; color:#d8dee9; }
+    .orbit-mars { left:78%; top:62%; width:17px; height:17px; background:#fb7185; color:#fb7185; }
+    .orbit-sat { left:61%; top:28%; width:10px; height:10px; background:#5eead4; color:#5eead4; }
+    .orbit-label { position:absolute; z-index:2; color:#b9c5df; font-size:.78rem; }
+    .label-earth { left:62%; top:49%; }.label-moon { left:70%; top:31%; }.label-mars { left:80%; top:68%; }.label-sat { left:63%; top:22%; }
+    .atlas-controls { display:flex; gap:10px; flex-wrap:wrap; padding:22px 28px 12px; }
+    .atlas-button { cursor:pointer; border:1px solid #3c5072; color:#cbd5e1; background:#151d31; border-radius:10px; padding:10px 14px; text-align:left; font:inherit; }
+    .atlas-button.active { border-color:#5eead4; color:#e5fffb; background:#123a3a; }
+    .atlas-readout { margin:0 28px 28px; display:grid; grid-template-columns:1.05fr .95fr; gap:16px; }
+    .atlas-panel { background:rgba(19,25,44,.92); border:1px solid #34415b; border-radius:14px; padding:18px; }
+    .atlas-panel h3 { color:#a7f3d0; margin-bottom:9px; }.atlas-panel p { color:#c9d3e8; line-height:1.7; }
+    .atlas-panel ul { padding-left:18px; color:var(--muted); line-height:1.8; }
+    .atlas-table { width:100%; border-collapse:collapse; font-size:.88rem; }.atlas-table td { padding:9px 0; border-bottom:1px solid #2d3953; color:#c9d3e8; }.atlas-table td:first-child { color:var(--muted); width:34%; }.atlas-table tr:last-child td { border-bottom:0; }
+
     footer {
       text-align: center;
       padding: 24px;
@@ -220,6 +246,9 @@
       .mission-timeline { grid-template-columns: 1fr; }
       .mission-step { min-height: 0; }
       .spacex-table { display: block; overflow-x: auto; }
+      .atlas-readout { grid-template-columns: 1fr; margin-left: 16px; margin-right: 16px; }
+      .orbit-stage { margin-left: 16px; margin-right: 16px; min-height: 280px; }
+      .atlas-controls { padding-left: 16px; padding-right: 16px; }
     }
   </style>
   <script defer src="../analytics-consent.js"></script>
@@ -251,6 +280,7 @@
   <a class="nav-link" href="star_lifecycle.html">恆星生命週期</a>
   <a class="nav-link" href="solar_system.html">太陽系互動圖</a>
   <a class="nav-link" href="#spacex-lab" onclick="openSpacexMissionConsole()">SpaceX 任務台</a>
+  <a class="nav-link" href="#spacex-program-map">目的地與星鏈地圖</a>
 </nav>
 
 <main>
@@ -500,6 +530,41 @@
     </div>
   </section>
 
+  <section id="spacex-program-map" aria-labelledby="program-map-title">
+    <div class="atlas-shell">
+      <div class="atlas-header">
+        <span class="atlas-kicker">SPACEX · 軌道到目的地的節點地圖</span>
+        <h2 id="program-map-title">火箭不是終點：它把任務接到哪一張網？</h2>
+        <p>用同一張軌道地圖看兩種尺度：Starlink 把大量近地軌道衛星連成可持續補位的通訊星座；月球與火星構想則把單次發射延伸為在軌補給、運輸與目的地系統。選擇一條路線，讀值會同步改變。</p>
+      </div>
+      <div class="orbit-stage" aria-label="地球、月球、火星與低地球軌道衛星示意圖">
+        <span class="orbit-sun" aria-hidden="true"></span><span class="orbit-earth" aria-hidden="true"></span><span class="orbit-moon" aria-hidden="true"></span><span class="orbit-mars" aria-hidden="true"></span><span class="orbit-sat" aria-hidden="true"></span>
+        <span class="orbit-label label-earth">地球</span><span class="orbit-label label-moon">月球</span><span class="orbit-label label-mars">火星</span><span class="orbit-label label-sat">LEO 衛星</span>
+      </div>
+      <div class="atlas-controls" role="group" aria-label="選擇 SpaceX 計畫學習路徑">
+        <button class="atlas-button active" data-track="starlink" onclick="selectProgramTrack('starlink', this)">① 星鏈：把軌道變成網路</button>
+        <button class="atlas-button" data-track="moon" onclick="selectProgramTrack('moon', this)">② 月球：把運輸接到表面</button>
+        <button class="atlas-button" data-track="mars" onclick="selectProgramTrack('mars', this)">③ 火星：把補給接成遠征</button>
+      </div>
+      <div class="atlas-readout">
+        <article class="atlas-panel">
+          <h3 id="track-title">星鏈：分散在低地球軌道的通訊節點</h3>
+          <p id="track-summary">星鏈可先被理解成「在較低軌道運行、由許多衛星共同覆蓋的網路」。衛星需持續補位，使用者端天線與地面閘道也同屬系統；它不是一顆衛星就能提供全球服務。</p>
+          <p class="spacex-callout"><strong>你可以這樣想：</strong><span id="track-analogy">把單一高塔改成會移動、要交接班的大量空中基地台；覆蓋、容量、延遲與補位必須一起看。</span></p>
+        </article>
+        <aside class="atlas-panel">
+          <h3>任務讀值</h3>
+          <table class="atlas-table"><tbody>
+            <tr><td>核心問題</td><td id="track-question">如何以星座形式提供廣域連線？</td></tr>
+            <tr><td>關鍵節點</td><td id="track-nodes">發射／衛星／使用者終端／地面網路</td></tr>
+            <tr><td>流程</td><td id="track-flow">部署 → 覆蓋 → 交接 → 補位</td></tr>
+            <tr><td>常見誤解</td><td id="track-misconception">星鏈不是單一衛星，也不只是一枚火箭的任務。</td></tr>
+          </tbody></table>
+        </aside>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -546,6 +611,42 @@
   }
   function openSpacexMissionConsole() {
     switchTab(document.getElementById('spacex-tab-button'), 'spacex');
+  }
+
+  const programTrackData = {
+    starlink: {
+      title: '星鏈：分散在低地球軌道的通訊節點',
+      summary: '星鏈可先被理解成「在較低軌道運行、由許多衛星共同覆蓋的網路」。衛星需持續補位，使用者端天線與地面閘道也同屬系統；它不是一顆衛星就能提供全球服務。',
+      analogy: '把單一高塔改成會移動、要交接班的大量空中基地台；覆蓋、容量、延遲與補位必須一起看。',
+      question: '如何以星座形式提供廣域連線？', nodes: '發射／衛星／使用者終端／地面網路',
+      flow: '部署 → 覆蓋 → 交接 → 補位', misconception: '星鏈不是單一衛星，也不只是一枚火箭的任務。'
+    },
+    moon: {
+      title: '月球：從近地軌道到月面任務的接力',
+      summary: '月球計畫的重點不是「火箭飛到月球」就結束。若要把人員或貨物送到月面，任務需串起進入地球軌道、離地轉移、月球軌道操作、下降與返回或後續運輸等不同階段。',
+      analogy: '把月球看成沒有公路的離島：先到轉運中心，再依任務把人、貨與推進劑接到正確的目的地節點。',
+      question: '如何把運輸能力延伸到月球表面？', nodes: '運載火箭／地球軌道／轉移段／月球軌道與月面系統',
+      flow: '入軌 → 轉移 → 月球軌道 → 下降／任務作業', misconception: '月球任務不是一次直飛；任務架構、補給與安全餘裕同樣重要。'
+    },
+    mars: {
+      title: '火星：把遠征拆成可補給的系統問題',
+      summary: '火星距離與窗口條件讓任務更像長程遠征：除了發射，還要思考大量物資如何上軌、何時出發、如何在抵達後進入大氣、著陸與維持任務。Starship 的討論因而常連到在軌補給與重複使用。',
+      analogy: '把火星任務看成遠洋補給線：船夠大不代表供應鏈已完成，出發前的裝載、途中資源與抵達後的生存條件都要接上。',
+      question: '如何把大量貨物與推進劑延伸為跨行星遠征？', nodes: '地面／低地球軌道補給／轉移軌道／火星進入與著陸',
+      flow: '多次入軌 → 在軌補給 → 發射窗口 → 抵達／進入／著陸', misconception: '火星計畫不是已固定成形的班表；它仍依賴多項系統能力逐步成熟。'
+    }
+  };
+  function selectProgramTrack(key, button) {
+    const data = programTrackData[key];
+    document.querySelectorAll('.atlas-button').forEach(b => b.classList.remove('active'));
+    button.classList.add('active');
+    document.getElementById('track-title').textContent = data.title;
+    document.getElementById('track-summary').textContent = data.summary;
+    document.getElementById('track-analogy').textContent = data.analogy;
+    document.getElementById('track-question').textContent = data.question;
+    document.getElementById('track-nodes').textContent = data.nodes;
+    document.getElementById('track-flow').textContent = data.flow;
+    document.getElementById('track-misconception').textContent = data.misconception;
   }
 </script>
 
