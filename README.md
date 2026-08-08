@@ -21,6 +21,7 @@
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
 | `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收技術、飛行程序、燃料與噴嘴設計、Falcon 9／Starship V3 任務控制台，以及星鏈／月球／火星互動節點地圖） |
+| `space/artemis_relay.html` | 阿提米絲計畫月球接力環（地球、獵戶座、月球軌道與月面之間的互動能力交接地圖） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
@@ -34,6 +35,7 @@
 | `crosstool_ng_guide.html` | Crosstool-NG Cross Toolchain 組裝線圖解（host tools、binutils、bootstrap GCC、libc、sysroot、target-prefixed tools 與互動錯誤分類控制台） |
 | `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（64-bit flags、partition entry 位元地圖、boot contract、A/B slot 流程與互動契約控制台） |
 | `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
+| `ssh_key_login_guide.html` | SSH 免輸入密碼圖解（兩把鎖的信任握手、Ed25519 部署流程、互動信任儀表、方法比較與安全收尾） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
