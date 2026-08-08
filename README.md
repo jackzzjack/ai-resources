@@ -35,6 +35,7 @@
 | `crosstool_ng_guide.html` | Crosstool-NG Cross Toolchain 組裝線圖解（host tools、binutils、bootstrap GCC、libc、sysroot、target-prefixed tools 與互動錯誤分類控制台） |
 | `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（64-bit flags、partition entry 位元地圖、boot contract、A/B slot 流程與互動契約控制台） |
 | `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
+| `ssh_key_login_guide.html` | SSH 免輸入密碼圖解（兩把鎖的信任握手、Ed25519 部署流程、互動信任儀表、方法比較與安全收尾） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
