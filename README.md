@@ -15,6 +15,7 @@
 | `chatgpt_chat_work.html` | ChatGPT Chat 與 Work 導覽：以雙軌地圖、情境選擇器與交接流程釐清個人探索和團隊協作的搭配方式 |
 | `ccstory_guide.html` | ccstory 使用紀錄回顧工具導覽：以展覽走廊理解本機 coding-agent session、recap、趨勢與隱私邊界 |
 | `iphone_ubuntu_tethering.html` | iPhone 讓 Ubuntu 上網圖解：以訊號接力台、連線時序、排錯控制台與方式比較理解 USB tethering |
+| `git_signoff_dco.html` | Git signoff、DCO 與 Signed-off-by 圖解：以 commit 責任鏈與 metadata 控制台區分 author、review 與加密簽章 |
 | `hermes_agents_guide.html` | Hermes Agents 入門圖解（模型、工具、脈絡、技能專章、執行流程與聊天 AI 對照） |
 | `mcp_guide.html` | MCP 入門圖解（AI 如何以共同協定安全連接工具、資料與外部服務） |
 | `context_windows.html` | Context Window 上下文視窗圖解（AI 工作桌心智模型、上下文流動、長文件管理） |
