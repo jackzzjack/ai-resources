@@ -491,6 +491,7 @@ footer {
   <button class="tab-btn active" onclick="switchTab('metro')">🚇 如何蓋捷運</button>
   <button class="tab-btn" onclick="switchTab('building')">🏢 如何蓋房子</button>
   <button class="tab-btn" onclick="switchTab('compare')">📊 工法比較</button>
+  <button class="tab-btn" onclick="switchTab('forces')">↕️ 力流控制台</button>
   <button class="tab-btn" onclick="switchTab('common')">🔧 共通技術</button>
 </nav>
 
@@ -1441,7 +1442,61 @@ footer {
 </div>
 </div><!-- end tab-compare -->
 
-<!-- ==================== TAB 4: 共通技術 ==================== -->
+<!-- ==================== TAB 4: 力流控制台 ==================== -->
+<div id="tab-forces" class="tab-content">
+<div class="main" id="rc-src-sc-force-console">
+  <h2 class="section-title">↕️ RC／SRC／SC：力量接力控制台</h2>
+  <p class="section-subtitle">同一棟樓都要把樓板上的重量安全傳到地基；差別在於混凝土、鋼筋與型鋼如何分工。選一種系統，看力流改走哪一條路。</p>
+
+  <div class="info-box"><strong>先懂這個：</strong><p>RC、SRC、SC 不是耐震或房價的排名。耐震表現由完整設計、構件細節、地盤、施工與維護共同決定；本頁只用「材料分工」建立入門心智模型。</p></div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3>選擇結構系統</h3>
+      <div class="tag-row" style="margin-top:0">
+        <button class="tab-btn" type="button" onclick="setForceSystem('rc')" id="force-btn-rc">🧱 RC：鋼筋＋混凝土</button>
+        <button class="tab-btn" type="button" onclick="setForceSystem('src')" id="force-btn-src">⚙️ SRC：型鋼＋鋼筋＋混凝土</button>
+        <button class="tab-btn" type="button" onclick="setForceSystem('sc')" id="force-btn-sc">🔩 SC：鋼構主骨架</button>
+      </div>
+      <p id="force-console-copy" style="color:var(--muted); margin-top:1.2rem">RC：樓板 → 混凝土梁柱與鋼筋協作 → 基礎。混凝土主要抗壓，鋼筋主要抗拉。</p>
+    </div>
+    <div class="panel">
+      <h3>力流剖面 <span class="badge badge-accent" id="force-system-badge">RC</span></h3>
+      <div id="force-building-diagram" aria-live="polite" style="display:grid;gap:.55rem;text-align:center">
+        <div style="padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px">樓板：使用與自重</div>
+        <div style="color:var(--accent2);font-size:1.4rem">↓</div>
+        <div id="force-beam" style="padding:.7rem;background:rgba(96,165,250,.12);border:1px solid var(--info);border-radius:8px">梁：彎矩與剪力的接力點</div>
+        <div style="color:var(--accent2);font-size:1.4rem">↓</div>
+        <div id="force-column" style="padding:.7rem;background:rgba(74,222,128,.12);border:1px solid var(--success);border-radius:8px">柱：把壓力送往基礎</div>
+        <div style="color:var(--accent2);font-size:1.4rem">↓</div>
+        <div style="padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px">基礎／地盤：分散並承接載重</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-section" style="margin-top:2rem">
+    <div class="flow-title">力量的四站旅行</div>
+    <div class="flow-row-wrap">
+      <div class="flow-step"><div class="flow-step-num">01</div><div class="flow-step-name">樓板收集</div><div class="flow-step-desc">人、家具、設備與自重</div></div><div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-num">02</div><div class="flow-step-name">梁分配</div><div class="flow-step-desc">將荷重導向柱或牆</div></div><div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-num">03</div><div class="flow-step-name">柱／牆下傳</div><div class="flow-step-desc">控制壓力與側向變形</div></div><div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-num">04</div><div class="flow-step-name">基礎交接</div><div class="flow-step-desc">把力量交給地盤</div></div>
+    </div>
+  </div>
+
+  <h3 style="color:var(--accent2);margin:1.5rem 0 1rem">三種骨架，三種分工</h3>
+  <div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>看什麼</th><th>RC</th><th>SRC</th><th>SC</th></tr></thead><tbody>
+    <tr><td>主要骨架</td><td>鋼筋置於混凝土內</td><td>型鋼、鋼筋與混凝土共同工作</td><td>型鋼柱、鋼梁與接頭</td></tr>
+    <tr><td>施工節奏</td><td>綁筋、立模、澆置、養護</td><td>先吊裝鋼骨，再配筋／澆置</td><td>工廠製作、現場吊裝與接合</td></tr>
+    <tr><td>設計要特別處理</td><td>裂縫、保護層、養護與細部配筋</td><td>複合構件與施工協調</td><td>接頭、耐火與防蝕</td></tr>
+    <tr><td>你可以這樣想</td><td>把鋼筋包在保護殼裡</td><td>兩副骨架彼此協作</td><td>先組好可延展的鋼骨</td></tr>
+  </tbody></table></div>
+  <div class="warning-box"><strong>常見誤解：</strong><p>「SRC 一定比 RC 安全」或「SC 一定更耐震」都太簡化。系統名稱不能取代結構技師的計算、審查與現場品管；選擇應回到用途、跨度、樓高、法規、地盤與整體設計。</p></div>
+  <div class="panel"><h3>把選擇交回設計條件</h3><p style="color:var(--muted)">先問空間需要多大跨度、預定幾層、工期與施工環境如何，再由專業團隊評估抗側系統、構件尺寸、接頭與基礎。控制台的目的不是選冠軍，而是看懂每一段力量都必須有人接手。</p></div>
+</div>
+</div><!-- end tab-forces -->
+
+<!-- ==================== TAB 5: 共通技術 ==================== -->
 <div id="tab-common" class="tab-content">
 <div class="main">
 
@@ -1749,7 +1804,7 @@ function switchTab(tabName) {
   if (tab) tab.classList.add('active');
   // Activate button
   var btns = document.querySelectorAll('.tab-btn');
-  var tabIndex = { metro: 0, building: 1, compare: 2, common: 3 };
+  var tabIndex = { metro: 0, building: 1, compare: 2, forces: 3, common: 4 };
   if (tabIndex[tabName] !== undefined && btns[tabIndex[tabName]]) {
     btns[tabIndex[tabName]].classList.add('active');
   }
@@ -1776,10 +1831,28 @@ function animateRatingBars() {
   });
 }
 
+function setForceSystem(system) {
+  var systems = {
+    rc: { badge: 'RC', copy: 'RC：樓板 → 混凝土梁柱與鋼筋協作 → 基礎。混凝土主要抗壓，鋼筋主要抗拉。', beam: 'RC 梁：混凝土承壓、鋼筋處理拉力區', column: 'RC 柱：鋼筋與混凝土共同把力量下傳' },
+    src: { badge: 'SRC', copy: 'SRC：樓板 → 型鋼、鋼筋、混凝土一起接力 → 基礎。把兩種骨架放進同一個構件協作。', beam: 'SRC 梁：型鋼骨架加上鋼筋與混凝土', column: 'SRC 柱：型鋼核心、鋼筋與混凝土共同工作' },
+    sc: { badge: 'SC', copy: 'SC：樓板 → 鋼梁、鋼柱與接頭 → 基礎。鋼構主骨架靠接頭把力量可靠地轉向與下傳。', beam: 'SC 鋼梁：型鋼傳遞彎矩與剪力', column: 'SC 鋼柱：型鋼骨架經接頭傳力至基礎' }
+  };
+  var selected = systems[system];
+  if (!selected) return;
+  document.getElementById('force-system-badge').textContent = selected.badge;
+  document.getElementById('force-console-copy').textContent = selected.copy;
+  document.getElementById('force-beam').textContent = selected.beam;
+  document.getElementById('force-column').textContent = selected.column;
+  ['rc', 'src', 'sc'].forEach(function(key) {
+    document.getElementById('force-btn-' + key).classList.toggle('active', key === system);
+  });
+}
+
 // Initialize: open first card in each section for demo
 document.addEventListener('DOMContentLoaded', function() {
   // Auto-open TBM card as example
   toggleCard('card-tbm');
+  setForceSystem('rc');
 });
 </script>
 </body>
