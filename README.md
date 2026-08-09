@@ -76,6 +76,7 @@
 | `dolphin.html` | 海豚互動知識頁（物種概覽、習性行為、智能溝通、主要物種、保育現況） |
 | `dinosaurs.html` | 恐龍百科互動知識頁（地質年代、分類系統、10 大物種圖鑑、習性行為、體型比較、K-Pg 滅絕事件） |
 | `gerd_guide.html` | 胃食道逆流完整指南（GERD 成因、症狀辨別、潛在後果、治療策略、衛教影片嵌入） |
+| `chinese_western_medicine.html` | 中醫與西醫的差異（以兩副臨床觀察鏡頭理解安全邊界、比較矩陣、就醫溝通與互動提問練習） |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學（眼球構造、虹膜調光機制、顏色成因與遺傳、動物瞳孔多樣性） |
 | `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
 | `serdes_guide.html` | SerDes 完整實作指南（序列化器/解序列化器原理、NRZ/PAM4 調變、等化器、CDR、訊號完整性、實作清單） |
@@ -92,7 +93,9 @@
 | `thailand_history.html` | 泰國歷史完整指南（史前文明、五大王朝、泰緬戰爭、近現代史、關鍵人物） |
 | `chinese_history.html` | 中國歷史全覽（史前到現代、歷代王朝卡片、重大事件、關鍵人物、文化成就、王朝速查表） |
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
-| `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
+| `construction_guide.html` | 建築工程知識庫（捷運／房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 比較，並以力量接力控制台與施工指揮塔說明材料分工、隱蔽工程交接與交屋檢查） |
+| `pcb_wet_dry_process.html` | PCB 濕製程與乾製程雙軌地圖（清洗、貼膜、曝光、顯影、蝕刻與站點互動） |
+| `poultry_plate_runway.html` | 雞、鴨、鵝營養餐盤跑道（以目標、部位、帶皮、烹調與份量建立選擇框架） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis、SAI、RoCEv2 AI 網路，以及 operator / developer / admin 的角色登入與救援路徑） |
