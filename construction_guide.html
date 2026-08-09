@@ -436,6 +436,32 @@ a:hover { text-decoration: underline; }
 }
 .badge-accent { background: rgba(124,106,255,0.2); color: var(--accent2); }
 
+/* House-building command tower: a topic-specific learning console */
+.command-hero { display:grid; grid-template-columns:minmax(260px,.9fr) minmax(300px,1.1fr); gap:1.4rem; align-items:stretch; margin:1.4rem 0 2rem; }
+.house-cutaway, .command-panel { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.25rem; }
+.house-cutaway { position:relative; min-height:365px; overflow:hidden; }
+.house-label { color:var(--accent2); font-size:.78rem; letter-spacing:.09em; text-transform:uppercase; }
+.house-frame { width:220px; height:265px; margin:26px auto 0; position:relative; border:5px solid #a594ff; border-top:0; background:linear-gradient(180deg,rgba(124,106,255,.1),rgba(96,165,250,.05)); }
+.house-roof { position:absolute; top:-67px; left:-15px; width:0; height:0; border-left:122px solid transparent; border-right:122px solid transparent; border-bottom:68px solid #7c6aff; filter:drop-shadow(0 0 16px rgba(124,106,255,.28)); }
+.house-floor { height:25%; border-bottom:2px solid rgba(165,148,255,.55); display:flex; align-items:center; padding-left:10px; color:var(--muted); font-size:.75rem; transition:all .25s ease; }
+.house-floor:last-child { border-bottom:0; }
+.house-floor.is-lit { color:#fff; background:rgba(250,204,21,.15); box-shadow:inset 0 0 20px rgba(250,204,21,.12); }
+.stage-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; margin:1rem 0; }
+.stage-btn { text-align:left; border:1px solid var(--border); border-radius:10px; color:var(--muted); background:var(--surface2); padding:.7rem .8rem; cursor:pointer; font:inherit; transition:.2s; }
+.stage-btn:hover, .stage-btn.active { border-color:var(--warning); color:var(--text); background:rgba(250,204,21,.08); }
+.stage-btn small { display:block; color:inherit; opacity:.75; margin-top:.15rem; }
+.stage-output { border-left:3px solid var(--warning); padding:.85rem 1rem; background:rgba(250,204,21,.06); border-radius:0 10px 10px 0; min-height:104px; }
+.stage-output h3 { color:var(--warning); font-size:1rem; margin-bottom:.25rem; }
+.stage-output p { color:var(--muted); font-size:.9rem; }
+.handoff-map { display:flex; flex-wrap:wrap; align-items:center; gap:.45rem; margin:1rem 0 2rem; }
+.handoff-node { border:1px solid var(--border); background:var(--surface2); border-radius:999px; padding:.45rem .75rem; font-size:.82rem; color:var(--text); }
+.handoff-arrow { color:var(--warning); }
+.checklist-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; margin:1rem 0 2rem; }
+.checklist-card { border-top:3px solid var(--accent); background:var(--surface); border-radius:10px; padding:1rem; }
+.checklist-card h4 { color:var(--accent2); margin-bottom:.35rem; }
+.checklist-card p { color:var(--muted); font-size:.85rem; }
+@media (max-width:760px) { .command-hero { grid-template-columns:1fr; } .checklist-grid { grid-template-columns:1fr; } }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -493,6 +519,7 @@ footer {
   <button class="tab-btn" onclick="switchTab('compare')">📊 工法比較</button>
   <button class="tab-btn" onclick="switchTab('forces')">↕️ 力流控制台</button>
   <button class="tab-btn" onclick="switchTab('common')">🔧 共通技術</button>
+  <button class="tab-btn" onclick="switchTab('command')">🏠 施工指揮塔</button>
 </nav>
 
 <!-- ==================== TAB 1: 捷運 ==================== -->
@@ -1784,6 +1811,31 @@ footer {
 </div><!-- end main -->
 </div><!-- end tab-common -->
 
+<!-- ==================== TAB 5: 房屋施工指揮塔 ==================== -->
+<div id="tab-command" class="tab-content">
+<div class="main" id="housing-command-center">
+  <h2 class="section-title">🏠 房子如何蓋：施工指揮塔</h2>
+  <p class="section-subtitle">把房子想成一場交接任務：不是把材料依序堆上去，而是讓每個階段完成可驗證的條件，才能安全交給下一棒。</p>
+  <div class="info-box"><strong>先懂這個：</strong><p>一個工種「做完」不等於可以封起來。防水、配管、鋼筋或測試若被下一道表面工程遮住，日後檢修成本會大幅上升；因此關鍵是交接前的紀錄與查驗。</p></div>
+  <div class="command-hero" aria-label="房屋施工六站互動導覽">
+    <div class="house-cutaway" aria-live="polite"><div class="house-label">Building cutaway · 點選右側站點看亮起的施工層</div><div class="house-frame" aria-hidden="true"><div class="house-roof"></div><div class="house-floor" data-floor="handover">交屋／測試</div><div class="house-floor" data-floor="systems">機電／封板</div><div class="house-floor" data-floor="frame">結構／外殼</div><div class="house-floor" data-floor="ground">地基／地下</div></div></div>
+    <div class="command-panel"><div class="house-label">Construction control console · 六個不可跳過的交接點</div><div class="stage-controls" id="construction-stage-controls">
+      <button class="stage-btn active" type="button" data-stage="brief" onclick="selectBuildStage('brief')">01 需求與基地<small>要蓋什麼、能蓋在哪裡？</small></button>
+      <button class="stage-btn" type="button" data-stage="permit" onclick="selectBuildStage('permit')">02 圖說與許可<small>誰把需求變成可施工條件？</small></button>
+      <button class="stage-btn" type="button" data-stage="ground" onclick="selectBuildStage('ground')">03 地基與地下<small>承載、擋土、止水先就位</small></button>
+      <button class="stage-btn" type="button" data-stage="frame" onclick="selectBuildStage('frame')">04 結構與外殼<small>讓房子站穩、擋住風雨</small></button>
+      <button class="stage-btn" type="button" data-stage="systems" onclick="selectBuildStage('systems')">05 機電與封板<small>把看不見的血管留好紀錄</small></button>
+      <button class="stage-btn" type="button" data-stage="handover" onclick="selectBuildStage('handover')">06 測試與交屋<small>確認能安全使用與維護</small></button>
+    </div><div class="stage-output" id="construction-stage-output"><h3>01｜需求與基地：先定義任務</h3><p>把空間需求、預算、基地限制與法規條件放進同一張起點圖；這不是施工前的行政枝節，而是後面所有設計與工序的邊界。</p></div></div>
+  </div>
+  <div class="flow-title">🧭 誰把事情交給誰？</div><div class="handoff-map" aria-label="房屋工程角色交接流程"><span class="handoff-node">屋主／開發者：需求與預算</span><span class="handoff-arrow">→</span><span class="handoff-node">建築師／技師：圖說與整合</span><span class="handoff-arrow">→</span><span class="handoff-node">營造團隊：工序與現場安全</span><span class="handoff-arrow">→</span><span class="handoff-node">監造／查驗：品質節點</span><span class="handoff-arrow">→</span><span class="handoff-node">使用者：維護與保固</span></div>
+  <div class="flow-title">🔍 看得見的完成 vs. 藏在牆裡的風險</div><div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>系統</th><th>何時最該看</th><th>交接前要留下什麼</th><th>為什麼不能只看表面</th></tr></thead><tbody><tr><td>結構</td><td>鋼筋、模板與澆置前後</td><td>圖說、材料與施工／查驗紀錄</td><td>日後會被混凝土包覆，外觀無法判斷內部配置。</td></tr><tr><td>防水與外殼</td><td>屋頂、外牆、窗框收邊完成時</td><td>試水／淋水結果與修補紀錄</td><td>漏水往往在雨季或使用後才顯現，返工會牽動飾面。</td></tr><tr><td>給排水、電氣、通風</td><td>配管配線、封板之前</td><td>管線位置、測試與竣工圖</td><td>被牆面與天花板遮住後，維修需要先找到正確路徑。</td></tr></tbody></table></div>
+  <div class="warning-box"><strong>常見誤解：裝潢就是蓋房子的最後一步。</strong><p>裝修是整體工程的一部分，但它不能替代結構、防水、機電與測試。好的收尾，是把看不見的系統可追溯地交給未來的使用者。</p></div>
+  <div class="flow-title">✅ 從圖紙到交屋：三段式收尾檢查</div><div class="checklist-grid"><div class="checklist-card"><h4>施工前</h4><p>確認需求、基地資訊、法規與專業圖說是否一致；不要只用漂亮的平面圖代替可施工的協調。</p></div><div class="checklist-card"><h4>施工中</h4><p>在隱蔽工程被覆蓋前，完成查驗、測試與影像／圖面紀錄；工序相依要由現場專業人員協調。</p></div><div class="checklist-card"><h4>交屋後</h4><p>整理測試結果、缺失改善、竣工圖與保固資訊；房子從交屋起進入維護週期，而非任務結束。</p></div></div>
+  <p class="section-subtitle">不同地區的法規、工法與查驗程序不同；實際工程應由合格的建築、結構、機電與施工專業人員設計、監造與執行。</p>
+</div>
+</div><!-- end tab-command -->
+
 <footer>
   <p>建築工程知識庫 | 資料僅供教育與參考用途</p>
   <p style="margin-top:0.5rem;"><a href="index.html">← 返回 AI 資源首頁</a></p>
@@ -1804,7 +1856,7 @@ function switchTab(tabName) {
   if (tab) tab.classList.add('active');
   // Activate button
   var btns = document.querySelectorAll('.tab-btn');
-  var tabIndex = { metro: 0, building: 1, compare: 2, forces: 3, common: 4 };
+  var tabIndex = { metro: 0, building: 1, compare: 2, forces: 3, common: 4, command: 5 };
   if (tabIndex[tabName] !== undefined && btns[tabIndex[tabName]]) {
     btns[tabIndex[tabName]].classList.add('active');
   }
@@ -1846,6 +1898,22 @@ function setForceSystem(system) {
   ['rc', 'src', 'sc'].forEach(function(key) {
     document.getElementById('force-btn-' + key).classList.toggle('active', key === system);
   });
+}
+
+function selectBuildStage(stage) {
+  var content = {
+    brief: ['01｜需求與基地：先定義任務', '把空間需求、預算、基地限制與法規條件放進同一張起點圖；這不是施工前的行政枝節，而是後面所有設計與工序的邊界。', 'ground'],
+    permit: ['02｜圖說與許可：把想像變成可交接的條件', '建築、結構與機電的圖說必須能彼此對照；許可與專業設計決定工程可以如何安全地開始，而不是事後補上的文件。', 'ground'],
+    ground: ['03｜地基與地下：先讓土地能承接房子', '地質調查、基礎、擋土與止水要依基地條件設計。這一棒的完成條件，是讓後續結構有可驗證且受控制的起點。', 'ground'],
+    frame: ['04｜結構與外殼：讓房子站穩並擋住風雨', '梁、柱、樓板與抗側系統形成受力路徑；外牆、門窗與防水則把室內外環境分開。不同結構系統由專業設計決定，沒有單一萬用答案。', 'frame'],
+    systems: ['05｜機電與封板：把血管留在可追溯的位置', '給排水、電氣、消防、空調與通風往往先於表面完成；封板前的定位、測試與紀錄，決定未來修繕能否少拆一面牆。', 'systems'],
+    handover: ['06｜測試與交屋：確認房子能被安全使用', '設備試運轉、缺失改善、竣工資料與保固資訊，把工程成果交給使用者。交屋不是忘記工程，而是開始按資料維護它。', 'handover']
+  };
+  if (!content[stage]) return;
+  document.querySelectorAll('.stage-btn').forEach(function(button) { button.classList.toggle('active', button.dataset.stage === stage); });
+  document.querySelectorAll('.house-floor').forEach(function(floor) { floor.classList.toggle('is-lit', floor.dataset.floor === content[stage][2]); });
+  var output = document.getElementById('construction-stage-output');
+  output.innerHTML = '<h3>' + content[stage][0] + '</h3><p>' + content[stage][1] + '</p>';
 }
 
 // Initialize: open first card in each section for demo
