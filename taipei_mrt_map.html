@@ -282,7 +282,30 @@
       border-top: 1px solid var(--border);
     }
 
+    .build-deck { background:linear-gradient(135deg,rgba(0,112,189,.16),rgba(124,106,255,.12)); border:1px solid #285886; border-radius:var(--radius); padding:28px; }
+    .build-deck h2 { color:#c6e6ff; font-size:1.45rem; margin-bottom:8px; }
+    .build-deck > p { color:var(--muted); max-width:760px; }
+    .build-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr); gap:20px; margin-top:20px; }
+    .build-stages { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+    .stage-btn { appearance:none; cursor:pointer; text-align:left; color:var(--text); background:#121925; border:1px solid #2d4965; border-radius:12px; padding:13px 10px; min-height:112px; font:inherit; transition:.2s; }
+    .stage-btn strong { display:block; color:#8ed1ff; font-size:.82rem; margin-bottom:7px; }
+    .stage-btn span { display:block; font-size:.76rem; color:var(--muted); line-height:1.45; }
+    .stage-btn:hover,.stage-btn.active { transform:translateY(-2px); border-color:#71c8ff; background:#172d42; box-shadow:0 8px 20px rgba(0,112,189,.16); }
+    .stage-panel { background:#101722; border:1px solid #2d4965; border-radius:14px; padding:22px; }
+    .stage-panel .eyebrow { color:#7dd3fc; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; }
+    .stage-panel h3 { margin:5px 0 10px; font-size:1.2rem; }
+    .stage-panel p { color:var(--muted); }
+    .stage-check { margin-top:14px; padding:12px; border-left:3px solid #f8b61c; background:rgba(248,182,28,.08); color:#d8d9e7; font-size:.88rem; }
+    .method-table { width:100%; border-collapse:collapse; margin-top:20px; font-size:.88rem; overflow:hidden; border-radius:12px; }
+    .method-table th,.method-table td { border:1px solid var(--border); padding:12px; text-align:left; vertical-align:top; }
+    .method-table th { background:#17202d; color:#bce6ff; }
+    .method-table td { color:var(--muted); }
+    .route-note { margin-top:18px; padding:15px 18px; border-radius:12px; background:rgba(124,106,255,.1); border:1px solid rgba(167,139,250,.35); color:#dcd6ff; font-size:.9rem; }
+
     @media (max-width: 768px) {
+      .build-grid { grid-template-columns:1fr; }
+      .build-stages { grid-template-columns:repeat(2,1fr); }
+
       .diagram-container { padding: 10px; }
       header h1 { font-size: 1.5rem; }
     }
@@ -311,6 +334,7 @@
 
 <nav class="nav-bar">
   <a class="nav-link" href="index.html">← 返回首頁</a>
+  <a class="nav-link" href="#taipei-mrt-build-lab">如何蓋一條線</a>
 </nav>
 
 <main>
@@ -469,6 +493,36 @@
       </ul>
     </div>
   </div>
+
+  <section class="build-deck" id="taipei-mrt-build-lab">
+    <h2>從一條走廊到一條路線：台北捷運建設控制台</h2>
+    <p>路網圖回答「哪些線把哪裡連起來」；這個控制台回答「為什麼不能把線畫好就立刻施工」。依序點選六個關卡，查看每一步交給下一步的是什麼。</p>
+    <div class="build-grid">
+      <div class="build-stages" id="mrt-build-stages">
+        <button class="stage-btn active" data-stage="0"><strong>01 需求與走廊</strong><span>人流、轉乘、土地與服務範圍</span></button>
+        <button class="stage-btn" data-stage="1"><strong>02 可行性</strong><span>運量、路線方案與效益取捨</span></button>
+        <button class="stage-btn" data-stage="2"><strong>03 設計與程序</strong><span>地質、車站、環境與用地協調</span></button>
+        <button class="stage-btn" data-stage="3"><strong>04 工程分標</strong><span>土建、機電、軌道與系統介面</span></button>
+        <button class="stage-btn" data-stage="4"><strong>05 測試整合</strong><span>列車、號誌、供電與營運情境</span></button>
+        <button class="stage-btn" data-stage="5"><strong>06 通車與迭代</strong><span>班距、轉乘、維修與服務調整</span></button>
+      </div>
+      <aside class="stage-panel" id="mrt-build-panel" aria-live="polite">
+        <div class="eyebrow">建設關卡 01</div>
+        <h3>需求與走廊：先問這條線替誰省下什麼</h3>
+        <p>從住宅、就業、學校與既有轉乘點看人流，選定值得深入比較的服務走廊；這還不是最後路線。</p>
+        <div class="stage-check"><strong>交付物：</strong>需求假設與候選走廊。先懂這個：捷運線不是愈直愈好，而是要同時回應需求、轉乘、地質與城市空間。</div>
+      </aside>
+    </div>
+    <table class="method-table">
+      <thead><tr><th>可能的工程型式</th><th>較適合的條件</th><th>需要面對的取捨</th></tr></thead>
+      <tbody>
+        <tr><td>地下隧道與地下站</td><td>核心區空間有限、需維持地面交通</td><td>地質、水文、管線遷移、施工風險與成本</td></tr>
+        <tr><td>高架與高架站</td><td>道路或既有廊道可提供足夠空間</td><td>景觀、噪音、鄰里影響與結構施工</td></tr>
+        <tr><td>平面／專用路廊</td><td>土地條件允許、可清楚隔離交通</td><td>路口、人行穿越與營運速度的協調</td></tr>
+      </tbody>
+    </table>
+    <div class="route-note"><strong>你可以這樣想：</strong>彩色路線像一張城市的「人流布線圖」。路網越能在關鍵點轉乘，越能把一段路線變成整張網的一部分。營運、興建與規劃狀態仍應以主管機關的最新公告為準。</div>
+  </section>
 </main>
 
 <footer>
@@ -516,6 +570,21 @@
       tooltip.classList.remove('show');
     });
   });
+
+  const buildStages = [
+    ['建設關卡 01','需求與走廊：先問這條線替誰省下什麼','從住宅、就業、學校與既有轉乘點看人流，選定值得深入比較的服務走廊；這還不是最後路線。','交付物：需求假設與候選走廊。先懂這個：捷運線不是愈直愈好，而是要同時回應需求、轉乘、地質與城市空間。'],
+    ['建設關卡 02','可行性：把好點子放進同一把尺','比較不同走向、站位與轉乘安排能服務多少人、需要多少資源，以及對城市的影響。','交付物：可比較的方案與取捨。常見誤解：地圖上距離短，不代表工程、用地或營運成本最低。'],
+    ['建設關卡 03','設計與程序：讓線位能安全落地','地質調查、車站與隧道設計、環境與用地程序會反覆調整方案，確保每個介面能被處理。','交付物：可審查、可施工的設計與程序條件。'],
+    ['建設關卡 04','工程分標：把一個系統拆成能協作的工作','土建、軌道、供電、號誌、通訊與車站機電必須各自施工，並在正確時間彼此交接。','交付物：可驗收的工程介面。先懂這個：土建完成不代表捷運已能行駛。'],
+    ['建設關卡 05','測試整合：確認列車不是只會動','把列車、供電、號誌、月台與控制中心放進正常、尖峰與異常情境，逐步驗證安全與服務。','交付物：系統測試與營運準備。'],
+    ['建設關卡 06','通車與迭代：把路線接進整張網','開通後持續看班距、轉乘、人流與維修資料；一條線的價值會隨網路連結與城市發展改變。','交付物：可持續調整的服務與維護循環。']
+  ];
+  const buildPanel = document.getElementById('mrt-build-panel');
+  document.querySelectorAll('#mrt-build-stages .stage-btn').forEach(button => button.addEventListener('click', () => {
+    const stage = buildStages[Number(button.dataset.stage)];
+    document.querySelectorAll('#mrt-build-stages .stage-btn').forEach(item => item.classList.toggle('active', item === button));
+    buildPanel.innerHTML = `<div class="eyebrow">${stage[0]}</div><h3>${stage[1]}</h3><p>${stage[2]}</p><div class="stage-check"><strong>${stage[3].split('：')[0]}：</strong>${stage[3].split('：').slice(1).join('：')}</div>`;
+  }));
 </script>
 </body>
 </html>
