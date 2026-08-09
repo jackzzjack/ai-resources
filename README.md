@@ -76,6 +76,7 @@
 | `dolphin.html` | 海豚互動知識頁（物種概覽、習性行為、智能溝通、主要物種、保育現況） |
 | `dinosaurs.html` | 恐龍百科互動知識頁（地質年代、分類系統、10 大物種圖鑑、習性行為、體型比較、K-Pg 滅絕事件） |
 | `gerd_guide.html` | 胃食道逆流完整指南（GERD 成因、症狀辨別、潛在後果、治療策略、衛教影片嵌入） |
+| `chinese_western_medicine.html` | 中醫與西醫的差異（以兩副臨床觀察鏡頭理解安全邊界、比較矩陣、就醫溝通與互動提問練習） |
 | `animal_eyes_iris.html` | 動物眼睛與虹膜科學（眼球構造、虹膜調光機制、顏色成因與遺傳、動物瞳孔多樣性） |
 | `computer_overview.html` | 電腦全覽互動圖解（歷史演進時間軸、硬體組成、Von Neumann 架構、CPU 流水線、現代趨勢） |
 | `serdes_guide.html` | SerDes 完整實作指南（序列化器/解序列化器原理、NRZ/PAM4 調變、等化器、CDR、訊號完整性、實作清單） |
