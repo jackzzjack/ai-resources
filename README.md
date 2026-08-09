@@ -94,6 +94,7 @@
 | `ev_knowledge.html` | 電動車知識庫（整體架構、電池包構造 Cell/Module/Pack、動力傳遞逆變器與馬達、車上電氣系統高低壓配電、充電系統 AC/DC/V2G） |
 | `construction_guide.html` | 建築工程知識庫（捷運建設流程、房屋建設流程、潛盾工法/明挖覆蓋法、RC/SRC/鋼構/CLT 工法比較） |
 | `pcb_wet_dry_process.html` | PCB 濕製程與乾製程雙軌地圖（清洗、貼膜、曝光、顯影、蝕刻與站點互動） |
+| `poultry_plate_runway.html` | 雞、鴨、鵝營養餐盤跑道（以目標、部位、帶皮、烹調與份量建立選擇框架） |
 | `chengdu_travel_guide.html` | 成都旅遊知識庫（景點、美食、台灣出發交通方式、行前文件、預算與 5 天行程建議） |
 | `fujian_travel_guide.html` | 福建旅遊知識庫（福州/廈門/泉州重點、台灣出發交通方式、行前文件、預算與 6 天行程建議） |
 | `sonic_nos_guide.html` | SONiC 開源網路作業系統（容器化架構、Redis、SAI、RoCEv2 AI 網路，以及 operator / developer / admin 的角色登入與救援路徑） |
