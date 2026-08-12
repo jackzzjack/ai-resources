@@ -146,6 +146,56 @@
       line-height: 2;
       pointer-events: none;
     }
+
+    #explorer {
+      position: fixed;
+      top: 88px; left: 20px;
+      z-index: 10;
+      width: min(300px, calc(100vw - 40px));
+      padding: 14px;
+      color: #dbeafe;
+      background: rgba(4, 13, 30, 0.82);
+      border: 1px solid rgba(100, 180, 255, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(12px);
+    }
+    #explorer h1 { font-size: 0.9rem; letter-spacing: 0.08em; color: #bae6fd; margin-bottom: 7px; }
+    #explorer p { color: #94a3b8; font-size: 0.75rem; line-height: 1.65; }
+    .explorer-actions { display: flex; flex-wrap: wrap; gap: 7px; margin: 11px 0 9px; }
+    .explorer-actions button {
+      appearance: none; cursor: pointer; padding: 6px 9px; border-radius: 999px;
+      border: 1px solid rgba(125, 211, 252, 0.28); color: #dbeafe;
+      background: rgba(30, 58, 138, 0.28); font: inherit; font-size: 0.72rem;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .explorer-actions button:hover, .explorer-actions button:focus-visible {
+      transform: translateY(-1px); border-color: #7dd3fc; background: rgba(14, 116, 144, 0.45); outline: none;
+    }
+    .fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .fact { padding: 8px; border-radius: 8px; background: rgba(30, 41, 59, 0.48); }
+    .fact strong { display: block; color: #fef3c7; font-size: 0.76rem; margin-bottom: 2px; }
+    .fact span { display: block; color: #94a3b8; font-size: 0.68rem; line-height: 1.35; }
+    #focus-note { min-height: 2.6em; margin-top: 9px; color: #cbd5e1; font-size: 0.72rem; line-height: 1.55; }
+
+    @media (max-width: 680px) {
+      #title { top: 16px; font-size: 0.86rem; letter-spacing: 2px; }
+      #scale-info { top: 40px; font-size: 0.58rem; letter-spacing: 0.8px; }
+      #back-btn { top: 68px; left: 12px; }
+      #solar-btn { top: 68px; right: 12px; }
+      #star-btn { top: 106px !important; right: 12px; }
+      #shuttle-btn { top: 144px !important; right: 12px; }
+      #rocket-btn { top: 182px !important; right: 12px; }
+      #explorer { top: auto; bottom: 12px; left: 12px; width: calc(100vw - 24px); padding: 10px; }
+      #explorer h1 { margin-bottom: 3px; }
+      #explorer p { display: none; }
+      .explorer-actions { margin: 7px 0; }
+      .fact-grid { display: none; }
+      #focus-note { min-height: 1.55em; margin-top: 5px; }
+      #controls { bottom: 190px; right: 12px; }
+      #legend { display: none; }
+      .tooltip-box { max-width: min(280px, calc(100vw - 28px)); padding: 12px; }
+    }
   </style>
   <script defer src="../analytics-consent.js"></script>
 
@@ -184,6 +234,25 @@
   <div>滑鼠滾輪 → 縮放</div>
 </div>
 
+<aside id="explorer" aria-label="銀河系探索控制台">
+  <h1>銀河系探索控制台</h1>
+  <p>這張圖把龐大的銀河系壓縮成可互動的俯視圖；點選捷徑即可聚焦重要尺度，再懸停標記讀取細節。</p>
+  <div class="explorer-actions" aria-label="聚焦捷徑">
+    <button type="button" data-focus="center">銀河中心</button>
+    <button type="button" data-focus="solar">太陽系</button>
+    <button type="button" data-focus="nebula">恆星誕生地</button>
+    <button type="button" data-focus="satellite">衛星星系</button>
+    <button type="button" data-focus="overview">完整視野</button>
+  </div>
+  <div class="fact-grid" aria-label="銀河系重點">
+    <div class="fact"><strong>直徑約 10 萬光年</strong><span>光以每秒約 30 萬公里前進，仍需跨越十萬年。</span></div>
+    <div class="fact"><strong>棒旋星系</strong><span>中央棒狀結構與旋臂不是固定的實體管線。</span></div>
+    <div class="fact"><strong>太陽在本地臂</strong><span>距銀河中心約 26,000 光年，並非位於中心。</span></div>
+    <div class="fact"><strong>一次銀河年</strong><span>太陽繞銀河中心一圈約需 2.25 億年。</span></div>
+  </div>
+  <div id="focus-note" role="status">從「完整視野」開始，找找太陽系位於哪一條旋臂旁。</div>
+</aside>
+
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -191,6 +260,23 @@ const tooltip = document.getElementById('tooltip');
 const ttContent = document.getElementById('tt-content');
 const speedSlider = document.getElementById('speed-slider');
 const speedValEl = document.getElementById('speed-val');
+const focusNote = document.getElementById('focus-note');
+const focusNotes = {
+  center: '銀河中心：核球內的恆星極為密集；中心的 Sgr A* 是超大質量黑洞，並不是會把整個星系吸進去的吸塵器。',
+  solar: '太陽系：我們位於獵戶座短臂（本地臂），離銀河中心約 26,000 光年；請懸停發亮的「你在這裡」標記。',
+  nebula: '恆星誕生地：星雲是氣體與塵埃的巨大雲團；其中一部分會在重力作用下收縮、孕育新恆星。',
+  satellite: '衛星星系：大、小麥哲倫雲受銀河系重力束縛，是銀河系之外、卻與它持續互動的鄰居。',
+  overview: '完整視野：旋臂是密度波造成的恆星與氣體聚集區，畫面用程序生成呈現它的整體結構。',
+};
+const focusZoom = { center: 3.1, solar: 2.15, nebula: 1.75, satellite: 0.34, overview: 1 };
+
+document.querySelectorAll('[data-focus]').forEach(button => {
+  button.addEventListener('click', () => {
+    const focus = button.dataset.focus;
+    targetZoom = focusZoom[focus];
+    focusNote.textContent = focusNotes[focus];
+  });
+});
 
 let W, H, cx, cy, galaxyR;
 let zoomLevel = 1, targetZoom = 1;
