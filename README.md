@@ -40,7 +40,7 @@
 | `smartphone_architecture.html` | 拆解手機的架構（從 SoC、螢幕、電池、相機到通訊模組理解手機） |
 | `makefile_assignment_guide.html` | Makefile 設定控制台（=、:=、?=、+= 的展開時機、include 載入走廊、命令列／override 覆寫關係、CFLAGS 設定模擬器與除錯儀表） |
 | `crosstool_ng_guide.html` | Crosstool-NG Cross Toolchain 組裝線圖解（host tools、binutils、bootstrap GCC、libc、sysroot、target-prefixed tools 與互動錯誤分類控制台） |
-| `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（64-bit flags、partition entry 位元地圖、boot contract、A/B slot 流程與互動契約控制台） |
+| `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（entry 編號與 LBA 實體位置、64-bit flags、boot contract、A/B slot 流程與互動控制台） |
 | `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
 | `ssh_key_login_guide.html` | SSH 免輸入密碼圖解（兩把鎖的信任握手、Ed25519 部署流程、互動信任儀表、方法比較與安全收尾） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |
