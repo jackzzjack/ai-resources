@@ -29,6 +29,9 @@
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
+| `space/solar_fusion_layers.html` | 太陽核融合、核分裂與分層構造互動導覽（反應控制台、核心至光球能量旅程與機制比較） |
+| `nose_hygiene.html` | 鼻腔濾網與安全清潔圖解（濕度互動跑道、黏液纖毛防護流程與清潔判斷地圖） |
+| `glasses_optics.html` | 眼鏡原理與挑選互動導覽（近視／遠視／散光焦點實驗室、配鏡路徑與選購矩陣） |
 | `kardashev-scale.html` | 卡爾達肖夫指數互動能量儀表板（Type I／II／III 尺度、能源路徑、常見誤解與行動清單） |
 | `star_life_death.html` | 說明恆星的一生，以及死亡之後會變成什麼（從星雲到白矮星、中子星與黑洞的生命旅程） |
 | `black_white_holes.html` | 說明黑洞，白洞（用事件視界理解黑洞，並區分理論上的白洞） |
