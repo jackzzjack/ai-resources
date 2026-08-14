@@ -29,6 +29,9 @@
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
+| `space/solar_fusion_layers.html` | 太陽核融合、核分裂與分層構造互動導覽（反應控制台、核心至光球能量旅程與機制比較） |
+| `nose_hygiene.html` | 鼻腔濾網與安全清潔圖解（濕度互動跑道、黏液纖毛防護流程與清潔判斷地圖） |
+| `glasses_optics.html` | 眼鏡原理與挑選互動導覽（近視／遠視／散光焦點實驗室、配鏡路徑與選購矩陣） |
 | `kardashev-scale.html` | 卡爾達肖夫指數互動能量儀表板（Type I／II／III 尺度、能源路徑、常見誤解與行動清單） |
 | `star_life_death.html` | 說明恆星的一生，以及死亡之後會變成什麼（從星雲到白矮星、中子星與黑洞的生命旅程） |
 | `black_white_holes.html` | 說明黑洞，白洞（用事件視界理解黑洞，並區分理論上的白洞） |
@@ -37,7 +40,7 @@
 | `smartphone_architecture.html` | 拆解手機的架構（從 SoC、螢幕、電池、相機到通訊模組理解手機） |
 | `makefile_assignment_guide.html` | Makefile 設定控制台（=、:=、?=、+= 的展開時機、include 載入走廊、命令列／override 覆寫關係、CFLAGS 設定模擬器與除錯儀表） |
 | `crosstool_ng_guide.html` | Crosstool-NG Cross Toolchain 組裝線圖解（host tools、binutils、bootstrap GCC、libc、sysroot、target-prefixed tools 與互動錯誤分類控制台） |
-| `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（64-bit flags、partition entry 位元地圖、boot contract、A/B slot 流程與互動契約控制台） |
+| `gpt_partition_attributes.html` | GPT Partition Attribute 圖解（entry 編號與 LBA 實體位置、64-bit flags、boot contract、A/B slot 流程與互動控制台） |
 | `sgdisk_safety_console.html` | sgdisk 使用教學（以飛行檢查表理解 GPT metadata 的辨識、讀取、備份、最小變更與驗證；附互動任務控制台） |
 | `ssh_key_login_guide.html` | SSH 免輸入密碼圖解（兩把鎖的信任握手、Ed25519 部署流程、互動信任儀表、方法比較與安全收尾） |
 | `vim_cheat_sheet.html` | Vim 快速參考，支援互動搜尋與篩選 |

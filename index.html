@@ -187,6 +187,58 @@
       white-space: nowrap;
     }
 
+    .feedback-panel {
+      max-width: 1152px;
+      margin: 0 auto 56px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      background: linear-gradient(135deg, rgba(124, 106, 255, 0.16), rgba(96, 200, 255, 0.08));
+      border: 1px solid rgba(167, 139, 250, 0.45);
+      border-radius: var(--radius);
+    }
+
+    .feedback-eyebrow {
+      color: var(--accent2);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .feedback-panel h2 {
+      margin: 6px 0 8px;
+      font-size: clamp(1.35rem, 3vw, 1.8rem);
+    }
+
+    .feedback-panel p:last-child {
+      max-width: 680px;
+      color: var(--muted);
+    }
+
+    .feedback-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .feedback-link:hover,
+    .feedback-link:focus-visible {
+      background: var(--accent2);
+      transform: translateY(-2px);
+    }
+
     footer {
       text-align: center;
       padding: 60px 24px;
@@ -266,6 +318,8 @@
       .card-desc { -webkit-line-clamp: 5; }
       .filter-bar { gap: 8px; }
       .filter-btn { font-size: 0.8rem; padding: 6px 14px; }
+      .feedback-panel { margin: 0 16px 40px; padding: 24px; align-items: flex-start; flex-direction: column; }
+      .feedback-link { width: 100%; }
     }
   </style>
   <script defer src="analytics-consent.js"></script>
@@ -1282,7 +1336,7 @@
       <div class="card-icon-wrap">🧭</div>
       <div class="card-body">
         <div class="card-title">GPT Partition Attribute 圖解</div>
-        <div class="card-desc">把 64-bit partition flags 放回 GPT entry、bootloader 與 installer 的共同契約中理解；含位元地圖、A/B slot 流程與互動契約控制台。</div>
+        <div class="card-desc">從 GPT entry、LBA 座標到 bootloader 契約理解分割區；新增「編號 vs 實體位置」實驗桌、位元地圖與 A/B slot 控制台。</div>
         <div class="card-chips"><span class="chip">GPT</span><span class="chip">sgdisk</span><span class="chip">Bootloader</span><span class="chip">Linux Storage</span></div>
       </div>
       <div class="card-footer"><span class="card-count">6 個心智模型 · 互動圖解</span><span class="card-cta">進入 →</span></div>
@@ -1990,6 +2044,10 @@
       </div>
     </a>
 
+    <!-- Pipeline cards: solar / nose / glasses -->
+    <a class="portal-card" href="space/solar_fusion_layers.html" data-category="space science" style="--strip-color:#ffb23e;"><div class="card-icon-wrap">☀️</div><div class="card-body"><div class="card-title">太陽的核融合、核分裂與分層構造</div><div class="card-desc">從太陽反應控制台走進核心、輻射層、對流層與光球；用互動比較分清核融合與核分裂。</div><div class="card-chips"><span class="chip">太陽</span><span class="chip">核融合</span><span class="chip">能量旅程</span></div></div><div class="card-footer"><span class="card-count">反應控制台 · 分層地圖</span><span class="card-cta">進入 →</span></div></a>
+    <a class="portal-card" href="nose_hygiene.html" data-category="life science" style="--strip-color:#72d7ff;"><div class="card-icon-wrap">🌬️</div><div class="card-body"><div class="card-title">為什麼會有鼻屎？鼻腔濾網與安全清潔</div><div class="card-desc">用濕度可調的鼻腔濾網跑道，理解黏液、纖毛與乾燥如何留下鼻屎，並認識溫和處理的邊界。</div><div class="card-chips"><span class="chip">生物知識</span><span class="chip">鼻腔防護</span><span class="chip">健康</span></div></div><div class="card-footer"><span class="card-count">濾網跑道 · 清潔判斷</span><span class="card-cta">進入 →</span></div></a>
+    <a class="portal-card" href="glasses_optics.html" data-category="life science" style="--strip-color:#8ee9ff;"><div class="card-icon-wrap">👓</div><div class="card-body"><div class="card-title">眼鏡的原理與挑選：把焦點拉回視網膜</div><div class="card-desc">在焦點實驗室切換近視、遠視與散光，沿著處方到鏡框的路徑，建立不只看度數的選購框架。</div><div class="card-chips"><span class="chip">光學</span><span class="chip">視力</span><span class="chip">選購</span></div></div><div class="card-footer"><span class="card-count">焦點實驗室 · 選購矩陣</span><span class="card-cta">進入 →</span></div></a>
     <div class="no-results" id="noResults">此分類目前沒有項目</div>
 
     <!-- Unix process API learning guides -->
@@ -2033,6 +2091,15 @@
     <a class="portal-card" href="poultry_plate_runway.html" data-category="life science" style="--strip-color:#d9ad45;"><div class="card-icon-wrap">🍽️</div><div class="card-body"><div class="card-title">雞、鴨、鵝哪個營養？</div><div class="card-desc">用可切換的餐盤跑道，把肉種、部位、帶皮、烹調、份量與配菜放進同一套選擇框架，而不是選一個永遠的冠軍。</div><div class="card-chips"><span class="chip">營養選擇</span><span class="chip">餐盤</span><span class="chip">互動跑道</span></div></div><div class="card-footer"><span class="card-count">4 個目標 · 餐盤跑道</span><span class="card-cta">進入 →</span></div></a>
   </div>
 </main>
+
+<section class="feedback-panel" aria-labelledby="feedback-title">
+  <div>
+    <p class="feedback-eyebrow">一起把資源庫變得更好</p>
+    <h2 id="feedback-title">有問題，歡迎來信</h2>
+    <p>發現內容錯誤、連結失效，或有想看的主題嗎？歡迎透過 GitHub Issues 告訴我們。請附上頁面名稱與你遇到的狀況，讓我們更容易重現與改善。</p>
+  </div>
+  <a class="feedback-link" href="https://github.com/jackzzjack/ai-resources/issues/new/choose" target="_blank" rel="noopener noreferrer">前往回報問題 ↗</a>
+</section>
 
 <footer>
   <p>本頁採 <a href="LICENSE">CC BY 4.0</a> 授權 · 持續更新中</p>
