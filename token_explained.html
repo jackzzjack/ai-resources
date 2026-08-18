@@ -21,7 +21,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="什麼是 Token：AI 如何把文字切成可計算單位">
   <meta name="twitter:description" content="探索「什麼是 Token：AI 如何把文字切成可計算單位」：提供繁體中文的互動式知識解說、視覺化內容與延伸學習資源。">
-</head>
+<meta name="page-updated" content="2026-08-18">\n</head>
 <body>
   <header><a class="back-link" href="index.html">← 返回 AI Resources Hub</a><h1>Token：AI 讀文字前，會先把語言切成小積木</h1><p class="subtitle">Token 是大型語言模型處理文字的基本單位。它不完全等於字、詞或中文字數，而是模型 tokenizer 依規則切出的片段；費用、上下文長度與輸出限制通常都用 token 計算。</p><div class="chips"><span class="chip">Tokenizer</span><span class="chip">LLM 成本</span><span class="chip">上下文長度</span><span class="chip">Prompt 設計</span></div></header>
   <nav class="tabs-wrap"><div class="tabs"><a href="#visual">一眼看懂</a><a href="#pipeline">處理流程</a><a href="#types">常見切法</a><a href="#budget">Token 預算</a><a href="#tips">實務建議</a></div></nav>
@@ -32,5 +32,5 @@
     <section id="budget" class="split"><div class="card"><span class="pill">Token budget 心智圖</span><h2>輸入與輸出共用一個容量概念</h2><p style="color:var(--muted);margin-bottom:18px">如果模型有固定上下文上限，系統指令、使用者資料、工具結果與最終回答都要共享這個預算。輸入太長時，留給輸出的空間可能變少。</p><div class="bars"><div class="bar-row"><span class="label">系統規則</span><div class="bar"><span style="width:20%"></span></div><span class="num">20%</span></div><div class="bar-row"><span class="label">文件資料</span><div class="bar"><span style="width:55%"></span></div><span class="num">55%</span></div><div class="bar-row"><span class="label">工具輸出</span><div class="bar"><span style="width:15%"></span></div><span class="num">15%</span></div><div class="bar-row"><span class="label">回答空間</span><div class="bar"><span style="width:10%"></span></div><span class="num">10%</span></div></div></div><div class="callout"><span class="pill">常見誤解</span><h2>Token 少不一定代表內容少</h2><p>高度重複、格式化良好的內容可能比較省；大量 JSON、表格、程式碼或罕見符號則可能比肉眼看起來更耗 token。實務上應用摘要、去重與只保留相關段落來控制成本。</p></div></section>
     <section id="tips"><div class="section-heading"><h2>Prompt 與文件處理的實務建議</h2><p>理解 token 後，就能更有效設計 AI 工作流。</p></div><table><thead><tr><th>情境</th><th>建議做法</th><th>原因</th></tr></thead><tbody><tr><td>長文件摘要</td><td>先切章節，逐段摘要，再合併總結</td><td>避免一次塞滿上下文並降低遺漏</td></tr><tr><td>程式碼分析</td><td>提供相關檔案與錯誤輸出，不要整個 repo 盲貼</td><td>程式碼符號與縮排很吃 token</td></tr><tr><td>多輪任務</td><td>保留短決策紀錄與 TODO</td><td>讓新一輪不用重新讀完整歷史</td></tr><tr><td>降低成本</td><td>刪除重複表格、長 log、無關附件</td><td>輸入與輸出 token 通常都會計費</td></tr></tbody></table></section>
   </main><footer>AI Resources Hub · Token 互動知識頁</footer>
-</body>
+<script defer src="page-updated-date.js"></script>\n</body>
 </html>
