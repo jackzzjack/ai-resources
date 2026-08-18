@@ -10,7 +10,7 @@
     .orb{--glow:28px;box-shadow:0 0 var(--glow) 8px rgba(85,217,255,.42)}
   </style>
   <script defer src="analytics-consent.js"></script>
-</head>
+<meta name="page-updated" content="2026-08-18">\n</head>
 <body>
   <header>
     <a class="back" href="index.html">← 回到 AI Resources Hub</a>
@@ -62,5 +62,5 @@
     function update(){const s=Number(signal.value)/100,m=Number(scale.value)/100,g=Number(glow.value);const size=72+s*m*120;orb.style.width=orb.style.height=`${size}px`;orb.style.setProperty('--glow',`${g}px`);orb.style.filter=`hue-rotate(${s*160}deg)`;readout.textContent=`signal ${s.toFixed(2)} · scale ${m.toFixed(2)} · glow ${g}`}
     [signal,scale,glow].forEach(input=>input.addEventListener('input',update));update();
   </script>
-</body>
+<script defer src="page-updated-date.js"></script>\n</body>
 </html>
