@@ -20,7 +20,7 @@
     footer{text-align:center;color:var(--muted);border-top:1px solid var(--border);padding:32px 20px}a{color:var(--accent2)}@media(max-width:760px){.grid{grid-template-columns:1fr}.checklist{grid-template-columns:1fr 1fr}.assembly{grid-template-columns:repeat(6,150px)}.route{grid-template-columns:70px 1fr}.route:before{left:34px}}@media(max-width:430px){.checklist{grid-template-columns:1fr}.compare{font-size:.86rem}.compare th,.compare td{padding:10px}}
   </style>
   <script defer src="analytics-consent.js"></script>
-</head>
+<meta name="page-updated" content="2026-08-18">\n</head>
 <body>
 <header>
   <a class="back" href="index.html">← 回到 AI Resources Hub</a>
@@ -83,4 +83,4 @@
   const consoleEl=document.getElementById('fault-console'),out=document.getElementById('diagnosis');
   consoleEl.addEventListener('click',e=>{const button=e.target.closest('.fault');if(!button)return;consoleEl.querySelectorAll('.fault').forEach(x=>x.classList.toggle('active',x===button));const [title,text]=messages[button.dataset.key];out.innerHTML=`<h3>${title}</h3><p>${text}</p>`;});
 </script>
-</body></html>
+<script defer src="page-updated-date.js"></script>\n</body></html>
