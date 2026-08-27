@@ -107,6 +107,7 @@
     .item { align-items: flex-start; flex-direction: column; gap: 5px; }
     .key { max-width: 100%; }
   }
+  .task-route{max-width:1120px;margin:0 auto;padding:26px 24px 0}.route-nav{position:sticky;top:0;z-index:4;display:flex;gap:8px;overflow:auto;padding:10px 0;background:#0a0a0ff0;border-bottom:1px solid var(--border)}.route-nav a{white-space:nowrap;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:99px;padding:5px 11px}.metro{margin-top:18px;padding:24px;border:1px solid var(--border);border-radius:18px;background:radial-gradient(circle at 86% 14%,rgba(124,106,255,.26),transparent 32%),var(--surface)}.metro h2{margin:0;font-size:clamp(1.35rem,3vw,2rem)}.route-picker{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}.route-picker button{cursor:pointer;border:1px solid var(--border);border-radius:99px;padding:8px 12px;color:var(--text);background:var(--surface2);font:inherit}.route-picker button.active{border-color:var(--accent2);background:#33295e}.stations{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;align-items:stretch}.station{position:relative;padding:14px 10px;border-radius:12px;border:1px solid var(--border);background:#0e0e17;text-align:center;font-size:.86rem}.station.active{border-color:var(--accent2);color:#fff;box-shadow:0 0 0 1px rgba(167,139,250,.45),0 0 22px rgba(124,106,255,.2)}.station:not(:last-child)::after{content:'→';position:absolute;right:-11px;top:38%;color:var(--accent2);z-index:1}.route-result{margin-top:15px;padding:14px;border-left:4px solid var(--accent2);border-radius:0 10px 10px 0;background:#1a1830;color:var(--muted)}.beginner{margin:16px 0 0;padding:13px 15px;background:rgba(255,205,112,.08);border-left:4px solid #ffcd70;border-radius:0 10px 10px 0;color:var(--muted)}@media(max-width:700px){.stations{grid-template-columns:1fr}.station:not(:last-child)::after{content:'↓';right:48%;top:auto;bottom:-16px}.metro{padding:18px}}
 </style>
 <meta name="page-updated" content="2026-08-18">\n</head>
 <body>
@@ -116,9 +117,10 @@
   <p class="subtitle">延伸內容：新增進階代理、工作樹、排程、隱私與外掛管理等新版 CLI 指令參考。</p>
   <p class="source-note"><a href="https://jackzzjack.github.io/ghcp-cli-cheatsheet/" target="_blank" rel="noopener">開啟完整互動式參考頁 →</a></p>
 </header>
-<main class="columns">
+<section class="task-route" id="task-route"><nav class="route-nav"><a href="#task-route">任務地鐵圖</a><a href="#first-run">第一次使用</a><a href="#commands">指令速查</a><a href="#troubleshoot">排錯提醒</a></nav><article class="metro"><h2>新手任務地鐵圖：先選目的，再找指令</h2><p class="subtitle">速查表的角色不是逼你背完斜線指令，而是在工作情境出現時，帶你走到下一個可驗證的站點。</p><div class="route-picker" id="taskRoutePicker"><button class="active" data-route="start">第一次開啟</button><button data-route="ask">提問與探索</button><button data-route="edit">修改程式</button><button data-route="agent">委派工作</button><button data-route="debug">排除問題</button></div><div class="stations" id="taskStations" aria-live="polite"></div><div class="route-result" id="taskRouteResult"></div><div class="beginner"><strong>先懂這個：</strong>指令、權限與可用功能會隨版本演進。執行會修改檔案、建立 PR 或委派 agent 的操作前，先確認工作目錄、權限與預覽內容。</div></article></section>
+<main class="columns" id="commands">
 
-  <div class="section">
+  <div class="section" id="first-run">
     <h2>Global</h2>
     <div class="item"><span class="key">/help</span><span class="desc">show full help</span></div>
     <div class="item"><span class="key">?</span><span class="desc">show quick help</span></div>
@@ -208,7 +210,7 @@
     <div class="item"><span class="key">/rewind</span><span class="desc">rewind last turn</span></div>
   </div>
 
-  <div class="section">
+  <div class="section" id="troubleshoot">
     <h2>Help</h2>
     <div class="item"><span class="key">/help</span><span class="desc">show help</span></div>
     <div class="item"><span class="key">/changelog</span><span class="desc">display changelog</span></div>
@@ -278,5 +280,6 @@ COPILOT_CUSTOM_INSTRUCTIONS_DIRS (env var)</div>
 
 </main>
 <footer>GitHub Copilot CLI v1.0.74 — Ask "What can you do?" or visit docs.github.com/copilot/how-tos/use-copilot-agents/use-copilot-cli</footer>
+<script>const routes={start:{stations:['確認版本','登入與環境','開新對話','先看 /help','完成第一個小問題'],result:'第一趟只求能辨識目前環境與取得說明；不要急著把所有設定、外掛或自動化一次開啟。'},ask:{stations:['說清目標','附上必要脈絡','提出問題','檢查回答','保留下一步'],result:'提問不是只有一句問題。把目標、限制與可驗證的輸出講清楚，再用結果決定是否進入修改。'},edit:{stations:['檢查工作目錄','描述變更','檢視差異','測試或審閱','再提交'],result:'修改程式的安全路線是先確認檔案範圍，再看差異與測試；CLI 的建議不是取代你的版本控制判斷。'},agent:{stations:['拆出明確任務','設定權限邊界','委派 agent','檢查產物','整合與驗證'],result:'委派適合有明確交付物的多步工作。先訂好可讀取範圍、成果格式與驗收點，避免把模糊目標直接交出去。'},debug:{stations:['描述症狀','取得診斷','縮小範圍','嘗試修正','驗證與記錄'],result:'排錯先保留重現線索，再利用 help、diagnose 或環境資訊縮小範圍；不要把敏感值直接貼進對話。'}};function drawRoute(key){const r=routes[key];document.getElementById('taskStations').innerHTML=r.stations.map((s,i)=>'<div class="station '+(i===2?'active':'')+'">'+String(i+1).padStart(2,'0')+' · '+s+'</div>').join('');document.getElementById('taskRouteResult').textContent=r.result}document.querySelectorAll('#taskRoutePicker button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#taskRoutePicker button').forEach(x=>x.classList.remove('active'));b.classList.add('active');drawRoute(b.dataset.route)}));drawRoute('start');</script>
 <script defer src="page-updated-date.js"></script>\n</body>
 </html>

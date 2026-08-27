@@ -48,7 +48,7 @@
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
-| `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表 |
+| `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表，含任務導向互動地鐵圖（第一次使用、提問、修改、委派與排錯） |
 | `terminal_statusline_guide.html` | 終端狀態列選型圖解（ccstatusline、copilot-hud、copilotstatusline 的宿主、訊號旅程與資料邊界） |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
