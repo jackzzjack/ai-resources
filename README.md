@@ -11,6 +11,7 @@
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
+| `ai_engineering_workbench.html` | AI Engineering 五層工作台：以情境控制台與選型矩陣區分 prompt、context、harness、loop、graph engineering |
 | `ai-native.html` | AI Native 工作方式導覽：理解其理念、人機協作迴圈、落地五步法與流程自評 |
 | `chatgpt_chat_work.html` | ChatGPT Chat 與 Work 導覽：以雙軌地圖、情境選擇器與交接流程釐清個人探索和團隊協作的搭配方式 |
 | `ccstory_guide.html` | ccstory 使用紀錄回顧工具導覽：以展覽走廊理解本機 coding-agent session、recap、趨勢與隱私邊界 |
