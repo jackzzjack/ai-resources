@@ -49,6 +49,7 @@
 | `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
 | `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表 |
+| `terminal_statusline_guide.html` | 終端狀態列選型圖解（ccstatusline、copilot-hud、copilotstatusline 的宿主、訊號旅程與資料邊界） |
 | `minicom_cheat_sheet.html` | minicom 快速參考 |
 | `5g_architecture.html` | 5G 網路架構互動圖（3GPP SBA、切片、介面說明） |
 | `f1_engine_2026.html` | F1 2026 動力單元架構圖（ICE、MGU-K、100% 永續燃料） |
