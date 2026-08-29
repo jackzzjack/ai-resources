@@ -565,6 +565,16 @@
     </div>
   </section>
 
+  <section id="flight-systems-deck" aria-labelledby="systems-title" style="margin-top:40px; padding:28px; border:1px solid var(--border); border-radius:var(--radius); background:linear-gradient(135deg,rgba(251,146,60,.10),rgba(124,106,255,.08));">
+    <span class="console-kicker">FLIGHT SYSTEMS · 四張工程讀圖</span>
+    <h2 id="systems-title" style="margin:8px 0 10px;">同一枚火箭，四種不一樣的系統瓶頸</h2>
+    <p style="color:var(--muted);">把飛行器當成任務鏈，而非只看推力或單次成功。選擇一張讀圖，控制台會更新關鍵狀態、風險放大方式與新手提問。</p>
+    <nav aria-label="四張工程讀圖" style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0;"><button class="mission-switch active system-switch" onclick="selectFlightSystem('turnaround',this)">① Falcon 9 周轉時鐘</button><button class="mission-switch system-switch" onclick="selectFlightSystem('raptor',this)">② Raptor 平衡盤</button><button class="mission-switch system-switch" onclick="selectFlightSystem('refuel',this)">③ 軌道補給鏈</button><button class="mission-switch system-switch" onclick="selectFlightSystem('tps',this)">④ 熱防護剖面</button></nav>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:18px;align-items:start;"><div id="system-map" style="display:grid;grid-template-columns:repeat(5,minmax(92px,1fr));gap:8px;overflow:auto;padding:16px 0;"><div class="flight-node">任務排定</div><div class="flight-node">發射</div><div class="flight-node">回收物流</div><div class="flight-node">整備</div><div class="flight-node">下一任務</div></div><aside style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;"><p class="console-kicker" id="system-kicker">TURNAROUND CLOCK</p><h3 id="system-heading" style="margin:6px 0 10px;">回收成功只是周轉的起點</h3><p id="system-summary" style="color:var(--muted);font-size:.92rem;">助推器、海上回收、港口、整備、氣象、酬載與安全程序要在同一個發射窗口裡排隊。</p><p class="spacex-callout" style="margin-top:14px;"><strong>先懂這個：</strong><span id="system-tip">高發射頻率是整個網路的吞吐量，不是單枚火箭的回收次數。</span></p></aside></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:18px;"><article id="falcon-turnaround" class="info-card"><h3>① Falcon 9：周轉時鐘</h3><p><b>流程：</b>任務排定 → 發射 → 海上／陸上回收 → 拖帶與靠港 → 檢查整備 → 分配下一任務。</p><p><b>對照：</b>「已回收」描述飛行結果；「可再飛」還要通過物流、檢查、資源與任務相容性。</p></article><article id="raptor-balance" class="info-card"><h3>② Raptor：高壓的平衡盤</h3><p><b>流路心智圖：</b>燃料與氧化劑各自經預燃器、渦輪泵與冷卻路徑，最後進主燃燒室；性能、熱、啟動與維護共同拉扯。</p><p><b>常見誤解：</b>高壓不是單一數字更大；啟動暫態與再飛檢修也屬可靠度問題。</p></article><article id="orbital-refuel" class="info-card"><h3>③ Starship：不是太空加油站</h3><p><b>補給鏈：</b>地面發射 → 近地軌道集合 → 姿態／熱控下的低溫流體轉移 → 任務出發。</p><p><b>決策問題：</b>單次發射思維看一枚火箭；補給鏈思維同時看等待、蒸發、窗口、備援與多次成功率。</p></article><article id="starship-tps" class="info-card"><h3>④ Starship：三層熱防護風險</h3><p><b>剖面：</b>高溫氣流 → 陶瓷隔熱瓦 → 縫隙、密封與固定 → 背面結構與檢修；姿態決定各區域遇到的熱與載荷。</p><p><b>你可以這樣想：</b>單片瓦是零件，熱防護是材料、附著、操作與檢修共同維持的邊界。</p></article></div>
+    <div style="overflow:auto;margin-top:18px;"><table class="spacex-table"><thead><tr><th>讀圖</th><th>主要狀態</th><th>風險如何放大</th><th>新手先問</th></tr></thead><tbody><tr><td>周轉時鐘</td><td>可用資源與窗口</td><td>一個延誤占用後續排程</td><td>回收後還缺哪一段？</td></tr><tr><td>Raptor 平衡盤</td><td>壓力、溫度、時序</td><td>一端餘裕縮小會牽動其他流路</td><td>流體最後去哪裡？</td></tr><tr><td>軌道補給鏈</td><td>剩餘推進劑與等待時間</td><td>多次操作的延誤與失效累積</td><td>為何不能只看單次運力？</td></tr><tr><td>熱防護剖面</td><td>材料、固定、密封、姿態</td><td>局部缺口可在再入時放大</td><td>哪一層正在承擔什麼？</td></tr></tbody></table></div>
+  </section>
+
 </main>
 
 <footer>
@@ -648,6 +658,8 @@
     document.getElementById('track-flow').textContent = data.flow;
     document.getElementById('track-misconception').textContent = data.misconception;
   }
+  const flightSystemData={turnaround:{k:'TURNAROUND CLOCK',h:'回收成功只是周轉的起點',s:'助推器、海上回收、港口、整備、氣象、酬載與安全程序要在同一個發射窗口裡排隊。',t:'高發射頻率是整個網路的吞吐量，不是單枚火箭的回收次數。',n:['任務排定','發射','回收物流','整備','下一任務']},raptor:{k:'RAPTOR BALANCE',h:'性能、熱、啟動與維護同時拉扯',s:'全流量分級燃燒把兩側推進劑流路都接回主燃燒室；高性能的代價是控制、材料與時序必須一起成立。',t:'先沿著流路走一次，再討論為什麼高壓會改變可靠度。',n:['預燃器','渦輪泵','冷卻','主燃燒室','檢修']},refuel:{k:'ORBITAL REFUEL',h:'任務能力來自整條補給鏈協調',s:'低溫推進劑轉移牽涉姿態、熱管理、等待時間、發射節奏與備援；它不是把地面加油移到太空。',t:'剩餘推進劑和等待時間必須一起讀，才知道任務窗口是否還存在。',n:['供應發射','軌道集合','熱控等待','轉移','深空出發']},tps:{k:'TPS CROSS-SECTION',h:'磁磚之外還有固定、密封與姿態',s:'再入保護是高溫氣流、陶瓷瓦、縫隙與固定、背面結構、飛行姿態共同維持的系統邊界。',t:'低導熱不等於可無限次重複使用；檢修與操作邊界同樣是熱防護的一部分。',n:['氣流','隔熱瓦','密封固定','背面結構','檢修判定']}};
+  function selectFlightSystem(key,button){const d=flightSystemData[key];document.querySelectorAll('.system-switch').forEach(b=>b.classList.remove('active'));button.classList.add('active');document.getElementById('system-kicker').textContent=d.k;document.getElementById('system-heading').textContent=d.h;document.getElementById('system-summary').textContent=d.s;document.getElementById('system-tip').textContent=d.t;document.getElementById('system-map').innerHTML=d.n.map(x=>`<div class="flight-node">${x}</div>`).join('');}
 </script>
 
 <script defer src="../page-updated-date.js"></script>\n</body>
