@@ -11,6 +11,8 @@
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
 | `ai-models.html` | AI 模型指南，詳解主流 LLM 特色、挑選建議與 OpenRouter 介紹 |
+| `falcon9_fairing_environment.html` | Falcon 9 整流罩發射環境膠囊：以氣動、聲學、振動、分離與環境傳遞鏈理解衛星保護與驗證 |
+| `ai_engineering_workbench.html` | AI Engineering 五層工作台：以情境控制台與選型矩陣區分 prompt、context、harness、loop、graph engineering |
 | `ai-native.html` | AI Native 工作方式導覽：理解其理念、人機協作迴圈、落地五步法與流程自評 |
 | `chatgpt_chat_work.html` | ChatGPT Chat 與 Work 導覽：以雙軌地圖、情境選擇器與交接流程釐清個人探索和團隊協作的搭配方式 |
 | `ccstory_guide.html` | ccstory 使用紀錄回顧工具導覽：以展覽走廊理解本機 coding-agent session、recap、趨勢與隱私邊界 |
@@ -24,7 +26,7 @@
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
-| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收技術、飛行程序、燃料與噴嘴設計、Falcon 9／Starship V3 任務控制台，以及星鏈／月球／火星互動節點地圖） |
+| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、飛行程序、燃料與噴嘴、Falcon 9／Starship 任務控制台、星鏈／月球／火星節點地圖，以及 Falcon 9 周轉、Raptor 流路、軌道加注、Starship 熱防護四張互動工程讀圖） |
 | `space/artemis_relay.html` | 阿提米絲計畫月球接力環（地球、獵戶座、月球軌道與月面之間的互動能力交接地圖） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
