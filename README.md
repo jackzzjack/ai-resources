@@ -36,6 +36,7 @@
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
 | `space/solar_fusion_layers.html` | 太陽核融合、核分裂與分層構造互動導覽（反應控制台、核心至光球能量旅程與機制比較） |
 | `nose_hygiene.html` | 鼻腔濾網與安全清潔圖解（濕度互動跑道、黏液纖毛防護流程與清潔判斷地圖） |
+| `acupuncture_decision_map.html` | 針灸理論與安全決策地圖（操作、傳統理論、現代研究與就醫安全的互動鏡頭） |
 | `glasses_optics.html` | 眼鏡原理與挑選互動導覽（近視／遠視／散光焦點實驗室、配鏡路徑與選購矩陣） |
 | `salmon_migration_atlas.html` | 鮭魚習性、食性與洄游生命地圖（河海視角切換、五站生命環、淡水／海洋對照與保育視角） |
 | `kardashev-scale.html` | 卡爾達肖夫指數互動能量儀表板（Type I／II／III 尺度、能源路徑、常見誤解與行動清單） |
