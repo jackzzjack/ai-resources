@@ -29,13 +29,15 @@
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
-| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、目的地節點地圖，以及材料選擇、發射台周轉、共乘調度、三段回收燃燒、Block 5 機隊與熱分離的互動工程讀圖） |
+| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、目的地節點地圖、營運工程讀圖，以及發射窗口四層交集與 Merlin Vacuum 高空噴管互動剖面） |
 | `space/artemis_relay.html` | 阿提米絲計畫月球接力環（地球、獵戶座、月球軌道與月面之間的互動能力交接地圖） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
 | `space/star_lifecycle.html` | 恆星生命週期與分類互動導覽，涵蓋光譜分類、太陽演化與代表性恆星 |
 | `space/solar_fusion_layers.html` | 太陽核融合、核分裂與分層構造互動導覽（反應控制台、核心至光球能量旅程與機制比較） |
 | `nose_hygiene.html` | 鼻腔濾網與安全清潔圖解（濕度互動跑道、黏液纖毛防護流程與清潔判斷地圖） |
+| `acupuncture_decision_map.html` | 針灸理論與安全決策地圖（操作、傳統理論、現代研究與就醫安全的互動鏡頭） |
+| `foot_arch_bridge.html` | 足弓拱橋圖解（結構、負載分配、步態互動讀值與安全觀察路徑） |
 | `glasses_optics.html` | 眼鏡原理與挑選互動導覽（近視／遠視／散光焦點實驗室、配鏡路徑與選購矩陣） |
 | `salmon_migration_atlas.html` | 鮭魚習性、食性與洄游生命地圖（河海視角切換、五站生命環、淡水／海洋對照與保育視角） |
 | `kardashev-scale.html` | 卡爾達肖夫指數互動能量儀表板（Type I／II／III 尺度、能源路徑、常見誤解與行動清單） |
