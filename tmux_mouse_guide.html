@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tmux 滑鼠操作指南</title>
+  <meta name="description" content="用圖解、設定檔與驗證步驟啟用 tmux 滑鼠操作：點選窗格、拖曳調整大小、滾輪捲動與複製文字。">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://jackzzjack.github.io/ai-resources/tmux_mouse_guide.html">
+  <meta property="og:title" content="tmux 滑鼠操作指南">
+  <meta property="og:description" content="從設定到驗證，理解 tmux 的點選、調整、捲動與複製操作。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jackzzjack.github.io/ai-resources/tmux_mouse_guide.html">
+  <meta property="og:site_name" content="AI Resources">
+  <meta property="og:locale" content="zh_TW">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="tmux 滑鼠操作指南">
+  <meta name="twitter:description" content="從設定到驗證，理解 tmux 的點選、調整、捲動與複製操作。">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#070b16; --surface:#10192b; --surface2:#16233b; --text:#e7efff; --muted:#a2b4d4; --accent:#62b6ff; --mint:#62e6bf; --warn:#ffd36b; --line:rgba(132,184,255,.2); }
+    * { box-sizing:border-box; } body { margin:0; color:var(--text); background:radial-gradient(circle at 12% 0%,#162c4b 0,transparent 34rem),var(--bg); font-family:'Noto Sans TC',sans-serif; line-height:1.7; }
+    header, main, footer { max-width:1100px; margin:auto; padding-left:24px; padding-right:24px; } header { padding-top:32px; padding-bottom:38px; } .back { color:var(--mint); text-decoration:none; font-size:.9rem; } h1 { font-size:clamp(2rem,6vw,4rem); letter-spacing:.04em; line-height:1.2; margin:32px 0 12px; } .lead { max-width:720px; color:var(--muted); font-size:1.1rem; }
+    .tag { display:inline-block; padding:4px 10px; margin:3px; border:1px solid var(--line); border-radius:999px; color:var(--accent); font: .78rem 'Share Tech Mono',monospace; } main { padding-bottom:64px; } section { margin:22px 0; padding:26px; background:linear-gradient(145deg,rgba(22,35,59,.95),rgba(16,25,43,.95)); border:1px solid var(--line); border-radius:18px; } h2 { margin-top:0; font-size:1.5rem; } h3 { color:var(--mint); font-size:1.05rem; } code, pre { font-family:'Share Tech Mono',monospace; } code { color:#a9d6ff; } pre { margin:16px 0; padding:18px; overflow:auto; border-radius:12px; background:#050914; border:1px solid rgba(98,182,255,.16); color:#d8ecff; }
+    .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; } .step { position:relative; min-height:120px; padding:18px; border-radius:14px; background:#0b1323; border:1px solid var(--line); } .step b { display:block; color:var(--accent); font:1.45rem 'Share Tech Mono',monospace; } .step:not(:last-child)::after { content:'→'; position:absolute; right:-18px; top:42%; color:var(--mint); font-size:1.6rem; z-index:1; }
+    .demo { display:grid; grid-template-columns:1fr 1fr; gap:16px; } .terminal { background:#050914; border-radius:14px; border:1px solid var(--line); overflow:hidden; } .bar { padding:8px 14px; background:#1d2a44; color:var(--muted); font:.75rem 'Share Tech Mono',monospace; } .panes { display:grid; grid-template-columns:1fr 1fr; min-height:180px; } .pane { padding:18px; border:1px solid rgba(98,182,255,.25); color:#8bd1ff; cursor:pointer; transition:.18s; } .pane:hover,.pane.active { background:rgba(98,182,255,.16); outline:2px solid var(--mint); outline-offset:-2px; } .note { border-left:4px solid var(--warn); padding:12px 16px; background:rgba(255,211,107,.08); color:#ffe9ac; } ul { padding-left:1.3rem; } footer { padding-top:24px; padding-bottom:36px; color:var(--muted); font-size:.9rem; }
+    @media(max-width:700px) { .flow,.demo { grid-template-columns:1fr; } .step:not(:last-child)::after { content:'↓'; right:48%; top:auto; bottom:-26px; } h1 { font-size:2.25rem; } section { padding:20px; } }
+  </style>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html">← 返回入口</a>
+  <div style="margin-top:24px"><span class="tag">TMUX</span><span class="tag">MOUSE</span><span class="tag">TERMINAL WORKFLOW</span></div>
+  <h1>tmux with Mouse</h1>
+  <p class="lead">tmux 預設以鍵盤為主；開啟滑鼠後，仍保有多窗格的效率，並可用點擊、拖曳與滾輪完成直覺操作。這一頁帶你安全啟用、理解行為並驗證設定真的生效。</p>
+</header>
+<main>
+  <section>
+    <h2>先理解：滑鼠事件會交給誰？</h2>
+    <p>沒有 tmux 時，終端模擬器直接處理滑鼠。進入 tmux 後，tmux 會先接收事件，再決定是否切換窗格、進入複製模式或把事件送給程式。<strong><code>mouse on</code></strong> 是這個交接規則的開關。</p>
+    <div class="flow"><div class="step"><b>1</b>你移動、點擊或滾動滑鼠</div><div class="step"><b>2</b>終端把事件送進 tmux</div><div class="step"><b>3</b>tmux 判斷目前窗格與模式</div><div class="step"><b>4</b>切窗格、調整大小、捲動或交給程式</div></div>
+  </section>
+  <section>
+    <h2>最快啟用方式</h2>
+    <p>把下列設定加入 <code>~/.tmux.conf</code>，重新載入設定檔。此設定會套用到新的與既有的 tmux session。</p>
+    <pre># ~/.tmux.conf
+set -g mouse on
+
+# 在 tmux 裡按 Ctrl-b，再按 :，輸入：
+source-file ~/.tmux.conf</pre>
+    <p>也可先在 tmux 命令列暫時測試：<code>Ctrl-b : set -g mouse on</code>。暫時設定在 tmux server 重啟後會消失，因此確認可用後仍應寫入設定檔。</p>
+  </section>
+  <section>
+    <h2>啟用後可以做什麼？</h2>
+    <div class="demo"><div class="terminal"><div class="bar">session: work · window: editor</div><div class="panes"><div class="pane active" tabindex="0">Pane 1<br><small>點一下取得焦點</small></div><div class="pane" tabindex="0">Pane 2<br><small>點一下切換到這裡</small></div></div></div><div><h3>四個常用操作</h3><ul><li><strong>點選 pane：</strong>把輸入焦點切到被點選的窗格。</li><li><strong>拖曳分隔線：</strong>改變相鄰 pane 的大小。</li><li><strong>滾輪：</strong>進入 copy mode 並捲動歷史輸出；按 <code>q</code> 或 <code>Esc</code> 離開。</li><li><strong>選取文字：</strong>在 copy mode 拖曳選取，放開後 tmux 會複製選取範圍；貼上可用 <code>Ctrl-b ]</code>。</li></ul></div></div>
+  </section>
+  <section>
+    <h2>三步驗證</h2>
+    <ol><li>執行 <code>tmux show-options -g | grep mouse</code>，預期看到 <code>mouse on</code>。</li><li>把目前視窗分成兩個 pane：按 <code>Ctrl-b %</code>，再用滑鼠點另一個 pane；輸入游標應跟著切換。</li><li>輸出幾行文字後用滾輪向上捲；應能看到歷史內容，按 <code>q</code> 回到即時畫面。</li></ol>
+    <pre>tmux show-options -g | grep '^mouse '
+# 預期輸出：mouse on</pre>
+  </section>
+  <section>
+    <h2>常見陷阱與排除</h2>
+    <div class="note"><strong>遠端 SSH：</strong>滑鼠設定是在遠端 tmux server 生效；請在遠端主機的 <code>~/.tmux.conf</code> 設定，而不只是本機。</div>
+    <h3>滾輪沒有捲動</h3><p>先確認設定載入的對象正確：<code>tmux show-options -g mouse</code>。若你使用 nested tmux（tmux 裡再開 tmux），外層可能先攔截事件；盡量避免巢狀使用或明確選定操作的那一層。</p>
+    <h3>終端不能原生選字</h3><p>這是預期行為：tmux 把拖曳交給 copy mode。多數終端可按住 <code>Shift</code> 再拖曳，暫時把滑鼠事件交回終端本身；實際快捷鍵依終端模擬器而異。</p>
+    <h3>全螢幕程式行為不同</h3><p>vim、htop、fzf 等程式會自行使用滑鼠事件。若某個程式沒有反應，先查看它自己的滑鼠設定，而不是關掉 tmux 的 <code>mouse</code>。</p>
+  </section>
+  <section>
+    <h2>最小可複製設定</h2>
+    <pre># ~/.tmux.conf
+set -g mouse on
+set -g history-limit 50000
+setw -g mode-keys vi
+
+# 重新讀取設定
+bind r source-file ~/.tmux.conf \; display-message "tmux config reloaded"</pre>
+    <p>設定後按 <code>Ctrl-b r</code> 即可重新載入；需要更多 session、window、pane 快捷鍵時，請搭配 <a class="back" href="tmux_cheat_sheet.html">tmux 指令速查表</a>。</p>
+  </section>
+</main>
+<footer>tmux 滑鼠操作指南 · <a class="back" href="index.html">AI Resources</a> · CC BY 4.0</footer>
+<script>
+  document.querySelectorAll('.pane').forEach(pane => pane.addEventListener('click', () => {
+    document.querySelectorAll('.pane').forEach(item => item.classList.remove('active'));
+    pane.classList.add('active'); pane.focus();
+  }));
+</script>
+</body>
+</html>

@@ -55,6 +55,7 @@
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
+| `tmux_mouse_guide.html` | tmux 滑鼠操作圖解（啟用設定、事件流程、點選／拖曳／捲動、驗證與排錯） |
 | `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表，含任務導向互動地鐵圖（第一次使用、提問、修改、委派與排錯） |
 | `terminal_statusline_guide.html` | 終端狀態列選型圖解（ccstatusline、copilot-hud、copilotstatusline 的宿主、訊號旅程與資料邊界） |
 | `pre_commit_guide.html` | pre-commit 提交前安檢門（hooks、CI 分工與互動提交模擬器） |
