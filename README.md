@@ -29,7 +29,7 @@
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
-| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、目的地節點地圖、營運工程讀圖，以及發射窗口四層交集與 Merlin Vacuum 高空噴管互動剖面） |
+| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、目的地節點地圖、營運工程讀圖、發射窗口、Merlin Vacuum 剖面，以及第二級／衛星軌道善後控制台） |
 | `space/artemis_relay.html` | 阿提米絲計畫月球接力環（地球、獵戶座、月球軌道與月面之間的互動能力交接地圖） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
@@ -55,6 +55,7 @@
 | `bash_test_guide.html` | Bash test 語法圖解（test、[ ]、[[ ]]、字串／數字／檔案條件、常見陷阱與互動範例） |
 | `coproc_guide.html` | Bash coproc 協同程序圖解（背景工作者、雙向管線、可執行範例、常見陷阱與驗證方式） |
 | `tmux_cheat_sheet.html` | tmux 快速參考 |
+| `tmux_mouse_guide.html` | tmux 滑鼠操作圖解（啟用設定、事件流程、點選／拖曳／捲動、驗證與排錯） |
 | `copilot_cli_cheat_sheet.html` | GitHub Copilot CLI 指令與快捷鍵速查表，含任務導向互動地鐵圖（第一次使用、提問、修改、委派與排錯） |
 | `terminal_statusline_guide.html` | 終端狀態列選型圖解（ccstatusline、copilot-hud、copilotstatusline 的宿主、訊號旅程與資料邊界） |
 | `pre_commit_guide.html` | pre-commit 提交前安檢門（hooks、CI 分工與互動提交模擬器） |
