@@ -290,6 +290,7 @@
     <button class="tab-btn" onclick="switchTab(this, 'sequence')">3. 飛行程序</button>
     <button class="tab-btn" onclick="switchTab(this, 'propellant')">4. 燃料與噴嘴</button>
     <button id="spacex-tab-button" class="tab-btn" onclick="switchTab(this, 'spacex')">5. SpaceX 任務台</button>
+    <button id="landing-legs-tab-button" class="tab-btn" onclick="switchTab(this, 'landing-legs')">6. 最後一哩著陸</button>
   </div>
 
   <!-- Tab: Structure -->
@@ -476,6 +477,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Tab: Landing legs final mile -->
+  <section id="tab-landing-legs" class="tab-panel" aria-labelledby="landing-legs-title"><div class="mission-console" id="falcon9-landing-legs-timeline"><span class="console-kicker">FALCON 9 · FINAL-MILE LANDING INSTRUMENT</span><h2 id="landing-legs-title">著陸腿為何要等到最後階段才展開？</h2><p class="console-lead">四根腿不是獨立的收尾動作；它們要在下降速度、姿態、氣動載荷、鎖定可靠度與接地條件都進入可接受窗口時，接過飛行系統交出的狀態。</p><nav id="leg-controls" class="mission-switches" aria-label="選擇下降階段"><button class="mission-switch" onclick="selectLegPhase('entry',this)">再入與導引</button><button class="mission-switch active" onclick="selectLegPhase('deploy',this)">部署窗口</button><button class="mission-switch" onclick="selectLegPhase('touchdown',this)">接地與整備</button></nav><div class="mission-display"><div class="flight-window"><p class="console-kicker" id="leg-kicker">DEPLOYMENT WINDOW</p><h3 id="leg-heading">太早與太晚之間，留下鎖定與修正的餘裕</h3><div id="leg-flow" class="flight-path"><div class="flight-node">著陸燃燒</div><div class="flight-arrow"></div><div class="flight-node">腿展開／鎖定</div><div class="flight-arrow"></div><div class="flight-node">接地</div></div><p class="console-note" id="leg-summary">部署時機需避開不必要的氣動與結構負擔，同時保留系統確認、姿態修正與接地準備的時間。</p></div><aside class="telemetry"><h3>狀態讀值</h3><dl><dt>腿部狀態</dt><dd id="leg-state">展開並確認鎖定</dd><dt>主要風險</dt><dd id="leg-risk">載荷、部署可靠度與剩餘修正時間</dd><dt>系統交接</dt><dd id="leg-handoff">導引／推力控制 → 結構支撐／地面回收</dd></dl></aside></div><div class="mission-timeline"><div class="mission-step"><strong>01｜先把飛行狀態帶進終端包線</strong><span>再入與著陸燃燒管理速度與姿態；實際配置隨任務而變。</span></div><div class="mission-step"><strong>02｜在窗口內部署</strong><span>越早不必然越安全：展開結構會遇到氣動與載荷，也需要可靠鎖定。</span></div><div class="mission-step"><strong>03｜把接地變成可管理事件</strong><span>腿、機身、著陸區與控制系統共同分配殘餘衝擊與姿態誤差。</span></div><div class="mission-step"><strong>04｜讓回收接手</strong><span>海上與陸上情境的風、晃動、固定與檢查，決定下一段整備工作。</span></div></div><div class="spacex-callout"><strong>常見誤解：</strong>最後展開不是為了戲劇效果；它是把多項風險放進可接受的時間窗。</div><table class="spacex-table"><thead><tr><th>時機</th><th>得到什麼</th><th>付出的代價</th></tr></thead><tbody><tr><td>太早</td><td>較長的確認時間</td><td>更久暴露於氣動／結構載荷與擾動</td></tr><tr><td>合適窗口</td><td>部署、鎖定與修正取得平衡</td><td>需要導引、推力與結構共同判定</td></tr><tr><td>太晚</td><td>較少的展開暴露時間</td><td>留給確認與修正的裕度不足</td></tr></tbody></table></div></section>
 
   <!-- Tab: SpaceX Mission Console -->
   <section id="spacex-lab" class="tab-panel" aria-labelledby="spacex-title">
@@ -716,6 +720,8 @@
   function selectSpaceflightSystem(key,button){const d=systemData[key];document.querySelectorAll('#spaceflight-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('spaceflight-display').innerHTML=`<p class="console-kicker">${key.toUpperCase()} · SYSTEM VIEW</p><h3>${d.title}</h3><div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0">${d.flow.split(' → ').map(x=>`<span style="padding:7px 10px;border:1px solid #3e4058;border-radius:999px;color:#c7c9d8">${x}</span>`).join('')}</div><p style="color:var(--muted)">${d.text}</p><p class="spacex-callout"><strong>你可以這樣想：</strong>把它當成接力賽；每一棒都要交出可驗證的狀態，而不是只報一個漂亮的終點數字。</p>`;}
   document.querySelectorAll('#spaceflight-controls button').forEach(b=>b.addEventListener('click',()=>selectSpaceflightSystem(b.dataset.system,b)));
   selectSpaceflightSystem('interstage',document.querySelector('#spaceflight-controls button'));
+  const legPhaseData={entry:{k:'ENTRY GUIDANCE',h:'先把速度與姿態帶進終端包線',n:['再入燃燒','氣動導引','著陸燃燒'],s:'在腿部仍收妥時，導引、柵格舵與推力控制先處理下降走廊與速度；腿不是替代這些控制面。',state:'收妥',risk:'飛行走廊、熱與姿態誤差',handoff:'導引／推力仍主導'},deploy:{k:'DEPLOYMENT WINDOW',h:'太早與太晚之間，留下鎖定與修正的餘裕',n:['著陸燃燒','腿展開／鎖定','接地'],s:'部署時機需避開不必要的氣動與結構負擔，同時保留系統確認、姿態修正與接地準備的時間。',state:'展開並確認鎖定',risk:'載荷、部署可靠度與剩餘修正時間',handoff:'導引／推力控制 → 結構支撐／地面回收'},touchdown:{k:'GROUND HANDOFF',h:'接地後，飛行結果才變成可整備硬體',n:['接地','固定／安全確認','檢查與回收'],s:'腿與機身要承受並分配接地瞬間的殘餘載荷；接下來海上或陸上團隊再處理固定、檢查與運輸。',state:'承載／等待固定',risk:'著陸區條件、晃動與飛後檢查',handoff:'結構支撐／地面回收 → 整備流程'}};
+  function selectLegPhase(key,button){const d=legPhaseData[key];document.querySelectorAll('#leg-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('leg-kicker').textContent=d.k;document.getElementById('leg-heading').textContent=d.h;document.getElementById('leg-summary').textContent=d.s;document.getElementById('leg-state').textContent=d.state;document.getElementById('leg-risk').textContent=d.risk;document.getElementById('leg-handoff').textContent=d.handoff;document.getElementById('leg-flow').innerHTML=d.n.map((x,i)=>`<div class="flight-node">${x}</div>${i<d.n.length-1?'<div class="flight-arrow"></div>':''}`).join('');}
 </script>
 
 <script defer src="../page-updated-date.js"></script>\n</body>
