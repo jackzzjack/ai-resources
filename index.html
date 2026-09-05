@@ -373,12 +373,24 @@
     <button class="filter-btn" data-cat="nature">🐾 自然動物</button>
     <button class="filter-btn" data-cat="life">🏙️ 生活財經</button>
     <button class="filter-btn" data-cat="history">🏛️ 歷史文化</button>
+    <button class="filter-btn" data-cat="music">🎧 音樂發現</button>
   </div>
   <p class="category-note" id="categoryNote">
     <strong>全部</strong>：顯示所有資源；部分跨領域頁面會同時出現在多個分類中。
   </p>
 
   <div class="portal-grid">
+
+    <!-- 音樂發現誌 -->
+    <a class="portal-card" href="music/index.html" data-category="music" style="--strip-color:#fb7185;">
+      <div class="card-icon-wrap">🎧</div>
+      <div class="card-body">
+        <div class="card-title">音樂發現誌</div>
+        <div class="card-desc">不是排行榜，也不是知識文章；把 Shazam 與手動收藏裡真正想留下的歌，整理成一頁頁音樂紀錄。</div>
+        <div class="card-chips"><span class="chip">音樂收藏</span><span class="chip">聆聽筆記</span><span class="chip">持續更新</span></div>
+      </div>
+      <div class="card-footer"><span class="card-count">獨立音樂專區</span><span class="card-cta">開始聆聽 →</span></div>
+    </a>
 
     <!-- 蜻蜓飛行雷達 -->
     <a class="portal-card" href="dragonfly_flight_console.html" data-category="nature science" style="--strip-color:#55e2dc;"><div class="card-icon-wrap">🪰</div><div class="card-body"><div class="card-title">蜻蜓：濕地飛行雷達</div><div class="card-desc">以複眼、四翼、水陸生命史與食物網四個雷達視角，讀懂蜻蜓不是只靠速度的空中獵手。</div><div class="card-chips"><span class="chip">昆蟲</span><span class="chip">濕地</span><span class="chip">食物網</span></div></div><div class="card-footer"><span class="card-count">4 種雷達視角</span><span class="card-cta">進入 →</span></div></a>
@@ -2204,7 +2216,8 @@
     science: '科學與技術知識',
     nature: '自然動物',
     life: '生活財經',
-    history: '歷史文化'
+    history: '歷史文化',
+    music: '音樂發現'
   };
   const categoryDescriptions = {
     all: '顯示所有資源；部分跨領域頁面會同時出現在多個分類中。',
@@ -2215,7 +2228,8 @@
     science: '自然科學、工程原理與可視化知識解說。',
     nature: '動物、生態與生物知識頁面。',
     life: '生活應用、交通、旅遊、健康與財經工具。',
-    history: '國家、文明、交通技術演進與文化脈絡。'
+    history: '國家、文明、交通技術演進與文化脈絡。',
+    music: '從 Shazam 與手動收藏整理而來的音樂發現與聆聽紀錄。'
   };
 
   function getCardCategories(card) {
