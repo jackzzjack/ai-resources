@@ -4,6 +4,8 @@
 
 ## 專案結構
 
+| `rubber_duck_debugging.html` | Rubber Duck Debugging 對話實驗室（將除錯問題外化為可觀測、可測試的假設） |
+
 | 檔案 | 說明 |
 |------|------|
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
