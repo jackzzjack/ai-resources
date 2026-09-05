@@ -597,6 +597,16 @@
     <p class="spacex-callout" style="margin-top:18px"><strong>先懂這個：</strong>大膨脹比是任務高度、效率、熱管理、結構重量與整體級段配置的折衷；「只能由二級使用」說的是設計工作環境，不是單一尺寸迷思。</p>
   </section>
   <section id="orbital-lifecycle-control" aria-labelledby="lifecycle-title" style="margin:42px 0;padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:radial-gradient(circle at 12% 12%,rgba(34,197,94,.16),transparent 32%),#101522;"><span class="console-kicker">ORBITAL LIFECYCLE · 軌道交通控制台</span><h2 id="lifecycle-title" style="margin:8px 0">酬載分離後，誰把軌道交通收進閉環？</h2><p style="color:var(--muted)">發射成功是任務鏈的中點。切換第二級與衛星路徑，控制台會顯示責任、風險與下一個可驗證的善後動作。</p><nav id="lifecycle-controls" style="display:flex;gap:9px;flex-wrap:wrap;margin:20px 0"><button class="mission-switch active" data-lifecycle="stage">第二級：交棒後的處置</button><button class="mission-switch" data-lifecycle="satellite">衛星：從部署到除役</button></nav><div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,.8fr);gap:16px"><div id="lifecycle-flow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:22px;border:1px solid #3e4058;border-radius:14px;background:#090d19"></div><aside style="padding:18px;border:1px solid #3e4058;border-radius:14px;background:var(--surface)"><p class="console-kicker" id="lifecycle-kicker">UPPER-STAGE HANDOFF</p><h3 id="lifecycle-heading">把剩餘能量與物件變成可管理狀態</h3><p id="lifecycle-summary" style="color:var(--muted)">處置策略取決於任務軌道、剩餘推進劑、追蹤與再入條件。</p><p class="spacex-callout"><strong>先懂這個：</strong><span id="lifecycle-tip">太空也像道路：上路、換道與離場都需要可看見的規則與責任。</span></p></aside></div><div style="overflow:auto;margin-top:18px"><table class="spacex-table"><thead><tr><th>一次性發射視角</th><th>全生命週期視角</th><th>需要留下的證據</th></tr></thead><tbody><tr><td>酬載分離即成功</td><td>分離、在役、避碰與除役都可追蹤</td><td>軌道／姿態、處置與回報</td></tr><tr><td>只看火箭</td><td>第二級、衛星、追蹤網路與監管共同接力</td><td>責任人與下一步</td></tr></tbody></table></div></section>
+  <section id="spaceflight-systems-console" aria-labelledby="spaceflight-systems-title" style="margin:42px 0;padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:radial-gradient(circle at 88% 8%,rgba(56,189,248,.16),transparent 28%),#101522;">
+    <span class="console-kicker">SPACEFLIGHT SYSTEMS · 任務關聯控制台</span>
+    <h2 id="spaceflight-systems-title" style="margin:8px 0">別只看火箭：四個系統如何把一次飛行接成任務？</h2>
+    <p style="color:var(--muted)">選擇一個節點，讀圖會改變：結構把推力交給飛行器，任務架構把運力接到月球，星座規則把發射節奏接到長期營運。</p>
+    <nav id="spaceflight-controls" style="display:flex;flex-wrap:wrap;gap:9px;margin:18px 0" aria-label="任務系統選擇">
+      <button class="tab-btn" data-system="interstage">級間：三重介面</button><button class="tab-btn" data-system="octaweb">Octaweb：推力樞紐</button><button class="tab-btn" data-system="hls">HLS：驗證鏈</button><button class="tab-btn" data-system="starlink">Starlink：營運閉環</button>
+    </nav>
+    <div id="spaceflight-display" style="padding:22px;border:1px solid #34364c;border-radius:12px;background:#0d101a"></div>
+    <div style="overflow:auto;margin-top:18px"><table class="spacex-table"><thead><tr><th>系統</th><th>不能只看的單一數字</th><th>新手先懂這個</th></tr></thead><tbody><tr><td>碳纖維級間</td><td>質量</td><td>它同時傳遞載荷、包住 MVac 啟動空間、提供分離邊界。</td></tr><tr><td>Octaweb</td><td>九具引擎總推力</td><td>推力必須被結構分配，也要留出檢修與單發失效的操作空間。</td></tr><tr><td>Starship HLS</td><td>單次運力</td><td>載人登月取決於里程碑、在軌加注與任務鏈每一段是否一起被驗證。</td></tr><tr><td>Starlink 部署</td><td>衛星數量</td><td>殼層、傾角、離軌規則與靶場條件會反過來塑造任務排程。</td></tr></tbody></table></div>
+  </section>
 </main>
 
 <footer>
@@ -697,6 +707,15 @@
   function selectLifecycle(key,button){const d=lifecycleData[key];document.querySelectorAll('#lifecycle-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('lifecycle-kicker').textContent=d.k;document.getElementById('lifecycle-heading').textContent=d.h;document.getElementById('lifecycle-summary').textContent=d.s;document.getElementById('lifecycle-tip').textContent=d.t;document.getElementById('lifecycle-flow').innerHTML=d.n.map((x,i)=>`<div class="flight-node">${i+1}. ${x}</div>`).join('');}
   document.querySelectorAll('#lifecycle-controls button').forEach(b=>b.addEventListener('click',()=>selectLifecycle(b.dataset.lifecycle,b)));
   selectLifecycle('stage',document.querySelector('#lifecycle-controls button'));
+  const systemData={
+    interstage:{title:'碳纖維級間：看不見的三重角色',flow:'載荷路徑 → MVac 啟動包絡 → 一二級分離',text:'它不是單純的圓筒。上方的載荷要傳下來、真空噴嘴需要空間、分離瞬間又必須形成清楚的機械邊界。'},
+    octaweb:{title:'Octaweb：把九具 Merlin 變成可回收的核心',flow:'引擎推力 → 結構分配 → 單發失效管理 → 檢修介面',text:'推力結構也決定營運性：它讓載荷路徑、引擎安裝與整備工作能在同一個可管理的介面相遇。'},
+    hls:{title:'Starship HLS：運力要穿過一條驗證鏈',flow:'載人里程碑 → 在軌加注 → 月球轉運 → 任務驗證',text:'「能飛多重」只是起點。載人任務還必須讓補給、操作、生命支援與任務規則在每一個關卡都可被驗證。'},
+    starlink:{title:'Starlink：星座部署是受規則約束的營運系統',flow:'軌道殼層 → 傾角與靶場 → 部署節奏 → 離軌閉環',text:'衛星不是送上去就結束；殼層、傾角、碰撞風險與離軌責任會影響何時、從哪裡、以何種節奏執行任務。'}
+  };
+  function selectSpaceflightSystem(key,button){const d=systemData[key];document.querySelectorAll('#spaceflight-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('spaceflight-display').innerHTML=`<p class="console-kicker">${key.toUpperCase()} · SYSTEM VIEW</p><h3>${d.title}</h3><div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0">${d.flow.split(' → ').map(x=>`<span style="padding:7px 10px;border:1px solid #3e4058;border-radius:999px;color:#c7c9d8">${x}</span>`).join('')}</div><p style="color:var(--muted)">${d.text}</p><p class="spacex-callout"><strong>你可以這樣想：</strong>把它當成接力賽；每一棒都要交出可驗證的狀態，而不是只報一個漂亮的終點數字。</p>`;}
+  document.querySelectorAll('#spaceflight-controls button').forEach(b=>b.addEventListener('click',()=>selectSpaceflightSystem(b.dataset.system,b)));
+  selectSpaceflightSystem('interstage',document.querySelector('#spaceflight-controls button'));
 </script>
 
 <script defer src="../page-updated-date.js"></script>\n</body>
