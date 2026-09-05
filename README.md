@@ -7,6 +7,8 @@
 | 檔案 | 說明 |
 |------|------|
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
+| `music/index.html` | 音樂發現誌入口：與知識型內容分開的私人選曲與聆聽紀錄專區 |
+| `music/die-with-a-smile.html` | 音樂發現誌第一筆收錄：Lady Gaga × Bruno Mars〈Die With A Smile〉 |
 | `knowledge-map.html` | 互動式知識地圖：以可篩選、可縮放的關係圖串連 Linux、SONiC、AI 基礎設施、半導體與 AI 工作流 |
 | `ai-services.html` | AI 服務入口，提供多家 AI 服務的快速連結 |
 | `graphify_guide.html` | Graphify 入門指南（AI 程式碼知識圖譜、安裝與使用教學） |
