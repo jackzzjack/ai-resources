@@ -290,6 +290,7 @@
     <button class="tab-btn" onclick="switchTab(this, 'sequence')">3. 飛行程序</button>
     <button class="tab-btn" onclick="switchTab(this, 'propellant')">4. 燃料與噴嘴</button>
     <button id="spacex-tab-button" class="tab-btn" onclick="switchTab(this, 'spacex')">5. SpaceX 任務台</button>
+    <button id="launch-site-tab-button" class="tab-btn" onclick="switchTab(this, 'launch-site')">6. 發射場選擇器</button>
   </div>
 
   <!-- Tab: Structure -->
@@ -476,6 +477,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Tab: Launch-site selector -->
+  <section id="tab-launch-site" class="tab-panel" aria-labelledby="launch-site-title">
+    <div class="mission-console" id="falcon9-launch-site-selector">
+      <span class="console-kicker">FALCON 9 · MISSION ORIGIN SELECTOR</span>
+      <h2 id="launch-site-title">同一枚 Falcon 9，為何不能從任何發射場服務所有任務？</h2>
+      <p class="console-lead">把發射場看成任務的第一個約束：緯度、可安全飛越的方向與靶場資源，先決定可達的軌道形狀；再由酬載、回收與排程把可行集合縮小成一次任務。</p>
+      <nav id="launch-site-controls" class="mission-switches" aria-label="選擇任務形狀">
+        <button class="mission-switch active" data-site-mission="low" onclick="selectLaunchSiteMission('low',this)">低傾角任務</button>
+        <button class="mission-switch" data-site-mission="polar" onclick="selectLaunchSiteMission('polar',this)">極軌／太陽同步</button>
+        <button class="mission-switch" data-site-mission="rideshare" onclick="selectLaunchSiteMission('rideshare',this)">共乘任務</button>
+      </nav>
+      <div class="mission-display"><div class="flight-window"><p class="console-kicker" id="site-kicker">EAST-COAST GEOMETRY</p><h3 id="site-heading">佛州：把東向海面走廊接到低傾角任務</h3><div id="site-map" class="flight-path"><div class="flight-node">佛州</div><div class="flight-arrow"></div><div class="flight-node">東向安全走廊</div><div class="flight-arrow"></div><div class="flight-node">較低傾角軌道</div></div><p class="console-note" id="site-summary">地球自轉、緯度與東向飛行的幾何條件，會影響任務的性能與可達傾角；實際路徑仍必須符合靶場與任務規劃。</p></div><aside class="telemetry"><h3>選擇器讀值</h3><dl><dt>優先問</dt><dd id="site-question">目標軌道平面從哪個方向較能安全抵達？</dd><dt>主要約束</dt><dd id="site-constraint">方位角、人口／海空域與靶場程序</dd><dt>回收連動</dt><dd id="site-recovery">返場或海上回收取決於任務餘裕與落區安排</dd></dl></aside></div>
+      <div class="mission-timeline"><div class="mission-step"><strong>01｜先選軌道</strong><span>酬載需要的傾角、平面與發射時間，先排除不合適的地理組合。</span></div><div class="mission-step"><strong>02｜再看安全走廊</strong><span>火箭不能任意朝目標飛：飛越區域、追蹤與海空域必須能被靶場安全系統接住。</span></div><div class="mission-step"><strong>03｜配置回收</strong><span>性能餘裕、無人船或陸上落區與海況，把同一枚火箭導向不同任務樣貌。</span></div><div class="mission-step"><strong>04｜回到市場</strong><span>客戶的軌道需求、共乘配對與檔期，決定可行任務能否成為可排程任務。</span></div></div>
+      <div class="spacex-callout"><strong>先懂這個：</strong>發射窗口回答「何時能飛」；發射場選擇先回答「哪些任務有可能從這裡飛」。兩者互補，不能互相取代。</div>
+      <table class="spacex-table"><thead><tr><th>發射場視角</th><th>佛州（Cape Canaveral／KSC 區域）</th><th>范登堡（Vandenberg）</th></tr></thead><tbody><tr><td>常見任務幾何</td><td>適合面向大西洋的東向與多種較低傾角任務。</td><td>面向太平洋的南向走廊，常與極軌／太陽同步任務連結。</td></tr><tr><td>不能只看的事</td><td>不是「離赤道較近」就能忽略靶場、天氣與任務限制。</td><td>不是「能飛極軌」就代表所有軌道與回收模式都一樣容易。</td></tr><tr><td>共同問題</td><td colspan="2">軌道幾何 → 安全走廊 → 性能與回收 → 客戶任務池；火箭相同，任務地理不同。</td></tr></tbody></table>
+    </div>
+  </section>
 
   <!-- Tab: SpaceX Mission Console -->
   <section id="spacex-lab" class="tab-panel" aria-labelledby="spacex-title">
@@ -716,6 +735,8 @@
   function selectSpaceflightSystem(key,button){const d=systemData[key];document.querySelectorAll('#spaceflight-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('spaceflight-display').innerHTML=`<p class="console-kicker">${key.toUpperCase()} · SYSTEM VIEW</p><h3>${d.title}</h3><div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0">${d.flow.split(' → ').map(x=>`<span style="padding:7px 10px;border:1px solid #3e4058;border-radius:999px;color:#c7c9d8">${x}</span>`).join('')}</div><p style="color:var(--muted)">${d.text}</p><p class="spacex-callout"><strong>你可以這樣想：</strong>把它當成接力賽；每一棒都要交出可驗證的狀態，而不是只報一個漂亮的終點數字。</p>`;}
   document.querySelectorAll('#spaceflight-controls button').forEach(b=>b.addEventListener('click',()=>selectSpaceflightSystem(b.dataset.system,b)));
   selectSpaceflightSystem('interstage',document.querySelector('#spaceflight-controls button'));
+  const launchSiteData={low:{k:'EAST-COAST GEOMETRY',h:'佛州：把東向海面走廊接到低傾角任務',nodes:['佛州','東向安全走廊','較低傾角軌道'],s:'地球自轉、緯度與東向飛行的幾何條件，會影響任務的性能與可達傾角；實際路徑仍必須符合靶場與任務規劃。',q:'目標軌道平面從哪個方向較能安全抵達？',c:'方位角、人口／海空域與靶場程序',r:'返場或海上回收取決於任務餘裕與落區安排'},polar:{k:'WEST-COAST CORRIDOR',h:'范登堡：讓南向太平洋走廊服務極軌任務',nodes:['范登堡','南向太平洋走廊','極軌／太陽同步'],s:'面向太平洋的安全走廊，讓特定高傾角與極軌任務有合適的發射幾何；這不是任何發射台都能複製的方向條件。',q:'南向飛行的安全走廊與目標傾角能否同時成立？',c:'方位角、下游落區與任務平面',r:'海上資源、著陸條件與性能保留仍要逐次規劃'},rideshare:{k:'SHARED-MANIFEST MAP',h:'共乘：把多個酬載放進同一張軌道時刻表',nodes:['酬載需求','共同軌道／窗口','發射場與靶場','依序部署'],s:'共乘不是只把小衛星裝進同一個整流罩：傾角、部署順序、客戶可接受的時間與發射場能力都必須相容。',q:'每個客戶的軌道需求可否在同一條安全走廊相遇？',c:'共同軌道、時間彈性與分離介面',r:'回收方案由整體任務性能與落區資源共同決定'}};
+  function selectLaunchSiteMission(key,button){const d=launchSiteData[key];document.querySelectorAll('#launch-site-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('site-kicker').textContent=d.k;document.getElementById('site-heading').textContent=d.h;document.getElementById('site-summary').textContent=d.s;document.getElementById('site-question').textContent=d.q;document.getElementById('site-constraint').textContent=d.c;document.getElementById('site-recovery').textContent=d.r;document.getElementById('site-map').innerHTML=d.nodes.map((x,i)=>`<div class="flight-node">${x}</div>${i<d.nodes.length-1?'<div class="flight-arrow"></div>':''}`).join('');}
 </script>
 
 <script defer src="../page-updated-date.js"></script>\n</body>
