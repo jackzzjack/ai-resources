@@ -4,7 +4,9 @@
 
 ## 專案結構
 
-| 檔案 | 說明 |
+| `data_clumps_refactoring.html` | Data Clumps 程式碼行李盤點台（辨識重複資料群、值物件重構與測試驗證） |
+
+| `rubber_duck_debugging.html` | Rubber Duck Debugging 對話實驗室（將除錯問題外化為可觀測、可測試的假設） |
 |------|------|
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
 | `music/index.html` | 音樂發現誌入口：與知識型內容分開的私人選曲與聆聽紀錄專區 |
