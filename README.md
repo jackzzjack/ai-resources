@@ -10,6 +10,7 @@
 
 | 檔案 | 說明 |
 |------|------|
+| `rocket_lab_company.html` | Rocket Lab 任務節奏儀表板（Electron、Neutron、太空系統與任務模式切換） |
 | `index.html` | 資源入口頁面，彙整所有子頁面的導覽樞紐 |
 | `music/index.html` | 音樂發現誌入口：與知識型內容分開的私人選曲與聆聽紀錄專區 |
 | `music/die-with-a-smile.html` | 音樂發現誌第一筆收錄：Lady Gaga × Bruno Mars〈Die With A Smile〉 |
