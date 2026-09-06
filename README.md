@@ -35,6 +35,7 @@
 | `space/solar_system.html` | 太陽系互動視覺化，含行星軌道、小行星帶、縮放與速度調整 |
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
+| `space/deep_space_missions.html` | 深空先驅航線：先鋒、航海家、新視野號與日球層互動圖解 |
 | `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、最後一哩著陸儀表、發射場選擇器、發射窗口、Merlin Vacuum 剖面、第二級／衛星軌道善後，以及 Falcon 9 級間與 Octaweb、Starship HLS 驗證鏈、Starlink 星座營運、Starship 再入姿態儀的互動系統控制台） |
 | `space/artemis_relay.html` | 阿提米絲計畫月球接力環（地球、獵戶座、月球軌道與月面之間的互動能力交接地圖） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
