@@ -477,6 +477,16 @@
         <p>利用大氣壓力作為噴嘴的「隱形邊界」，能自動適應不同海拔。雖然理論效率極高，但冷卻與結構重量仍是工程挑戰。</p>
       </div>
     </div>
+    <section id="falcon9-subcooled-propellant-console" class="mission-console" style="margin-top:32px" aria-labelledby="subcooled-title">
+      <span class="console-kicker">FALCON 9 · COLD-CHAIN FLIGHT BOARD</span>
+      <h2 id="subcooled-title">Falcon 9 為何讓液氧與 RP-1「更冷」？</h2>
+      <p class="console-lead">亞冷卻不是單純追求低溫：較低溫度可讓液體密度提高，讓既定儲箱容積容納更多推進劑；但地面冷鏈、裝填時序、倒數窗口與任務性能必須一起成立。</p>
+      <nav id="subcooled-controls" class="mission-switches" aria-label="選擇亞冷卻系統視角"><button class="mission-switch active" data-subcool="density">密度儲量</button><button class="mission-switch" data-subcool="countdown">倒數冷鏈</button><button class="mission-switch" data-subcool="mission">任務取捨</button></nav>
+      <div class="mission-display"><div class="flight-window"><p class="console-kicker" id="subcooled-kicker">DENSITY WINDOW</p><h3 id="subcooled-heading">把更多液體放進同一個體積，不代表性能免費</h3><div id="subcooled-flow" class="flight-path"><div class="flight-node">冷卻</div><div class="flight-arrow"></div><div class="flight-node">密度提高</div><div class="flight-arrow"></div><div class="flight-node">儲箱裝填</div><div class="flight-arrow"></div><div class="flight-node">任務餘裕</div></div><p class="console-note" id="subcooled-summary">液體密度隨溫度改變；系統設計的問題是能否在起飛前把這項條件維持到需要它的時刻。</p></div><aside class="telemetry"><h3>讀圖提示</h3><dl><dt>主要收益</dt><dd id="subcooled-benefit">同體積內的推進劑質量增加</dd><dt>主要代價</dt><dd id="subcooled-cost">冷卻、保溫、時間與地面設備協調</dd><dt>先懂這個</dt><dd id="subcooled-tip">這是整個發射系統的取捨，不是單一引擎設定。</dd></dl></aside></div>
+      <div class="mission-timeline"><div class="mission-step"><strong>01｜地面先建立低溫條件</strong><span>儲存、轉運與設備狀態決定推進劑能否進入目標溫度區間。</span></div><div class="mission-step"><strong>02｜靠近倒數才裝填</strong><span>愈早裝滿，熱漏與等待的不確定性愈可能侵蝕原本的溫度條件。</span></div><div class="mission-step"><strong>03｜把性能連回任務</strong><span>酬載、軌道、回收與天候一起決定可用餘裕，而非只看推進劑總量。</span></div></div>
+      <table class="spacex-table"><thead><tr><th>問題</th><th>亞冷卻帶來的方向</th><th>不能直接推論</th></tr></thead><tbody><tr><td>同一儲箱容積</td><td>較高密度可提升可裝填質量</td><td>不能據此直接換算某次任務的確切運力</td></tr><tr><td>倒數與等待</td><td>需要把冷鏈與裝填時序納入操作</td><td>不能假設低溫狀態可無限維持</td></tr><tr><td>任務性能</td><td>可能增加設計與任務規畫的選項</td><td>不代表每次發射都採用同一套條件</td></tr></tbody></table>
+      <div class="spacex-callout"><strong>常見誤解：</strong>「更冷」不等於火箭燃燒室更冷；此處關鍵是裝填前的液態推進劑狀態，以及它與整個倒數節奏的連動。公開資料對個別任務的精確溫度與配置未必完整，閱讀時應把概念與任務細節分開。</div>
+    </section>
   </div>
 
   <!-- Tab: Landing legs final mile -->
@@ -761,6 +771,10 @@
   function selectHlsElevator(key,button){const d=hlsElevatorData[key];document.querySelectorAll('#hls-elevator-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('hls-elevator-kicker').textContent=d.k;document.getElementById('hls-elevator-heading').textContent=d.h;document.getElementById('hls-elevator-summary').textContent=d.s;document.getElementById('hls-elevator-tip').textContent=d.t;const platform=document.getElementById('hls-elevator-platform');platform.textContent=d.p;platform.style.transform=`translateY(${d.y})`;document.getElementById('hls-elevator-flow').innerHTML=d.n.map((x,i)=>`<span class="flight-node">${i+1}. ${x}</span>`).join('');}
   document.querySelectorAll('#hls-elevator-controls button').forEach(b=>b.addEventListener('click',()=>selectHlsElevator(b.dataset.hlsElevator,b)));
   selectHlsElevator('crew',document.querySelector('#hls-elevator-controls button'));
+  const subcooledData={density:{k:'DENSITY WINDOW',h:'把更多液體放進同一個體積，不代表性能免費',s:'液體密度隨溫度改變；系統設計的問題是能否在起飛前把這項條件維持到需要它的時刻。',b:'同體積內的推進劑質量增加',c:'冷卻、保溫、時間與地面設備協調',t:'這是整個發射系統的取捨，不是單一引擎設定。',n:['冷卻','密度提高','儲箱裝填','任務餘裕']},countdown:{k:'COUNTDOWN COLD CHAIN',h:'低溫狀態要穿過整個倒數節奏',s:'儲存、轉運、裝填與等待都會改變溫度條件；因此裝填時序是性能條件的一部分。',b:'把低溫條件帶到起飛窗口',c:'等待、熱漏與地面流程耦合',t:'晚裝填不是儀式，而是管理狀態隨時間漂移的方式。',n:['地面冷卻','轉運確認','靠近起飛裝填','倒數放行']},mission:{k:'MISSION TRADE STUDY',h:'多出的密度必須回到一趟任務的整體帳本',s:'酬載、軌道、回收與天候共同決定餘裕如何使用；公開任務資料不足時，不應反推精確性能。',b:'增加任務規畫選項',c:'不能脫離軌道與回收需求單獨解讀',t:'推進劑狀態是一張系統地圖上的一個節點，不是一個保證。',n:['任務需求','性能餘裕','回收取捨','發射決策']}};
+  function selectSubcooled(key,button){const d=subcooledData[key];document.querySelectorAll('#subcooled-controls button').forEach(b=>b.classList.toggle('active',b===button));document.getElementById('subcooled-kicker').textContent=d.k;document.getElementById('subcooled-heading').textContent=d.h;document.getElementById('subcooled-summary').textContent=d.s;document.getElementById('subcooled-benefit').textContent=d.b;document.getElementById('subcooled-cost').textContent=d.c;document.getElementById('subcooled-tip').textContent=d.t;document.getElementById('subcooled-flow').innerHTML=d.n.map((x,i)=>`<div class="flight-node">${x}</div>${i<d.n.length-1?'<div class="flight-arrow"></div>':''}`).join('');}
+  document.querySelectorAll('#subcooled-controls button').forEach(b=>b.addEventListener('click',()=>selectSubcooled(b.dataset.subcool,b)));
+  selectSubcooled('density',document.querySelector('#subcooled-controls button'));
 </script>
 
 <script defer src="../page-updated-date.js"></script>\n</body>
