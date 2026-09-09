@@ -134,7 +134,7 @@
 | `why-we-dream.html` | 做夢的原因：睡著的大腦仍在整理世界（新手友善互動知識導覽） |
 | `classical-music-types.html` | 古典音樂的類型：從巴洛克到當代的聆聽地圖（新手友善互動知識導覽） |
 | `jazz-types.html` | Jazz 的類型：沿著一棵會聽的爵士樹探索（新手友善互動知識導覽） |
-| `gpt-5-6-guide.html` | GPT-5.6：把 AI 協作變成可驗收的工作流程（新手友善互動知識導覽） |
+| `gpt-5-6-guide.html` | GPT-5.6 官方資料導覽（Sol／Terra／Luna 定位、1.05M context、價格、工具支援、限制與互動成本試算） |
 | `threejs_guide.html` | Three.js 入門圖解（瀏覽器 3D 的場景、相機、網格、渲染器與最小程式範例） |
 | `touchdesigner_guide.html` | TouchDesigner 入門圖解（節點式即時視覺、五種 OP、聲音反應 patch 與學習路線） |
 
