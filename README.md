@@ -13,6 +13,7 @@
 | `space/modern_rockets.html#shuttle-falcon9-reuse-rhythm` | 太空梭與 Falcon 9 的重複使用節奏（架構、整備與機隊經濟） |
 | `space/modern_rockets.html#starship-header-tank-landing` | Starship 頭箱與末段著陸（翻轉、低液位取用與管理） |
 | `space/modern_rockets.html#falcon9-recovery-decision` | Falcon 9 的回收決策邊界（回收推進劑、軌道與營運） |
+| `space/modern_rockets.html#falcon9-grid-fin-guidance` | Falcon 9 格柵翼的再入導引（氣動控制、可達性與著陸） |
 | `data_clumps_refactoring.html` | Data Clumps 程式碼行李盤點台（辨識重複資料群、值物件重構與測試驗證） |
 | `rubber_duck_debugging.html` | Rubber Duck Debugging 對話實驗室（將除錯問題外化為可觀測、可測試的假設） |
 | `rocket_lab_company.html` | Rocket Lab 任務節奏儀表板（Electron、Neutron、太空系統與任務模式切換） |
