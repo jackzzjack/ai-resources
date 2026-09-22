@@ -8,6 +8,7 @@
 |------|------|
 | `agent_memory_atlas.html` | Agent 記憶地圖（以互動路由器比較 Supermemory、Mem0、Honcho 與 Hermes 的記憶分工） |
 | `falcon9_flight_termination_safety.html` | 飛行終止系統：任務安全控制室（以設計、許可、倒數與飛行判讀的可點選安全鏈，理解 FTS 的公共安全角色與證據邊界） |
+| `space/modern_rockets.html#satellite-separation-interface` | 衛星如何安全離開 Falcon 9？（分離機構、淨空與任務介面） |
 | `data_clumps_refactoring.html` | Data Clumps 程式碼行李盤點台（辨識重複資料群、值物件重構與測試驗證） |
 | `rubber_duck_debugging.html` | Rubber Duck Debugging 對話實驗室（將除錯問題外化為可觀測、可測試的假設） |
 | `rocket_lab_company.html` | Rocket Lab 任務節奏儀表板（Electron、Neutron、太空系統與任務模式切換） |
