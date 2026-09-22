@@ -6,6 +6,7 @@
 
 | 檔案 | 說明 |
 |------|------|
+| `space/modern_rockets.html#falcon9-reliability-evidence` | Falcon 9 重複使用紀錄的可靠性判讀（剖面、暴露量與資料偏差） |
 | `data_clumps_refactoring.html` | Data Clumps 程式碼行李盤點台（辨識重複資料群、值物件重構與測試驗證） |
 | `rubber_duck_debugging.html` | Rubber Duck Debugging 對話實驗室（將除錯問題外化為可觀測、可測試的假設） |
 | `rocket_lab_company.html` | Rocket Lab 任務節奏儀表板（Electron、Neutron、太空系統與任務模式切換） |
