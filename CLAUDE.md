@@ -71,8 +71,10 @@
 - 不引入 npm、bundler 或任何外部建置工具
 - 外部資源（字型、圖示）若需引入，優先使用 CDN，並考量離線可用性
 
-### README 維護
+### README 與 sitemap 維護
 - 新增 HTML 頁面時，同步更新 `README.md` 的「專案結構」表格
+- 新增、移動或刪除 HTML 頁面後，執行 `python3 scripts/generate_sitemap.py` 更新 `sitemap.xml`
+- 提交前執行 `python3 scripts/generate_sitemap.py --check`，確認 sitemap 沒有過期
 - AI 工具目錄的連結應定期驗證是否仍然有效
 
 ## 測試方式

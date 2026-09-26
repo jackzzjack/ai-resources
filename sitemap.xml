@@ -1,71 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://jackzzjack.github.io/ai-resources/</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/5g_architecture.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/ac_principles.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/acupuncture_decision_map.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/ai-infrastructure.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/ai-models.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/ai-native.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/ai-services.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/ai_engineering_workbench.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/aircraft-attitude.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/animal_eyes_iris.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/bash_test_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/bbu_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/black_white_holes.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/brain_forgetting.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/british_history.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/car_architecture.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/ccstory_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/chatgpt_chat_work.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/chengdu_travel_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/chinese_history.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/chinese_western_medicine.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/classical-music-types.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/computer_overview.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/construction_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/context_windows.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/copilot_cli_cheat_sheet.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/coproc_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/covered_call_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/cpo-industry.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/crosstool_ng_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/data_clumps_refactoring.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/dehumidifier-principles.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/dinosaurs.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/dolphin.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/dragonfly_flight_console.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/dup2_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/dutch_republic.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/ems-industry.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/ev_knowledge.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/execlp_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/f1_driver_knowledge.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/f1_engine_2026.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/falcon9_fairing_environment.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/fiber-optic-industry.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/foot_arch_bridge.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/fork_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/fujian_travel_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/gerd_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/git_signoff_dco.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/glasses_optics.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/gpt-5-6-guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/gpt_partition_attributes.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/graphify_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/hbm_memory.html</loc></url>
-  <url><loc>https://jackzzjack.github.io/ai-resources/</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/hermes_agents_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/iphone_ubuntu_tethering.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/japan_history.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/jazz-types.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/kardashev-scale.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/kiwifruit_journey.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/knowledge-map.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/linux_dd_io_control.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/linux_kernel_overview.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/linux_user_switch.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/mac_serdes.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/makefile_assignment_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/mcp_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/memory_types.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/metro_knowledge.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/mind_thinking_compass.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/minicom_cheat_sheet.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/music/</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/music/die-with-a-smile.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/nose_hygiene.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/one-person-company.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/opencode_tooling_atlas.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/pcb_wet_dry_process.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/pcie_linux_driver.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/periodic_table.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/philippine_eagle.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/pipe_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/poultry_plate_runway.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/power-industry.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/pre_commit_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/rocket_lab_company.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/router-industry.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/rubber_duck_debugging.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/russian_history.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/salmon_migration_atlas.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/script_vs_tee.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/select_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/semiconductor-industry.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/serdes_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/sgdisk_safety_console.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/shipping-industry.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/smartphone_architecture.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/sonic_nos_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/space/artemis_relay.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/black_hole.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/space/deep_space_missions.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/galaxy.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/modern_rockets.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/rocket_physics.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/space/solar_fusion_layers.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/solar_system.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/space_shuttle.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/space/star_lifecycle.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/sperm_whale.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/ssh_key_login_guide.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/ssot_control_room.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/star_life_death.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/starship_safety_loop.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/stock-valuation.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/switch-industry.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/taipei_mrt_map.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/terminal_statusline_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/thailand_history.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/thermal-industry.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/threejs_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/tmux_cheat_sheet.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/tmux_mouse_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/token_explained.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/touchdesigner_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/train_knowledge.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/training_inference_studio.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/typhoon_structure.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/us-broker-choice.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/us_history_overview.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/usb_flash_drive_guide.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/usb_hub_architecture.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/vim_cheat_sheet.html</loc></url>
   <url><loc>https://jackzzjack.github.io/ai-resources/whale_knowledge.html</loc></url>
+  <url><loc>https://jackzzjack.github.io/ai-resources/why-we-dream.html</loc></url>
 </urlset>
