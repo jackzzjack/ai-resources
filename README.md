@@ -78,6 +78,7 @@
 | `ems-industry.html` | EMS 電子代工產業生態系（供應鏈上下游、OEM/ODM 模式、全球領導大廠） |
 | `shipping-industry.html` | 航運產業生態系（定期與不定期航線模式、全球供應鏈協作、船舶分級） |
 | `stock-valuation.html` | 投資評價工具（本益比計算機、回本年限視覺化、不同產業估值邏輯） |
+| `etf-009827-holdings.html` | 009827 玉山未來全球算力 ETF 持股地圖（官方 PCF 股票清單、前十大權重、期貨部位與互動搜尋） |
 | `one-person-company.html` | 一人公司導覽（定義、核心理念、營運系統與 90 天行動計畫） |
 | `us-broker-choice.html` | IBKR、嘉信、Firstrade 美股券商新手圖解（資金路徑、IBKR 入金心智模型、定期定額規劃、比較表與互動情境篩選） |
 | `covered_call_guide.html` | Covered Call 備兌買權新手圖解（持股與買權關係、指派流程、風險對照與互動情境試算） |
