@@ -6,6 +6,23 @@
 
 | 檔案 | 說明 |
 |------|------|
+| `agent_memory_atlas.html` | Agent 記憶地圖（以互動路由器比較 Supermemory、Mem0、Honcho 與 Hermes 的記憶分工） |
+| `agi-capability-navigator.html` | AGI 能力導航儀（以能力地圖理解通用人工智慧的目標、評估與未知邊界） |
+| `docker-sbom-xray.html` | Docker SBOM 容器成分 X 光機（理解映像內容、供應鏈風險與掃描流程） |
+| `dragon_external_modules.html` | Dragon Trunk 外部模組任務圖（理解非加壓艙、外部載荷與任務介面） |
+| `repo-submodule-route.html` | repo 子模組地圖與車隊（理解 manifest、子專案版本與同步流程） |
+| `root-canal-dashboard.html` | 根管治療牙齒剖面儀表板（理解感染路徑、治療步驟與術後照護） |
+| `falcon9_flight_termination_safety.html` | 飛行終止系統：任務安全控制室（以設計、許可、倒數與飛行判讀的可點選安全鏈，理解 FTS 的公共安全角色與證據邊界） |
+| `space/modern_rockets.html#satellite-separation-interface` | 衛星如何安全離開 Falcon 9？（分離機構、淨空與任務介面） |
+| `space/modern_rockets.html#starship-tower-catch-interface` | Starship 發射塔的捕捉介面（末段導引、捕捉與可維護性） |
+| `space/modern_rockets.html#shuttle-falcon9-reuse-rhythm` | 太空梭與 Falcon 9 的重複使用節奏（架構、整備與機隊經濟） |
+| `space/modern_rockets.html#starship-header-tank-landing` | Starship 頭箱與末段著陸（翻轉、低液位取用與管理） |
+| `space/modern_rockets.html#falcon9-recovery-decision` | Falcon 9 的回收決策邊界（回收推進劑、軌道與營運） |
+| `space/modern_rockets.html#falcon9-grid-fin-guidance` | Falcon 9 格柵翼的再入導引（氣動控制、可達性與著陸） |
+| `space/modern_rockets.html#falcon9-reliability-evidence` | Falcon 9 重複使用紀錄的可靠性判讀（剖面、暴露量與資料偏差） |
+| `space/modern_rockets.html#raptor-sea-level-vacuum` | Starship 的海平面與真空版 Raptor（膨脹比、節流與軌道效率） |
+| `space/modern_rockets.html#dragon-superdraco-escape` | Dragon SuperDraco 的側壁逃生系統（推力向量、隔離與復飛） |
+| `space/modern_rockets.html#raptor-thrust-vector-control` | Starship Raptor 的推力向量控制（控制分配、閉環與故障邊界） |
 | `data_clumps_refactoring.html` | Data Clumps 程式碼行李盤點台（辨識重複資料群、值物件重構與測試驗證） |
 | `rubber_duck_debugging.html` | Rubber Duck Debugging 對話實驗室（將除錯問題外化為可觀測、可測試的假設） |
 | `rocket_lab_company.html` | Rocket Lab 任務節奏儀表板（Electron、Neutron、太空系統與任務模式切換） |
@@ -35,7 +52,7 @@
 | `space/galaxy.html` | 銀河系互動視覺化，程序生成四大旋臂、核球、太陽系定位標記 |
 | `space/rocket_physics.html` | 火箭與軌道物理互動指南，涵蓋發射流程、逃逸速度與引力助推 |
 | `space/deep_space_missions.html` | 深空先驅航線：先鋒、航海家、新視野號與日球層互動圖解 |
-| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、最後一哩著陸儀表、發射場選擇器、發射窗口、Merlin Vacuum 剖面、第二級／衛星軌道善後，以及 Falcon 9 級間與 Octaweb、Starship HLS 驗證鏈、月面升降梯的乘員／貨物／備援控制台、Starlink 星座營運、Starship 再入姿態儀、Falcon 9 二級滑行後重啟（軌道幾何／推進劑沉降／點火裕度）的互動系統控制台） |
+| `space/modern_rockets.html` | 現代火箭構造與回收（垂直回收、任務控制台、最後一哩著陸儀表、發射場選擇器、Falcon 9 亞冷卻推進劑冷鏈控制台、發射窗口、Merlin Vacuum 剖面、第二級／衛星軌道善後，以及 Falcon 9 級間與 Octaweb、Starship HLS 驗證鏈、月面升降梯的乘員／貨物／備援控制台、Starlink 星座營運、Starship 再入姿態儀、Falcon 9 二級滑行後重啟（軌道幾何／推進劑沉降／點火裕度）的互動系統控制台） |
 | `space/artemis_relay.html` | 阿提米絲計畫月球接力環（地球、獵戶座、月球軌道與月面之間的互動能力交接地圖） |
 | `space/space_shuttle.html` | 太空梭構造導覽（軌道器構造、隔熱系統、飛行任務流程） |
 | `space/black_hole.html` | 黑洞結構與特色互動導覽，涵蓋事件視界、奇點、時間膨脹與霍金輻射 |
