@@ -10,6 +10,7 @@
 | `space/modern_rockets.html#falcon9-recovery-operations` | Falcon 9 回收與周轉控制室（以性能配額、海象、整備與場站容量理解回收決策閉環） |
 | `space/modern_rockets.html#falcon9-turnaround-economics` | Falcon 9 周轉率商業系統（以機隊節奏區分回收、整備與發射場資源） |
 | `space/modern_rockets.html#transporter-rideshare-dispatch` | Transporter 共乘調度台（以共同軌道、標準介面與部署時程理解共享運力） |
+| `space/modern_rockets.html#starship-hot-staging-thermal-path` | Starship 熱分級熱流判讀器（以排氣路徑、級間交接與營運邊界理解分離設計） |
 | `agent_memory_atlas.html` | Agent 記憶地圖（以互動路由器比較 Supermemory、Mem0、Honcho 與 Hermes 的記憶分工） |
 | `agi-capability-navigator.html` | AGI 能力導航儀（以能力地圖理解通用人工智慧的目標、評估與未知邊界） |
 | `docker-sbom-xray.html` | Docker SBOM 容器成分 X 光機（理解映像內容、供應鏈風險與掃描流程） |
