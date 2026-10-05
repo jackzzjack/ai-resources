@@ -7,6 +7,7 @@
 | 檔案 | 說明 |
 |------|------|
 | `water_oven_energy_studio.html` | 水波爐能量調度台（把料理腔體看成三條可協調的能量路：微波、熱風與蒸氣各自改變食材的加熱條件。） |
+| `kv_cache_guide.html` | KV 快取工作台（把已處理的提示字詞視為可重用的閱讀筆記：預填階段寫入，解碼階段讀取。） |
 | `space/modern_rockets.html#raptor-autogenous-pressurization` | Raptor 自增壓讀圖（以受控汽化、箱壓與控制耦合理解低溫火箭的可靠性取捨） |
 | `space/modern_rockets.html#falcon9-recovery-operations` | Falcon 9 回收與周轉控制室（以性能配額、海象、整備與場站容量理解回收決策閉環） |
 | `space/modern_rockets.html#falcon9-turnaround-economics` | Falcon 9 周轉率商業系統（以機隊節奏區分回收、整備與發射場資源） |
