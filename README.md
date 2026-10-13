@@ -43,6 +43,7 @@
 | `dragonfly_flight_console.html` | 蜻蜓飛行雷達：以複眼、四翼、水陸生命史與食物網切換，理解感測—控制—棲地的關係 |
 | `training_inference_studio.html` | Training 與 Inference 工作室：以模型工廠與服務櫃台雙線圖解參數更新、即時交付、延遲與成本取捨 |
 | `starship_safety_loop.html` | Starship 安全工程迴路：以觀測、調查、修正、驗證與許可決策，理解飛行試驗如何形成可審視的安全閉環 |
+| `starship_launch_ops_console.html` | Starship 發射營運控制台：以飛行資料、FAA 許可、場站與任務班表四軌交會，理解試飛窗口如何形成 |
 | `ai_engineering_workbench.html` | AI Engineering 五層工作台：以情境控制台與選型矩陣區分 prompt、context、harness、loop、graph engineering |
 | `ai-native.html` | AI Native 工作方式導覽：理解其理念、人機協作迴圈、落地五步法與流程自評 |
 | `chatgpt_chat_work.html` | ChatGPT Chat 與 Work 導覽：以雙軌地圖、情境選擇器與交接流程釐清個人探索和團隊協作的搭配方式 |
