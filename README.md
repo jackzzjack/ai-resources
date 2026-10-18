@@ -6,6 +6,7 @@
 
 | 檔案 | 說明 |
 |------|------|
+| `space/modern_rockets.html#merlin-tea-teb-ignition` | Merlin 的 TEA-TEB 點火系統（互動系統讀圖） |
 | `water_oven_energy_studio.html` | 水波爐能量調度台（把料理腔體看成三條可協調的能量路：微波、熱風與蒸氣各自改變食材的加熱條件。） |
 | `space/modern_rockets.html#raptor-autogenous-pressurization` | Raptor 自增壓讀圖（以受控汽化、箱壓與控制耦合理解低溫火箭的可靠性取捨） |
 | `space/modern_rockets.html#falcon9-recovery-operations` | Falcon 9 回收與周轉控制室（以性能配額、海象、整備與場站容量理解回收決策閉環） |
